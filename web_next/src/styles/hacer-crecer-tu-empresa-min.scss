@@ -1,0 +1,88 @@
+.wrapper_content{
+    background: #f9f8ff !important;
+}
+.ganalogo{
+    /*background: #f9f8ff;*/
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.formula_ganalogo{
+    position: relative;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.titulo_ganalogo{
+    text-align: center;
+    position: relative;
+    margin-bottom: 30px;
+}
+.titulo_ganalogo p{
+    color: #000;
+    font-weight: 800;
+    font-size: 22px;
+    font-family: 'Baloo 2';
+    display: inline-block;
+    margin: 0;
+}
+.titulo_ganalogo h2{
+    font-size: 30px;
+    color: #4e54c8;
+    font-family: 'Baloo 2';
+    font-weight: 400;
+    margin: 0;
+    display: inline-block;
+    padding: 0px 5px;
+}
+.titulo_ganalogo .hr_first{
+    width: 9px;
+    border-top: 1px solid #d33741;
+    border-bottom: 3px solid #d33741;
+    display: inline-block;
+    transition: all ease 500ms;
+    margin-right: 7px;
+    border-radius: 20px;
+    margin-bottom: 0!important;
+}
+.titulo_ganalogo .hr_second{
+    width: 206px;
+    border-top: 1px solid #d33741;
+    border-bottom: 3px solid #d33741;
+    display: inline-block;
+    transition: all ease 500ms;
+    border-radius: 20px;
+    margin-bottom: 0!important;
+}
+.formulario_ganalogo{
+    background: #ffffff;
+    box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.2);
+    width: 40%;
+    margin: 0 auto;
+    padding: 36px;
+    border-radius: 10px;
+}
+@media(max-width: 1199px){
+    .formulario_ganalogo {
+      width: 50%;
+    }
+}
+@media(max-width: 992px){
+    .formulario_ganalogo {
+      width: 65%;
+    }
+}
+@media(max-width: 767px){
+    .formulario_ganalogo {
+      width: 100%;
+    }
+}
+.for_style_ganalogo{
+    width: 100%;
+    outline: none;
+    border: 0;
+    border: 2px solid #4e54c7;
+    border-radius: 10px;
+    padding: 10px 42px;
+    margin-bottom: 15px;
+    font-size: 13px;
+}

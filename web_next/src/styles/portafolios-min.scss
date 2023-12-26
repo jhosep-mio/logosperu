@@ -1,0 +1,740 @@
+/*TITULO DE LA INTERNA PORTAFOLIO*/
+
+.section_portafolio {
+
+    padding: 40px 0px;
+
+    background: #fff;
+
+}
+
+.titulo_portafolio {
+
+    text-align: center;
+
+    padding: 17px 0;
+
+}
+
+.titulo_portafolio h1 {
+
+    font-size: 36px;
+
+    color: #4e54c8;
+
+    font-family: 'Baloo 2';
+
+    font-weight: 900;
+
+    margin: 0;
+
+    text-transform: uppercase;
+
+}
+
+.descrip_portafolio {
+
+    text-align: center;
+
+    margin-bottom: 50px;
+
+    width: 100%;
+
+    max-width: 730px;
+
+    margin: 0 auto;
+
+    padding-bottom: 30px;
+
+}
+
+.descrip_portafolio p {
+
+    margin: 0;
+
+    color: #444444;
+
+    font-size: 16px;
+
+}
+
+.boton_portafolio{
+    text-align: center;
+    padding: 20px 0px;
+}
+
+
+.hr_first {
+
+    width: 9px;
+
+    border-top: 1px solid #d33741;
+
+    border-bottom: 3px solid #d33741;
+
+    display: inline-block;
+
+    transition: all ease 500ms;
+
+    margin-right: 7px;
+
+    border-radius: 20px;
+
+    margin-bottom: 0!important;
+
+}
+
+.hr_second {
+
+    width: 206px;
+
+    border-top: 1px solid #d33741;
+
+    border-bottom: 3px solid #d33741;
+
+    display: inline-block;
+
+    transition: all ease 500ms;
+
+    border-radius: 20px;
+
+    margin-bottom: 0!important;
+
+}
+
+/*FINAL DEL TITULO*/
+
+/*MENU DEL PORTAFOLIO*/
+
+.prodinterna-bg {
+
+    padding: 40px 0 50px;
+
+    position: relative;
+
+    background-repeat: repeat;
+
+    color: #6d6d6d;
+
+}
+
+.title_flito_porta {
+
+    padding: 15px;
+
+    background: #4e54c8;
+
+    color: #fff;
+
+    box-shadow: 0px 0px 5px #a6a6a6;
+
+    border-bottom: 1px solid #dbdbdb;
+
+}
+
+.title_flito_porta h3{
+
+    margin: 0;
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+}
+
+.box_filtros_porta {
+
+    background: #fff;
+
+    margin: 10px 0;
+
+}
+
+.box_filtros_porta .box_head_porta {
+
+    padding: 15px;
+
+    background: #f2f2f2;
+
+    box-shadow: 0px 1px 3px #b8b8b8;
+
+}
+
+.box_filtros_porta .box_head_porta h3 {
+
+    color: #000;
+
+    font-weight: 600;
+
+    font-size: 16px;
+
+    display: inline-block;
+
+    width: 80%;
+
+    margin: 0;
+
+}
+
+.box_filtros_porta .box_body_porta ul {
+
+    padding-left: 0;
+
+    list-style: none;
+
+    margin-bottom: 0;
+
+}
+
+.box_filtros_porta .box_body_porta ul>li>a {
+
+    display: block;
+
+    padding: 15px;
+
+    text-decoration: none;
+
+    border-top: 1px solid #ebebeb;
+
+    transition: all ease 500ms;
+
+    color: #222222;
+
+    font-size: 14px;
+
+}
+
+.box_filtros_porta .box_body_porta ul>li>a:hover {
+
+    color: #4e54c8;
+
+    font-weight: 800;
+
+    transition: all ease 500ms;
+
+}
+
+/*FIN DEL MENU*/
+
+/*INICIO DE ITEMS DE SERVICIOS*/
+
+.prodlist-grid {
+
+    /* display: block; */
+
+    padding: 0;
+
+    margin: 0;
+
+    list-style: none outside;
+
+    clear: both;
+
+    display: -webkit-flex!important;
+
+    display: flex!important;
+
+    -webkit-flex-flow: row wrap;
+
+    flex-flow: row wrap;
+
+}
+
+.prodlist-grid > li.pogrid {
+
+    float: left;
+
+    padding: 0;
+
+    position: relative;
+
+    text-align: center;
+
+    width: 30%;
+
+    margin: 0 auto;
+
+    margin-bottom: 20px;
+
+    background: #fff;
+
+    box-shadow: 0px 0px 5px #c7c7c7;
+
+    border: 1px solid transparent;
+
+    transition: border 500ms;
+
+}
+
+.prodlist-grid .flex_content {
+
+    text-decoration: none;
+
+    display: flex;
+
+    flex-flow: row wrap;
+
+}
+
+.pogrid .item_head {
+
+    position: relative;
+
+    width: 100%;
+
+}
+
+.pogrid .item_head a {
+
+    display: block;
+
+    position: relative;
+
+}
+
+.prodlist-grid img {
+
+    width: 100%;
+
+}
+
+.prodlist-grid > li.pogrid .item_body {
+
+    text-align: left;
+
+    position: relative;
+
+    padding: 15px 10px;
+
+    width: 100%;
+
+}
+
+.prodlist-grid > li.pogrid .item_body h3 {
+
+    color: #000000;
+
+    font-size: 15px;
+
+    width: 100%;
+
+    margin: 0;
+
+    font-weight: 600;
+
+}
+
+.prodlist-grid > li.pogrid .item_body h6 {
+
+    text-align: left;
+
+    color: #848484;
+
+    margin-top: 15px;
+
+}
+
+.prodlist-grid > li.pogrid .item_body a {
+
+    text-decoration: none;
+
+}
+
+.hr_title {
+
+    margin: 10px 0;
+
+    border-top: 3px solid #000;
+
+    width: 50px;
+
+}
+
+.hr_separator {
+
+    border-top: 1px solid #5f5f5f;
+
+    margin-top: 13px;
+
+}
+
+.interaccion ul {
+
+    list-style: none;
+
+    padding-left: 0;
+
+    margin-bottom: 0;
+
+    text-align: left;
+
+}
+
+.interaccion ul li {
+
+    display: inline-block;
+
+    margin-right: 10px;
+
+}
+
+.interaccion ul li a {
+
+    color: #8c8c8c;
+
+    text-decoration: none;
+
+    font-size: 20px;
+
+    font-weight: 600;
+
+    transition: all ease 500ms;
+
+}
+
+.interaccion ul li a i {
+
+    color: #848484;
+
+}
+
+.interaccion ul li a:hover {
+
+    color: #4e54c8;
+
+}
+
+/**/
+
+.item_head{
+
+    width: 100%;
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+.item_head:before{
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    background: #4e54c8;
+
+    margin-bottom: 20px;
+
+    opacity: 0;
+
+    z-index: 2;
+
+    transition: all ease 500ms;
+
+}
+
+.prodlist-grid .pogrid:hover .item_head:before{
+
+    opacity: 0.9;
+
+    transition: all ease 500ms;
+
+}
+
+.prodlist-grid .pogrid .caption_portafolio{
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    display: -moz-flex;
+
+    flex-flow: row wrap;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: left;
+
+    transform: scale(0);
+
+    z-index: 48;
+
+    transition: all ease 500ms;
+
+}
+
+ .prodlist-grid .pogrid .caption_portafolio .btn-visitar {
+
+    /*width: 151px;;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background-color: transparent;*/
+    width: 160px;
+    border: 3px solid rgba(255, 255, 255, 0.7);
+    background-color: white;
+    box-shadow: inset -1px 0px 4px 2px #0000002b;
+    border-radius: 50px;
+
+    padding: 8px 0 8px 15px;
+
+    position: relative;
+
+    text-align: center;
+
+    color: #d33741;
+
+    text-transform: uppercase;
+
+    font-size: 13px;
+
+    display: inline-block;
+
+    text-decoration: none;
+
+    margin: 0 auto;
+
+    display: block;
+
+    margin-top: 30px;
+
+    font-weight: 900;
+
+}
+
+.prodlist-grid .pogrid .caption_portafolio .btn-visitar:before {
+
+    position: absolute;
+
+    left: 45px;
+
+    content: attr(data-hover);
+
+    opacity: 0;
+
+    text-align: center;
+
+    transition: all 0.5s ease;
+
+    -webkit-transition: all 0.5s ease;
+
+    -moz-transition: all 0.5s ease;
+
+    -o-transition: all 0.5s ease;
+
+}
+
+.prodlist-grid .pogrid .caption_portafolio .btn-visitar .icons {
+
+    position: absolute;
+
+    left: 3px;
+
+    top: 1px;
+
+    bottom: 1px;
+
+    padding: 9px 10px;
+
+    border-radius: 50%;
+
+    text-align: center;
+
+    color: #d33741;
+
+    background-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 1px 1px 6px 2px #0000002b;
+
+    transition: all 0.5s ease;
+
+    -webkit-transition: all 0.5s ease;
+
+    -moz-transition: all 0.5s ease;
+
+    -o-transition: all 0.5s ease;
+
+}
+
+.prodlist-grid .pogrid .caption_portafolio .btn-visitar:hover, .prodlist-grid .pogrid .caption_portafolio .btn-visitar:active, .prodlist-grid .pogrid .caption_portafolio .btn-visitar:focus {
+
+    color: #4e54c8;
+    border-color: #ffffff;
+    font-weight: 900;
+    transition: all ease 500ms;
+
+}
+
+ .prodlist-grid .pogrid .caption_portafolio .btn-visitar:hover .icons {
+
+    left: 119px;
+    background-color: #ffffff;
+
+}
+
+.prodlist-grid .pogrid  .caption_portafolio .btn-visitar:hover .text {
+
+    opacity: 0;
+
+}
+
+.prodlist-grid .pogrid .caption_portafolio .btn-visitar:hover:before {
+
+    opacity: 1;
+
+}
+
+.prodlist-grid .pogrid .caption_portafolio .btn-visitar:before {
+
+    position: absolute;
+
+    left: 23px;
+
+    content: attr(data-hover);
+
+    opacity: 0;
+
+    text-align: center;
+
+    transition: all 0.5s ease;
+
+    -webkit-transition: all 0.5s ease;
+
+    -moz-transition: all 0.5s ease;
+
+    -o-transition: all 0.5s ease;
+
+}
+
+.prodlist-grid .pogrid:hover .caption_portafolio{
+
+    transform: scale(1);
+
+    transition: all ease 500ms;
+
+}
+
+@media(max-width: 991px){
+
+    .section_portafolio {
+
+        padding: 0px 0px;
+
+    }
+
+    .descrip_portafolio {
+
+        padding-bottom: 10px;
+
+    }
+
+    .prodlist-grid > li.pogrid {
+
+        width: 45%;
+
+    }
+
+}
+
+/*FIN ITEMS DE SERVICIOS*/
+
+
+
+.pagination_cat ul{
+
+    padding-left: 0;
+
+    margin: 20px 0;
+
+    text-align: center;
+
+    list-style: none;
+
+    display: -webkit-inline-box;
+
+}
+
+.pagination_cat .disabled{
+
+    display: inline;
+
+}
+
+.pagination_cat li.active a{
+
+    background: #4e54c8;
+
+    color: #fff;
+
+    font-weight: 700;
+
+}
+
+.pagination_cat li a{
+
+    display: inline-block;
+
+    padding: 5px 14px;
+
+    background-color: #fff;
+
+    border: 1px solid #ddd;
+
+    border-radius: 15px;
+
+    color: #4e54c8;
+
+    font-weight: 700;
+
+}
+
+.pagination_cat li a span{
+
+    position: absolute;
+
+    width: 1px;
+
+    height: 1px;
+
+    padding: 0;
+
+    margin: -1px;
+
+    overflow: hidden;
+
+    clip: rect(0, 0, 0, 0);
+
+    border: 0;
+
+}
+
+/*RESPONSIVE*/
+@media(max-width:470px){
+    .prodlist-grid .pogrid .caption_portafolio .btn-visitar {
+        width: 140px;
+        font-size: 9px;
+        margin-top: 0px;
+    }
+    .prodlist-grid .pogrid .caption_portafolio .btn-visitar:hover .icons {
+        left: 104px;
+        background-color: #ffffff;
+    }
+}

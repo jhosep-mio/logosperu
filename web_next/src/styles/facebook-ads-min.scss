@@ -1,0 +1,438 @@
+/*TITULO LOGOTIPO*/
+
+.descrip_facebok_ads{
+
+  padding: 40px 0px;
+
+  background: #fff;
+
+  text-align: center;
+
+}
+
+
+.cont_descrip_facebok_ads{
+
+    text-align: center;
+
+    margin-bottom: 50px;
+
+    width: 100%;
+
+    max-width: 730px;
+
+    margin: 0 auto;
+
+    padding-bottom: 30px;
+
+}
+
+.cont_descrip_facebok_ads p{
+
+    margin: 0;
+
+    color: #444444;
+
+    font-size: 16px;
+
+    padding-top: 17px;
+
+}
+
+.cont_descrip_facebok_ads span{
+
+    font-weight: 600;
+
+}
+
+.hr_first {
+
+    width: 9px;
+
+    border-top: 1px solid #d33741;
+
+    border-bottom: 3px solid #d33741;
+
+    display: inline-block;
+
+    transition: all ease 500ms;
+
+    margin-right: 7px;
+
+    border-radius: 20px;
+
+    margin-bottom: 0!important;
+
+}
+
+.hr_second {
+
+    width: 206px;
+
+    border-top: 1px solid #d33741;
+
+    border-bottom: 3px solid #d33741;
+
+    display: inline-block;
+
+    transition: all ease 500ms;
+
+    border-radius: 20px;
+
+    margin-bottom: 0!important;
+
+}
+
+.boton_portafolio {
+    text-align: center;
+    margin-top: 5%;
+}
+
+
+.vista .change{
+    display: none;
+}
+/**/
+
+/*PORQUE*/
+.sec_porque{
+    background-color: #f9f8ff;
+    padding: 71px 0;
+}
+.vista .change1{
+    width: 357px;
+    margin-left: 15%;
+}
+.mana{
+    padding-top: 25px;
+    text-align: center;
+}
+.mana img{
+    /*max-width: 73%;*/
+}
+.boton_cotizar {
+    position: absolute;
+    text-align: center;
+    margin-top: -6%;
+    right: 12%;
+    bottom: -36px;
+}
+.boton_cotizar a{
+  transition: all 0.3s ease;
+    text-transform: capitalize;
+    font-family: 'Baloo 2';
+    font-weight: 400;
+    padding: 8px 30px;
+    background-color: #ffffff;
+    border-radius: 25px;
+    font-size: 16px;
+    color: #4e54c8;
+    text-decoration: none;
+    cursor: pointer;
+    border: transparent;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+    box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+}
+.boton_cotizar a:hover {
+    border-style: none;
+    transition: all 0.3s ease;
+    text-transform: capitalize;
+    font-family: 'Baloo 2';
+    font-weight: 400;
+    padding: 8px 30px;
+    background-color: #4e54c8;
+    border-radius: 25px;
+    font-size: 16px;
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+    border: transparent;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.9);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.9);
+    box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.9);
+}
+
+/**/
+
+/*Intermedio*/
+.intermedio{
+     padding: 65px 0;
+}
+.kayoken{
+    text-align: center;
+}
+.kayoken img{
+    width: 406px;
+}
+.kayoken p{
+    font-size: 18px;
+    padding: 30px 0;
+}
+.kayoken p span {
+    font-weight: 600;
+}
+.senosama{
+    text-align: center;
+}
+.senosama img{
+    max-width: 649px;
+}
+/**/
+
+/*FINAL*/
+.final{
+    text-align: center;
+    background-color: #f9f8ff;
+    padding: 65px 0;
+}
+.final h2{
+    font-size: 36px;
+    color: #4e54c8;
+    font-family: 'Baloo 2';
+    font-weight: 400;
+    margin: 0;
+    padding-top: 17px;
+}
+.te{
+    text-align: center;
+    padding-top: 60px;
+}
+.titulo_cont{
+    font-weight: 900;
+    font-size: 21px;
+}
+.descrip{
+    padding: 0 66px;
+    padding-top: 23px;
+    font-size: 18px;
+    text-align: justify;
+}
+
+/*RESPONSIVEW*/
+.itemss{
+    display: none;
+}
+.boton_cotizar1{
+    display: none;
+}
+.alma{
+    display: none;
+}
+@media(max-width: 1000px){
+    .mana{
+        display: none;
+    }
+   .vista .change1 {
+     display: none!important;
+   }
+   .vista{
+     text-align: center;
+   }
+   .vista .change {
+     display: block;
+     width: 357px;
+     margin: 0 auto;
+     padding-bottom: 24px;
+   }
+   .mana img{
+    display: none;
+   }
+   .boton_cotizar{
+    display: none;
+   } 
+   .boton_cotizar1{
+    display: block!important;
+    text-align: center;
+   }
+   .boton_cotizar1 a{
+    transition: all 0.3s ease;
+    text-transform: capitalize;
+    font-family: 'Baloo 2';
+    font-weight: 400;
+    padding: 8px 30px;
+    background-color: #ffffff;
+    border-radius: 25px;
+    font-size: 16px;
+    color: #4e54c8;
+    text-decoration: none;
+    cursor: pointer;
+    border: transparent;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+    box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+}
+.boton_cotizar1 a:hover {
+    border-style: none;
+    transition: all 0.3s ease;
+    padding: 8px 30px;
+    background-color: #4e54c8;
+    color: #ffffff;
+}
+.itemss{
+        display: block!important;
+        text-align: center;
+    }
+.itemss p{
+    border: 2px solid #4a53cd;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    padding: 10px;
+    text-align: justify;
+    margin-top: 26px;
+    margin-bottom: 32px;
+    }
+.itemss .jr{
+    border: 2px solid #000000;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    padding: 10px;
+    padding-bottom: 10px;
+    text-align: justify;
+    font-weight: 700;
+    }
+.itemss a{
+      text-decoration: none;
+      color: #01559d;
+      font-weight: 700;
+     }
+.jr span{
+    color: #4a53cd;
+    font-weight: 700;
+    }
+ .alma{
+    display: block!important;
+    text-align: center;
+ }
+ .alma img{
+    text-align: center;
+    max-width: 534px;
+    margin-right: 78px
+ }
+ .senosama img{
+    max-width: 534px;
+ }
+ .cont_img img{
+    max-width: 534px;
+ }
+}
+
+@media(max-width: 715px){
+ .alma img{
+     max-width: 402px;
+     margin-right: 51px;
+ }
+ .senosama img{
+    max-width: 402px;
+ }
+ .cont_img img{
+    max-width: 402px;
+ }
+ .titulo_cont{
+    font-size: 18px;
+ }
+ .descrip{
+    font-size: 18px;
+ }
+ .descrip_facebok_ads h1{
+    font-size: 24px;
+ }
+ .cont_descrip_facebok_ads p{
+    font-size: 14px;
+ }
+}
+
+@media(max-width: 575px){
+  .itemss .jr{
+    font-size: 13px;
+  }
+  .itemss p{
+    font-size: 13px;
+  }
+  .kayoken p{
+    font-size: 14px;
+  }
+  .final h2 {
+    font-size: 28px;
+}
+.titulo_cont {
+    font-size: 14px;
+}
+.descrip {
+    font-size: 14px;
+}
+}
+@media( max-width: 440px){
+ .vista .change{
+    width: 256px;
+ }
+ .kayoken img {
+    width: 256px;
+}
+.senosama img {
+    max-width: 290px;
+}
+.cont_img img{
+     max-width: 290px;
+ }
+}
+
+
+
+
+
+.imagenvarios{
+   
+    
+    
+    shape-outside:ellipse(55% 62% at 56% 53%);
+    
+    shape-margin: 9px ;
+    float: right;
+    margin-right: 90px;
+
+   }
+   .imagenvarios img{
+   
+    padding:35px 50px 0 0;
+
+
+   }
+
+.parrafosIma{
+
+    text-align:right;
+    font-size: 0.75rem;
+    
+}
+.parrafosIma span{
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.9rem;
+    font-weight: bolder;
+    text-align: right;
+
+    
+}
+.parrafosIma span span{
+  color :#4e54c8;
+}
+.parrafosIma p{
+    font-family: 'Raleway', sans-serif;
+    text-align:right;
+     margin-top: 9px;
+}
+.mana .imagenvarios{
+   width: 50%;
+}
+.mana{
+   
+     margin-top: 0;
+}
+
+
+@media(max-width: 1199px){
+    .boton_cotizar {
+       
+        left: 17%;
+    }
+}

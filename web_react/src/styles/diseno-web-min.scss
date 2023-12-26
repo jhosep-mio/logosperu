@@ -1,0 +1,727 @@
+/*************DISEÑO DE PAGINAS WEB EN EL PERU*********************/
+.descrip_web{
+   padding: 45px 0;
+   text-align: center;  
+}
+.descrip_web h1{
+    font-size: 36px;
+    color: #4e54c8;
+    font-family: 'Baloo 2';
+    font-weight: 900;
+    margin: 0;
+    padding-top: 17px;
+}
+.hr_first {
+    width: 9px;
+    border-top: 1px solid #d33741;
+    border-bottom: 3px solid #d33741;
+    display: inline-block;
+    transition: all ease 500ms;
+    margin-right: 7px;
+    border-radius: 20px;
+    margin-bottom: 0!important;
+}
+.hr_second {
+    width: 206px;
+    border-top: 1px solid #d33741;
+    border-bottom: 3px solid #d33741;
+    display: inline-block;
+    transition: all ease 500ms;
+    border-radius: 20px;
+    margin-bottom: 0!important;
+}
+.cont_descrip_web{
+    text-align: center;
+    margin-bottom: 50px;
+    width: 100%;
+    max-width: 730px;
+    margin: 0 auto;
+    padding-bottom: 30px;
+}
+.cont_descrip_web p{
+    margin: 0;
+    color: #444444;
+    font-size: 16px;
+    padding-top: 17px;
+}
+.cont_descrip_web span{
+    font-weight: 600;
+}
+
+/*************FIN DE DISEÑO DE PAGINAS WEB EN EL PERU*********************/
+
+/*************¿QUE TIPO DE WEB ESTAS BUSCANDO?*********************/
+.cotiza_formal{
+    background: #f3f3f3;
+    padding: 40px 0;
+}
+.titulo_opcion{
+    text-align: center;
+}
+
+.opinion_cordial{
+    text-align: center;
+    margin-top: 10px;
+}
+.opinion_cordial p{
+    margin: 0;
+    color: #444444;
+    font-size: 21px;
+}
+.seleccion_formulario{
+    text-align: right;
+    padding: 0px 130px;
+    margin-bottom: 25px;
+}
+.seleccion_formulario button{
+    transition: all 0.3s ease;
+    text-transform: capitalize;
+    font-family: 'Baloo 2';
+    font-weight: 400;
+    padding: 8px 30px;
+    background-color: #ffffff;
+    border-radius: 25px;
+    font-size: 16px;
+    color: #4e54c8;
+    text-decoration: none;
+    cursor: pointer;
+    border: transparent;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+    box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+}
+.seleccion_formulario button:hover{
+    border-style: none;
+    transition: all 0.3s ease;
+    background-color: #4e54c8;
+    color: #ffffff;
+}
+.descrip_paginas{
+    background: whitesmoke;
+    padding: 40px 0;
+}
+.cont_descrip_paginas h1{
+    padding: 50px 150px;
+    color: #4e54c8;
+    font-size: 20px;
+    font-weight: bold;
+}
+.cont_descrip_paginas p{    
+    color: red;    
+}
+.boton_siguiente {
+    text-align: right;
+    margin-top: 1%;
+}
+.boton_siguiente a {
+    transition: all 0.3s ease;
+    text-transform: capitalize;
+    font-family: 'Baloo 2';
+    font-weight: 300;
+    padding: 0px 45px;
+    background-color: #ffffff;
+    border: 2px solid #DC143C !important; 
+    border-radius: 25px;
+    font-size: 16px;
+    color: #4e54c8;
+    text-decoration: none;
+    cursor: pointer;
+    border: transparent;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+    box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.3);
+}
+.boton_siguiente a:hover {
+    border-style: none;
+    transition: all 0.3s ease;
+    text-transform: capitalize;
+    font-family: 'Baloo 2';
+    font-weight: 400;
+    padding: 0px 45px;
+    background-color: #F08080;
+    border: 2px solid transparent !important;
+    border-radius: 25px;
+    font-size: 16px;
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+    border: transparent;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.9);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.9);
+    box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.9);
+}
+/*PLANES*/
+.control_webs{
+    text-align: center;
+}
+.control_webs .head{
+    list-style: none;
+    display: inline-flex;
+}
+.control_webs .head li a{
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 7px;
+    margin: 0px 15px;
+    background: #d33741;
+    color: white;
+    transition: ease 500ms;
+}
+.control_webs .head li a:hover{
+   background: white;
+   color: #d33741;
+   border: 2px solid #d33741;
+   transition: ease 500ms;
+   cursor: pointer;
+}
+.mixitup-control-active{
+    background: white!important;
+   color: #d33741!important;
+   border: 2px solid #d33741!important;
+   transition: ease 500ms;
+   cursor: pointer;
+}
+.contenido_web{
+    display: -webkit-inline-box;
+}
+.contenido_web img{
+    width: 100%;
+}
+.descripcion{
+    display: flex;
+    align-items: center;
+    width: 422px;
+    text-align: justify;
+}
+.odin ul{
+    list-style: none;
+    padding: 0;
+}
+.odin p span{
+    font-weight: 600;
+}
+.odin ul li{
+    font-weight: 600;
+}
+.odin ul i{
+   padding-right: 11px!important;
+   color: #4e54c8;
+}
+.list_mixitup{
+   /* margin-right: 60%;*/
+//    padding-right: 60%;
+}
+/**/
+/************ FIN DE ¿QUE TIPO DE WEB ESTAS BUSCANDO?*********************/
+
+/************SERVICIOS WEB PLANES************/
+.descrip {
+    text-align: center;
+    margin-bottom: 4px;
+}
+.descrip p {
+    margin: 0;
+    color: #444444;
+    font-size: 21px;
+}
+.hr_first {
+    width: 9px;
+    border-top: 1px solid #d33741;
+    border-bottom: 3px solid #d33741;
+    display: inline-block;
+    transition: all ease 500ms;
+    margin-right: 7px;
+    border-radius: 20px;
+    margin-bottom: 0!important;
+}
+.hr_second {
+    width: 206px;
+    border-top: 1px solid #d33741;
+    border-bottom: 3px solid #d33741;
+    display: inline-block;
+    transition: all ease 500ms;
+    border-radius: 20px;
+    margin-bottom: 0!important;
+}
+
+.servi{
+    background: white;
+     -webkit-box-shadow: 0px 0px 12px 0px rgba(105, 90, 166, 0.5);
+    -moz-box-shadow: 0px 0px 12px 0px rgba(105, 90, 166, 0.5);
+    box-shadow: 0px 0px 12px 0px rgba(105, 90, 166, 0.5);
+    transition: all 0.5s ease;
+}
+.servi a{
+    text-decoration: none;
+}
+.servi:hover span {
+    color: #695aa6;
+    transition: all 0.5s ease;
+}
+.etiqueta {
+    position: relative;
+    top: -8px;
+    z-index: 1;
+    left: -8px;
+}
+
+.img_serv {
+    text-align: center;
+    transition: ease 500ms;
+    padding-top: 0px;
+    position: relative;
+    top: -78px;
+}
+
+.descrip_serv {
+    text-align: center;
+    color: white;
+    padding-top: -19px;
+    position: relative;
+    top: -57px;
+}
+.descrip_serv p {
+    margin: 0;
+    font-size: 17px;
+    color: #444444;
+}
+.serv:hover span {
+    color: #695aa6;
+    transition: all 0.5s ease;
+}
+.descrip_serv span {
+    font-size: 22px;
+    color: black;
+    font-weight: 600;
+    transition: all 0.5s ease;
+}
+.descrip_serv p {
+    margin: 0;
+    font-size: 17px;
+    color: #444444;
+}
+.descrip_servicesv1 {
+    padding: 10px 28px;
+    text-align: justify;
+    font-size: 15px!important;
+}
+.descrip_servicesv1 {
+    padding: 10px 28px;
+    text-align: justify;
+    font-size: 15px!important;
+}
+
+.expertos{
+    background: whitesmoke;    
+}
+
+.cont_expertos h1{
+    padding: 50px 150px;
+    color: #4e54c8;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.cont_expertos h2{
+    padding: 50px 150px;
+    color: #4e54c8;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.cont_expertos p{    
+    color: red;    
+}
+
+/** SECCION CARRUSEL SERVICIOS***/
+
+.nosotros{
+    background: white;
+    padding-top: 43px;
+}
+.title_nosotros p{
+    font-size: 22px;
+    color: #444444;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.img_nosotros img{
+    width: 100%;
+}
+.img_nosotros{
+    text-align: center;
+    padding: 0px 44px;
+}
+.figura_nosotros{
+    text-align: center;
+    margin-bottom: 11px;
+}
+.figura_nosotros img{
+     max-width: 54px;
+}
+.texto_nosotros{
+    text-align: justify;
+}
+.texto_nosotros p{
+    color: #444444;;
+}
+
+.redes_nosotros ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.redes_nosotros ul li i {
+    float: left;
+    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50%;
+    border: 1px solid #444444;
+    text-align: center;
+    color: #444444;
+    margin-right: 10px;
+}
+.redes_nosotros ul li i:hover {
+    background: #4e54c8;
+    color: #ffffff;
+    border: transparent;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.9);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.9);
+    box-shadow: 0px 0px 10px 0px rgba(105, 90, 166, 0.9);
+}
+
+.boss_content{
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+/** FIN DE SECCION CARRUSEL SERVICIOS**/
+
+/* SECCION PLANES*/
+
+.menu_portadolios{
+    text-align: center;
+}
+.list_services a:hover {
+    color: #696eb9;
+    font-weight: 800;
+    transition: all ease 500ms;
+}
+
+.list_services {
+    padding-left: 0;
+    margin-left: -5px;
+    list-style: none;
+}
+.list_services li {
+    padding: 0;
+    margin: 0;
+    color: #222222;
+    font-size: 16px;
+    line-height: 80px;
+    text-transform: capitalize;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    cursor: pointer!important;
+    display: inline-block;
+}
+.list_services a {
+    text-decoration: none;
+    color: #222222;
+    transition: all ease 500ms;
+}
+.list_services span {
+    color: #222222;
+    font-size: 20px;
+    display: inline-block;
+    margin: 0 10px;
+}
+.menu_portadolios{
+    text-align: center;
+}
+.list_services a:hover {
+    color: #696eb9;
+    font-weight: 800;
+    transition: all ease 500ms;
+}
+.portafolios{
+    margin-bottom: 42px;
+    background: white;
+}
+.titulo_portafolio{
+    text-align: center;
+    padding: 17px 0;
+}
+
+.descrip_portafolio{
+    text-align: center;
+    margin-bottom: 4px;
+}
+.descrip_portafolio p{
+    margin: 0;
+    color: #444444;
+    font-size: 21px;
+}
+.porta_item{
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+.porta_item:before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000354;
+    margin-bottom: 20px;
+    opacity: 0;
+    z-index: 1;
+    transition: all ease 500ms;
+}
+.web .item:hover .porta_item:before{
+    opacity: 0.7;
+    transition: all ease 500ms;
+}
+.web .item .caption_portafolio{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    display: -moz-flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    transform: scale(0);
+    z-index: 2;
+    transition: all ease 500ms;
+}
+ .web .item .caption_portafolio .btn-visitar {
+    width: 151px;;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background-color: transparent;
+    border-radius: 50px;
+    padding: 8px 0 8px 15px;
+    position: relative;
+    text-align: center;
+    color: #ffdd00;
+    text-transform: uppercase;
+    font-size: 13px;
+    display: inline-block;
+    text-decoration: none;
+    margin: 0 auto;
+    display: block;
+    margin-top: 30px;
+    font-weight: 900;
+}
+.web .item .caption_portafolio .btn-visitar:before {
+    position: absolute;
+    left: 45px;
+    content: attr(data-hover);
+    opacity: 0;
+    text-align: center;
+    transition: all 0.5s ease;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+}
+.web .item .caption_portafolio .btn-visitar .icons {
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    bottom: 1px;
+    padding: 9px 10px;
+    border-radius: 50%;
+    text-align: center;
+    color: #ffdd00;
+    background-color: rgba(255, 255, 255, 0.6);
+    transition: all 0.5s ease;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+}
+.web .item .caption_portafolio .btn-visitar:hover, .web .item .caption_portafolio .btn-visitar:active, .web .item .caption_portafolio .btn-visitar:focus {
+    color: #ffffff;
+    border-color: #ffffff;
+    font-weight: 900;
+    transition: all ease 500ms;
+}
+ .web .item .caption_portafolio .btn-visitar:hover .icons {
+    left: 114px;
+    background-color: #ffffff;
+}
+.web .item  .caption_portafolio .btn-visitar:hover .text {
+    opacity: 0;
+}
+.web .item .caption_portafolio .btn-visitar:hover:before {
+    opacity: 1;
+}
+.web .item .caption_portafolio .btn-visitar:before {
+    position: absolute;
+    left: 23px;
+    content: attr(data-hover);
+    opacity: 0;
+    text-align: center;
+    transition: all 0.5s ease;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+}
+.web .item:hover .caption_portafolio{
+    transform: scale(1);
+    transition: all ease 500ms;
+}
+.web .owl-item{
+    margin-right: 0px!important;
+        width: 228px!important;
+}
+/**/
+/* FIN DE SECCION PLANES*/
+@media(max-width: 1099px){
+   .descripcion{
+      font-size: 14px;
+      width: 378px;
+   }
+   .img_contenido_web{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   }
+   .contenido_web img {
+    width: 80%;
+}
+
+}
+
+@media(max-width: 991px){
+    .control_webs .head {
+    padding: 0;
+     }
+     .control_webs .head li a {
+    margin: 0px 3px;
+    transition: ease 500ms;
+    font-size: 12px;
+    }
+    .descripcion {
+    font-size: 13px;
+    width: 337px;
+   }
+      .descrip_web h1 {
+       font-size: 24px;
+   }
+   .cont_descrip_web p {
+    font-size: 14px;
+   }
+   .titulo_opcion h2 {
+    font-size: 24px;
+   }
+   .opinion_cordial p {
+    font-size: 14px;
+   }
+   .seleccion_formulario {
+    padding: 0px 37px;
+  }
+  .servi {
+    margin: 22px;
+}
+}
+@media(max-width: 911px){
+    .titulo h2 {
+    font-size: 24px;
+}
+.descrip p {
+    font-size: 14px;
+}
+}
+@media(max-width: 812px){
+   .descripcion {
+    font-size: 12px;
+    width: 284px;
+   }
+}
+@media(max-width: 767px){
+    .control_webs .head {
+       display: inline;
+     }
+     .control_webs .head li{
+        margin-bottom: 10px;
+     }
+    .nosotros {
+    padding-top: 20px;
+    }
+    .content_mixitup {
+    padding-top: 19px;
+    }
+    .contenido_web {
+    display: grid;
+    }
+    .list_mixitup {
+     padding-right: 0%;
+   }
+   .seleccion_formulario {
+    text-align: center;
+    margin: 16px 0;
+    }
+}
+@media(max-width: 766px){
+    .descripcion {
+    width: 459px;
+}
+}
+@media (max-width: 524px){
+    .list_services li {
+        line-height: 41px;
+    }
+}
+@media(max-width: 501px){
+   .descripcion {
+    width: 284px;
+    margin-left: 89px;
+}
+}
+@media(max-width: 465px){
+  .descripcion {
+    margin-left: 78px;
+  }
+}
+@media(max-width: 430px){
+  .descripcion {
+    margin-left: 53px;
+}
+}
+@media(max-width: 394px ){
+    .descripcion {
+    margin-left: 33px;
+    }
+}
+@media(max-width: 387px){
+   .descripcion {
+    margin-left: 17px;
+    }
+}
+@media(max-width: 369px){
+     .descripcion {
+    margin-left: 0px;
+    }
+}
+
+
+.bouncebutton {
+    animation: bounces 1s alternate infinite;
+    background: #4e54c8 !important;
+    border: 4px solid #ffffff !important;
+    font-weight: 900 !important;
+    color: #f9f8ff !important;
+    margin-bottom: 30px;
+}

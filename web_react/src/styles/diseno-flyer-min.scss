@@ -1,0 +1,155 @@
+/*TITULO LOGOTIPO*/
+.descrip_comunity_manager{
+  padding: 40px 0px;
+  background: #fff;
+  text-align: center;
+}
+
+.cont_descrip_comunity_manager{
+	text-align: center;
+    margin-bottom: 50px;
+    width: 100%;
+    max-width: 730px;
+    margin: 0 auto;
+    padding-bottom: 30px;
+}
+.cont_descrip_comunity_manager p{
+	margin: 0;
+    color: #444444;
+    font-size: 16px;
+    padding-top: 17px;
+}
+.cont_descrip_comunity_manager span{
+	font-weight: 600;
+}
+.hr_first {
+    width: 9px;
+    border-top: 1px solid #d33741;
+    border-bottom: 3px solid #d33741;
+    display: inline-block;
+    transition: all ease 500ms;
+    margin-right: 7px;
+    border-radius: 20px;
+    margin-bottom: 0!important;
+}
+.hr_second {
+    width: 206px;
+    border-top: 1px solid #d33741;
+    border-bottom: 3px solid #d33741;
+    display: inline-block;
+    transition: all ease 500ms;
+    border-radius: 20px;
+    margin-bottom: 0!important;
+}
+.boton_portafolio {
+    text-align: center;
+    margin-top: 5%;
+}
+/**/
+/*PROCESOS AUDIOVISUAL*/
+.descrip{
+    text-align: center;
+    margin-bottom: 4px;
+}
+.titulo_opcion{
+    text-align: center;
+}
+
+.procesos{
+    padding: 40px 0px 0px;
+    background: #f9f8ff;
+}
+.procesos .box_proceso {
+    position: relative;
+    padding-left: 70px;
+    margin-top: 28px;
+}
+.procesos .box_proceso span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: 'Days One', sans-serif;
+    font-size: 80px;
+    color: #4e54c8;
+    line-height: 1;
+}
+.procesos .box_proceso h4 {
+    font-weight: 800;
+    font-size: 16px;
+}
+.procesos .box_proceso p {
+    font-size: 15px;
+    text-align: justify;
+}
+.aea{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.aea .descriptivo{
+    margin-left: 30px;
+    padding: 40px 0;
+}
+.aea .descriptivo h4{
+   font-size: 17px;
+   font-family: 'Cabin Condensed', sans-serif;
+}
+.aea .numero{
+    box-shadow: 2px 2px 3px 1px #0000003d;
+    padding: 29px;
+    border-radius: 20px;
+}
+.aea .numero span{
+    font-family: 'Days One', sans-serif;
+    font-size: 80px;
+    color: #4e54c8;
+}
+/**/
+.sect_title_mo{
+    background: #4e54c8;
+    padding: 30px;
+}
+.titulo_white{
+    text-align: center;
+}
+.titulo_white h2 {
+    font-size: 36px;
+    color: #ffffff;
+    font-family: 'Baloo 2';
+    font-weight: 800;
+    margin: 0;
+}
+/****/
+
+.requisitos_flyer{
+    padding: 50px 0px;
+    background: #ffffff;
+}
+.aea_requisitos{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f9f8ff;
+}
+.aea_requisitos .descriptivo{
+    margin-left: 30px;
+    padding: 40px 10px;
+}
+.aea_requisitos .descriptivo h4{
+   font-size: 17px;
+   font-family: 'Cabin Condensed', sans-serif;
+}
+.aea_requisitos .numero{
+    box-shadow: 2px 2px 3px 1px #0000003d;
+    padding: 29px;
+    border-radius: 5px;
+    background: #4e54c8;
+}
+.aea_requisitos .numero img{
+    max-width: 180px;
+}
+.aea_requisitos .numero span{
+    font-family: 'Days One', sans-serif;
+    font-size: 80px;
+    color: #ffffff;
+}

@@ -5,6 +5,7 @@ import useAuth from '../../hooks/useAuth'
 
 export const PrivateLayout = (): JSX.Element => {
   const { auth, loading } = useAuth()
+
   if (loading && auth) {
     return (
       <div className="centrarclase_do_spinner">

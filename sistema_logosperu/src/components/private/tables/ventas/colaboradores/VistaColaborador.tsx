@@ -6,6 +6,7 @@ import {
   useState
 } from 'react'
 import {
+  type ValuesVenta,
   type errorValues,
   type valuesResumen
 } from '../../../../shared/schemas/Interfaces'
@@ -34,7 +35,8 @@ export const VistaColaborador = ({
   handleUpdate,
   setRespuestaAdmin,
   respuestaAdmin,
-  setShowError
+  setShowError,
+  proyecto
 }: {
   id: string | undefined
   resumen: valuesResumen[]
@@ -54,6 +56,7 @@ export const VistaColaborador = ({
   respuestaAdmin: string
   showError: errorValues | null
   setShowError: Dispatch<SetStateAction<errorValues | null>>
+  proyecto: ValuesVenta | null
 }): JSX.Element => {
   const [open, setOpen] = useState(false)
   const token = localStorage.getItem('token')
@@ -166,7 +169,7 @@ export const VistaColaborador = ({
           <>
             <div className="flex flex-col gap-2" key={index}>
             {fechaElement}
-              <div className="relative w-full md:w-1/2 rounded-xl group">
+            <div className={`relative bg-white w-full md:w-1/2 ${(resu.userId != '1') && (resu.userId != '99') && (resu.userId != '8') ? 'md:ml-[50%]' : ''} rounded-xl group`}>
                 <div
                   className="text-justify bg-white p-4 rounded-xl relative  w-full
                      lowercase first-letter:uppercase text-base "
@@ -235,7 +238,7 @@ export const VistaColaborador = ({
                 <>
                   <div
                     className={
-                      'relative bg-white w-full md:w-1/2 md:ml-[50%] rounded-xl group p-4 group'
+                      'relative bg-white w-full md:w-1/2  rounded-xl group p-4 group'
                     }
                   >
                     <span className="w-full flex justify-start uppercase items-center gap-3 mb-3 font-bold text-black pl-4">
@@ -261,7 +264,7 @@ export const VistaColaborador = ({
                             setIdItem(resu.id)
                             setFechaadmin(resu.fecha)
                           }}
-                          className="bg-red-500 hover:bg-red-700 transition-colors rounded-xl w-fit ml-auto mr-0 px-4 py-1 text-white font-bold"
+                          className="bg-red-500 hover:bg-red-700 transition-colors rounded-xl w-fit mr-auto ml-0 px-4 py-1 text-white font-bold"
                         >
                           Responder
                         </button>
@@ -269,17 +272,7 @@ export const VistaColaborador = ({
                    )}
                   <div
                     key={respues.id}
-                    className={`relative bg-white  ${
-                      respues.user == 'Logos Perú' ||
-                      respues.user == 'Administración'
-                        ? 'w-1/2'
-                        : 'w-[45%]'
-                    } ${
-                      respues.user == 'Logos Perú' ||
-                      respues.user == 'Administración'
-                        ? 'ml-[50%]'
-                        : 'ml-[55%]'
-                    }  rounded-xl group p-4 group`}
+                    className={`relative bg-white w-1/2 ${respues.user == 'Logos Perú' || respues.user == 'Administración' ? '' : 'ml-[50%]'} rounded-xl group p-4 group`}
                   >
                     <span className="w-full flex justify-start uppercase items-center gap-3 mb-3 font-bold pl-4 text-black">
                       {respues.user == 'Logos Perú'
@@ -355,6 +348,7 @@ export const VistaColaborador = ({
         idIem={idItem}
         fechaadmin={fechaadmin}
         setShowError={setShowError}
+        proyecto={proyecto}
       />
     </>
   )

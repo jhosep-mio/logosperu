@@ -1,6 +1,7 @@
 import { Dialog, DialogContent } from '@mui/material'
 import { type Dispatch, type SetStateAction, useState } from 'react'
 import {
+  type ValuesVenta,
   type errorValues,
   type valuesResumen
 } from '../../../../shared/schemas/Interfaces'
@@ -18,6 +19,7 @@ interface values {
   resumen: valuesResumen[]
   idIem: number | null
   setShowError: Dispatch<SetStateAction<errorValues | null>>
+  proyecto: ValuesVenta | null
 }
 
 export const ModalRespuesta = ({
@@ -27,7 +29,8 @@ export const ModalRespuesta = ({
   idIem,
   id,
   getOneBrief,
-  setShowError
+  setShowError,
+  proyecto
 }: values): JSX.Element => {
   const [respuestaAdmin, setRespuestaAdmin] = useState('')
   const [loading, setLoading] = useState(false)
@@ -110,6 +113,46 @@ export const ModalRespuesta = ({
             Swal.fire('Error al agregar respuesta', '', 'error')
           }
         }
+        const enviarNotificacion = async (): Promise<void> => {
+          const data = new FormData()
+          const currentUrl = window.location.href
+          // Utilizar el objeto URL para extraer la ruta
+          const urlObject = new URL(currentUrl)
+          const pathName = urlObject.pathname
+          data.append('id_usuario', auth.id)
+          data.append('id_venta', id ?? '')
+          data.append('nombre', auth.name)
+          data.append('icono', 'comentario')
+          data.append('url', pathName)
+          data.append('contenido', `Ha subido un nuevo comentario para el proyecto ${proyecto?.nombre_marca ?? ''}  (${proyecto?.nombres ?? ''} ${proyecto?.apellidos ?? ''})`)
+          data.append('hidden_users', '')
+          try {
+            const respuesta = await axios.post(
+                    `${Global.url}/nuevaNotificacion`,
+                    data,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${
+                          token !== null && token !== '' ? token : ''
+                        }`
+                      }
+                    }
+            )
+            if (respuesta.data.status == 'success') {
+              setShowError({
+                estado: 'success',
+                texto: 'Notificacion enviada'
+              })
+              getOneBrief()
+            } else {
+              Swal.fire('Error al subir', '', 'error')
+            }
+          } catch (error: unknown) {
+            console.log(error)
+            Swal.fire('Error al subir', '', 'error')
+          }
+        }
+        enviarNotificacion()
         enviarDatos()
         return nuevosResumenes
       })
@@ -130,7 +173,7 @@ export const ModalRespuesta = ({
           setOpen(false)
         }}
         aria-describedby="alert-dialog-slide-description"
-        className="dialog_comentario"
+        className="dialog_comentario dialog222"
       >
         <DialogContent>
           <section className="flex flex-col justify-center items-center w-[500px]">

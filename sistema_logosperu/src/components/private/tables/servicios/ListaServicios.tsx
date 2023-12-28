@@ -279,14 +279,12 @@ export const ListaServicios = (): JSX.Element => {
           </div>
         </div>
         <div className="hidden w-fit md:w-full lg:flex flex-col-reverse md:flex-row items-center md:justify-end gap-4">
-          <button
+          <Link
             type="button"
-            onClick={() => {
-              setOpenChat(true)
-            }}
+            to={`/admin/colaboradores/reporte/${auth.id}`}
           >
             <BsCardChecklist className="text-main text-3xl cursor-pointer" />
-          </button>
+          </Link>
           <button
             type="button"
             onClick={() => {

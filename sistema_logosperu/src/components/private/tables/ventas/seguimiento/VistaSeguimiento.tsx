@@ -45,8 +45,12 @@ export const VistaSeguimiento = (): JSX.Element => {
     getOneBrief()
   }, [])
 
+  useEffect(() => {
+    getOneBrief()
+  }, [id])
+
   return (
-    <section className='w-full h-screen relative'>
+    <section className='w-full h-full relative'>
        <span className='fixed w-fit md:top-[9%] lg:top-[11%] text-3xl z-20 right-4 text-red-500 cursor-pointer'
        onClick={() => { window.history.back() }}
        ><BsArrowLeftSquareFill/></span>

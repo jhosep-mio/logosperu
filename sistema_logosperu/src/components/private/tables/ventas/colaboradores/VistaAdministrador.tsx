@@ -1,5 +1,5 @@
 import {
-  BsFillTrash2Fill,
+//   BsFillTrash2Fill,
   BsPencilSquare,
   BsReplyAllFill
 } from 'react-icons/bs'
@@ -10,6 +10,7 @@ import {
   useState
 } from 'react'
 import {
+  type ValuesVenta,
   type errorValues,
   type valuesResumen
 } from '../../../../shared/schemas/Interfaces'
@@ -18,7 +19,7 @@ import { fechaFormateada } from '../../../../shared/functions/GenerarTextoEnLetr
 import { FaSave } from 'react-icons/fa'
 import axios from 'axios'
 import { Global } from '../../../../../helper/Global'
-import Swal from 'sweetalert2'
+// import Swal from 'sweetalert2'
 import { ModalRespuesta } from '../../servicios/modalRespuesta.tsx/ModalRespuesta'
 import useAuth from '../../../../../hooks/useAuth'
 
@@ -32,7 +33,8 @@ export const VistaAdministrador = ({
   id,
   getOneBrief,
   endOfMessagesRef,
-  setShowError
+  setShowError,
+  proyecto
 }: {
   resumen: valuesResumen[]
   setResumen: Dispatch<SetStateAction<valuesResumen[]>>
@@ -45,6 +47,7 @@ export const VistaAdministrador = ({
   endOfMessagesRef: LegacyRef<HTMLDivElement> | undefined
   showError: errorValues | null
   setShowError: Dispatch<SetStateAction<errorValues | null>>
+  proyecto: ValuesVenta | null
 }): JSX.Element => {
   const handleTextAdmin = (e: any): void => {
     setRespuestaAdmin(e.target.value)
@@ -101,7 +104,6 @@ export const VistaAdministrador = ({
           )
           if (respuesta.data.status == 'success') {
             setRespuestaAdmin('')
-            console.log('hola')
             setShowError({
               estado: 'success',
               texto: 'Respuesta actualizada'
@@ -127,82 +129,83 @@ export const VistaAdministrador = ({
     setIdEdicion(null)
   }
 
-  const eliminarResumen = async (
-    idResumen: number | null,
-    idRespuesta: number | null
-  ): Promise<void> => {
-    const confirmacion = await Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'La respuesta seleccionada será eliminada.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    })
-    if (!confirmacion.isConfirmed) {
-      // Si el usuario cancela, no hacemos nada
-      return
-    }
-    setResumen((resumenesPrevios) => {
-      const nuevosResumenes = resumenesPrevios.map((resu) => {
-        if (resu.id === idResumen) {
-          const respuestasSinEliminar = resu.respuestas.filter(
-            (resp) => resp.id !== idRespuesta
-          )
-          return {
-            ...resu,
-            respuestas: respuestasSinEliminar
-          }
-        }
-        return resu
-      })
-      const enviarDatos = async (): Promise<void> => {
-        const data = new FormData()
-        data.append('resumen', JSON.stringify(nuevosResumenes))
-        data.append('_method', 'PUT')
+  //   const eliminarResumen = async (
+  //     idResumen: number | null,
+  //     idRespuesta: number | null
+  //   ): Promise<void> => {
+  //     const confirmacion = await Swal.fire({
+  //       title: '¿Estás seguro?',
+  //       text: 'La respuesta seleccionada será eliminada.',
+  //       icon: 'warning',
+  //       showCancelButton: true,
+  //       confirmButtonColor: '#3085d6',
+  //       cancelButtonColor: '#d33',
+  //       confirmButtonText: 'Sí, eliminar',
+  //       cancelButtonText: 'Cancelar'
+  //     })
+  //     if (!confirmacion.isConfirmed) {
+  //       // Si el usuario cancela, no hacemos nada
+  //       return
+  //     }
+  //     setResumen((resumenesPrevios) => {
+  //       const nuevosResumenes = resumenesPrevios.map((resu) => {
+  //         if (resu.id === idResumen) {
+  //           const respuestasSinEliminar = resu.respuestas.filter(
+  //             (resp) => resp.id !== idRespuesta
+  //           )
+  //           return {
+  //             ...resu,
+  //             respuestas: respuestasSinEliminar
+  //           }
+  //         }
+  //         return resu
+  //       })
+  //       const enviarDatos = async (): Promise<void> => {
+  //         const data = new FormData()
+  //         data.append('resumen', JSON.stringify(nuevosResumenes))
+  //         data.append('_method', 'PUT')
 
-        try {
-          const respuesta = await axios.post(
-            `${Global.url}/saveChat/${id ?? ''}`,
-            data,
-            {
-              headers: {
-                Authorization: `Bearer ${
-                  token !== null && token !== '' ? token : ''
-                }`
-              }
-            }
-          )
+  //         try {
+  //           const respuesta = await axios.post(
+  //             `${Global.url}/saveChat/${id ?? ''}`,
+  //             data,
+  //             {
+  //               headers: {
+  //                 Authorization: `Bearer ${
+  //                   token !== null && token !== '' ? token : ''
+  //                 }`
+  //               }
+  //             }
+  //           )
 
-          if (respuesta.data.status === 'success') {
-            setRespuestaAdmin('')
-            setShowError({
-              estado: 'success',
-              texto: 'Comentario eliminado'
-            })
-            getOneBrief()
-          } else {
-            setShowError({
-              estado: 'warning',
-              texto: 'Error al eliminar'
-            })
-          }
-        } catch (error: unknown) {
-          setShowError({
-            estado: 'warning',
-            texto: 'Error al eliminar'
-          })
-        }
-      }
-      enviarDatos()
-      return nuevosResumenes
-    })
+  //           if (respuesta.data.status === 'success') {
+  //             setRespuestaAdmin('')
+  //             setShowError({
+  //               estado: 'success',
+  //               texto: 'Comentario eliminado'
+  //             })
+  //             getOneBrief()
+  //           } else {
+  //             setShowError({
+  //               estado: 'warning',
+  //               texto: 'Error al eliminar'
+  //             })
+  //           }
+  //         } catch (error: unknown) {
+  //           setShowError({
+  //             estado: 'warning',
+  //             texto: 'Error al eliminar'
+  //           })
+  //         }
+  //       }
+  //       enviarDatos()
+  //       return nuevosResumenes
+  //     })
 
-    // Limpiar el estado de edición
-    setIdEdicion(null)
-  }
+  //     // Limpiar el estado de edición
+  //     setIdEdicion(null)
+  //   }
+
   return (
     <>
       {resumenOrdenado.length > 0
@@ -223,7 +226,7 @@ export const VistaAdministrador = ({
           <>
             <div className="flex flex-col gap-2 " key={index}>
               {fechaElement}
-              <div className="relative bg-white w-full md:w-1/2 rounded-xl group">
+              <div className={`relative bg-white w-full md:w-1/2 ${(resu.userId != '1') && (resu.userId != '99') && (resu.userId != '8') ? 'md:ml-[50%]' : ''} rounded-xl group`}>
                 {/* USUARIO */}
                 <BsReplyAllFill
                   className="text-xl text-transparent group-hover:text-main transition-colors cursor-pointer absolute top-2 right-6 z-10"
@@ -237,7 +240,9 @@ export const VistaAdministrador = ({
                     lowercase first-letter:uppercase text-base"
                 >
                   <span className="w-full text-lg lowercase first-letter:uppercase items-center gap-3 mb-3 font-bold text-black">
-                    {resu.user}
+                  {(resu.user == 'Logos Perú')
+                    ? 'ADMINISTRACIÓN'
+                    : resu.user}
                   </span>
                   <p className="text-black pt-4 lowercase first-letter:uppercase break-words">
                     {resu.texto}
@@ -251,7 +256,7 @@ export const VistaAdministrador = ({
               {resu?.respuesta?.texto && (
                 <>
                   <div
-                    className={'relative bg-white w-full md:w-1/2 md:ml-[50%] rounded-xl group p-4 group'}
+                    className={'relative bg-white w-full md:w-1/2 rounded-xl group p-4 group'}
                   >
                     <span className="w-full flex justify-start uppercase items-center gap-3 mb-3 font-bold text-black pl-4">
                       Administración
@@ -269,7 +274,7 @@ export const VistaAdministrador = ({
               {resu?.respuestas?.map((respues) => (
                 <div
                   key={respues.id}
-                  className={`relative bg-white  ${respues.user == 'Logos Perú' || respues.user == 'Administración' ? 'w-1/2' : 'w-[45%]'} ${respues.user == 'Logos Perú' || respues.user == 'Administración' ? 'ml-[50%]' : 'ml-[55%]'}  rounded-xl group p-4 group`}
+                  className={`relative bg-white w-1/2  ${respues.user == 'Logos Perú' || respues.user == 'Administración' ? '' : 'ml-[50%]'}  rounded-xl group p-4 group`}
                 >
                   {idEdicion && idEdicion == respues.id && respues.userId == auth.id
                     ? <FaSave
@@ -292,17 +297,16 @@ export const VistaAdministrador = ({
                       }}
                     />
                     )}
-
                   {/* {respues.userId == auth.id && */}
-                    <BsFillTrash2Fill
+                    {/* <BsFillTrash2Fill
                       className="text-lg text-transparent group-hover:text-red-500 transition-colors cursor-pointer absolute top-2 right-3 z-10"
                       onClick={() => {
                         eliminarResumen(resu.id, respues.id)
                       }}
-                    />
+                    /> */}
                   {/* } */}
                   <span className="w-full flex justify-start uppercase items-center gap-3 mb-3 font-bold pl-4 text-black">
-                    {respues.user == 'Logos Perú'
+                    {(respues.user == 'Logos Perú')
                       ? 'ADMINISTRACIÓN'
                       : respues.user}
                   </span>
@@ -352,6 +356,7 @@ export const VistaAdministrador = ({
         id={id}
         getOneBrief={getOneBrief}
         setShowError={setShowError}
+        proyecto={proyecto}
       />
     </>
   )

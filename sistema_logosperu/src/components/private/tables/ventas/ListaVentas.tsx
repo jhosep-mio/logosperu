@@ -23,6 +23,7 @@ import {
   quitarAcentos
 } from '../../../shared/functions/QuitarAcerntos'
 import { BsCheckCircle, BsGraphUp } from 'react-icons/bs'
+import { MdChevronRight } from 'react-icons/md'
 // import { GeneradorExcel } from '../../../shared/EXCEL/GeneradorExcel'
 
 interface Filters {
@@ -52,7 +53,12 @@ export const ListaVentas = (): JSX.Element => {
     sinFechaFinYNo1: null
   })
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
+  const [ordenAscendente, setOrdenAscendente] = useState(false)
+  const [ordenDescente, setOrdenDescente] = useState(false)
+  const [ordenAscendente2, setOrdenAscendente2] = useState(false)
+  const [ordenDescente2, setOrdenDescente2] = useState(false)
 
+  // FUNCIONES
   const getColaboradores = async (): Promise<void> => {
     const request = await axios.get(`${Global.url}/getUsuariosToMatrix`, {
       headers: {
@@ -239,6 +245,45 @@ export const ListaVentas = (): JSX.Element => {
     })
   }
 
+  useEffect(() => {
+    if (ordenAscendente) {
+      setLoading(true)
+      Promise.all([
+        getDataVentas('getVentasAscendente', setProductos, setTotalRegistros)
+      ]).then(() => {
+        setLoading(false)
+      })
+    } else if (ordenDescente) {
+      setLoading(true)
+      Promise.all([
+        getDataVentas('getVentasDescendente', setProductos, setTotalRegistros)
+      ]).then(() => {
+        setLoading(false)
+      })
+    } else if (ordenAscendente2) {
+      setLoading(true)
+      Promise.all([
+        getDataVentas('getVentasAscendente2', setProductos, setTotalRegistros)
+      ]).then(() => {
+        setLoading(false)
+      })
+    } else if (ordenDescente2) {
+      setLoading(true)
+      Promise.all([
+        getDataVentas('getVentasDescendente2', setProductos, setTotalRegistros)
+      ]).then(() => {
+        setLoading(false)
+      })
+    } else {
+      setLoading(true)
+      Promise.all([
+        getDataVentas('getVentas', setProductos, setTotalRegistros)
+      ]).then(() => {
+        setLoading(false)
+      })
+    }
+  }, [ordenAscendente, ordenDescente, ordenAscendente2, ordenDescente2])
+
   return (
     <>
       <div className="flex flex-col md:flex-row items-center justify-between gap-y-4 mb-3 md:mb-5 gap-2">
@@ -330,7 +375,7 @@ export const ListaVentas = (): JSX.Element => {
         : (
         <div className="md:bg-[#fff] md:px-8 md:py-6 rounded-xl">
           <div
-            className={`hidden md:grid pr-10 lg:pr-4 grid_teplate_ventas ${
+            className={`hidden md:grid pr-10 lg:pr-4 items-center grid_teplate_ventas ${
               filters.enCola ? 'grid_teplate_ventas_encola' : ''
             } ${
               filters.sinFechaFinYNo1 ? 'grid_teplate_ventas_pendientes' : ''
@@ -356,13 +401,23 @@ export const ListaVentas = (): JSX.Element => {
                 <h5 className="md:text-center line-clamp-1 col-span-2">
                   Fecha de Alta
                 </h5>
-                <h5 className="md:text-center line-clamp-1 col-span-2">
+                <h5 className="md:text-center w-fit flex gap-2 items-center col-span-2">
                   Fecha de Inicio
+                  <div className='flex flex-col'>
+                    <MdChevronRight
+                   onClick={() => { setOrdenAscendente(!ordenAscendente); setOrdenAscendente2(false); setOrdenDescente(false); setOrdenDescente2(false) }} className={`${!ordenAscendente ? 'text-gray-400' : 'text-main'} -rotate-90 hover:text-main transition-colors cursor-pointer`} title='Ascendente'/>
+                    <MdChevronRight onClick={() => { setOrdenDescente(!ordenDescente); setOrdenAscendente(false); setOrdenAscendente2(false); setOrdenDescente2(false) }} className={`${!ordenDescente ? 'text-gray-400' : 'text-main'} rotate-90 hover:text-main transition-colors cursor-pointer`} title='Descendente'/>
+                  </div>
                 </h5>
                 {!filters.sinFechaFinYNo1 && (
-                  <h5 className="md:text-center line-clamp-1 col-span-2">
+                <h5 className="md:text-center w-fit flex gap-2 items-center col-span-2">
                     Fecha Final
-                  </h5>
+                    <div className='flex flex-col'>
+                        <MdChevronRight
+                    onClick={() => { setOrdenAscendente2(!ordenAscendente2); setOrdenAscendente(false); setOrdenDescente2(false); setOrdenDescente(false) }} className={`${!ordenAscendente2 ? 'text-gray-400' : 'text-main'} -rotate-90 hover:text-main transition-colors cursor-pointer`} title='Ascendente'/>
+                        <MdChevronRight onClick={() => { setOrdenDescente2(!ordenDescente2); setOrdenDescente(false); setOrdenAscendente2(false); setOrdenAscendente(false) }} className={`${!ordenDescente2 ? 'text-gray-400' : 'text-main'} rotate-90 hover:text-main transition-colors cursor-pointer`} title='Descendente'/>
+                  </div>
+                </h5>
                 )}
               </>
             )}
@@ -520,7 +575,7 @@ export const ListaVentas = (): JSX.Element => {
                 </span>
               </div>
               <div className="hidden md:block md:text-center col-span-2 relative h-full">
-                <span className="text-left text-black line-clamp-1 transition-all hover:w-[200%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
+                <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                   {planes.map((plan) =>
                     orden.id_contrato.split('_')[0] == plan.codigo
                       ? plan.nombre
@@ -547,20 +602,15 @@ export const ListaVentas = (): JSX.Element => {
                   </div>
                 </>
               )}
-              <div className="hidden md:block md:text-center col-span-2">
-                <div className='line-clamp-1'>
-                  <span className="text-left text-black w-full block lowercase first-letter:uppercase">
+              <div className="hidden md:block md:text-center col-span-2 relative h-full">
+                <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                     {orden.nombres} {orden.apellidos}
                   </span>
-                </div>
               </div>
-              <div className="hidden md:block md:text-center  col-span-2">
-                <div className='line-clamp-1'>
-                  <span className="text-left text-black w-full block lowercase first-letter:uppercase">
+              <div className="hidden md:block md:text-center col-span-2 relative h-full">
+                <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                   {orden.nombre_marca ? orden.nombre_marca : 'No registrado'}
-
                   </span>
-                </div>
               </div>
               <div className="hidden md:block md:text-center col-span-2">
                 <span className="text-center block text-black">
@@ -764,7 +814,6 @@ export const ListaVentas = (): JSX.Element => {
               </div>
             </div>
           ))}
-
           <div className="flex flex-col md:flex-row gap-6 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">
             <p className="text-md ml-1 text-black">
               {totalRegistros} Registros

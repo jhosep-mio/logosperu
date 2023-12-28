@@ -23,9 +23,10 @@ import {
   FaRectangleList,
   FaUserGroup
 } from 'react-icons/fa6'
+import { BsPersonVcardFill } from 'react-icons/bs'
 
 const SideBar = (): JSX.Element => {
-  const { auth, setAuth, roles, loadingComponents } = useAuth()
+  const { auth, setAuth, roles, setLoadingComponents, loadingComponents, totalNotificaciones } = useAuth()
   const token = localStorage.getItem('token')
   const [showMenu, setShowMenu] = useState(false)
   //   const [showSubmenu, setShowSubmenu] = useState(false)
@@ -84,8 +85,6 @@ const SideBar = (): JSX.Element => {
   }, [])
 
   return (
-    <>
-      {!loadingComponents && (
         <>
           <div
             className={`manejar_Scroll xl:h-[100vh] md:overflow-y-scroll fixed xl:static w-[80%] md:w-[40%] lg:w-[30%] xl:w-auto h-full top-0 bg-[#f1f1f1] shadow-xl p-4 flex flex-col justify-between z-50 ${
@@ -99,19 +98,18 @@ const SideBar = (): JSX.Element => {
               <hr className="mb-5" />
               <ul className="ml-0 p-0">
                 <li className=''>
-                  <Link
-                    to="notificaciones"
+                  <button
                     className={
                       'flex items-center gap-3 py-2 pl-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full relative'
                     }
                     onClick={() => {
-                      handleItemClick2(111)
+                      setLoadingComponents(!loadingComponents)
                       setShowMenu(false)
                     }}
                   >
-                    <MdNotificationsActive className="text-main/80 text-2xl" />Notificaciones
-                  <span className='bg-main text-white w-5 h-5 text-xs flex justify-center items-center rounded-full absolute -top-2 right-3'>33</span>
-                  </Link>
+                  <MdNotificationsActive className="text-main/80 text-2xl" />Notificaciones
+                  <span className='bg-main text-white w-5 h-5 text-xs flex justify-center items-center  rounded-md '>{totalNotificaciones}</span>
+                  </button>
                 </li>
                 {roles.map(
                   (role: RolsValues): React.ReactNode =>
@@ -130,6 +128,7 @@ const SideBar = (): JSX.Element => {
                                 onClick={() => {
                                   handleItemClick2(1)
                                   setShowMenu(false)
+                                  setLoadingComponents(false)
                                 }}
                               >
                                 <FaUserGroup className="text-main/80 text-xl" />{' '}
@@ -145,6 +144,7 @@ const SideBar = (): JSX.Element => {
                                 onClick={() => {
                                   handleItemClick2(1)
                                   setShowMenu(false)
+                                  setLoadingComponents(false)
                                 }}
                               >
                                 <FaRectangleList className="text-main/80 text-xl" />{' '}
@@ -184,6 +184,7 @@ const SideBar = (): JSX.Element => {
                                     onClick={() => {
                                       handleItemClick(299)
                                       setShowMenu(false)
+                                      setLoadingComponents(false)
                                     }}
                                   >
                                     Todos
@@ -200,6 +201,7 @@ const SideBar = (): JSX.Element => {
                                     onClick={() => {
                                       handleItemClick(298)
                                       setShowMenu(false)
+                                      setLoadingComponents(false)
                                     }}
                                   >
                                     Plazo vencido
@@ -260,6 +262,7 @@ const SideBar = (): JSX.Element => {
                                               onClick={() => {
                                                 handleItemClick(colaborador.id)
                                                 setShowMenu(false)
+                                                setLoadingComponents(false)
                                               }}
                                             >
                                               {colaborador.name}
@@ -280,12 +283,30 @@ const SideBar = (): JSX.Element => {
                                 onClick={() => {
                                   handleItemClick2(25)
                                   setShowMenu(false)
+                                  setLoadingComponents(false)
                                 }}
                               >
                                 <FaReceipt className="text-main/80 text-xl" />{' '}
                                 Planes
                               </Link>
                             </li>
+                            <li key={77}>
+                              <Link
+                                to="colaboradores"
+                                className={
+                                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                                }
+                                onClick={() => {
+                                  handleItemClick2(77)
+                                  setShowMenu(false)
+                                  setLoadingComponents(false)
+                                }}
+                              >
+                                <BsPersonVcardFill className="text-main/80 text-xl" />{' '}
+                                Colaboradores
+                              </Link>
+                            </li>
+
                             <li key={26}>
                               <button
                                 onClick={() => {
@@ -424,6 +445,7 @@ const SideBar = (): JSX.Element => {
                               }
                               onClick={() => {
                                 setShowMenu(false)
+                                setLoadingComponents(false)
                               }}
                             >
                               <FaChartSimple className="text-main/80 text-xl" />{' '}
@@ -477,6 +499,7 @@ const SideBar = (): JSX.Element => {
                                       onClick={() => {
                                         handleItemClick2(1)
                                         setShowMenu(false)
+                                        setLoadingComponents(false)
                                       }}
                                     >
                                       <RiStackFill className="text-main" />{' '}
@@ -494,6 +517,7 @@ const SideBar = (): JSX.Element => {
                                       onClick={() => {
                                         handleItemClick2(999)
                                         setShowMenu(false)
+                                        setLoadingComponents(false)
                                       }}
                                     >
                                       <RiStackFill className="text-main" />{' '}
@@ -511,6 +535,7 @@ const SideBar = (): JSX.Element => {
                                       onClick={() => {
                                         handleItemClick2(998)
                                         setShowMenu(false)
+                                        setLoadingComponents(false)
                                       }}
                                     >
                                       <RiStackFill className="text-main" />{' '}
@@ -528,6 +553,7 @@ const SideBar = (): JSX.Element => {
                                       onClick={() => {
                                         handleItemClick2(997)
                                         setShowMenu(false)
+                                        setLoadingComponents(false)
                                       }}
                                     >
                                       <RiStackFill className="text-main" />{' '}
@@ -545,7 +571,6 @@ const SideBar = (): JSX.Element => {
                     )}
                   </ul>
                 </li>
-
                 {/* <li>
                   <button
                     onClick={() => {
@@ -587,6 +612,8 @@ const SideBar = (): JSX.Element => {
                                     onClick={() => {
                                       handleItemClick2(1)
                                       setShowMenu(false)
+                      setLoadingComponents(false)
+
                                     }}
                                   >
                                     <RiStackFill className="text-main" /> Diseño
@@ -722,8 +749,6 @@ const SideBar = (): JSX.Element => {
             {showMenu ? <RiCloseLine /> : <RiMenu3Line />}
           </button>
         </>
-      )}
-    </>
   )
 }
 

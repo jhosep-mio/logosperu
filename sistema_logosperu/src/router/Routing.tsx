@@ -61,7 +61,8 @@ import { ListaVentasVencidos } from '../components/private/tables/ventas/vencido
 import { ListaVentasPorColaborador } from '../components/private/tables/ventas/ListaVentasPorColaborador'
 import { StatusPorColaborador } from '../components/private/tables/ventas/colaboradores/StatusPorColaborador'
 import { VistaSeguimiento } from '../components/private/tables/ventas/seguimiento/VistaSeguimiento'
-import { IndexNotificaciones } from '../components/private/tables/notificaciones/IndexNotificaciones'
+import { ListaColaboradores } from '../components/private/tables/colaboradores/ListaColaboradores'
+import { ReportePorColaborador } from '../components/private/tables/colaboradores/ReportePorColaborador'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -73,17 +74,16 @@ export const Routing = (): JSX.Element => {
           <Route path="login" element={<Login />} />
 
           {/* PRIVADO */}
-
           <Route path="admin" element={<PrivateLayout />}>
-
-            {/* NOTIFICACIONES */}
-            <Route path="notificaciones" element={<IndexNotificaciones />} />
 
             {/* PLANES */}
             <Route index element={<ListaBriefDiseñoNew />} />
             <Route path="lista-planes" element={<ListaPlanes />} />
             <Route path="lista-planes/agregar" element={<RegistrarPlan />} />
             <Route path="lista-planes/editar/:id" element={<EditarPlan />} />
+            {/* COLABORADORES */}
+            <Route path="colaboradores" element={<ListaColaboradores />} />
+            <Route path="colaboradores/reporte/:id" element={<ReportePorColaborador />} />
             {/* DISEÑO */}
             <Route path="lista-briefs-diseños" element={<ListaBriefDiseño />} />
             <Route

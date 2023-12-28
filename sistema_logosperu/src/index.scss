@@ -6,6 +6,37 @@
   width: 0px;
 }
 
+.scroll_white::-webkit-scrollbar-track {
+    background-color: white; /* Fondo transparente del track */
+}
+
+.acordion_notifiacte{
+    border: none !important;
+}
+
+.styled_tttle{
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.bg_gradiante{
+    background: rgb(219,95,103);
+    background: linear-gradient(142deg, rgba(219,95,103,1) 0%, rgba(210,55,65,1) 44%, rgba(168,44,52,1) 100%);
+}
+
+.border_inner{
+    box-shadow: inset -2px -2px 8px #ababab,
+    inset 1px 1px 1px #ffffff;
+}
+
+.border_inner2{
+    box-shadow: inset -1px -1px 6px #ababab,
+    inset 1px 1px 1px #ffffff;
+}
+
+.dialog222 .MuiDialog-container{
+    justify-content: left !important;
+}
 
 .fondo_wsp_s{
     position: relative;

@@ -356,7 +356,7 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
                 </h5>
               </>
             )}
-            <h5 className="md:text-left col-span-2">Empresa</h5>
+            <h5 className="md:text-left col-span-2">Cliente</h5>
             <h5 className="md:text-left col-span-2">Marca</h5>
             <h5 className="md:text-center line-clamp-1 col-span-2">
               Medio de ingreso
@@ -438,10 +438,10 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
                 <div className="md:hidden flex justify-between gap-3">
                   <div className="md:text-center ">
                     <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                      Empresa
+                      Cliente
                     </h5>
                     <span className="text-left w-full text-black line-clamp-1">
-                      {orden.nombre_empresa}
+                      {orden.nombres} {orden.apellidos}
                     </span>
                   </div>
                   <div className="md:text-right ">
@@ -561,7 +561,7 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
               <div className="hidden md:block md:text-center col-span-2">
                 <div className='line-clamp-1'>
                   <span className="text-left text-black w-full block lowercase first-letter:uppercase">
-                    {orden.nombre_empresa}
+                    {orden.nombres} {orden.apellidos}
                   </span>
                 </div>
               </div>

@@ -31,7 +31,8 @@ export const Login = (): JSX.Element | undefined => {
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
   const [loged, setLoged] = useState('')
-  const { auth, setAuth, loadingComponents, setLoadingComponents } = useAuth()
+  const { auth, setAuth } = useAuth()
+  const [loadingComponents, setLoadingComponents] = useState(false)
 
   if (auth.id !== '') {
     navigate('/admin', { replace: true })

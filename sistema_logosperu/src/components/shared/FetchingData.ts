@@ -1,9 +1,39 @@
 import axios from 'axios'
 import { type Dispatch, type SetStateAction } from 'react'
 import { Global } from '../../helper/Global'
-import { type interfaceListaDiseñoNew, type ValuesPreventaModificate, type interfaceListaDiseño, type ValuesVenta, type VluesToExcel, type ValuesCategoriasPortafolio, type ValuesSubCategoriasPortafolio, type ValuesItemsPortafolio, type ValuesPlanes } from './schemas/Interfaces'
+import { type interfaceListaDiseñoNew, type ValuesPreventaModificate, type interfaceListaDiseño, type ValuesVenta, type VluesToExcel, type ValuesCategoriasPortafolio, type ValuesSubCategoriasPortafolio, type ValuesItemsPortafolio, type ValuesPlanes, type notificacionesValues, type usurioValues } from './schemas/Interfaces'
 
 const token = localStorage.getItem('token')
+
+export const getColaboradresList = async (ruta: string, setDatos: Dispatch<SetStateAction<usurioValues[]>>, setTotalRegistros: Dispatch<SetStateAction<number>>): Promise<void> => {
+  const request = await axios.get(`${Global.url}/${ruta}`, {
+    headers: {
+      Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+    }
+  })
+  setDatos(request.data)
+  setTotalRegistros(request.data.length)
+}
+
+export const getColaboradores = async (ruta: string, setDatos: Dispatch<SetStateAction<notificacionesValues[]>>, setTotalRegistros: Dispatch<SetStateAction<number>>): Promise<void> => {
+  const request = await axios.get(`${Global.url}/${ruta}`, {
+    headers: {
+      Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+    }
+  })
+  setDatos(request.data)
+  setTotalRegistros(request.data.length)
+}
+
+export const getVentas = async (ruta: string, setDatos: Dispatch<SetStateAction<notificacionesValues[]>>, setTotalRegistros: Dispatch<SetStateAction<number>>): Promise<void> => {
+  const request = await axios.get(`${Global.url}/${ruta}`, {
+    headers: {
+      Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+    }
+  })
+  setDatos(request.data)
+  setTotalRegistros(request.data.length)
+}
 
 export const getData = async (ruta: string, setDatos: Dispatch<SetStateAction<interfaceListaDiseño[]>>, setTotalRegistros: Dispatch<SetStateAction<number>>): Promise<void> => {
   const request = await axios.get(`${Global.url}/${ruta}`, {

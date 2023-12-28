@@ -1,5 +1,25 @@
 import { type Dispatch, type SetStateAction } from 'react'
 
+export interface usurioValues {
+  id: number
+  name: string
+  email: string
+  firma: string
+  estado: number
+  resumen: string
+}
+
+export interface notificacionesValues {
+  id: number
+  id_usuario: number
+  usuario: string
+  url: string
+  contenido: string
+  hidden_users: string
+  icono: string
+  created_at: string
+}
+
 export interface ValuesBrochure {
   nombres: string
   nombre_comercial: string

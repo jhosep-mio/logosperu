@@ -14,6 +14,7 @@ import { type valuesResumen } from '../../../../shared/schemas/Interfaces'
 import { Global } from '../../../../../helper/Global'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import useAuth from '../../../../../hooks/useAuth'
 
 const Transition = forwardRef(function Transition (
   props: TransitionProps & {
@@ -62,6 +63,7 @@ export const DialogComentario = ({
   const [respuestaAdmin, setRespuestaAdmin] = useState('')
   const [loading, setLoading] = useState(false)
   const token = localStorage.getItem('token')
+  const { auth } = useAuth()
 
   const handleTextAdmin = (e: any): void => {
     setRespuestaAdmin(e.target.value)
@@ -86,7 +88,7 @@ export const DialogComentario = ({
         hora: obtenerHora(),
         user: 'Resumen no registrado',
         texto: '',
-        userId: '',
+        userId: auth.id,
         respuesta: {
           hora: new Date(),
           texto: respuestaAdmin

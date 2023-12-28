@@ -95,7 +95,7 @@ const Header = (): JSX.Element => {
           </MenuItem>
         </Menu>
       </nav>
-      <ModalNotificaciones/>
+      <ModalNotificaciones />
     </header>
   )
 }

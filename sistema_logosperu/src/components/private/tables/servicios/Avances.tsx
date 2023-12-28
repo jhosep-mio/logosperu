@@ -21,7 +21,7 @@ import { ArchivosFinales } from './ArchivosFinales'
 import { ViewFinal } from './ViewFinal'
 import { ViewActa } from './ViewActa'
 import { BsChatRightText } from 'react-icons/bs'
-import { Chat } from './Chat'
+// import { Chat } from './Chat'
 import { RegistroMarca } from './RegistroMarca'
 import { RegistroMail } from './RegistroMail'
 import { ModalQuestion } from './modals/ModalQuestion'
@@ -68,7 +68,7 @@ export const Avances = (): JSX.Element => {
     nombre_marca: '',
     archivos: ''
   })
-  const [openChat, setOpenChat] = useState(false)
+  //   const [openChat, setOpenChat] = useState(false)
   const [openMail, setOpenMail] = useState(false)
 
   const [openCorreoFinal, setOpenCorreoFinal] = useState(false)
@@ -107,7 +107,7 @@ export const Avances = (): JSX.Element => {
   const [openFinal, setOpenFinal] = useState(false)
   const [openMarca, setOpenMarca] = useState(false)
   const [correos, setCorreos] = useState<arrayCorreos[]>([])
-  const [resumen, setResumen] = useState<valuesResumen[]>([])
+  const [, setResumen] = useState<valuesResumen[]>([])
   const [colaboradores, setColaboradores] = useState([])
   const [colaborador, setColaborador] = useState([])
   const [limite, setLimite] = useState(0)
@@ -522,14 +522,14 @@ export const Avances = (): JSX.Element => {
           </button>
         </>
           )}
-      <Chat
+      {/* <Chat
         open={openChat}
         setOpen={setOpenChat}
         id={id}
         getOneBrief={getOneBrief}
         resumen={resumen}
         setResumen={setResumen}
-      />
+      /> */}
       <RegistroMarca
         open={openMarca}
         setOpen={setOpenMarca}

@@ -4,6 +4,7 @@ import moment from 'moment'
 import 'moment/locale/es'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import {
+  type usurioValues,
   type errorValues,
   type ValuesPreventaModificate
 } from '../../../shared/schemas/Interfaces'
@@ -18,6 +19,7 @@ import { AnimatePresence } from 'framer-motion'
 import { AlertSucess } from '../../../shared/alerts/AlertSucess'
 import { BsArrowLeftSquareFill } from 'react-icons/bs'
 import { Link } from 'react-router-dom'
+import useAuth from '../../../../hooks/useAuth'
 moment.locale('es')
 const localizer = momentLocalizer(moment) // Importa el locale español
 
@@ -26,11 +28,13 @@ interface values {
   start: Date
   end: Date
   client?: ValuesPreventaModificate
+  user?: usurioValues
 }
 
 export const GestordeCitas = (): JSX.Element => {
   const token = localStorage.getItem('token')
   const [loading, setLoading] = useState(true)
+  const { auth } = useAuth()
   const [clientes, setclientes] = useState<ValuesPreventaModificate[]>([])
   const [eventoSelected, setEventoSelected] = useState<any | []>([])
   const [showError, setShowError] = useState<errorValues | null>(null)
@@ -85,7 +89,8 @@ export const GestordeCitas = (): JSX.Element => {
             title,
             start: selectedTimeSlot.start,
             end: selectedTimeSlot.end,
-            client: selectedClient
+            client: selectedClient,
+            user: auth
           } as unknown as Event
         ]
         updateCita(updatedEvents)
@@ -126,18 +131,20 @@ export const GestordeCitas = (): JSX.Element => {
     event: (props: values) => {
       return (
         <div
-          className="cursor-pointer hover:bg-gray-300 hover:text-black w-fit transition-colors duration-300  break-words"
+          className="cursor-pointer  h-full hover:text-black/40 w-full transition-colors duration-300 break-words"
           onClick={() => {
             handleEventClick(props)
           }}
           rel="noreferrer"
         >
-          <strong>{props.title}</strong>
-          {props.client && (
-            <div>
-              Cliente: {props.client.nombres} {props.client.apellidos}
-            </div>
-          )}
+          <div className=' div_cita px-1 h-full text-white bg-[#d23741] rounded-t-md'>
+            <span className='block lowercase'>{props.title}</span>
+            {props.client && (
+              <div className=''>
+                Cliente: {props.client.nombres} {props.client.apellidos}
+              </div>
+            )}
+          </div>
         </div>
       )
     }
@@ -244,13 +251,11 @@ export const GestordeCitas = (): JSX.Element => {
         ? <Loading />
         : (
         <>
-          <h1
-            className="w-full text-center text-4xl text-black font-bold font_main uppercase"
-          >
+          <h1 className="w-full text-center text-4xl text-black font-bold font_main uppercase">
             Gestor de Citas
           </h1>
           <Link
-            to='/admin/lista-clientes'
+            to="/admin/lista-clientes"
             className="fixed w-fit md:top-[3%] lg:top-[3%] text-3xl  right-4 text-red-500 cursor-pointer"
           >
             <BsArrowLeftSquareFill />

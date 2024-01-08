@@ -66,6 +66,7 @@ import { ReportePorColaborador } from '../components/private/tables/colaboradore
 import { StatusToColaborador } from '../components/private/tables/ventas/StatusToColaborador'
 import { ListaProyectosAgencia } from '../components/private/tables/ventas/ListaProyectosAgencia'
 import { GestordeCitas } from '../components/private/tables/citas/GestordeCitas'
+import { ComentariosClientes } from '../components/private/tables/citas/comentarios/ComentariosClientes'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -116,6 +117,7 @@ export const Routing = (): JSX.Element => {
               path="lista-clientes/editar/:id"
               element={<EditarCliente />}
             />
+            <Route path="lista-clientes/resumen/:id" element={<ComentariosClientes />} />
 
             <Route path="lista-preventa" element={<ListaPreventa />} />
             <Route path="lista-preventa/view/:id" element={<ViewPreventa />} />

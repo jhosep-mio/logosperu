@@ -11,7 +11,6 @@ import { Errors } from '../../../shared/Errors'
 import { SchemaEditarVentas } from '../../../shared/schemas/Schemas'
 import { logo } from '../../../shared/Images'
 import { convertirFecha } from '../../../shared/functions/QuitarAcerntos'
-import Calendar from 'react-calendar'
 type ValuePiece = Date | null
 type Value = ValuePiece | [ValuePiece, ValuePiece]
 
@@ -21,6 +20,7 @@ export const ViewServicio = (): JSX.Element => {
   const token = localStorage.getItem('token')
   const [loading, setLoading] = useState(true)
   const [dateInicio, setDateInicio] = useState<Value>(null)
+  const [fechaAlta, setFechaAlta] = useState<Value>(null)
   const [dateFin, setDateFin] = useState<Value>(null)
   const savePreventa = async (): Promise<void> => {
   }
@@ -44,6 +44,8 @@ export const ViewServicio = (): JSX.Element => {
       nombre_marca: '',
       apellidos: '',
       codigo: '',
+      observaciones: '',
+      comentarios: '',
       uso: 0
     },
     validationSchema: SchemaEditarVentas,
@@ -68,8 +70,14 @@ export const ViewServicio = (): JSX.Element => {
       apellidos: request.data[0].apellidos,
       dni_ruc: request.data[0].dni_ruc,
       codigo: request.data[0].codigo,
+      observaciones: request.data[0].observaciones,
+      comentarios: request.data[0].comentarios,
       uso: request.data[0].uso
     })
+
+    if (request.data[0].fecha_alta) {
+      setFechaAlta(convertirFecha(request.data[0].fecha_alta))
+    }
 
     if (request.data[0].fecha_inicio) {
       setDateInicio(convertirFecha(request.data[0].fecha_inicio))
@@ -101,12 +109,12 @@ export const ViewServicio = (): JSX.Element => {
         {loading
           ? <Loading />
           : (
-          <div className="card">
+            <div className="card">
             <form
               className="flex flex-col bg-white rounded-md mt-4 p-4 md:p-10 relative"
               onSubmit={handleSubmit}
             >
-              <div className='w-full flex gap-5'>
+              <div className="w-full flex gap-5">
                 <img
                   src={logo}
                   alt=""
@@ -215,7 +223,7 @@ export const ViewServicio = (): JSX.Element => {
                           value={values.medio_ingreso}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          disabled={true}
+                          disabled
                         >
                           {/* FB GOOGLE, VENTAS, POST VENTA, RECOMENDACION, ISNTAGRAM) */}
                           <option value="">Seleccionar</option>
@@ -227,7 +235,6 @@ export const ViewServicio = (): JSX.Element => {
                           <option value="3">Post Venta</option>
                           <option value="6">Recomendación</option>
                           <option value="7">Logos</option>
-
                         </select>
                         <Errors
                           errors={errors.medio_ingreso}
@@ -246,8 +253,55 @@ export const ViewServicio = (): JSX.Element => {
                         />
                       </div>
                     </div>
+                    <div className="w-full">
+                      <div className="w-full relative">
+                        <TitleBriefs titulo="Observaciones" />
+                        <textarea
+                          className="border placeholder-gray-400 focus:outline-none
+                                            focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                            border-gray-300 rounded-md resize-none text-black"
+                          name="observaciones"
+                          disabled
+                          rows={5}
+                          value={values.observaciones}
+                        />
+                      </div>
+                    </div>
+                    <div className="w-full">
+                      <div className="w-full relative">
+                        <TitleBriefs titulo="Comentarios generales" />
+                        <textarea
+                          className="border placeholder-gray-400 focus:outline-none
+                                            focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                            border-gray-300 rounded-md resize-none text-black"
+                          name="comentarios"
+                          rows={5}
+                          disabled
+                          value={values.comentarios}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="w-full flex gap-5 px-3">
+                </div>
+              </div>
+
+              <div className="w-full flex gap-5 px-3 justify-center mb-10 mt-3">
+                <div className="w-full contenido_calendario relative">
+                  <TitleBriefs titulo="Fecha del Alta" />
+                  <input
+                    type="date"
+                    disabled
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    value={fechaAlta ? fechaAlta.toISOString().substr(0, 10) : ''}
+                    className="border placeholder-gray-400 focus:outline-none
+                    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                    border-gray-300 rounded-md transition-all text-black text-center cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              <div className="w-full flex gap-5 px-3 mt-0">
                 <div className="w-full contenido_calendario relative">
                   <TitleBriefs titulo="Fecha de inicio" />
                   <input
@@ -262,16 +316,12 @@ export const ViewServicio = (): JSX.Element => {
                     focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
                     border-gray-300 rounded-md transition-all text-black text-center"
                   />
-                  <Calendar
-                    value={dateInicio ?? null}
-                    className="w-full px-10 shadow-md shadow-green-500 p-4 no-interaction"
-                  />
                 </div>
                 <div className="w-full contenido_calendario relative">
                   <TitleBriefs titulo="Fecha de culminación" />
                   <input
-                    disabled
                     type="date"
+                    disabled
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-expect-error
                     value={dateFin ? dateFin.toISOString().substr(0, 10) : ''}
@@ -279,12 +329,6 @@ export const ViewServicio = (): JSX.Element => {
                     focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
                     border-gray-300 rounded-md transition-all text-black text-center cursor-pointer"
                   />
-                  <Calendar
-                    value={dateFin ?? null}
-                    className="w-full px-10 shadow-md shadow-red-500 p-4 no-interaction"
-                  />
-                </div>
-              </div>
                 </div>
               </div>
 

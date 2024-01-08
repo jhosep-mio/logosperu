@@ -5,19 +5,16 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContentText from '@mui/material/DialogContentText'
 import Slide from '@mui/material/Slide'
 import { type TransitionProps } from '@mui/material/transitions'
-import EditorContexto from './EditorContexto'
-import { AgregarCorreos } from './AgregarCorreos'
-import {
-  type arrayImagenes,
-  type arrayCorreos
-} from '../../../shared/schemas/Interfaces'
-import { SwiperCorreos } from './SwiperCorreos'
-import { AgregarImagenes } from './AgregarImagenes'
-import { SwiperImagenes } from './SwiperImagenes'
-import { Global } from '../../../../helper/Global'
 import axios from 'axios'
 import Swal, { type SweetAlertResult } from 'sweetalert2'
-import useAuth from '../../../../hooks/useAuth'
+import { type arrayImagenes, type arrayCorreos } from '../../../../shared/schemas/Interfaces'
+import useAuth from '../../../../../hooks/useAuth'
+import { Global } from '../../../../../helper/Global'
+import { AgregarCorreos } from '../AgregarCorreos'
+import { SwiperCorreos } from '../SwiperCorreos'
+import EditorContexto from '../EditorContexto'
+import { AgregarImagenes } from '../AgregarImagenes'
+import { SwiperImagenes } from '../SwiperImagenes'
 
 const Transition = React.forwardRef(function Transition (
   props: TransitionProps & {
@@ -44,7 +41,7 @@ interface values {
   setCorreos: React.Dispatch<React.SetStateAction<arrayCorreos[]>>
 }
 
-export const ModalRegistro = ({
+export const ModalaAvisonNotificacion = ({
   open,
   setOpen,
   idVenta,
@@ -153,7 +150,7 @@ export const ModalRegistro = ({
               )
 
               if (respuesta.data.status == 'success') {
-                Swal.fire('Se subio el avance correctamente', '', 'success')
+                Swal.fire('Se subio el aviso de notificación correctamente', '', 'success')
                 const enviarNotificacion = async (): Promise<void> => {
                   const data = new FormData()
                   const currentUrl = window.location.href
@@ -167,7 +164,7 @@ export const ModalRegistro = ({
                   data.append('url', pathName)
                   data.append(
                     'contenido',
-                        `Ha enviado un correo para el proyecto ${
+                        `Ha enviado un aviso de notificación para el proyecto ${
                           datos.nombre_marca ?? ''
                         }  (${datos?.nombres ?? ''})`
                   )
@@ -345,6 +342,11 @@ export const ModalRegistro = ({
     return { fecha, hora }
   }
 
+  React.useEffect(() => {
+    setAsunto(`AVISO DE NOTIFICACIÓN - ${datos.nombre_marca}`)
+    setContexto(`<p>Por el presente debemos informarle sobre la notificación de aviso (adjuntado)</p><p>El cual el área Administrativa Remite hacia su persona.</p><p><br></p><p>En el presente</p><p>Según lo acordado con Área Diseño, Área Desarrollo, Área administrativa y Gerencia llegado a la fecha limite:</p><p>SE DARA POR CONCLUIDO EL PROYECTO <strong style="background-color: yellow;">${datos.nombre_marca ?? ''}</strong><strong> </strong></p><p><br></p>`)
+  }, [])
+
   return (
     <Dialog
       open={open}
@@ -356,7 +358,7 @@ export const ModalRegistro = ({
     >
       <DialogContentText id="alert-dialog-slide-description">
         <h2 className="w-full font-bold text-2xl text-center text-white bg-main/80 py-2">
-          SUBIR AVANCES
+          AVISO DE NOTIFICACIÓN
         </h2>
         <div className="w-full flex gap-2 items-center justify-center">
           <AgregarCorreos correos={correos} setCorreos={setCorreos} />
@@ -364,12 +366,10 @@ export const ModalRegistro = ({
         </div>
         <input
           type="text"
+          disabled
           placeholder="ASUNTO"
-          className="text-black outline-none px-4 py-3 border border-b-gray-400 w-full"
+          className="text-black outline-none px-4 py-3 border border-b-gray-400 w-full bg-gray-200"
           value={asunto}
-          onChange={(e) => {
-            setAsunto(e.target.value)
-          }}
         />
         <section className="px-0 py-2 flex flex-col gap-4">
           <EditorContexto content={contexto} setContent={setContexto} />
@@ -399,7 +399,7 @@ export const ModalRegistro = ({
               await guardarAvance()
             }}
           >
-            SUBIR AVANCE
+            ENVIAR NOTIFICACIÓN
           </button>
           : (
           <button className="w-fit px-3 py-1 bg-[#4E4263] text-white font-bold rounded-xl">

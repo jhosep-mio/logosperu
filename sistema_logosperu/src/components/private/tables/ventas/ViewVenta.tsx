@@ -256,6 +256,7 @@ export const ViewVenta = (): JSX.Element => {
                           <option value="2">Ventas</option>
                           <option value="3">Post Venta</option>
                           <option value="6">Recomendación</option>
+                          <option value="7">Logos</option>
                         </select>
                         <Errors
                           errors={errors.medio_ingreso}

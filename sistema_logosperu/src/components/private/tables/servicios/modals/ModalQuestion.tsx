@@ -6,18 +6,22 @@ import {
   DialogTitle
 } from '@mui/material'
 import { type Dispatch, type SetStateAction, useState } from 'react'
+import useAuth from '../../../../../hooks/useAuth'
 
 export const ModalQuestion = ({
   open,
   setOpen,
   openCorreo,
-  setOpenCorreoActa
+  setOpenCorreoActa,
+  setOpenAvisoNotificacion
 }: {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
   openCorreo: Dispatch<SetStateAction<boolean>>
   setOpenCorreoActa: Dispatch<SetStateAction<boolean>>
+  setOpenAvisoNotificacion: Dispatch<SetStateAction<boolean>>
 }): JSX.Element => {
+  const { auth } = useAuth()
   const [tipo, setTipo] = useState('')
   return (
     <Dialog
@@ -42,6 +46,9 @@ export const ModalQuestion = ({
                 <option value="">Seleccionar</option>
                 <option value="correo">Correo de avance/entrega</option>
                 <option value="acta">Acta de estado de proyecto</option>
+                {auth.id == '1' &&
+                    <option value="aviso">Aviso de notificación</option>
+                }
             </select>
           </>
         </DialogContentText>
@@ -64,6 +71,9 @@ export const ModalQuestion = ({
             } else if (tipo == 'acta') {
               setOpen(false)
               setOpenCorreoActa(true)
+            } else if (tipo == 'aviso') {
+              setOpen(false)
+              setOpenAvisoNotificacion(true)
             }
           }}
         >

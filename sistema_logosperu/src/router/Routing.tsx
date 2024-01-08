@@ -63,6 +63,9 @@ import { StatusPorColaborador } from '../components/private/tables/ventas/colabo
 import { VistaSeguimiento } from '../components/private/tables/ventas/seguimiento/VistaSeguimiento'
 import { ListaColaboradores } from '../components/private/tables/colaboradores/ListaColaboradores'
 import { ReportePorColaborador } from '../components/private/tables/colaboradores/ReportePorColaborador'
+import { StatusToColaborador } from '../components/private/tables/ventas/StatusToColaborador'
+import { ListaProyectosAgencia } from '../components/private/tables/ventas/ListaProyectosAgencia'
+import { GestordeCitas } from '../components/private/tables/citas/GestordeCitas'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -120,6 +123,7 @@ export const Routing = (): JSX.Element => {
 
             {/* VENTAS */}
             <Route path="lista-ventas" element={<ListaVentas />} />
+            <Route path="lista-ventas-agencia" element={<ListaProyectosAgencia />} />
             <Route path="lista-ventas/view/:id" element={<ViewVenta />} />
             <Route path="lista-ventas/editar/:id" element={<EditarVentas />} />
             <Route path="lista-ventas/acta-aceptacion/:id" element={<ActaAceptacion />} />
@@ -131,6 +135,7 @@ export const Routing = (): JSX.Element => {
             {/* LISTA VENTAS POR COLABORADOR */}
             <Route path="lista-ventas/:id" element={<ListaVentasPorColaborador />} />
             <Route path="lista-ventas/:id/status" element={<StatusPorColaborador />} />
+            <Route path="lista-ventas/status-colabordador/:id" element={<StatusToColaborador />} />
             <Route path="seguimiento/:id" element={<VistaSeguimiento />} />
             {/* SERVICIOS */}
             <Route path="lista-servicios" element={<ListaServicios />} />
@@ -196,6 +201,7 @@ export const Routing = (): JSX.Element => {
           </Route>
           <Route path="admin/lista-ventas/metricas" element={<Metricas />} />
           <Route path="admin/lista-ventas/status" element={<Status />} />
+          <Route path="admin/citas" element={<GestordeCitas />} />
           {/* PUBLICO */}
           <Route
             path="*"

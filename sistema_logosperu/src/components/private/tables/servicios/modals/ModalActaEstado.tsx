@@ -178,6 +178,38 @@ export const ModalActaEstado = ({
 
               if (respuesta.data.status == 'success') {
                 Swal.fire('Se subio el acta correctamente', '', 'success')
+                const enviarNotificacion = async (): Promise<void> => {
+                  const data = new FormData()
+                  const currentUrl = window.location.href
+                  // Utilizar el objeto URL para extraer la ruta
+                  const urlObject = new URL(currentUrl)
+                  const pathName = urlObject.pathname
+                  data.append('id_usuario', auth.id)
+                  data.append('id_venta', String(idVenta))
+                  data.append('nombre', auth.name)
+                  data.append('icono', 'correo')
+                  data.append('url', pathName)
+                  data.append(
+                    'contenido',
+                      `Ha enviado un acta de estado para el proyecto ${
+                        datos.nombre_marca ?? ''
+                      }  (${datos?.nombres ?? ''})`
+                  )
+                  data.append('hidden_users', '')
+                  try {
+                    await axios.post(`${Global.url}/nuevaNotificacion`, data, {
+                      headers: {
+                        Authorization: `Bearer ${
+                            token !== null && token !== '' ? token : ''
+                          }`
+                      }
+                    })
+                  } catch (error: unknown) {
+                    console.log(error)
+                    Swal.fire('Error al subir', '', 'error')
+                  }
+                }
+                enviarNotificacion()
                 setArrayImagenes([])
                 setArrayArchivos([])
                 setContexto('')

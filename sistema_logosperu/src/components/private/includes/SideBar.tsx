@@ -192,6 +192,23 @@ const SideBar = (): JSX.Element => {
                                 </li>
                                 <li>
                                   <Link
+                                    to="lista-ventas-agencia"
+                                    className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                      activeItem == 291
+                                        ? 'before:bg-main'
+                                        : 'before:bg-gray-500'
+                                    } hover:text-main transition-colors`}
+                                    onClick={() => {
+                                      handleItemClick(291)
+                                      setShowMenu(false)
+                                      setLoadingComponents(false)
+                                    }}
+                                  >
+                                    Proyectos de agencia
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
                                     to="lista-ventas-vencidos"
                                     className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
                                       activeItem == 298
@@ -243,9 +260,7 @@ const SideBar = (): JSX.Element => {
                                   >
                                     {colaboradores
                                       .filter(
-                                        (colaborador: { id_rol: string }) =>
-                                          colaborador.id_rol != '99'
-                                      )
+                                        (colaborador: { id_rol: string, id: string }) => colaborador.id_rol != '99' || colaborador.id == '8')
                                       .map(
                                         (colaborador: {
                                           name: string

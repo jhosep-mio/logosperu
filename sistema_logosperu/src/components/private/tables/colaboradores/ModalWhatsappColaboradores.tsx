@@ -12,11 +12,11 @@ import axios from 'axios'
 import { AnimatePresence } from 'framer-motion'
 import { type valuesResumen, type errorValues, type ValuesVenta } from '../../../shared/schemas/Interfaces'
 import { Global } from '../../../../helper/Global'
-import { VistaColaborador } from '../ventas/colaboradores/VistaColaborador'
 import { AlertSucess } from '../../../shared/alerts/AlertSucess'
 import { DialogComentario } from '../servicios/comentario/DialogComentario'
 import useAuth from '../../../../hooks/useAuth'
 import { VistaAdministradorToColaborador } from './VistaAdministradorToColaborador'
+import { VistaColaboradorToColaborador } from './VistaColaboradorToColaborador'
 
 interface values {
   id: string | undefined
@@ -372,13 +372,18 @@ export const ModalWhatsappColaboradores = ({
                 setRespuestaAdmin={setRespuestaAdmin}
                 respuestaAdmin={respuestaAdmin}
                 endOfMessagesRef={endOfMessagesRef}
+                permitirEdicion={permitirEdicion}
                 showError={showError}
                 setShowError={setShowError}
                 proyecto={proyecto}
+                handleUpdate={handleUpdate}
+                textoEditado={textoEditado}
+                setTextoEditado={setTextoEditado}
+                handleUpdateEdit={handleUpdateEdit}
               />
                 )
               : (
-              <VistaColaborador
+              <VistaColaboradorToColaborador
                 setResumen={setResumen}
                 getOneBrief={getOneBrief}
                 id={id}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import useAuth from '../../../../hooks/useAuth'
 import axios from 'axios'
@@ -28,6 +28,7 @@ import { ModalQuestion } from './modals/ModalQuestion'
 import { ModalActaEstado } from './modals/ModalActaEstado'
 import { ModalCorreoFinal2 } from './ModalCorreoFinal2'
 import { RegistroEmail2 } from './RegistroEmail2'
+import { ModalaAvisonNotificacion } from './avisoNotificacion/ModalaAvisonNotificacion'
 
 interface valuesDatos {
   idCliente: string
@@ -56,6 +57,7 @@ export const Avances = (): JSX.Element => {
   const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState(false)
   const [openCorreoActa, setOpenCorreoActa] = useState(false)
+  const [openAvisoNotificacion, setOpenAvisoNotificacion] = useState(false)
   const [openQuestion, setOpenQuestion] = useState(false)
   const [selectIDCLIENTE, setSelectIDCLIENTE] = useState(0)
   const [datos, setDatos] = useState<values>({
@@ -313,45 +315,53 @@ export const Avances = (): JSX.Element => {
           <form className="mt-5" onSubmit={handleSubmit}>
             <div className="bg-white p-8 rounded-xl mt-6">
               <div className="flex justify-between">
-                <span className="text-left flex gap-6 text-black uppercase ">
+                <span className="text-left flex gap-6 text-black uppercase">
                   <span className="font-bold">COLABORADOR(ES) A CARGO:</span>
-                  {colaborador?.map((asignacion: any) =>
-                    colaboradores
+                  {colaborador?.map((asignacion: any, index: number) => {
+                    const assignedCollaborators = colaboradores
                       .filter(
                         (colaborador: { id: number, name: string }) =>
                           colaborador.id == asignacion.peso
                       )
                       .map((colaborador: { name: string }) => colaborador.name)
-                      .join(', ')
-                  )}
+                    return (
+                      <Fragment key={index}>
+                        {assignedCollaborators && (
+                          <span>{assignedCollaborators}</span>
+                        )}
+                        {index < colaborador.length - 1 }
+                      </Fragment>
+                    )
+                  })}
                 </span>
-                {!values.fecha_fin &&
-                <div className="p-0 bg-yellow-600 hover:bg-yellow-700 rounded-xl" >
-                  {id != null && values.fecha_fin == null && (
-                    <button
-                    type='button'
-                      onClick={() => {
-                        if (datos2?.email) {
-                          setOpenCorreoFinal(true)
-                        } else {
-                          Swal.fire({
-                            title: 'EL cliente no tiene un email registrado',
-                            showDenyButton: true,
-                            confirmButtonText: 'Registrar email',
-                            denyButtonText: 'Cancelar'
-                          }).then(async (result: SweetAlertResult) => {
-                            if (result.isConfirmed) {
-                              setOpenMailFinal(true)
-                            }
-                          })
-                        }
-                      }}
-                      className="transition-colors text-white font-bold flex items-center justify-center gap-x-4 p-2 flex-1 rounded-xl"
-                    >
-                      Finalizar servicio
-                    </button>
-                  )}
-                </div>}
+                {!values.fecha_fin && (
+                  <div className="p-0 bg-yellow-600 hover:bg-yellow-700 rounded-xl">
+                    {id != null && values.fecha_fin == null && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (datos2?.email) {
+                            setOpenCorreoFinal(true)
+                          } else {
+                            Swal.fire({
+                              title: 'EL cliente no tiene un email registrado',
+                              showDenyButton: true,
+                              confirmButtonText: 'Registrar email',
+                              denyButtonText: 'Cancelar'
+                            }).then(async (result: SweetAlertResult) => {
+                              if (result.isConfirmed) {
+                                setOpenMailFinal(true)
+                              }
+                            })
+                          }
+                        }}
+                        className="transition-colors text-white font-bold flex items-center justify-center gap-x-4 p-2 flex-1 rounded-xl"
+                      >
+                        Finalizar servicio
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -457,6 +467,7 @@ export const Avances = (): JSX.Element => {
               setOpen={setOpenQuestion}
               openCorreo={setOpen}
               setOpenCorreoActa={setOpenCorreoActa}
+              setOpenAvisoNotificacion={setOpenAvisoNotificacion}
             />
             <ModalActaEstado
               open={openCorreoActa}
@@ -476,6 +487,17 @@ export const Avances = (): JSX.Element => {
               correos={correos}
               setCorreos={setCorreos}
             />
+
+            <ModalaAvisonNotificacion
+              open={openAvisoNotificacion}
+              setOpen={setOpenAvisoNotificacion}
+              idVenta={id}
+              getOneBrief={getOneBrief}
+              datos={datos}
+              correos={correos}
+              setCorreos={setCorreos}
+            />
+
             <ViewAvance
               open={openAvance}
               setOpen={setOpenAvance}
@@ -499,10 +521,10 @@ export const Avances = (): JSX.Element => {
             />
 
             <RegistroEmail2
-                open={openMailFinal}
-                setOpen={setOpenMailFinal}
-                id={datos2?.idCliente}
-                getOneBrief={getOneBrief}
+              open={openMailFinal}
+              setOpen={setOpenMailFinal}
+              id={datos2?.idCliente}
+              getOneBrief={getOneBrief}
             />
             {datos.hora_acta && (
               <ViewActa open={openActa} setOpen={setOpenActa} datos={datos} />

@@ -184,7 +184,9 @@ export const ListaVentasPre = (): JSX.Element => {
                             ? 'Whatsapp'
                             : orden.medio_ingreso == '6'
                               ? 'Recomendación'
-                              : ''}
+                              : orden.medio_ingreso == '7'
+                                ? 'Logos'
+                                : ''}
                 </p>
               </div>
 

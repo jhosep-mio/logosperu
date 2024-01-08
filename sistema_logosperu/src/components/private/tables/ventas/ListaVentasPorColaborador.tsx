@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import useAuth from '../../../../hooks/useAuth'
 import {
+  RiFileExcel2Fill,
   RiFilter2Fill,
   RiSettings3Fill
 } from 'react-icons/ri'
@@ -22,6 +23,7 @@ import {
 } from '../../../shared/functions/QuitarAcerntos'
 import { BsCheckCircle, BsGraphUp } from 'react-icons/bs'
 import { FaComments } from 'react-icons/fa6'
+import { MdChevronRight } from 'react-icons/md'
 // import { GeneradorExcel } from '../../../shared/EXCEL/GeneradorExcel'
 
 interface Filters {
@@ -50,6 +52,10 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
     activeFilter: null,
     sinFechaFinYNo1: null
   })
+  const [ordenAscendente, setOrdenAscendente] = useState(false)
+  const [ordenDescente, setOrdenDescente] = useState(false)
+  const [ordenAscendente2, setOrdenAscendente2] = useState(false)
+  const [ordenDescente2, setOrdenDescente2] = useState(false)
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
   const { id } = useParams()
 
@@ -72,6 +78,45 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
       setLoading(false)
     })
   }, [])
+
+  useEffect(() => {
+    if (ordenAscendente) {
+      setLoading(true)
+      Promise.all([
+        getDataVentas(`getVentasAscendenteColaborador/${id ?? ''}`, setProductos, setTotalRegistros)
+      ]).then(() => {
+        setLoading(false)
+      })
+    } else if (ordenDescente) {
+      setLoading(true)
+      Promise.all([
+        getDataVentas(`getVentasDescendenteColaborador/${id ?? ''}`, setProductos, setTotalRegistros)
+      ]).then(() => {
+        setLoading(false)
+      })
+    } else if (ordenAscendente2) {
+      setLoading(true)
+      Promise.all([
+        getDataVentas(`getVentasAscendente2Colaborador/${id ?? ''}`, setProductos, setTotalRegistros)
+      ]).then(() => {
+        setLoading(false)
+      })
+    } else if (ordenDescente2) {
+      setLoading(true)
+      Promise.all([
+        getDataVentas(`getVentasDescendente2Colaborador/${id ?? ''}`, setProductos, setTotalRegistros)
+      ]).then(() => {
+        setLoading(false)
+      })
+    } else {
+      setLoading(true)
+      Promise.all([
+        getDataVentas(`indexToColaboradores/${id ?? ''}`, setProductos, setTotalRegistros)
+      ]).then(() => {
+        setLoading(false)
+      })
+    }
+  }, [ordenAscendente, ordenDescente, ordenAscendente2, ordenDescente2])
 
   useEffect(() => {
     setLoading(true)
@@ -331,9 +376,11 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
           <Link to={'status'}>
             <FaComments className="text-green-700 text-2xl md:text-4xl cursor-pointer" />
           </Link>
-          {/* <Link to={'metricas'}>
-            <RiBarChartFill className="text-main text-2xl md:text-3xl cursor-pointer" />
-          </Link> */}
+          <div className="w-fit md:w-fit flex flex-row items-center gap-4">
+          <Link to={`/admin/lista-ventas/status-colabordador/${id ?? ''}`}>
+            <RiFileExcel2Fill className="text-green-700 text-2xl md:text-3xl cursor-pointer" />
+          </Link>
+        </div>
         </div>
       </div>
       {loading
@@ -367,13 +414,23 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
                 <h5 className="md:text-center line-clamp-1 col-span-2">
                   Fecha de Alta
                 </h5>
-                <h5 className="md:text-center line-clamp-1 col-span-2">
+                <h5 className="md:text-center w-fit flex gap-2 items-center col-span-2">
                   Fecha de Inicio
+                  <div className='flex flex-col'>
+                    <MdChevronRight
+                   onClick={() => { setOrdenAscendente(!ordenAscendente); setOrdenAscendente2(false); setOrdenDescente(false); setOrdenDescente2(false) }} className={`${!ordenAscendente ? 'text-gray-400' : 'text-main'} -rotate-90 hover:text-main transition-colors cursor-pointer`} title='Ascendente'/>
+                    <MdChevronRight onClick={() => { setOrdenDescente(!ordenDescente); setOrdenAscendente(false); setOrdenAscendente2(false); setOrdenDescente2(false) }} className={`${!ordenDescente ? 'text-gray-400' : 'text-main'} rotate-90 hover:text-main transition-colors cursor-pointer`} title='Descendente'/>
+                  </div>
                 </h5>
                 {!filters.sinFechaFinYNo1 && (
-                  <h5 className="md:text-center line-clamp-1 col-span-2">
+                <h5 className="md:text-center w-fit flex gap-2 items-center col-span-2">
                     Fecha Final
-                  </h5>
+                    <div className='flex flex-col'>
+                        <MdChevronRight
+                    onClick={() => { setOrdenAscendente2(!ordenAscendente2); setOrdenAscendente(false); setOrdenDescente2(false); setOrdenDescente(false) }} className={`${!ordenAscendente2 ? 'text-gray-400' : 'text-main'} -rotate-90 hover:text-main transition-colors cursor-pointer`} title='Ascendente'/>
+                        <MdChevronRight onClick={() => { setOrdenDescente2(!ordenDescente2); setOrdenDescente(false); setOrdenAscendente2(false); setOrdenAscendente(false) }} className={`${!ordenDescente2 ? 'text-gray-400' : 'text-main'} rotate-90 hover:text-main transition-colors cursor-pointer`} title='Descendente'/>
+                  </div>
+                </h5>
                 )}
               </>
             )}
@@ -558,19 +615,15 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
                   </div>
                 </>
               )}
-              <div className="hidden md:block md:text-center col-span-2">
-                <div className='line-clamp-1'>
-                  <span className="text-left text-black w-full block lowercase first-letter:uppercase">
+               <div className="hidden md:block md:text-center col-span-2 relative h-full">
+                <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                     {orden.nombres} {orden.apellidos}
                   </span>
-                </div>
               </div>
-              <div className="hidden md:block md:text-center  col-span-2">
-                <div className='line-clamp-1'>
-                  <span className="text-left text-black w-full block lowercase first-letter:uppercase">
+              <div className="hidden md:block md:text-center col-span-2 relative h-full">
+                <span className="text-left text-black line-clamp-1 transition-all hover:w-[200%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                     {orden.nombre_marca ? orden.nombre_marca : 'No registrado'}
                   </span>
-                </div>
               </div>
               <div className="hidden md:block md:text-center col-span-2">
                 <span className="text-center block text-black">
@@ -588,7 +641,9 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
                               ? 'Whatsapp'
                               : orden.medio_ingreso == '6'
                                 ? 'Recomendación'
-                                : ''}
+                                : orden.medio_ingreso == '7'
+                                  ? 'Logos'
+                                  : ''}
                 </span>
               </div>
               <div

@@ -5,6 +5,15 @@ import { type interfaceListaDiseñoNew, type ValuesPreventaModificate, type inte
 
 const token = localStorage.getItem('token')
 
+export const getClientes = async (ruta: string, setDatos: Dispatch<SetStateAction<ValuesPreventaModificate[]>>): Promise<void> => {
+  const request = await axios.get(`${Global.url}/${ruta}`, {
+    headers: {
+      Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+    }
+  })
+  setDatos(request.data)
+}
+
 export const getColaboradresList = async (ruta: string, setDatos: Dispatch<SetStateAction<usurioValues[]>>, setTotalRegistros: Dispatch<SetStateAction<number>>): Promise<void> => {
   const request = await axios.get(`${Global.url}/${ruta}`, {
     headers: {
@@ -54,6 +63,7 @@ export const getDataNew = async (ruta: string, setDatos: Dispatch<SetStateAction
   setDatos(request.data)
   setTotalRegistros(request.data.length)
 }
+
 export const getData2 = async (ruta: string, setDatos: Dispatch<SetStateAction<ValuesPreventaModificate[]>>, setTotalRegistros: Dispatch<SetStateAction<number>>): Promise<void> => {
   const request = await axios.get(`${Global.url}/${ruta}`, {
     headers: {

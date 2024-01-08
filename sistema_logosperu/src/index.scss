@@ -5,52 +5,142 @@
 ::-webkit-scrollbar {
   width: 0px;
 }
+// ELIMIANR
+.modal_citas_clientes{
+    & .MuiPaper-root{
+        width: 900px;
+        max-width: 100%;
+        min-height: 600px;
+    }
+}
+
+
+.App-content {
+  padding: 20px;
+}
+.rbc-active {
+  background: #d23741be !important;
+  color: white !important;
+}
+.rbc-header {
+  background: #d23741 !important;
+  color: white;
+  padding: 6px 6px !important;
+}
+.rbc-current-time-indicator{
+    display: none !important;
+}
+.rbc-event {
+  background-color: #d23741be !important;
+  color: #fff; /* Cambia el color del texto según tus preferencias */
+  border-radius: 4px; /* Ajusta el radio de borde según tus preferencias */
+  width: fit-content !important;
+}
+
+.rbc-time-view {
+  .rbc-label {
+    background: white !important;
+  }
+  .rbc-timeslot-group {
+    background: white !important;
+  }
+  .rbc-row {
+    background: white !important;
+  }
+}
+
+.rbc-time-view .rbc-row {
+  min-height: auto !important;
+}
+
+.rbc-agenda-table {
+  background-color: white;
+}
+
+.rbc-btn-group button {
+  margin: 0; /* Ajusta el margen según sea necesario */
+  padding: 8px 16px; /* Ajusta el relleno según sea necesario */
+  cursor: pointer;
+}
+
+.rbc-btn-group button:active,
+.rbc-btn-group button:focus {
+  outline: none; /* Evita el contorno predeterminado al hacer clic o enfocar */
+  background-color: #d23741be; /* Cambia el color de fondo al pasar el ratón */
+  color: white !important;
+}
+
+/* Estilos para el calendario */
+.rbc-calendar {
+  font-family: Arial, sans-serif;
+}
+.rbc-month-view {
+  border-radius: 10px;
+  background-color: white !important;
+  border: 1px solid black;
+  overflow: hidden;
+}
+
+.rbc-month-header {
+  background: #d23741;
+  color: white;
+
+  & .rbc-header {
+    padding: 6px 0;
+  }
+  // padding: 5px 0;
+}
+
+// END ELIMINAR
 
 .scroll_white::-webkit-scrollbar-track {
-    background-color: white; /* Fondo transparente del track */
+  background-color: white; /* Fondo transparente del track */
 }
 
-.acordion_notifiacte{
-    border: none !important;
+.acordion_notifiacte {
+  border: none !important;
 }
 
-.styled_tttle{
-    background-color: transparent !important;
-    border: none !important;
+.styled_tttle {
+  background-color: transparent !important;
+  border: none !important;
 }
 
-.bg_gradiante{
-    background: rgb(219,95,103);
-    background: linear-gradient(142deg, rgba(219,95,103,1) 0%, rgba(210,55,65,1) 44%, rgba(168,44,52,1) 100%);
+.bg_gradiante {
+  background: rgb(219, 95, 103);
+  background: linear-gradient(
+    142deg,
+    rgba(219, 95, 103, 1) 0%,
+    #d23741 44%,
+    rgba(168, 44, 52, 1) 100%
+  );
 }
 
-.border_inner{
-    box-shadow: inset -2px -2px 8px #ababab,
-    inset 1px 1px 1px #ffffff;
+.border_inner {
+  box-shadow: inset -2px -2px 8px #ababab, inset 1px 1px 1px #ffffff;
 }
 
-.border_inner2{
-    box-shadow: inset -1px -1px 6px #ababab,
-    inset 1px 1px 1px #ffffff;
+.border_inner2 {
+  box-shadow: inset -1px -1px 6px #ababab, inset 1px 1px 1px #ffffff;
 }
 
-.dialog222 .MuiDialog-container{
-    justify-content: left !important;
+.dialog222 .MuiDialog-container {
+  justify-content: left !important;
 }
 
-.fondo_wsp_s{
-    position: relative;
-    z-index: 1;
-    &::before{
-        content: '';
-        opacity: 0.1;
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url(../src/assets/modals/fondowsp.jpg);
-        z-index: -1;
-    }
+.fondo_wsp_s {
+  position: relative;
+  z-index: 1;
+  &::before {
+    content: "";
+    opacity: 0.1;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(../src/assets/modals/fondowsp.jpg);
+    z-index: -1;
+  }
 }
 
 .cart_avance {
@@ -59,24 +149,23 @@
 }
 
 .fist_upeer {
-    text-transform: lowercase;
-  
-    &::first-letter {
-      text-transform: uppercase !important;
-    }
+  text-transform: lowercase;
+
+  &::first-letter {
+    text-transform: uppercase !important;
   }
-
-
-.grid_teplate_ventas{
-    grid-template-columns: repeat(19, 1fr);
 }
 
-.grid_teplate_ventas_encola{
-    grid-template-columns: repeat(11, 1fr);
+.grid_teplate_ventas {
+  grid-template-columns: repeat(19, 1fr);
 }
 
-.grid_teplate_ventas_pendientes{
-    grid-template-columns: repeat(17, 1fr);
+.grid_teplate_ventas_encola {
+  grid-template-columns: repeat(11, 1fr);
+}
+
+.grid_teplate_ventas_pendientes {
+  grid-template-columns: repeat(17, 1fr);
 }
 
 .dialog_fecha_inicio {
@@ -86,7 +175,7 @@
     pointer-events: none;
   }
 }
-.dialog_comentario{
+.dialog_comentario {
   z-index: 600 !important;
 }
 
@@ -152,11 +241,11 @@
 }
 
 .moda_registro2 {
-    z-index: 500 !important;
-    & .MuiPaper-root {
-      min-width: 1000px !important;
-      padding: 0 !important;
-    }
+  z-index: 500 !important;
+  & .MuiPaper-root {
+    min-width: 1000px !important;
+    padding: 0 !important;
+  }
 }
 
 .modal_archivos_finales {
@@ -438,8 +527,8 @@ input[type="number"] {
 }
 
 @media (max-width: 576px) {
-  .grid_teplate_ventas{
-    grid-template-columns: 1fr ;
+  .grid_teplate_ventas {
+    grid-template-columns: 1fr;
   }
   .swiper-grid-column > .swiper-wrapper {
     flex-wrap: wrap;

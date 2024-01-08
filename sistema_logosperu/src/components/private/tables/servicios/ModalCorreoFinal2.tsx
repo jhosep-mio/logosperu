@@ -129,6 +129,38 @@ export const ModalCorreoFinal2 = ({
             )
             if (respuesta.data.status == 'success') {
               Swal.fire('SERVICIO TERMINADO', '', 'success')
+              const enviarNotificacion = async (): Promise<void> => {
+                const data = new FormData()
+                const currentUrl = window.location.href
+                // Utilizar el objeto URL para extraer la ruta
+                const urlObject = new URL(currentUrl)
+                const pathName = urlObject.pathname
+                data.append('id_usuario', auth.id)
+                data.append('id_venta', String(idVenta))
+                data.append('nombre', auth.name)
+                data.append('icono', 'correo')
+                data.append('url', pathName)
+                data.append(
+                  'contenido',
+                  `Ha enviado el corrreo final del proyecto ${
+                    marca ?? ''
+                  }  (${datos?.nombres ?? ''})`
+                )
+                data.append('hidden_users', '')
+                try {
+                  await axios.post(`${Global.url}/nuevaNotificacion`, data, {
+                    headers: {
+                      Authorization: `Bearer ${
+                        token !== null && token !== '' ? token : ''
+                      }`
+                    }
+                  })
+                } catch (error: unknown) {
+                  console.log(error)
+                  Swal.fire('Error al subir', '', 'error')
+                }
+              }
+              enviarNotificacion()
               setAsunto('')
               setContexto('')
               getOneBrief()

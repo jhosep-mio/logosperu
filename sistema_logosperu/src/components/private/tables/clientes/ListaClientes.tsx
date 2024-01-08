@@ -14,6 +14,8 @@ import { useFormik } from 'formik'
 import { SchemaValidarVentas } from '../../../shared/schemas/Schemas'
 import { quitarAcentos } from '../../../shared/functions/QuitarAcerntos'
 import { GeneracionVentas } from './GeneracionVentas'
+import { IoCalendarOutline } from 'react-icons/io5'
+
 export const ListaClientes = (): JSX.Element => {
   const { setTitle } = useAuth()
   const [productos, setProductos] = useState<ValuesPreventaModificate[]>([
@@ -127,6 +129,9 @@ export const ListaClientes = (): JSX.Element => {
               type="search"
             />
           </button>
+          <Link to='/admin/citas'>
+            <IoCalendarOutline className='text-4xl text-main' title='Calendario de citas'/>
+          </Link>
         </div>
         <div className="w-full md:w-fit flex flex-col-reverse md:flex-row items-center md:gap-4">
           <Link
@@ -285,7 +290,9 @@ export const ListaClientes = (): JSX.Element => {
                                 ? 'Whatsapp'
                                 : orden.medio_ingreso == '6'
                                   ? 'Recomendación'
-                                  : ''}
+                                  : orden.medio_ingreso == '7'
+                                    ? 'Logos'
+                                    : ''}
                   </span>
                 </div>
                 <div className="hidden md:block md:text-center">

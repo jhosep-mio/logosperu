@@ -56,7 +56,7 @@ export const SwiperImagenes = ({
         {arrayImagenes.map((imagen: arrayImagenes) => (
           <SwiperSlide
             key={imagen.id}
-            className="w-full relative bg-transparent flex ga-2  rounded-xl items-center justify-between group h-52"
+            className="w-full relative bg-transparent flex ga-2 rounded-xl items-center justify-between group h-40"
           >
             {imagen.imagen1.archivo != null && (
               <RViewer

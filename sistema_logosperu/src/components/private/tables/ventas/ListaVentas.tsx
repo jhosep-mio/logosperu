@@ -608,7 +608,7 @@ export const ListaVentas = (): JSX.Element => {
                   </span>
               </div>
               <div className="hidden md:block md:text-center col-span-2 relative h-full">
-                <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
+                <span className="text-left text-black line-clamp-1 transition-all hover:w-[200%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                   {orden.nombre_marca ? orden.nombre_marca : 'No registrado'}
                   </span>
               </div>
@@ -628,7 +628,9 @@ export const ListaVentas = (): JSX.Element => {
                               ? 'Whatsapp'
                               : orden.medio_ingreso == '6'
                                 ? 'Recomendación'
-                                : ''}
+                                : orden.medio_ingreso == '7'
+                                  ? 'Logos'
+                                  : ''}
                 </span>
               </div>
               <div

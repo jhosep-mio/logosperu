@@ -30,12 +30,19 @@ export const VistaAdministradorToColaborador = ({
   getOneBrief,
   endOfMessagesRef,
   setShowError,
-  proyecto
+  proyecto,
+  permitirEdicion,
+  handleUpdate,
+  textoEditado,
+  setTextoEditado,
+  handleUpdateEdit
 }: {
   resumen: valuesResumen[]
   setResumen: Dispatch<SetStateAction<valuesResumen[]>>
   resumenOrdenado: valuesResumen[]
+  permitirEdicion: (fechaResumen: string) => boolean
   loading: boolean
+  handleUpdate: (id: number, nuevoTexto: string) => void
   id: string | undefined
   setRespuestaAdmin: Dispatch<SetStateAction<string>>
   respuestaAdmin: string
@@ -43,7 +50,10 @@ export const VistaAdministradorToColaborador = ({
   endOfMessagesRef: LegacyRef<HTMLDivElement> | undefined
   showError: errorValues | null
   setShowError: Dispatch<SetStateAction<errorValues | null>>
+  textoEditado: string
   proyecto: ValuesVenta | null
+  setTextoEditado: Dispatch<SetStateAction<string>>
+  handleUpdateEdit: (e: any) => void
 }): JSX.Element => {
   const handleTextAdmin = (e: any): void => {
     setRespuestaAdmin(e.target.value)
@@ -198,14 +208,49 @@ export const VistaAdministradorToColaborador = ({
                   className="text-justify bg-white p-4 rounded-l-xl relative w-[93%] ml-3
                     lowercase first-letter:uppercase text-base"
                 >
+                     {permitirEdicion(resu.fecha) &&
+                  idEdicion == resu.id &&
+                  resu.userId == auth.id
+                       ? <FaSave
+                      className="text-xl hover:text-green-500 transition-colors cursor-pointer absolute top-2 right-6 z-10"
+                      onClick={() => {
+                        handleUpdate(resu.id, textoEditado)
+                        setIdEdicion(null)
+                      }}
+                    />
+                       : (
+                           permitirEdicion(resu.fecha) &&
+                    resu.userId == auth.id && (
+                      <BsPencilSquare
+                        className="text-xl hover:text-green-500 transition-colors cursor-pointer absolute top-2 right-6 z-10"
+                        onClick={() => {
+                          setIdEdicion(resu.id)
+                          setTextoEditado(resu.texto)
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-expect-error
+                          inputRef.current.focus()
+                        }}
+                      />
+                           )
+                         )}
                   <span className="w-full text-lg lowercase first-letter:uppercase items-center gap-3 mb-3 font-bold text-black">
                   {(resu.user == 'Logos Perú')
                     ? 'ADMINISTRACIÓN'
                     : resu.user}
                   </span>
-                  <p className="text-black pt-4 lowercase first-letter:uppercase break-words">
-                    {resu.texto}
-                  </p>
+                  {permitirEdicion(resu.fecha) && idEdicion == resu.id
+                    ? (
+                    <textarea
+                      className="w-full h-full pl-4 pr-14 outline-none py-4 resize-none overflow-hidden text-black"
+                      rows={1}
+                      onFocus={handleUpdateEdit}
+                      onChange={handleUpdateEdit}
+                      value={textoEditado}
+                    ></textarea>
+                      )
+                    : (
+                    <p className="text-black pt-4 break-words">{resu.texto}</p>
+                      )}
                   <span className="w-full flex justify-end text-gray-400">
                     {resu.hora}
                   </span>

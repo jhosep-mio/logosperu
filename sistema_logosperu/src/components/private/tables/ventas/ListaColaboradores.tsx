@@ -98,7 +98,7 @@ export const ListaColaboradores = ({
                       )
                       .map(
                         (user: { id: number, id_rol: number, name: string }) =>
-                          user.id_rol == role.id && (
+                          (user.id_rol == role.id || user.id == 8) && (
                           <option value={String(user.id)} key={user.id}>
                             {user.name}
                           </option>
@@ -152,7 +152,7 @@ export const ListaColaboradores = ({
                               id_rol: number
                               name: string
                             }) =>
-                              user.id_rol == role.id && (
+                              (user.id_rol == role.id || user.id == 8) && (
                                 <option value={user.id} key={user.id}>
                                   {user.name}
                                 </option>

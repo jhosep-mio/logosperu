@@ -78,7 +78,6 @@ export const TableStatusToColaborador = (): JSX.Element => {
       }
     })
   }
-
   // Función que genera los <th> con las fechas de hoy y los dos días anteriores.
   const renderDateHeaders = (): JSX.Element[] => {
     const headers = []

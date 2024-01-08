@@ -15,12 +15,14 @@ import ReactHTMLTableToExcel from 'react-html-table-to-excel'
 import { IoCalendarOutline } from 'react-icons/io5'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
+import { useParams } from 'react-router-dom'
 
-export const TableStatus = (): JSX.Element => {
+export const TableStatusToColaborador2 = (): JSX.Element => {
   const [, setLoading] = useState(false)
   const [, setTotalRegistros] = useState(0)
   const [productos, setProductos] = useState<ValuesVenta[]>([])
   const [open, setOpen] = useState(false)
+  const { id } = useParams()
 
   const handleClose = (): void => {
     setOpen(false)
@@ -28,7 +30,7 @@ export const TableStatus = (): JSX.Element => {
 
   useEffect(() => {
     Promise.all([
-      getDataVentas('getVentas', setProductos, setTotalRegistros)
+      getDataVentas(`indexToColaboradores/${id ?? ''}`, setProductos, setTotalRegistros)
     ]).then(() => {
       setLoading(false)
     })

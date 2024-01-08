@@ -437,7 +437,9 @@ export const ListaServicios = (): JSX.Element => {
                               ? 'Whatsapp'
                               : orden.medio_ingreso == '6'
                                 ? 'Recomendación'
-                                : ''}
+                                : orden.medio_ingreso == '7'
+                                  ? 'Logos'
+                                  : ''}
                 </span>
               </div>
               <div

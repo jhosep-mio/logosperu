@@ -155,6 +155,16 @@ export const SchemaItemsToPortafolio = Yup.object().shape({
   idSubcategoria: Yup.string().required('Este campo es requerido')
 })
 
+export const SchemaLlamadas = Yup.object().shape({
+  evento: Yup.string().required('Este campo es requerido').min(1),
+  id_cliente: Yup.string().required('Este campo es requerido').min(1)
+})
+
+export const SchemePreClientes = Yup.object().shape({
+  nombres: Yup.string().required('Este campo es requerido').min(1),
+  apellidos: Yup.string().required('Este campo es requerido').min(1)
+})
+
 export const SchemePreventas = Yup.object().shape({
   nombres: Yup.string().required('Este campo es requerido').min(1),
   empresa: Yup.string().required('Este campo es requerido').min(1),

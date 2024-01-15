@@ -9,6 +9,15 @@ export interface usurioValues {
   resumen: string
 }
 
+export interface preclientesValues {
+  nombres: string
+  empresa: string
+  apellidos: string
+  celular: string
+  sexo: string
+  medio_ingreso: string
+}
+
 export interface notificacionesValues {
   id: number
   id_usuario: number
@@ -121,6 +130,17 @@ export interface validateClientes {
   medio_ingreso: string
   nombres: string
   apellidos: string
+}
+
+export interface historialValues {
+  id: string
+  id_cliente: string
+  nombres: string
+  apellidos: string
+  celular: string
+  duracion: string
+  evento: string
+  created_at: string
 }
 
 export interface ValuesVentasEdit {
@@ -482,6 +502,24 @@ export interface ValuesPreventa {
   sexo: string
   dni_ruc: string
   medio_ingreso: string
+}
+
+export interface userValues {
+  id: string
+  name: string
+  email: string
+  email_alter: string
+  firma: string
+  pass_email: string
+  id_rol: number
+}
+
+export interface pendientesValues {
+  title: string
+  start: string
+  end: string
+  client: ValuesPreventa
+  user: userValues
 }
 
 export interface ValuesPreventaModificate {

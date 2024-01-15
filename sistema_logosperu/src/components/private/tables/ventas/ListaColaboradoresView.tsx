@@ -41,7 +41,6 @@ export const ListaColaboradoresView = ({
               </h5>
               <select
                     className="line-clamp-1 bg-secondary-900 border-none outline-none text-center w-full"
-                    placeholder="Ruta"
                     disabled
                     value={pro.peso}
                   >

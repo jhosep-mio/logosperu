@@ -5,3 +5,5 @@ declare module 'react-viewerjs' {
 
 declare module 'react-big-calendar'
 declare module 'react-dom/client'
+declare module 'react-datepicker'
+declare module 'uuid'

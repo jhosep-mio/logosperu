@@ -1318,6 +1318,8 @@ export default function LinesChart (): JSX.Element {
             <div className="w-2/5 h-96 bg-white rounded-lg">
               <Bar
                 data={dataGenero}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 options={optionsGenero}
                 className="m-auto w-full h-full p-4 object-contain graficaas"
               />

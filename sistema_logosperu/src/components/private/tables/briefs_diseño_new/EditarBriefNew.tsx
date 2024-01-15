@@ -98,8 +98,6 @@ export const EditarBriefNew = (): JSX.Element => {
       }
     )
 
-    console.log(request.data)
-
     setValues({
       ...values,
       id_venta: request.data[0].id_venta,

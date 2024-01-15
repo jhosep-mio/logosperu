@@ -716,7 +716,7 @@ export const ListaProyectosAgencia = (): JSX.Element => {
                   <MenuItem className="p-0 hover:bg-transparent">
                     {orden.id != null && (
                       <Link
-                        to={`view/${orden.id}`}
+                        to={`/admin/lista-ventas/view/${orden.id}`}
                         className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
                       >
                         Ver
@@ -726,7 +726,7 @@ export const ListaProyectosAgencia = (): JSX.Element => {
                   <MenuItem className="p-0 hover:bg-transparent">
                     {orden.id != null && (
                       <Link
-                        to={`/admin/lista-clientes/editar/${orden.id}`}
+                        to={`/admin/lista-ventas/editar/${orden.id}`}
                         className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
                       >
                         Editar

@@ -76,7 +76,6 @@ export const ListaColaboradores = ({
           <div className="w-full">
             <select
               className="w-full py-2 px-4 outline-none rounded-lg bg-secondary-100 text-white"
-              placeholder="Ruta"
               value={peso}
               onChange={(e) => {
                 setPeso(e.target.value)
@@ -90,7 +89,6 @@ export const ListaColaboradores = ({
                     usuarios
                       .filter(
                         (usuario: valueUsuarios) =>
-                          usuario.id !== 1 &&
                           !arrayPesos.some(
                             (pesoObj: { peso: string }) =>
                               pesoObj.peso == String(usuario.id)
@@ -98,7 +96,7 @@ export const ListaColaboradores = ({
                       )
                       .map(
                         (user: { id: number, id_rol: number, name: string }) =>
-                          (user.id_rol == role.id || user.id == 8) && (
+                          (user.id_rol == role.id || user.id == 8 || user.id == 1) && (
                           <option value={String(user.id)} key={user.id}>
                             {user.name}
                           </option>
@@ -136,7 +134,6 @@ export const ListaColaboradores = ({
               </h5>
               <select
                     className="line-clamp-1 bg-secondary-900 border-none outline-none text-center w-full"
-                    placeholder="Ruta"
                     value={pro.peso}
                     onChange={(e) => {
                       handleInputChange(e, pro.id, 'peso')
@@ -152,7 +149,7 @@ export const ListaColaboradores = ({
                               id_rol: number
                               name: string
                             }) =>
-                              (user.id_rol == role.id || user.id == 8) && (
+                              (user.id_rol == role.id || user.id == 8 || user.id == 1) && (
                                 <option value={user.id} key={user.id}>
                                   {user.name}
                                 </option>

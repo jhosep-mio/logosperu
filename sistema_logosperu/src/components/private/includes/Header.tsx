@@ -1,5 +1,5 @@
 import { RiArrowDownSLine, RiLogoutCircleRLine } from 'react-icons/ri'
-
+import { useState, useEffect } from 'react'
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
 import '@szhsin/react-menu/dist/index.css'
 import '@szhsin/react-menu/dist/transitions/slide.css'
@@ -13,6 +13,7 @@ import { ModalNotificaciones } from '../tables/notificaciones/ModalNotificacione
 const Header = (): JSX.Element => {
   const { auth, setAuth, title } = useAuth()
   const navigate = useNavigate()
+  const [colaboradores, setColaboradores] = useState([])
 
   const cerrarSession = async (): Promise<void> => {
     const token = localStorage.getItem('token')
@@ -37,6 +38,20 @@ const Header = (): JSX.Element => {
     })
     navigate('/login')
   }
+
+  const token = localStorage.getItem('token')
+  const getColaboradores = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/getUsuarios`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+    setColaboradores(request.data)
+  }
+
+  useEffect(() => {
+    getColaboradores()
+  }, [])
 
   return (
     <header className="h-[7vh] lg:h-[10vh] border-b border-gray-100 shadow-sm p-8 flex items-center justify-between bg-white z-10">
@@ -95,7 +110,7 @@ const Header = (): JSX.Element => {
           </MenuItem>
         </Menu>
       </nav>
-      <ModalNotificaciones />
+      <ModalNotificaciones colaboradores={colaboradores} />
     </header>
   )
 }

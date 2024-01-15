@@ -14,7 +14,7 @@ import { SchemaValidarVentas } from '../../../../shared/schemas/Schemas'
 import { GeneracionVentas } from '../../clientes/GeneracionVentas'
 import { type ValuesPlanes } from '../../../../shared/schemas/Interfaces'
 
-export const ModalOpciones = ({
+export const ModalOpcionesToLista = ({
   eventoSelected,
   open,
   setOpen,
@@ -67,7 +67,7 @@ export const ModalOpciones = ({
               onClick={() => {
                 window.open(
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/restrict-template-expressions
-                  `/admin/lista-clientes/editar/${eventoSelected?.event?.client.id}`
+                  `/admin/lista-clientes/editar/${eventoSelected?.client.id}`
                 )
                 setOpen(false)
               }}
@@ -76,7 +76,7 @@ export const ModalOpciones = ({
             </div>
             <Link
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/restrict-template-expressions
-              to={`/admin/lista-clientes/resumen/${eventoSelected?.event?.client.id}`}
+              to={`/admin/lista-clientes/resumen/${eventoSelected?.client.id}`}
               className="hover:bg-gray-200 p-2 rounded-full group cursor-pointer transition-colors"
             >
               <GoComment className="group-hover:text-gray-400" />
@@ -109,20 +109,20 @@ export const ModalOpciones = ({
             <div className="flex gap-4 items-center">
               <span className="w-3 h-3 bg-main rounded-full text-black"></span>
               <div className="flex flex-col">
-                <span className="text-lg">{eventoSelected?.event?.title}</span>
+                <span className="text-lg">{eventoSelected?.title}</span>
                 <div className="flex text-gray-500 gap-2 items-center">
                   <span className="first-letter:uppercase ">
-                    {moment(eventoSelected?.event?.start).format(
+                    {moment(eventoSelected?.start).format(
                       'dddd, DD [de] MMMM'
                     )}
                   </span>
                   <span>.</span>
                   <span>
-                    {moment(eventoSelected?.event?.start).format('HH:mm')}
+                    {moment(eventoSelected?.start).format('HH:mm')}
                   </span>
                   <span>-</span>
                   <span>
-                    {moment(eventoSelected?.event?.end).format('HH:mm')}
+                    {moment(eventoSelected?.end).format('HH:mm')}
                   </span>
                 </div>
               </div>
@@ -134,11 +134,11 @@ export const ModalOpciones = ({
               <div className="flex flex-col gap-2">
                 <p className="flex gap-3">
                   <span className="font-medium ">Celular:</span>{' '}
-                  {eventoSelected?.event?.client?.celular}
+                  {eventoSelected?.client?.celular}
                 </p>
                 <p className="flex gap-3">
                   <span className="font-medium ">Correo:</span>{' '}
-                  {eventoSelected?.event?.client?.email}
+                  {eventoSelected?.client?.email}
                 </p>
               </div>
             </div>
@@ -147,7 +147,7 @@ export const ModalOpciones = ({
             <div className="flex gap-3 items-center">
               <GoCalendar className="text-xl text-gray-600" />
               <span className="text-base text-gray-600">
-                {eventoSelected?.event?.user?.name}
+                {eventoSelected?.user?.name}
               </span>
             </div>
           </div>
@@ -157,15 +157,15 @@ export const ModalOpciones = ({
                   setOpen3(true)
                   setValues({
                     ...values,
-                    id_cliente: String(eventoSelected?.event?.client?.id),
-                    medio_ingreso: eventoSelected?.event?.client?.medio_ingreso,
-                    nombre_empresa: eventoSelected?.event?.client?.empresa
-                      ? eventoSelected?.event?.client?.empresa
+                    id_cliente: String(eventoSelected?.client?.id),
+                    medio_ingreso: eventoSelected?.client?.medio_ingreso,
+                    nombre_empresa: eventoSelected?.client?.empresa
+                      ? eventoSelected?.client?.empresa
                       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                      : `${eventoSelected?.event?.client?.nombres} ${eventoSelected?.event?.client?.apellidos}`,
+                      : `${eventoSelected?.client?.nombres} ${eventoSelected?.client?.apellidos}`,
                     dni_ruc: `${
                       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                        eventoSelected?.event?.client?.dni_ruc != null ? eventoSelected?.event?.client?.dni_ruc : ''
+                        eventoSelected?.client?.dni_ruc != null ? eventoSelected?.client?.dni_ruc : ''
                       }`
                   })
                 }}

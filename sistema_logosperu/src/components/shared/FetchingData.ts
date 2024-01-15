@@ -71,6 +71,7 @@ export const getData2 = async (ruta: string, setDatos: Dispatch<SetStateAction<V
     }
   })
   setDatos(request.data)
+  console.log(request.data)
   setTotalRegistros(request.data.length)
 }
 

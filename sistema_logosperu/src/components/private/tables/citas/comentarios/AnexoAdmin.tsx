@@ -1,6 +1,7 @@
 import {
   BsPencilSquare,
-  BsReplyAllFill
+  BsReplyAllFill,
+  BsTrash
 } from 'react-icons/bs'
 import {
   type Dispatch,
@@ -16,6 +17,9 @@ import { Global } from '../../../../../helper/Global'
 import { fechaFormateada } from '../../../../shared/functions/GenerarTextoEnLetras'
 import { chat } from '../../../../shared/Images'
 import { AnexoRespuesta } from './AnexoRespuesta'
+import { RViewer, RViewerTrigger } from 'react-viewerjs'
+import { IoDocumentOutline } from 'react-icons/io5'
+import { limpiarNombreArchivo } from '../../../../shared/functions/QuitarAcerntos'
 
 export const AnexoAdmin = ({
   resumen,
@@ -133,6 +137,90 @@ export const AnexoAdmin = ({
     setIdEdicion(null)
   }
 
+  const descargarArchivos = async (nombre: string): Promise<void> => {
+    const response = await axios.get(
+          `${Global.url}/descargarArchivoToWsp/${nombre ?? ''}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token ?? ''}`
+            },
+            responseType: 'blob'
+          }
+    )
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    const namelimpio = limpiarNombreArchivo(nombre)
+    link.setAttribute('download', namelimpio) // Asigna el nombre al archivo descargado
+    document.body.appendChild(link)
+    link.click()
+
+    // Limpieza después de la descarga
+    if (link.parentNode) {
+      link.parentNode.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    }
+  }
+
+  const eliminarArchivo = async (nombre: string): Promise<void> => {
+    await axios.get(
+        `${Global.url}/deleteArchivoWsp/${nombre ?? ''}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token ?? ''}`
+          },
+          responseType: 'blob'
+        }
+    )
+  }
+
+  const eliminarResumen = async (idResumen: number | null, nombre: string): Promise<void> => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar este archivo?')) {
+      setResumen((resumenesPrevios) => {
+        const nuevosResumenes = resumenesPrevios.filter((resu) => resu.id !== idResumen)
+        const enviarDatos = async (): Promise<void> => {
+          const data = new FormData()
+          data.append('resumen', JSON.stringify(nuevosResumenes))
+          data.append('_method', 'PUT')
+          try {
+            const respuesta = await axios.post(
+              `${Global.url}/saveResumen/${id ?? ''}`,
+              data,
+              {
+                headers: {
+                  Authorization: `Bearer ${
+                    token !== null && token !== '' ? token : ''
+                  }`
+                }
+              }
+            )
+            if (respuesta.data.status == 'success') {
+              setShowError({
+                estado: 'success',
+                texto: 'Archivo eliminado correctamente'
+              })
+              eliminarArchivo(nombre)
+              getOneBrief()
+            } else {
+              setShowError({
+                estado: 'warning',
+                texto: 'Error al eliminar el archivo'
+              })
+            }
+          } catch (error: unknown) {
+            setShowError({
+              estado: 'warning',
+              texto: 'Error al eliminar el archivo'
+            })
+          }
+        }
+
+        enviarDatos() // Asegúrate de llamar a esta función después de actualizar el estado
+        return nuevosResumenes
+      })
+    }
+  }
+
   return (
     <>
       {resumenOrdenado.length > 0
@@ -153,7 +241,92 @@ export const AnexoAdmin = ({
           <>
             <div className="flex flex-col gap-2 " key={index}>
               {fechaElement}
-              <div className={`relative bg-white w-full md:w-1/2 ${(resu.userId != '1') && (resu.userId != '99') && (resu.userId != '8') ? 'md:ml-[50%]' : ''} rounded-xl group`}>
+              {/* IMAGENES */}
+              {// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                resu.tipo == 'imagen'
+                  ? <div className={`relative bg-white w-full md:w-fit max-w-1/2 ${(resu.userId != '1') && (resu.userId != '99') && (resu.userId != '8') ? 'md:ml-[50%]' : ''} rounded-xl group`}>
+                <BsReplyAllFill
+                  className="text-xl text-transparent group-hover:text-main transition-colors cursor-pointer absolute top-2 right-6 z-10"
+                  onClick={() => {
+                    setOpen(true)
+                    setIdAdd(resu.id)
+                  }}
+                />
+                {resu.userId == auth.id &&
+                    <BsTrash
+                        className="text-lg text-transparent group-hover:text-main transition-colors cursor-pointer absolute top-2 right-14 z-10"
+                        onClick={async () => { await eliminarResumen(resu.id, resu.texto) }}
+                    />
+                }
+                <div
+                  className="text-justify bg-white p-2 rounded-xl relative min-w-[250px] w-fit max-w-[93%] ml-3
+                    lowercase first-letter:uppercase text-base"
+                >
+                  <span className="w-full text-lg lowercase first-letter:uppercase items-center gap-3 mb-3 font-bold text-black">
+                  {(resu.user == 'Logos Perú')
+                    ? 'ADMINISTRACIÓN'
+                    : resu.user}
+                  </span>
+                    <RViewer
+                            imageUrls={`${Global.urlImages}/archivosresumen/${resu.texto}`}
+                        >
+                        <RViewerTrigger>
+                            <img src={`${Global.urlImages}/archivosresumen/${resu.texto}`} alt="" className='w-full h-[100px] object-contain mt-2 cursor-pointer'/>
+                        </RViewerTrigger>
+                    </RViewer>
+                  <span className="w-full flex justify-end text-gray-400">
+                    {resu.hora}
+                  </span>
+                </div>
+              </div>
+                //   DOCUMENTOS
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                  : resu.tipo == 'documento'
+                    ? <div className={`relative bg-white w-full md:w-fit max-w-1/2 ${(resu.userId != '1') && (resu.userId != '99') && (resu.userId != '8') ? 'md:ml-[50%]' : ''} rounded-xl group`}>
+                <BsReplyAllFill
+                className="text-xl text-transparent group-hover:text-main transition-colors cursor-pointer absolute top-2 right-6 z-10"
+                onClick={() => {
+                  setOpen(true)
+                  setIdAdd(resu.id)
+                }}
+                />
+                {resu.userId == auth.id &&
+                    <BsTrash
+                        className="text-lg mt-1 text-transparent group-hover:text-main transition-colors cursor-pointer absolute top-2 right-14 z-10"
+                        onClick={async () => { await eliminarResumen(resu.id, resu.texto) }}
+                    />
+                }
+                <div
+                className="text-justify bg-white p-2 rounded-xl relative min-w-[250px] w-fit max-w-[93%] mx-3
+                lowercase first-letter:uppercase text-base"
+                >
+                <span className="w-full text-lg lowercase first-letter:uppercase items-center gap-3 mb-3 font-bold text-black">
+                {(resu.user == 'Logos Perú')
+                  ? 'ADMINISTRACIÓN'
+                  : resu.user}
+                </span>
+                    <div className='flex gap-3 flex-col mt-4 w-[250px] mb-2'>
+                        <div className='flex gap-3 '>
+                            <IoDocumentOutline className="text-gray-500  text-2xl w-auto" />
+                            <span className='line-clamp-1 flex-1 w-full text-gray-700'>{limpiarNombreArchivo(resu.texto)}</span>
+                        </div>
+                        <div className='w-full flex gap-2'>
+                            <button
+                            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                            onClick={async () => { await descargarArchivos(resu.texto) }}
+                            type='button' className='w-full bg-gray-400 hover:bg-gray-500 transition-colors rounded-md text-white py-1 mt-2'>Guardar</button>
+                        </div>
+                    </div>
+                    {/* <img src={`${Global.urlImages}/archivosresumen/${resu.texto}`} alt="" className='w-full h-[100px] object-contain mt-3 cursor-pointer'/> */}
+                <span className="w-full flex justify-end text-gray-400">
+                {resu.hora}
+                </span>
+                </div>
+                </div>
+                //   TEXTO
+                    : <div className={`relative bg-white w-full md:w-1/2 ${(resu.userId != '1') && (resu.userId != '99') && (resu.userId != '8') ? 'md:ml-[50%]' : ''} rounded-xl group`}>
                 {/* USUARIO */}
                 <BsReplyAllFill
                   className="text-xl text-transparent group-hover:text-main transition-colors cursor-pointer absolute top-2 right-6 z-10"
@@ -214,7 +387,7 @@ export const AnexoAdmin = ({
                   </span>
                 </div>
                 {/* END- USUARIO */}
-              </div>
+              </div>}
               {resu?.respuesta?.texto && (
                 <>
                   <div
@@ -313,6 +486,7 @@ export const AnexoAdmin = ({
         setShowError={setShowError}
         proyecto={proyecto}
       />
+
     </>
   )
 }

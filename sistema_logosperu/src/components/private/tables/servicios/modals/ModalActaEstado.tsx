@@ -18,7 +18,7 @@ import { Global } from '../../../../../helper/Global'
 import axios from 'axios'
 import Swal, { type SweetAlertResult } from 'sweetalert2'
 import useAuth from '../../../../../hooks/useAuth'
-import { format } from 'date-fns-tz'
+import { format } from 'date-fns'
 
 const Transition = React.forwardRef(function Transition (
   props: TransitionProps & {
@@ -403,6 +403,8 @@ export const ModalActaEstado = ({
 
   React.useEffect(() => {
     const fechaActual = new Date()
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const fechaFormateada = format(fechaActual, 'dd/MM/yyyy', { timeZone: 'America/Lima' })
     setAsunto(`ACTA DE ESTADO DE PROYECTO - ${(datos.nombre_marca).toUpperCase()}`)
     setEmpresa((datos.nombre_marca).toUpperCase())

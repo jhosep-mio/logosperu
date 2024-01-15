@@ -68,3 +68,9 @@ export function limpiarCadena (cadena: string): string {
     return '--'
   }
 }
+
+export function limpiarNombreArchivo (uniqueFileName: string): string {
+  const parts = uniqueFileName.split('_')
+  // Si hay al menos dos partes (UUID y nombre de archivo), devuelve la segunda parte
+  return parts.length >= 2 ? parts.slice(1).join('_') : uniqueFileName
+}

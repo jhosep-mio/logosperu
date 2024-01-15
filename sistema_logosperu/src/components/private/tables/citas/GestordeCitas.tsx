@@ -6,9 +6,10 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import {
   type usurioValues,
   type errorValues,
-  type ValuesPreventaModificate
+  type ValuesPreventaModificate,
+  type ValuesPlanes
 } from '../../../shared/schemas/Interfaces'
-import { getClientes } from '../../../shared/FetchingData'
+import { getClientes, getDataToPlanes } from '../../../shared/FetchingData'
 import { Loading } from '../../../shared/Loading'
 import { ModalClientes } from './ModalClientes'
 import { ModalOpciones } from './modal/ModalOpciones'
@@ -33,6 +34,7 @@ interface values {
 
 export const GestordeCitas = (): JSX.Element => {
   const token = localStorage.getItem('token')
+  const [planes, setplanes] = useState<ValuesPlanes[]>([])
   const [loading, setLoading] = useState(true)
   const { auth } = useAuth()
   const [clientes, setclientes] = useState<ValuesPreventaModificate[]>([])
@@ -44,8 +46,9 @@ export const GestordeCitas = (): JSX.Element => {
     end: Date
   } | null>(null)
   const [open, setOpen] = useState(false)
+  const [, setTotalRegistros2] = useState(0)
   const [open2, setOpen2] = useState(false)
-
+  const [open3, setOpen3] = useState(false)
   const [events, setEvents] = useState<Event[]>([])
   const messages = {
     allDay: 'Todo el día',
@@ -137,10 +140,10 @@ export const GestordeCitas = (): JSX.Element => {
           }}
           rel="noreferrer"
         >
-          <div className=' div_cita px-1 h-full text-white bg-[#d23741] rounded-t-md'>
-            <span className='block lowercase'>{props.title}</span>
+          <div className=" div_cita px-1 h-full text-white bg-[#d23741] rounded-t-md">
+            <span className="block lowercase">{props.title}</span>
             {props.client && (
-              <div className=''>
+              <div className="">
                 Cliente: {props.client.nombres} {props.client.apellidos}
               </div>
             )}
@@ -210,11 +213,13 @@ export const GestordeCitas = (): JSX.Element => {
   }
 
   useEffect(() => {
-    Promise.all([getClientes('getClientes', setclientes), getCitas()]).then(
-      () => {
-        setLoading(false)
-      }
-    )
+    Promise.all([
+      getClientes('getClientes', setclientes),
+      getCitas(),
+      getDataToPlanes('getPlanes', setplanes, setTotalRegistros2)
+    ]).then(() => {
+      setLoading(false)
+    })
   }, [])
 
   useEffect(() => {
@@ -251,9 +256,18 @@ export const GestordeCitas = (): JSX.Element => {
         ? <Loading />
         : (
         <>
-          <h1 className="w-full text-center text-4xl text-black font-bold font_main uppercase">
-            Gestor de Citas
-          </h1>
+          <div className='flex w-full justify-center'>
+          <div className='w-full'>
+                <h2 className="text-center mx-auto text-3xl text-white rounded-xl py-1 bg-main/80 px-10 w-fit font-bold font_main uppercase">
+                Gestor de Citas
+                </h2>
+            </div>
+            <div className='w-full '>
+                <Link to='/admin/historialllamadas' className="w-fit mx-auto text-center rounded-xl py-1 block text-3xl hover:bg-main/80 hover:text-white transition-colors px-10 text-black font-bold font_main uppercase">
+                Historial de llamadas
+                </Link>
+            </div>
+          </div>
           <Link
             to="/admin/lista-clientes"
             className="fixed w-fit md:top-[3%] lg:top-[3%] text-3xl  right-4 text-red-500 cursor-pointer"
@@ -293,6 +307,9 @@ export const GestordeCitas = (): JSX.Element => {
         open={open2}
         setOpen={setOpen2}
         updateCita={updateCita2}
+        open3={open3}
+        setOpen3={setOpen3}
+        planes={planes}
       />
 
       <AnimatePresence>

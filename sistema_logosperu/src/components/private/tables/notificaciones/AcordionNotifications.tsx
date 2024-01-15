@@ -100,7 +100,7 @@ export const AcordionNotifications = ({
   }
 
   return (
-    <div className='h-[85%] overflow-y-auto mt-3'>
+    <div className='h-[77%] overflow-y-auto '>
       {Object.keys(groupedNotificaciones).map((fechaKey) => (
         <Accordion
           key={fechaKey}
@@ -161,7 +161,7 @@ export const AcordionNotifications = ({
                                 notificacion.created_at
                               )}
                             </p>
-                            <span className="text-black block mt-1">
+                            <span className="text-black  mt-1 line-clamp-2">
                               {notificacion.contenido}
                             </span>
                           </div>

@@ -86,7 +86,6 @@ export const ListaUsuarios = ({
                   </h5>
                   <select
                     className="line-clamp-1 bg-transparent border-none outline-none text-center w-full"
-                    placeholder="Ruta"
                     value={pro.peso}
                     onChange={(e) => {
                       handleInputChange(e, pro.id, 'peso')

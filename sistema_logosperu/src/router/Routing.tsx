@@ -67,6 +67,12 @@ import { StatusToColaborador } from '../components/private/tables/ventas/StatusT
 import { ListaProyectosAgencia } from '../components/private/tables/ventas/ListaProyectosAgencia'
 import { GestordeCitas } from '../components/private/tables/citas/GestordeCitas'
 import { ComentariosClientes } from '../components/private/tables/citas/comentarios/ComentariosClientes'
+import { HistorialLlamadas } from '../components/private/tables/citas/HistorialLlamadas'
+import { ListaHistorial } from '../components/private/tables/citas/ListaHistorial'
+import { ListaPendientes } from '../components/private/tables/citas/ListaPendientes'
+import { Preclientes } from '../components/private/tables/pre_clientes/Preclientes'
+import { RegistroPreClientes } from '../components/private/tables/pre_clientes/RegistroPreClientes'
+import { EditarPreCliente } from '../components/private/tables/pre_clientes/EditarPreCliente'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -109,6 +115,12 @@ export const Routing = (): JSX.Element => {
 
             {/* CLIENTES */}
             <Route path="lista-clientes" element={<ListaClientes />} />
+            <Route path="lista-pre-clientes" element={<Preclientes />} />
+            <Route path="lista-pre-clientes/agregar" element={<RegistroPreClientes />} />
+            <Route path="lista-pre-clientes/editar/:id" element={<EditarPreCliente />} />
+
+            <Route path="lista-historial" element={<ListaHistorial />} />
+            <Route path="llamadas-pendientes" element={<ListaPendientes/>} />
             <Route
               path="lista-clientes/agregar"
               element={<RegistrarCliente />}
@@ -204,6 +216,7 @@ export const Routing = (): JSX.Element => {
           <Route path="admin/lista-ventas/metricas" element={<Metricas />} />
           <Route path="admin/lista-ventas/status" element={<Status />} />
           <Route path="admin/citas" element={<GestordeCitas />} />
+          <Route path="admin/historialllamadas" element={<HistorialLlamadas />} />
           {/* PUBLICO */}
           <Route
             path="*"

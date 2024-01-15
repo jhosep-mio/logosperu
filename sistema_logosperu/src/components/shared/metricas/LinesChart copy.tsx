@@ -1162,7 +1162,11 @@ export default function LinesChart (): JSX.Element {
 
           <section className="flex flex-row justify-between items-center w-full h-full gap-4 px-4 py-4">
             <div className="w-2/5 h-96 bg-white rounded-lg">
-              <Bar data={dataGenero} options={optionsGenero} className="m-auto w-full h-full p-4 object-contain graficaas"/>
+
+              <Bar data={dataGenero}
+               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+               // @ts-expect-error
+              options={optionsGenero} className="m-auto w-full h-full p-4 object-contain graficaas"/>
             </div>
 
             <div className="w-3/5 h-96 bg-white rounded-lg">

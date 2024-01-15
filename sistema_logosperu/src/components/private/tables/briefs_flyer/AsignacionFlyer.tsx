@@ -148,7 +148,6 @@ export const AsignacionFlyer = (): JSX.Element => {
               <div className="w-full">
                 <select
                   className="w-full py-2 px-4 outline-none rounded-lg bg-main_2-250 text-black"
-                  placeholder="Ruta"
                   value={peso}
                   onChange={(e) => {
                     setPeso(e.target.value)
@@ -202,7 +201,6 @@ export const AsignacionFlyer = (): JSX.Element => {
                   </h5>
                   <select
                     className="line-clamp-1 bg-transparent border-none outline-none text-center w-full"
-                    placeholder="Ruta"
                     value={pro.peso}
                     onChange={(e) => {
                       handleInputChange(e, pro.id, 'peso')

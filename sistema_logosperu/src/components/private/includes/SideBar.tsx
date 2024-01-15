@@ -36,6 +36,8 @@ const SideBar = (): JSX.Element => {
   const [showSubmenu5, setShowSubmenu5] = useState(false)
   const [showSubmenu6, setShowSubmenu6] = useState(false)
   const [showSubmenu7, setShowSubmenu7] = useState(false)
+  const [showSubmenu8, setShowSubmenu8] = useState(false)
+  const [showSubmenu9, setShowSubmenu9] = useState(false)
 
   const navigate = useNavigate()
   const [activeItem, setActiveItem] = useState(0)
@@ -119,21 +121,131 @@ const SideBar = (): JSX.Element => {
                         {route.peso == 'superusuario'
                           ? (
                           <>
-                            <li key={22}>
-                              <Link
-                                to="lista-clientes"
-                                className={
-                                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
-                                }
+                          <li key={22}>
+                              <button
                                 onClick={() => {
-                                  handleItemClick2(1)
-                                  setShowMenu(false)
-                                  setLoadingComponents(false)
+                                  setShowSubmenu8(!showSubmenu8)
                                 }}
+                                className="flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full"
                               >
-                                <FaUserGroup className="text-main/80 text-xl" />{' '}
-                                Clientes
-                              </Link>
+                                <span className="flex items-center gap-4 w-full">
+                                  <FaUserGroup className="text-main/80 text-xl" />{' '}
+                                  Clientes
+                                </span>
+                                <RiArrowRightSLine
+                                  className={`mt-1 ${
+                                    showSubmenu8 ? 'rotate-90' : ''
+                                  } transition-all`}
+                                />
+                              </button>
+                              <ul
+                                className={` ml-0 ${
+                                  showSubmenu8 ? '' : 'h-0'
+                                } overflow-hidden transition-all`}
+                              >
+                                <li>
+                                  <Link
+                                    to="lista-clientes"
+                                    className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                      activeItem == 399
+                                        ? 'before:bg-main'
+                                        : 'before:bg-gray-500'
+                                    } hover:text-main transition-colors`}
+                                    onClick={() => {
+                                      handleItemClick(399)
+                                      setShowMenu(false)
+                                      setLoadingComponents(false)
+                                    }}
+                                  >
+                                    Clientes
+                                  </Link>
+                                  <Link
+                                    to="lista-pre-clientes"
+                                    className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                      activeItem == 339
+                                        ? 'before:bg-main'
+                                        : 'before:bg-gray-500'
+                                    } hover:text-main transition-colors`}
+                                    onClick={() => {
+                                      handleItemClick(339)
+                                      setShowMenu(false)
+                                      setLoadingComponents(false)
+                                    }}
+                                  >
+                                    Pre-Clientes
+                                  </Link>
+                                </li>
+                                <ul
+                                  className={` ${
+                                    showSubmenu8 ? '' : 'h-0'
+                                  } overflow-hidden transition-all`}
+                                >
+                                  <button
+                                    onClick={() => {
+                                      setShowSubmenu9(!showSubmenu9)
+                                      handleItemClick(397)
+                                    }}
+                                    className={`bg-transparent ${
+                                      showSubmenu9
+                                        ? 'after:absolute after:w-4 after:bg-gray-500 after:h-[1px] after:bottom-0 after:left-0'
+                                        : ''
+                                    }  py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                      activeItem == 397
+                                        ? 'before:bg-main'
+                                        : 'before:bg-gray-500'
+                                    } hover:text-main transition-colors`}
+                                  >
+                                    <span className="flex items-center gap-4 w-full ">
+                                      Citas
+                                    </span>
+                                    <RiArrowRightSLine
+                                      className={`mt-1  ${
+                                        showSubmenu7 ? 'rotate-90' : ''
+                                      } transition-all`}
+                                    />
+                                  </button>
+                                  <ul
+                                    className={` ml-4 ${
+                                      showSubmenu9 ? '' : 'h-0'
+                                    } overflow-y-hidden transition-all`}
+                                  >
+                                    <li >
+                                        <Link
+                                            to={'/admin/llamadas-pendientes'}
+                                            className={`py-2 px-4 border-l  flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                            activeItem == 375
+                                                ? 'before:bg-main'
+                                                : 'before:bg-gray-500'
+                                            } hover:text-main transition-colors`}
+                                            onClick={() => {
+                                              handleItemClick(375)
+                                              setShowMenu(false)
+                                              setLoadingComponents(false)
+                                            }}
+                                        >
+                                            Pendientes
+                                        </Link>
+                                    </li>
+                                    <li >
+                                        <Link
+                                            to={'/admin/lista-historial'}
+                                            className={`py-2 px-4 border-l  flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                            activeItem == 395
+                                                ? 'before:bg-main'
+                                                : 'before:bg-gray-500'
+                                            } hover:text-main transition-colors`}
+                                            onClick={() => {
+                                              handleItemClick(395)
+                                              setShowMenu(false)
+                                              setLoadingComponents(false)
+                                            }}
+                                        >
+                                            Historial
+                                        </Link>
+                                    </li>
+                                  </ul>
+                                </ul>
+                              </ul>
                             </li>
                             <li key={23}>
                               <Link

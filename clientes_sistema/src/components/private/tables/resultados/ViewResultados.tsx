@@ -78,7 +78,7 @@ const useResponsiveTour = (): any => {
 export const ViewResultados = (): JSX.Element => {
   const { steps } = useResponsiveTour()
   const { id } = useParams()
-  const { token, guia, setGuia } = useAuth()
+  const { token, guia, setGuia, auth } = useAuth()
   const navigate = useNavigate()
   const [limite, setLimite] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -295,6 +295,34 @@ export const ViewResultados = (): JSX.Element => {
     }
   }
 
+  const enviarNotificacion = async (): Promise<void> => {
+    const data = new FormData()
+    // Utilizar el objeto URL para extraer la ruta
+    data.append('id_general', auth.name)
+    data.append('tipo', 'cliente')
+    data.append('nombre', auth.name)
+    data.append('icono', 'descarga')
+    data.append('url', id ?? '')
+    data.append(
+      'contenido',
+      `Ha descargado sus archivos finales del proyecto ${
+        datos.nombre_marca ?? ''
+      }  (${datos?.nombres ?? ''} )`
+    )
+    try {
+      const resultado = await axios.post(`${Global.url}/storeNotiGeneral`, data, {
+        headers: {
+          Authorization: `Bearer ${
+            token !== null && token !== '' ? token : ''
+          }`
+        }
+      })
+      console.log(resultado)
+    } catch (error: unknown) {
+      console.log(error)
+    }
+  }
+
   const descargarFinal = async (): Promise<void> => {
     if (resultado.limitar_descarga <= 3 && limite <= 2) {
       setLoading(true)
@@ -328,6 +356,9 @@ export const ViewResultados = (): JSX.Element => {
           }
         )
         if (resultadoDes.data.mensaje) {
+          if (resultado.limitar_descarga <= 1 && limite < 1) {
+            enviarNotificacion()
+          }
           setLimite(resultadoDes.data.mensaje)
           Swal.fire(
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -373,9 +404,11 @@ export const ViewResultados = (): JSX.Element => {
       // Asegurarse de que fechaCreacion esté disponible
       const actualizarTiempoRestante = (): void => {
         const ahora = new Date()
+        const creacion = new Date(fechaCreacion)
+        creacion.setHours(23, 59, 60, 60) // Establecer la hora a las 23:59
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        const tiempoTranscurrido = ahora - new Date(fechaCreacion)
+        const tiempoTranscurrido = ahora - creacion
         const restante = plazo - tiempoTranscurrido
         if (restante <= 0) {
           setTiempoRestante(0)

@@ -7,12 +7,13 @@ import {
   type valuesResumen,
   type arrayCorreos,
   type ValuesVenta,
-  type errorValues
+  type errorValues,
+  type ValuesPlanes
 } from '../../../shared/schemas/Interfaces'
 import { Paginacion } from '../../../shared/Paginacion'
-import { getDataVentas } from '../../../shared/FetchingData'
+import { getDataToPlanes, getDataVentas } from '../../../shared/FetchingData'
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
-import { quitarAcentos } from '../../../shared/functions/QuitarAcerntos'
+import { limpiarCadena, quitarAcentos } from '../../../shared/functions/QuitarAcerntos'
 import { ModalFechaInicio } from './ModalFechaInicio'
 import { ModalCorreoFinal } from './ModalCorreoFinal'
 import Swal, { type SweetAlertResult } from 'sweetalert2'
@@ -47,6 +48,7 @@ type Value = ValuePiece | [ValuePiece, ValuePiece]
 export const ListaServicios = (): JSX.Element => {
   const { setTitle, auth } = useAuth()
   const [openChat, setOpenChat] = useState(false)
+  const [planes, setplanes] = useState<ValuesPlanes[]>([])
   const [resumen, setResumen] = useState<valuesResumen[]>([])
   const [productos, setProductos] = useState<ValuesVenta[]>([])
   const [loading, setLoading] = useState(true)
@@ -55,6 +57,8 @@ export const ListaServicios = (): JSX.Element => {
   const [openFinal, setOpenFinal] = useState(false)
   const [openEmail, setOpenEmail] = useState(false)
   const [totalRegistros, setTotalRegistros] = useState(0)
+  const [, setTotalRegistros2] = useState(0)
+
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(12)
@@ -81,6 +85,7 @@ export const ListaServicios = (): JSX.Element => {
         setProductos,
         setTotalRegistros
       ),
+      getDataToPlanes('getPlanes', setplanes, setTotalRegistros2),
       getResumen()
     ]).then(() => {
       setLoading(false)
@@ -264,7 +269,7 @@ export const ListaServicios = (): JSX.Element => {
                 toggleFilter('fechaFin', true)
               }}
             >
-              Terminados
+              Finalizados
             </button>
             <div className="w-fit lg:hidden flex-col-reverse md:flex-row items-center gap-4">
               <button
@@ -301,15 +306,18 @@ export const ListaServicios = (): JSX.Element => {
         <div className="md:bg-[#fff] md:p-8 rounded-xl">
           <div
             className={`hidden md:grid md:pr-10 lg:pr-4 grid-cols-1 md:grid-cols-6 ${
-              !filters.sinFechaFinYNo1 ? 'lg:grid-cols-8' : 'lg:grid-cols-7'
+              !filters.sinFechaFinYNo1 ? 'lg:grid-cols-9' : 'lg:grid-cols-8'
             } gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300`}
           >
-            <h5 className="md:text-left line-clamp-1">COD. Contrato</h5>
+            <h5 className="md:text-left line-clamp-1">Contrato</h5>
             <h5 className="md:text-left line-clamp-1 md:col-span-2 lg:col-span-1">
-              Empresa
+              Plan
             </h5>
             <h5 className="md:text-left line-clamp-1 md:hidden lg:block">
               Cliente
+            </h5>
+            <h5 className="md:text-left line-clamp-1 md:col-span-2 lg:col-span-1">
+              Marca
             </h5>
             <h5 className="md:text-center line-clamp-1 md:hidden lg:block">
               Medio de ingreso
@@ -326,7 +334,7 @@ export const ListaServicios = (): JSX.Element => {
           {filterDate().map((orden: ValuesVenta, index: number) => (
             <div
               className={`grid grid-cols-1 md:grid-cols-6 ${
-                !filters.sinFechaFinYNo1 ? 'lg:grid-cols-8' : 'lg:grid-cols-7'
+                !filters.sinFechaFinYNo1 ? 'lg:grid-cols-9' : 'lg:grid-cols-8'
               } md:pr-10 lg:pr-4 relative gap-3 items-center mb-3 md:mb-3 ${
                 index % 2 == 0 ? 'bg-transparent' : 'bg-gray-200'
               } md:px-4 md:py-2 rounded-xl relative shadow_class`}
@@ -355,7 +363,7 @@ export const ListaServicios = (): JSX.Element => {
                     </span>
                         )}
                   <span className="flex md:justify-left items-center gap-3 font-bold text-black">
-                    {orden.id_contrato}
+                    {limpiarCadena(orden.id_contrato)}
                   </span>
                 </div>
                 <div className="md:hidden flex justify-between gap-3">
@@ -363,6 +371,7 @@ export const ListaServicios = (): JSX.Element => {
                     <h5 className="md:hidden text-black font-bold mb-0 text-sm">
                       Empresa
                     </h5>
+
                     <span className="text-left w-full text-black line-clamp-1">
                       {orden.nombre_empresa}
                     </span>
@@ -408,17 +417,26 @@ export const ListaServicios = (): JSX.Element => {
               {/* PC */}
               <div className="hidden md:block md:text-center">
                 <span className="text-left block text-black w-full line-clamp-1">
-                  {orden.id_contrato}
+                  {limpiarCadena(orden.id_contrato)}
+                </span>
+              </div>
+              <div className="hidden md:block md:text-center col-span-1 relative h-full">
+                <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
+                  {planes.map((plan) =>
+                    orden.id_contrato.split('_')[0] == plan.codigo
+                      ? plan.nombre
+                      : ''
+                  )}
+                </span>
+              </div>
+              <div className="hidden md:block md:text-center col-span-1 relative h-full">
+                <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
+                    {orden.nombres} {orden.apellidos}
                 </span>
               </div>
               <div className="hidden md:block md:text-center md:col-span-2 lg:col-span-1">
                 <span className="text-left text-black line-clamp-1 w-full">
-                  {orden.nombre_empresa}
-                </span>
-              </div>
-              <div className="hidden md:text-center md:hidden lg:block">
-                <span className="text-left text-black line-clamp-1 w-full">
-                  {orden.nombres} {orden.apellidos}
+                  {orden.nombre_marca}
                 </span>
               </div>
               <div className="hidden md:hidden lg:block md:text-center ">

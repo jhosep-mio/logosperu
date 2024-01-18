@@ -31,6 +31,8 @@ export interface AuthContextValue {
   estado: number
   totalNotificaciones: number
   loadingNotifi: boolean
+  totalNotiClientes: number
+  totalNotificaciones3: number
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -61,7 +63,9 @@ export const AuthProvider = ({
   const user = localStorage.getItem('user')
   const [loadingNotifi, setLoadingNotifi] = useState(true)
   const [, setTotalRegistros] = useState(0)
+  const [totalNotiClientes, setTotalNotiClientes] = useState(0)
   const [totalNotificaciones, setTotalRegistros2] = useState(0)
+  const [totalNotificaciones3, setTotalRegistros3] = useState(0)
   const [notificaciones, setNotificaciones] = useState<notificacionesValues[]>(
     []
   )
@@ -84,8 +88,8 @@ export const AuthProvider = ({
       console.log('Conexión WebSocket establecida con éxito')
     })
     if (!loading) {
+      // PROYECTOS DE AGENCIA
       socket.on('mensaje', (data) => {
-        console.log(data)
         const filteredNotifications = JSON.parse(data.asignacion).filter((item: any) => item.peso == auth.id)
         if (data.id_usuario != auth.id) {
           if (auth.id_rol == 99) {
@@ -105,6 +109,19 @@ export const AuthProvider = ({
             getVentas(`getNotificacionesAll/${auth.id}/${auth.id_rol}`, setNotificaciones, setTotalRegistros)
           ]).then(() => {
             setLoading(false)
+          })
+        }
+      })
+      //   DESCARGA DE ARCHIVOS
+      socket.on('mensaje2', (data) => {
+        if (auth.id == '8') {
+          showNotification(data.nombre, data.contenido)
+        }
+        if (estado == 2) {
+          Promise.all([
+            getVentas('getNotificacionesToClientes', setNotificaciones, setTotalNotiClientes)
+          ]).then(() => {
+            setLoadingNotifi(false)
           })
         }
       })
@@ -189,6 +206,69 @@ export const AuthProvider = ({
     }
   }
 
+  const getDataGeneral = async (): Promise<void> => {
+    const today = new Date() // Obtiene la fecha actual
+    let dateOne = new Date(today.getFullYear(), today.getMonth(), today.getDate()) // Mismo día del mes actual
+    let dateTwo = new Date(today.getFullYear(), today.getMonth(), today.getDate()) // Mismo día del mes actual
+    dateOne.setMonth(dateOne.getMonth() - 1) // Ajusta al mes anterior
+    dateTwo.setMonth(dateTwo.getMonth() - 1) // Ajusta al mes anterior
+    // Si estamos en enero, ajusta al mismo día del mes anterior del año pasado
+    if (today.getMonth() === 0) {
+      dateOne = new Date(today.getFullYear() - 1, 11, today.getDate())
+      dateTwo = new Date(today.getFullYear() - 1, 11, today.getDate())
+    }
+    // Agrega un día a la primera fecha
+    dateOne.setDate(dateOne.getDate() + 1)
+    // Agrega tres días a la segunda fecha
+    dateTwo.setDate(dateTwo.getDate() + 3)
+    // Formatea las fechas en el formato deseado (dd/mm/yyyy)
+    const formattedFechaInicio = `${dateOne.getDate()}/${dateOne.getMonth() + 1}/${dateOne.getFullYear()}`
+    const formattedFechaFin = `${dateTwo.getDate()}/${dateTwo.getMonth() + 1}/${dateTwo.getFullYear()}`
+    const data = new FormData()
+    data.append('fechaInicio', formattedFechaInicio)
+    data.append('fechaFin', formattedFechaFin)
+
+    const request = await axios.post(`${Global.url}/indexToPorVencer`, data, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+    setNotificaciones(request.data)
+    setTotalRegistros3(request.data.length)
+  }
+
+  useEffect(() => {
+    setLoadingNotifi(true)
+    if (!loading) {
+      if (estado == 0) {
+        Promise.all([
+
+          getVentas(`getNotificaciones/${auth.id}/${auth.id_rol}`, setNotificaciones, setTotalRegistros2)
+        ]).then(() => {
+          setLoadingNotifi(false)
+        })
+      } else if (estado == 1) {
+        Promise.all([
+          getVentas(`getNotificacionesAll/${auth.id}/${auth.id_rol}`, setNotificaciones, setTotalRegistros)
+        ]).then(() => {
+          setLoadingNotifi(false)
+        })
+      } else if (estado == 2) {
+        Promise.all([
+          getVentas('getNotificacionesToClientes', setNotificaciones, setTotalNotiClientes)
+        ]).then(() => {
+          setLoadingNotifi(false)
+        })
+      } else if (estado == 3) {
+        Promise.all([
+          getDataGeneral()
+        ]).then(() => {
+          setLoadingNotifi(false)
+        })
+      }
+    }
+  }, [estado, loading])
+
   useEffect(() => {
     setLoadingNotifi(true)
     if (!loading) {
@@ -198,15 +278,40 @@ export const AuthProvider = ({
         ]).then(() => {
           setLoadingNotifi(false)
         })
-      } else {
+      } else if (estado == 1) {
         Promise.all([
           getVentas(`getNotificacionesAll/${auth.id}/${auth.id_rol}`, setNotificaciones, setTotalRegistros)
         ]).then(() => {
           setLoadingNotifi(false)
         })
+      } else if (estado == 2) {
+        Promise.all([
+          getVentas('getNotificacionesToClientes', setNotificaciones, setTotalNotiClientes)
+        ]).then(() => {
+          setLoadingNotifi(false)
+        })
+      } else if (estado == 3) {
+        Promise.all([
+          getDataGeneral()
+        ]).then(() => {
+          setLoadingNotifi(false)
+        })
       }
     }
-  }, [estado, loading])
+  }, [])
+
+  useEffect(() => {
+    const getData = async (): Promise<void> => {
+      const request = await axios.get(`${Global.url}/getNotificacionesToClientes`, {
+        headers: {
+          Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+        }
+      })
+      setTotalNotiClientes(request.data.length)
+    }
+    getDataGeneral()
+    getData()
+  }, [])
 
   return (
     <AuthContext.Provider
@@ -226,7 +331,9 @@ export const AuthProvider = ({
         estado,
         setEstado,
         totalNotificaciones,
-        loadingNotifi
+        loadingNotifi,
+        totalNotiClientes,
+        totalNotificaciones3
       }}
     >
       {children}

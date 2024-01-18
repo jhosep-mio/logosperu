@@ -1,9 +1,22 @@
 import axios from 'axios'
 import { type Dispatch, type SetStateAction } from 'react'
 import { Global } from '../../helper/Global'
-import { type interfaceListaDiseñoNew, type ValuesPreventaModificate, type interfaceListaDiseño, type ValuesVenta, type VluesToExcel, type ValuesCategoriasPortafolio, type ValuesSubCategoriasPortafolio, type ValuesItemsPortafolio, type ValuesPlanes, type notificacionesValues, type usurioValues } from './schemas/Interfaces'
+import { type interfaceListaDiseñoNew, type ValuesPreventaModificate, type interfaceListaDiseño, type ValuesVenta, type VluesToExcel, type ValuesCategoriasPortafolio, type ValuesSubCategoriasPortafolio, type ValuesItemsPortafolio, type ValuesPlanes, type notificacionesValues, type usurioValues, type clasificadosValues } from './schemas/Interfaces'
 
 const token = localStorage.getItem('token')
+
+// CLASIFICADOS
+
+export const getClasificados = async (ruta: string, setDatos: Dispatch<SetStateAction<clasificadosValues[]>>, setTotalRegistros: Dispatch<SetStateAction<number>>): Promise<void> => {
+  const request = await axios.get(`${Global.url}/${ruta}`, {
+    headers: {
+      Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+    }
+  })
+  setDatos(request.data)
+  console.log(request.data)
+  setTotalRegistros(request.data.length)
+}
 
 export const getClientes = async (ruta: string, setDatos: Dispatch<SetStateAction<ValuesPreventaModificate[]>>): Promise<void> => {
   const request = await axios.get(`${Global.url}/${ruta}`, {
@@ -41,6 +54,7 @@ export const getVentas = async (ruta: string, setDatos: Dispatch<SetStateAction<
     }
   })
   setDatos(request.data)
+  console.log(request.data)
   setTotalRegistros(request.data.length)
 }
 
@@ -71,7 +85,6 @@ export const getData2 = async (ruta: string, setDatos: Dispatch<SetStateAction<V
     }
   })
   setDatos(request.data)
-  console.log(request.data)
   setTotalRegistros(request.data.length)
 }
 

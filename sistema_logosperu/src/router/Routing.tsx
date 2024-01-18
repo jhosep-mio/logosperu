@@ -73,6 +73,10 @@ import { ListaPendientes } from '../components/private/tables/citas/ListaPendien
 import { Preclientes } from '../components/private/tables/pre_clientes/Preclientes'
 import { RegistroPreClientes } from '../components/private/tables/pre_clientes/RegistroPreClientes'
 import { EditarPreCliente } from '../components/private/tables/pre_clientes/EditarPreCliente'
+import { MetricasVencidos } from '../components/private/tables/ventas/vencidos/MetricasVencidos'
+import { ListaClasificados } from '../components/private/tables/clasificados/ListaClasificados'
+import { RegistrarClasificados } from '../components/private/tables/clasificados/RegistrarClasificados'
+import { EditarClasificados } from '../components/private/tables/clasificados/EditarClasificados'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -143,7 +147,6 @@ export const Routing = (): JSX.Element => {
             <Route path="lista-ventas/acta-aceptacion/:id" element={<ActaAceptacion />} />
             <Route path="lista-ventas/generarContrato/:id" element={<GenerarContrato />} />
             <Route path="lista-prueba" element={<ListaPrueba />} />
-
             {/* VENTAS VENCIDOS */}
             <Route path="lista-ventas-vencidos" element={<ListaVentasVencidos />} />
             {/* LISTA VENTAS POR COLABORADOR */}
@@ -181,6 +184,11 @@ export const Routing = (): JSX.Element => {
               path="lista-briefs-diseños-new/propuestas/:id"
               element={<Propuestas />}
             />
+            {/* CLASIFICADOS */}
+            <Route path="lista-clasificados" element={<ListaClasificados />} />
+            <Route path="lista-clasificados/registro" element={<RegistrarClasificados />} />
+            <Route path="lista-clasificados/editar/:id" element={<EditarClasificados />} />
+
             {/* comunity */}
             <Route path="lista-briefs-comunity" element={<ListadoComunity />} />
             <Route path="lista-briefs-comunity/agregar" element={<RegistrarBriegComunity />} />
@@ -214,6 +222,7 @@ export const Routing = (): JSX.Element => {
             <Route path="items-portafolio/editar/:id" element={<EditarItemsToPortafolio />} />
           </Route>
           <Route path="admin/lista-ventas/metricas" element={<Metricas />} />
+          <Route path="admin/lista-ventas-vencidos/metricas" element={<MetricasVencidos />} />
           <Route path="admin/lista-ventas/status" element={<Status />} />
           <Route path="admin/citas" element={<GestordeCitas />} />
           <Route path="admin/historialllamadas" element={<HistorialLlamadas />} />

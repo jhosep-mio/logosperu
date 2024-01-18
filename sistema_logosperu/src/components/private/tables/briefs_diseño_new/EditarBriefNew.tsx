@@ -145,16 +145,13 @@ export const EditarBriefNew = (): JSX.Element => {
         data.append('logo_referencia', imagenNueva1.archivo)
       }
       data.append('nombre_empresa', values.nombre_empresa)
-
       data.append('historia_empresa', values.historia_empresa)
       data.append('principales_servicios', values.principales_servicios)
-
       data.append('medios', option1Checked.toString())
       data.append('medios2', option2Checked.toString())
       data.append('colores', values.colores)
 
       data.append('referencias', values.referencias)
-
       if (imagenNueva2.archivo != null) {
         data.append('refe1', imagenNueva2.archivo)
       }

@@ -23,7 +23,6 @@ export const ReportePorColaborador = (): JSX.Element => {
               }`
         }
       })
-      console.log(request)
       setTitle(
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         `REPORTE GENERAL - ${request.data[0].name}`

@@ -94,6 +94,10 @@ export const ViewServicio = (): JSX.Element => {
   }, [])
 
   useEffect(() => {
+    getOneBrief()
+  }, [id])
+
+  useEffect(() => {
     if (errors && isSubmitting) {
       const firstErrorKey = Object.keys(errors)[0]
       const firstErrorElement = document.getElementsByName(firstErrorKey)[0]

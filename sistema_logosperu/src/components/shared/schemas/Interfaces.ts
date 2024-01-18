@@ -1,5 +1,54 @@
 import { type Dispatch, type SetStateAction } from 'react'
 
+export interface clasificadosValues {
+  id: number
+  nombre: string
+  icono: string
+  correo: string
+  celular: string
+  created_at: string
+  updated_at: string
+  pagina_web: string
+}
+
+export interface clasificadosRegistroValues {
+  nombre: string
+  correo: string
+  celular: string
+  icono: string
+  logo: string
+  instragram: string
+  facebook: string
+  tiktok: string
+  color: string
+  // BANNER
+  banner1: string
+  banner2: string
+  // INFORMACION
+  titulo1: string
+  titulo2: string
+  titulo3: string
+  titulo4: string
+  subtitulo1: string
+  subtitulo2: string
+  subtitulo3: string
+  subtitulo4: string
+  imagentitulo1: string
+  imagentitulo2: string
+  imagentitulo3: string
+  imagentitulo4: string
+  // INTERNAS
+  interna1: string
+  interna2: string
+  interna3: string
+  interna4: string
+  //
+  //   PRODUCTOS - SERCIVIOS
+  tipoenfoque: string
+  productos: arrayImagesClasificados []
+//   productos: string
+}
+
 export interface usurioValues {
   id: number
   name: string
@@ -21,6 +70,8 @@ export interface preclientesValues {
 export interface notificacionesValues {
   id: number
   id_usuario: number
+  tipo: string
+  id_general: string
   usuario: string
   url: string
   contenido: string
@@ -164,9 +215,28 @@ export interface ImagePreviewPropsUdpdateGeneral {
   carpeta: string
 }
 
+export interface ImagePreviewPropsUdpdateClasificados {
+  url: string
+  setUrl: React.Dispatch<React.SetStateAction<string>>
+  boton: boolean
+  setBoton: React.Dispatch<React.SetStateAction<boolean>>
+  imagen: string | null
+  setImagen: React.Dispatch<React.SetStateAction<ImagenState>>
+  clase: string
+  disabled: boolean
+  carpeta: string
+}
+
 export interface arrayCategoriasToPortafolio {
   id: number | null
   imagen1: ImagenState
+}
+
+export interface arrayImagesClasificados {
+  id: number | null
+  imagenproducto: ImagenState
+  titulo: string
+  descripcion: string
 }
 
 export interface ValuesCategoriasPortafolio {

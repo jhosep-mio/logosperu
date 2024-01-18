@@ -66,6 +66,7 @@ export const ListaPendientes = (): JSX.Element => {
       }
     })
     setProductos(JSON.parse(request.data.contenido))
+    setTotalRegistros(JSON.parse(request.data.contenido).length)
   }
 
   useEffect(() => {
@@ -82,26 +83,29 @@ export const ListaPendientes = (): JSX.Element => {
   const indexOfFirstPost = indexOfLastPost - cantidadRegistros
   let totalPosts = productos.length
   const [eventoSelected, setEventoSelected] = useState<any | []>([])
+
   const filterDate = (): pendientesValues[] => {
+    let filteredItems: pendientesValues[]
+
     if (search.length === 0) {
-      const producto = productos.slice(indexOfFirstPost, indexOfLastPost)
-      return producto
+      filteredItems = productos.slice(indexOfFirstPost, indexOfLastPost)
+    } else {
+      const searchTerm = quitarAcentos(search.toLowerCase())
+      const filter = productos.filter((pro) => {
+        const fullName =
+            `${pro.client.nombres} ${pro.client.apellidos}`.toLowerCase()
+        const empresa = `${pro.client.empresa}`.toLowerCase()
+        return (
+          quitarAcentos(fullName).includes(searchTerm) ||
+            quitarAcentos(empresa).includes(searchTerm) ||
+            String(pro.client.celular).includes(searchTerm)
+        )
+      })
+
+      totalPosts = filter.length
+      filteredItems = filter.slice(indexOfFirstPost, indexOfLastPost)
     }
-    const searchTerm = quitarAcentos(search.toLowerCase())
-
-    const filter = productos.filter((pro) => {
-      const fullName =
-        `${pro.client.nombres} ${pro.client.apellidos}`.toLowerCase()
-      const empresa = `${pro.client.empresa}`.toLowerCase()
-      return (
-        quitarAcentos(fullName).includes(searchTerm) ||
-        quitarAcentos(empresa).includes(searchTerm) ||
-        String(pro.client.celular).includes(searchTerm)
-      )
-    })
-
-    totalPosts = filter.length
-    return filter.slice(indexOfFirstPost, indexOfLastPost)
+    return filteredItems.reverse()
   }
 
   useEffect(() => {
@@ -212,12 +216,12 @@ export const ListaPendientes = (): JSX.Element => {
                   className={`grid grid-cols-1 md:grid-cols-7 relative gap-3 items-center mb-3 md:mb-0 ${
                     index % 2 == 0 ? 'bg-transparent' : 'bg-gray-200'
                   } md:px-4 md:py-1 rounded-xl relative shadow_class`}
-                  key={index}
+                  key={index + 1}
                 >
                   {/* PC */}
                   <div className="hidden md:block md:text-center">
                     <span className="text-left block text-black w-full line-clamp-1">
-                      #{index}
+                      #{totalRegistros - index }
                     </span>
                   </div>
                   <div className="hidden md:block md:text-center col-span-2">
@@ -264,7 +268,6 @@ export const ListaPendientes = (): JSX.Element => {
                       </p>
                     </div>
                   </div>
-
                   <div className="md:text-center md:flex md:justify-center items-center absolute md:relative right-0 top-0">
                     <MenuButton
                       className="block p-2"

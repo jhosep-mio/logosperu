@@ -282,6 +282,11 @@ export const Avances = (): JSX.Element => {
   }, [])
 
   useEffect(() => {
+    setLimite(0)
+    getOneBrief()
+  }, [id])
+
+  useEffect(() => {
     if (errors && isSubmitting) {
       const firstErrorKey = Object.keys(errors)[0]
       const firstErrorElement = document.getElementsByName(firstErrorKey)[0]

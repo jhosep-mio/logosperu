@@ -1,5 +1,13 @@
 import * as Yup from 'yup'
 
+// CLASIFICADOS
+
+export const SchemaClasificado = Yup.object().shape({
+  nombre: Yup.string().required('Este campo es requerido'),
+  celular: Yup.string().required('Este campo es requerido'),
+  correo: Yup.string().required('Este campo es requerido').email('Digite un correo valido')
+})
+
 export const SchemaBriefFlyer = Yup.object().shape({
   nombres: Yup.string().nullable(),
   id_venta: Yup.string().required('Este campo es requerido').min(1),

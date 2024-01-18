@@ -181,11 +181,12 @@ export const ArchivosFinales = ({
       // Asegurarse de que fechaCreacion esté disponible
       const actualizarTiempoRestante = (): void => {
         const ahora = new Date()
+        const creacion = new Date(fechaCreacion)
+        creacion.setHours(23, 59, 60, 60) // Establecer la hora a las 23:59
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        const tiempoTranscurrido = ahora - new Date(fechaCreacion)
+        const tiempoTranscurrido = ahora - creacion
         const restante = plazo - tiempoTranscurrido
-
         if (restante <= 0) {
           setTiempoRestante(0)
         } else {

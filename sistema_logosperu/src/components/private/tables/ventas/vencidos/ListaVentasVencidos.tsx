@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../../../../../hooks/useAuth'
 import {
   RiBarChartFill,
-  RiFileExcel2Fill,
   RiFilter2Fill,
   RiSettings3Fill
 } from 'react-icons/ri'
@@ -22,15 +21,13 @@ import {
   limpiarCadena,
   quitarAcentos
 } from '../../../../shared/functions/QuitarAcerntos'
-import { BsCheckCircle, BsGraphUp } from 'react-icons/bs'
+import { BsCheckCircle } from 'react-icons/bs'
 import { MdChevronRight } from 'react-icons/md'
 
 interface Filters {
-  estado?: number | null
-  enCola?: boolean | null
-  fechaFin?: boolean | null
   activeFilter: null
-  sinFechaFinYNo1: boolean | null
+  descargo: null
+  nodescargo: null
 }
 
 export const ListaVentasVencidos = (): JSX.Element => {
@@ -44,16 +41,15 @@ export const ListaVentasVencidos = (): JSX.Element => {
   const [cantidadRegistros] = useState(12)
   const navigate = useNavigate()
   const [colaboradores, setColaboradores] = useState([])
-  const [filters] = useState<Filters>({
-    estado: null,
-    fechaFin: null,
-    enCola: null,
+  const [filters, setFilters] = useState<Filters>({
+    descargo: null,
     activeFilter: null,
-    sinFechaFinYNo1: null
+    nodescargo: null
   })
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
   const [ordenAscendente, setOrdenAscendente] = useState(false)
   const [ordenDescente, setOrdenDescente] = useState(false)
+
   const [ordenAscendente2, setOrdenAscendente2] = useState(false)
   const [ordenDescente2, setOrdenDescente2] = useState(false)
   const getColaboradores = async (): Promise<void> => {
@@ -82,35 +78,19 @@ export const ListaVentasVencidos = (): JSX.Element => {
 
   const filterDate = (): ValuesVenta[] => {
     let filteredProductos = productos
-    if (filters.activeFilter == 'enCola') {
+    console.log(filters)
+    if (filters.descargo == true) {
       filteredProductos = filteredProductos.filter(
         (pro) =>
-          !pro.fecha_alta &&
-          !pro.fecha_inicio &&
-          !pro.fecha_fin &&
-          pro.estado != '1'
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+          pro.limitar_archivos != null
       )
-    } else if (filters.activeFilter == 'estado' && filters.estado !== null) {
+    } else if (filters.nodescargo == true) {
       filteredProductos = filteredProductos.filter(
-        (pro) => pro.estado == String(filters.estado)
-      )
-    } else if (
-      filters.activeFilter == 'fechaFin' &&
-      filters.fechaFin !== null
-    ) {
-      filteredProductos = filteredProductos.filter(
-        (pro) =>
-          pro.fecha_fin !== null && pro.fecha_fin !== '' && pro.estado != '1'
-      )
-    } else if (
-      filters.activeFilter == 'sinFechaFinYNo1' &&
-      filters.sinFechaFinYNo1 !== null
-    ) {
-      filteredProductos = filteredProductos.filter(
-        (pro) =>
-          (pro.fecha_fin == null || pro.fecha_fin == '') &&
-          pro.fecha_inicio &&
-          pro.estado != '1'
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        (pro) => pro.limitar_archivos == null
       )
     }
 
@@ -258,6 +238,22 @@ export const ListaVentasVencidos = (): JSX.Element => {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  const toggleFilter = (type: 'descargo' | 'nodescargo', value: number | boolean) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    setFilters((prev) => {
+      if (prev.activeFilter == type) {
+        return { ...prev, [type]: null, activeFilter: null } // desactiva el filtro si ya estaba activo
+      }
+      return {
+        descargo: null,
+        nodescargo: null,
+        [type]: value
+      } // activa el filtro seleccionado y desactiva los demás
+    })
+  }
+
   return (
     <>
       <div className="flex flex-col md:flex-row items-center justify-between gap-y-4 mb-3 md:mb-5 gap-2">
@@ -272,11 +268,34 @@ export const ListaVentasVencidos = (): JSX.Element => {
               type="search"
             />
           </button>
+          <div className="flex gap-2">
+            <button
+              className={`bg-green-600 text-white px-2 md:px-4 text-sm md:text-base py-1 lg:py- rounded-xl line-clamp-1 font-bold ${
+                filters.descargo
+                  ? 'border-2 border-yellow-500'
+                  : 'border-2 border-transparent'
+              }`}
+              onClick={() => {
+                toggleFilter('descargo', !filters.descargo)
+              }}
+            >
+              Descargo
+            </button>
+            <button
+              className={`bg-red-600 text-white px-2 md:px-4 text-sm md:text-base py-1 lg:py- rounded-xl line-clamp-1 font-bold ${
+                filters.nodescargo
+                  ? 'border-2 border-yellow-500'
+                  : 'border-2 border-transparent'
+              }`}
+              onClick={() => {
+                toggleFilter('nodescargo', !filters.nodescargo)
+              }}
+            >
+              No descargo
+            </button>
+          </div>
         </div>
         <div className="w-fit md:w-fit flex flex-row items-center gap-4">
-          <Link to={'status'}>
-            <RiFileExcel2Fill className="text-green-700 text-2xl md:text-3xl cursor-pointer" />
-          </Link>
           <Link to={'metricas'}>
             <RiBarChartFill className="text-main text-2xl md:text-3xl cursor-pointer" />
           </Link>
@@ -287,61 +306,40 @@ export const ListaVentasVencidos = (): JSX.Element => {
         : (
         <div className="md:bg-[#fff] md:px-8 md:py-6 rounded-xl">
           <div
-            className={`hidden md:grid pr-10 lg:pr-4 grid_teplate_ventas ${
-              filters.enCola ? 'grid_teplate_ventas_encola' : ''
-            } ${
-              filters.sinFechaFinYNo1 ? 'grid_teplate_ventas_pendientes' : ''
-            }  gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300`}
+            className={'hidden md:grid pr-10 lg:pr-4 grid_teplate_ventas gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300'}
           >
             <h5 className="md:text-left line-clamp-1 col-span-1">Contrato</h5>
             <h5 className="md:text-left line-clamp-1 col-span-2 ">Plan</h5>
-            {!filters.enCola && (
-              <>
-                <h5 className="md:text-left line-clamp-1 col-span-2">
-                  Colaborador
-                </h5>
-              </>
-            )}
+            <h5 className="md:text-left line-clamp-1 col-span-2 ">Colaborador</h5>
             <h5 className="md:text-left col-span-2">Empresa</h5>
             <h5 className="md:text-left col-span-2">Marca</h5>
             <h5 className="md:text-center line-clamp-1 col-span-2">
               Medio de ingreso
             </h5>
             <h5 className="md:text-center col-span-2">Estado</h5>
-            {!filters.enCola && (
-               <>
-               <h5 className="md:text-center line-clamp-1 col-span-2">
-                 Fecha de Alta
-               </h5>
-               <h5 className="md:text-center w-fit flex gap-2 items-center col-span-2">
-                 Fecha de Inicio
-                 <div className='flex flex-col'>
-                   <MdChevronRight
-                  onClick={() => { setOrdenAscendente(!ordenAscendente); setOrdenAscendente2(false); setOrdenDescente(false); setOrdenDescente2(false) }} className={`${!ordenAscendente ? 'text-gray-400' : 'text-main'} -rotate-90 hover:text-main transition-colors cursor-pointer`} title='Ascendente'/>
-                   <MdChevronRight onClick={() => { setOrdenDescente(!ordenDescente); setOrdenAscendente(false); setOrdenAscendente2(false); setOrdenDescente2(false) }} className={`${!ordenDescente ? 'text-gray-400' : 'text-main'} rotate-90 hover:text-main transition-colors cursor-pointer`} title='Descendente'/>
-                 </div>
-               </h5>
-               {!filters.sinFechaFinYNo1 && (
-               <h5 className="md:text-center w-fit flex gap-2 items-center col-span-2">
-                   Fecha Final
-                   <div className='flex flex-col'>
-                       <MdChevronRight
-                   onClick={() => { setOrdenAscendente2(!ordenAscendente2); setOrdenAscendente(false); setOrdenDescente2(false); setOrdenDescente(false) }} className={`${!ordenAscendente2 ? 'text-gray-400' : 'text-main'} -rotate-90 hover:text-main transition-colors cursor-pointer`} title='Ascendente'/>
-                       <MdChevronRight onClick={() => { setOrdenDescente2(!ordenDescente2); setOrdenDescente(false); setOrdenAscendente2(false); setOrdenAscendente(false) }} className={`${!ordenDescente2 ? 'text-gray-400' : 'text-main'} rotate-90 hover:text-main transition-colors cursor-pointer`} title='Descendente'/>
-                 </div>
-               </h5>
-               )}
-             </>
-            )}
+            <h5 className="md:text-center line-clamp-1 col-span-2">
+                Fecha de Alta
+            </h5>
+            <h5 className="md:text-center w-fit flex gap-2 items-center col-span-2">
+                Fecha de Inicio
+                <div className='flex flex-col'>
+                <MdChevronRight
+                onClick={() => { setOrdenAscendente(!ordenAscendente); setOrdenAscendente2(false); setOrdenDescente(false); setOrdenDescente2(false) }} className={`${!ordenAscendente ? 'text-gray-400' : 'text-main'} -rotate-90 hover:text-main transition-colors cursor-pointer`} title='Ascendente'/>
+                <MdChevronRight onClick={() => { setOrdenDescente(!ordenDescente); setOrdenAscendente(false); setOrdenAscendente2(false); setOrdenDescente2(false) }} className={`${!ordenDescente ? 'text-gray-400' : 'text-main'} rotate-90 hover:text-main transition-colors cursor-pointer`} title='Descendente'/>
+                </div>
+            </h5>
+            <h5 className="md:text-center w-fit flex gap-2 items-center col-span-2">
+                Fecha Final
+                <div className='flex flex-col'>
+                    <MdChevronRight
+                onClick={() => { setOrdenAscendente2(!ordenAscendente2); setOrdenAscendente(false); setOrdenDescente2(false); setOrdenDescente(false) }} className={`${!ordenAscendente2 ? 'text-gray-400' : 'text-main'} -rotate-90 hover:text-main transition-colors cursor-pointer`} title='Ascendente'/>
+                    <MdChevronRight onClick={() => { setOrdenDescente2(!ordenDescente2); setOrdenDescente(false); setOrdenAscendente2(false); setOrdenAscendente(false) }} className={`${!ordenDescente2 ? 'text-gray-400' : 'text-main'} rotate-90 hover:text-main transition-colors cursor-pointer`} title='Descendente'/>
+                </div>
+            </h5>
           </div>
           {filterDate().map((orden: ValuesVenta, index: number) => (
             <div
-              className={`grid grid_teplate_ventas ${
-                filters.enCola ? 'grid_teplate_ventas_encola' : ''
-              } 
-              ${
-                filters.sinFechaFinYNo1 ? 'grid_teplate_ventas_pendientes' : ''
-              } 
+              className={`grid grid_teplate_ventas 
               md:pr-10 lg:pr-4 relative gap-3 items-center mb-3 md:mb-0 ${
                 index % 2 == 0 ? 'bg-transparent' : 'bg-gray-200'
               } md:px-4 md:py-3 rounded-xl relative shadow_class`}
@@ -380,16 +378,14 @@ export const ListaVentasVencidos = (): JSX.Element => {
                       {limpiarCadena(orden.id_contrato)}
                     </span>
                   </div>
-                  {!filters.enCola && !filters.sinFechaFinYNo1 && (
-                    <div className="md:text-right pr-0">
-                      <h5 className="md:hidden text-gray-500 text-right font-bold mb-0 text-sm">
-                        Fecha de alta
-                      </h5>
-                      <span className="text-right block text-gray-500">
-                        {orden.fecha_alta}
-                      </span>
-                    </div>
-                  )}
+                <div className="md:text-right pr-0">
+                    <h5 className="md:hidden text-gray-500 text-right font-bold mb-0 text-sm">
+                    Fecha de alta
+                    </h5>
+                    <span className="text-right block text-gray-500">
+                    {orden.fecha_alta}
+                    </span>
+                </div>
                 </div>
                 <div className="md:hidden flex justify-between gap-3">
                   <div className="md:text-center ">
@@ -424,7 +420,6 @@ export const ListaVentasVencidos = (): JSX.Element => {
                       )}
                     </span>
                   </div>
-                  {!filters.enCola && (
                     <div className="md:text-right ">
                       <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
                         Colaborador
@@ -444,9 +439,7 @@ export const ListaVentasVencidos = (): JSX.Element => {
                         )}
                       </span>
                     </div>
-                  )}
                 </div>
-                {!filters.enCola && (
                   <div className="md:hidden flex justify-between gap-3">
                     <div className="md:text-center ">
                       <h5 className="md:hidden text-[#62be6d] font-bold mb-0 text-sm ">
@@ -456,8 +449,6 @@ export const ListaVentasVencidos = (): JSX.Element => {
                         {orden.fecha_inicio}
                       </span>
                     </div>
-                    {!filters.sinFechaFinYNo1
-                      ? (
                       <div className="md:text-right ">
                         <h5 className="md:hidden text-red-500 text-right font-bold mb-0 text-sm">
                           Fecha de cierre
@@ -466,19 +457,7 @@ export const ListaVentasVencidos = (): JSX.Element => {
                           {orden.fecha_fin}
                         </span>
                       </div>
-                        )
-                      : (
-                      <div className="md:text-right ">
-                        <h5 className="md:hidden text-gray-500 text-right font-bold mb-0 text-sm">
-                          Fecha de alta
-                        </h5>
-                        <span className="text-right block text-gray-500">
-                          {orden.fecha_alta}
-                        </span>
-                      </div>
-                        )}
                   </div>
-                )}
               </div>
               {/* PC */}
               <div className="hidden md:block md:text-center col-span-1">
@@ -495,7 +474,6 @@ export const ListaVentasVencidos = (): JSX.Element => {
                   )}
                 </span>
               </div>
-              {!filters.enCola && (
                 <>
                   <div className="hidden md:block md:text-center col-span-2">
                     <span className="text-left text-black line-clamp-1 w-full">
@@ -513,7 +491,6 @@ export const ListaVentasVencidos = (): JSX.Element => {
                     </span>
                   </div>
                 </>
-              )}
               <div className="hidden md:block md:text-center col-span-2">
                 <div className='line-clamp-1'>
                   <span className="text-left text-black w-full block lowercase first-letter:uppercase">
@@ -552,53 +529,33 @@ export const ListaVentasVencidos = (): JSX.Element => {
               </div>
               <div
                 className={`hidden w-fit mx-auto md:flex gap-2 lg:px-2 items-center justify-center col-span-2 md:text-center ${
-                  orden.estado == '1'
-                    ? 'bg-red-600 text-white'
-                    : orden.fecha_fin != null
-                    ? 'bg-[#1A5515] text-white'
-                    : !orden.fecha_inicio && !orden.fecha_alta
-                    ? 'bg-yellow-500 text-white'
-                    : 'bg-gray-300 text-gray-500'
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                orden.limitar_archivos != null
+                    ? ' bg-[#1A5515] text-white'
+                    : 'bg-red-600 text-white'
                 }`}
               >
-                {orden.estado == '1'
+                {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                orden.limitar_archivos != null
                   ? (
                   <>
                     <BsCheckCircle className="hidden lg:block" />
-                    <span className="text-center bg-red-600 text-white font-bold w-fit line-clamp-1">
-                      Abandono
+                    <span className="text-center  bg-[#1A5515] text-white font-bold w-fit line-clamp-1">
+                      Si descargo
                     </span>
                   </>
                     )
-                  : orden.fecha_fin != null
-                    ? (
-                  <>
-                    <BsCheckCircle className="hidden lg:block" />
-                    <span className="text-center bg-[#1A5515] text-white font-bold w-fit line-clamp-1">
-                      Finalizado
+                  : <>
+                    {/* <BsCheckCircle className="hidden lg:block" /> */}
+                    <span className="text-center bg-red-600 px-2 text-white font-bold w-fit line-clamp-1">
+                      No descargo
                     </span>
                   </>
-                      )
-                    : !orden.fecha_inicio && !orden.fecha_alta
-                        ? (
-                  <>
-                    <BsGraphUp className="hidden lg:block" />
-                    <span className="text-center gap-2 font-bold w-fit line-clamp-1">
-                      En cola
-                    </span>
-                  </>
-                          )
-                        : (
-                  <>
-                    <BsGraphUp className="hidden lg:block" />
-                    <span className="text-center gap-2 font-bold w-fit line-clamp-1">
-                      Pendiente
-                    </span>
-                  </>
-                          )}
+                }
               </div>
-              {!filters.enCola && (
-                <>
                   <div className="hidden md:block md:text-center col-span-2">
                     <span className="text-cener block text-black">
                       {orden.fecha_alta}
@@ -609,15 +566,11 @@ export const ListaVentasVencidos = (): JSX.Element => {
                       {orden.fecha_inicio}
                     </span>
                   </div>
-                  {!filters.sinFechaFinYNo1 && (
                     <div className="hidden md:block md:text-center col-span-2">
                       <span className="text-center block text-black">
                         {orden.fecha_fin}
                       </span>
                     </div>
-                  )}
-                </>
-              )}
               <div className="md:text-center md:flex md:justify-center items-center absolute right-0 top-0 bottom-0 my-auto">
                 <Menu
                   menuButton={

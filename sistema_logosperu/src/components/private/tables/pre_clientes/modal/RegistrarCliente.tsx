@@ -121,7 +121,6 @@ export const RegistrarCliente = ({ datos }: { datos: ValuesPreventaModificate })
   }, [])
 
   useEffect(() => {
-    console.log(datos)
     setValues({
       ...values,
       nombres: datos.nombres,

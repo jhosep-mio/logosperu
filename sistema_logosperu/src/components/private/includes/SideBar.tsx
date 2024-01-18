@@ -24,6 +24,7 @@ import {
   FaUserGroup
 } from 'react-icons/fa6'
 import { BsPersonVcardFill } from 'react-icons/bs'
+import { HiRectangleGroup } from 'react-icons/hi2'
 
 const SideBar = (): JSX.Element => {
   const { auth, setAuth, roles, setLoadingComponents, loadingComponents, totalNotificaciones } = useAuth()
@@ -121,7 +122,7 @@ const SideBar = (): JSX.Element => {
                         {route.peso == 'superusuario'
                           ? (
                           <>
-                          <li key={22}>
+                            <li key={22}>
                               <button
                                 onClick={() => {
                                   setShowSubmenu8(!showSubmenu8)
@@ -433,7 +434,6 @@ const SideBar = (): JSX.Element => {
                                 Colaboradores
                               </Link>
                             </li>
-
                             <li key={26}>
                               <button
                                 onClick={() => {
@@ -549,6 +549,22 @@ const SideBar = (): JSX.Element => {
                                   </li>
                                 </ul>
                               </ul>
+                            </li>
+                            <li key='clasificados'>
+                              <Link
+                                to="lista-clasificados"
+                                className={
+                                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                                }
+                                onClick={() => {
+                                  handleItemClick2(25)
+                                  setShowMenu(false)
+                                  setLoadingComponents(false)
+                                }}
+                              >
+                                <HiRectangleGroup className="text-main/80 text-xl" />{' '}
+                                Clasificados
+                              </Link>
                             </li>
                           </>
                             )

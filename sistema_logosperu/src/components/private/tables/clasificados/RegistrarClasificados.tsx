@@ -111,7 +111,10 @@ export const RegistrarClasificados = (): JSX.Element => {
       interna3: '',
       interna4: '',
       tipoenfoque: '',
-      productos: []
+      productos: [],
+      imagenseo: '',
+      descripcionseo: '',
+      marcas: []
     },
     validationSchema: SchemaClasificado,
     onSubmit: savePreventa

@@ -11,7 +11,8 @@ import { Errors } from '../../../shared/Errors'
 import {
   type arrayImagesClasificados,
   type ImagenState,
-  type clasificadosRegistroValues
+  type clasificadosRegistroValues,
+  type arrayCategoriasToPortafolio
 } from '../../../shared/schemas/Interfaces'
 import { SchemaClasificado } from '../../../shared/schemas/Schemas'
 import Accordion from '@mui/material/Accordion'
@@ -20,18 +21,21 @@ import AccordionSummary from '@mui/material/AccordionSummary'
 import { CgArrowsExpandRight } from 'react-icons/cg'
 import { ImageUpdateClasificados } from '../../../shared/imagenes-videos/ImageUpdateClasificados'
 import { AgregarProductos } from './components/AgregarProductos'
+import { AgregarMarca } from './components/AgregarMarca'
 
 export const EditarClasificados = (): JSX.Element => {
   const { setTitle } = useAuth()
   const [loading, setLoading] = useState(false)
   const token = localStorage.getItem('token')
   const [open, setOpen] = useState(false)
+  const [open2, setOpen2] = useState(false)
   const [expanded, setExpanded] = useState<string | false>(false)
   const { id } = useParams()
   const [imagen1, setImagen1] = useState(null)
   const [boton1, setBoton1] = useState(false)
   const [url1, setUrl1] = useState('')
   const [arrayPesos, setarrayPesos] = useState<arrayImagesClasificados[]>([])
+  const [arrayMarcas, setarrayMarcas] = useState<arrayCategoriasToPortafolio[]>([])
   const [imagenNueva1, SetImagenNueva1] = useState<ImagenState>({
     archivo: null,
     archivoName: ''
@@ -91,7 +95,20 @@ export const EditarClasificados = (): JSX.Element => {
     archivoName: ''
   })
 
+  const [imagenseo, setImagenseo] = useState(null)
+  const [botonseo, setBotonseo] = useState(false)
+  const [urlseo, setUrlseo] = useState('')
+  const [imagenNuevaseo, SetImagenNuevaseo] = useState<ImagenState>({
+    archivo: null,
+    archivoName: ''
+  })
+
   const [imagenproducto, setImagenproducto] = useState<ImagenState>({
+    archivo: null,
+    archivoName: ''
+  })
+
+  const [imagenmarca, setImagenmarca] = useState<ImagenState>({
     archivo: null,
     archivoName: ''
   })
@@ -109,46 +126,53 @@ export const EditarClasificados = (): JSX.Element => {
       }
     })
     const data = JSON.parse(request.data.pagina_web)
-    const arrayproducto = (JSON.parse(JSON.parse(request.data.pagina_web).productos.productos))
-
+    const arrayproducto = JSON.parse(request.data.pagina_web).productos?.productos ? (JSON.parse(JSON.parse(request.data.pagina_web).productos?.productos)) : []
+    const arraymarcasTwo = JSON.parse(request.data?.pagina_web).marcas ? (JSON.parse(JSON.parse(request.data?.pagina_web).marcas)) : []
     setValues({
       ...values,
-      nombre: data.configuracion.nombre,
-      correo: data.configuracion.correo,
-      celular: data.configuracion.celular,
-      logo: data.configuracion.logo,
-      icono: data.configuracion.icono,
-      instragram: data.configuracion.instragram,
-      facebook: data.configuracion.facebook,
-      tiktok: data.configuracion.tiktok,
-      color: data.configuracion.color,
+      nombre: data?.configuracion?.nombre,
+      correo: data?.configuracion?.correo,
+      celular: data?.configuracion?.celular,
+      logo: data?.configuracion?.logo,
+      icono: data?.configuracion?.icono,
+      instragram: data?.configuracion?.instragram,
+      facebook: data?.configuracion?.facebook,
+      tiktok: data?.configuracion?.tiktok,
+      color: data?.configuracion?.color,
       // INTERNAS
-      interna1: data.internas.interna1,
-      interna2: data.internas.interna2,
-      interna3: data.internas.interna3,
-      interna4: data.internas.interna4,
+      interna1: data?.internas?.interna1,
+      interna2: data?.internas?.interna2,
+      interna3: data?.internas?.interna3,
+      interna4: data?.internas?.interna4,
       //   BANNERS
-      banner1: data.banner.banner1,
-      banner2: data.banner.banner2,
+      banner1: data?.banner?.banner1,
+      banner2: data?.banner?.banner2,
       //   INFORMACION
-      titulo1: data.informacion.titulo1,
-      titulo2: data.informacion.titulo2,
-      titulo3: data.informacion.titulo3,
-      titulo4: data.informacion.titulo4,
-      subtitulo1: data.informacion.subtitulo1,
-      subtitulo2: data.informacion.subtitulo2,
-      subtitulo3: data.informacion.subtitulo3,
-      subtitulo4: data.informacion.subtitulo4,
-      imagentitulo1: data.informacion.imagentitulo1,
-      imagentitulo2: data.informacion.imagentitulo1,
-      imagentitulo3: data.informacion.imagentitulo1,
-      imagentitulo4: data.informacion.imagentitulo1,
+      titulo1: data?.informacion?.titulo1,
+      titulo2: data?.informacion?.titulo2,
+      titulo3: data?.informacion?.titulo3,
+      titulo4: data?.informacion?.titulo4,
+      subtitulo1: data?.informacion?.subtitulo1,
+      subtitulo2: data?.informacion?.subtitulo2,
+      subtitulo3: data?.informacion?.subtitulo3,
+      subtitulo4: data?.informacion?.subtitulo4,
+      imagentitulo1: data?.informacion?.imagentitulo1,
+      imagentitulo2: data?.informacion?.imagentitulo1,
+      imagentitulo3: data?.informacion?.imagentitulo1,
+      imagentitulo4: data?.informacion?.imagentitulo1,
       // PRODUCTOS
-      tipoenfoque: data.productos.tipoenfoque,
-      productos: arrayproducto ?? ''
+      tipoenfoque: data?.productos?.tipoenfoque,
+      productos: arrayproducto ?? '',
+      // SEO
+      imagenseo: data?.seo?.imagenseo,
+      descripcionseo: data?.seo?.descripcionseo,
+      marcas: arraymarcasTwo ?? ''
     })
     if (arrayproducto) {
       setarrayPesos(arrayproducto)
+    }
+    if (arraymarcasTwo) {
+      setarrayMarcas(arraymarcasTwo)
     }
 
     if (data.configuracion.logo) {
@@ -174,6 +198,9 @@ export const EditarClasificados = (): JSX.Element => {
     }
     if (data.informacion.imagentitulo4) {
       setImagentitulo4(data.informacion.imagentitulo4)
+    }
+    if (data.seo.imagenseo) {
+      setImagenseo(data.seo.imagenseo)
     }
     setLoading(false)
   }
@@ -222,7 +249,12 @@ export const EditarClasificados = (): JSX.Element => {
       productos: {
         tipoenfoque: values.tipoenfoque,
         productos: JSON.stringify(arrayPesos)
-      }
+      },
+      seo: {
+        imagenseo,
+        descripcionseo: values.descripcionseo
+      },
+      marcas: JSON.stringify(arrayMarcas)
     }
     const data = new FormData()
     data.append('pagina_web', JSON.stringify(paginaWeb))
@@ -251,10 +283,19 @@ export const EditarClasificados = (): JSX.Element => {
     if (imagenNuevatitulo4.archivo != null) {
       data.append('imagentitulo4', imagenNuevatitulo4.archivo)
     }
+    if (imagenNuevaseo.archivo != null) {
+      data.append('imagenseo', imagenNuevaseo.archivo)
+    }
     arrayPesos.forEach((image1, index1) => {
       if (image1.imagenproducto.archivo) {
         data.append(`images1[${index1}]`, image1.imagenproducto.archivo)
         data.append(`names1[${index1}]`, image1.imagenproducto.archivoName)
+      }
+    })
+    arrayMarcas.forEach((image1, index1) => {
+      if (image1.imagen1.archivo) {
+        data.append(`imagesmarca1[${index1}]`, image1.imagen1.archivo)
+        data.append(`namesmarca1[${index1}]`, image1.imagen1.archivoName)
       }
     })
     try {
@@ -271,7 +312,7 @@ export const EditarClasificados = (): JSX.Element => {
       )
 
       if (respuesta.data.status == 'success') {
-        Swal.fire('Editado correctamente', '', 'success')
+        Swal.fire('Actualizado correctamente', '', 'success')
         getClasificado()
       } else {
         Swal.fire('Error al editar el registro', '', 'error')
@@ -323,7 +364,10 @@ export const EditarClasificados = (): JSX.Element => {
       interna3: '',
       interna4: '',
       tipoenfoque: '',
-      productos: []
+      productos: [],
+      imagenseo: '',
+      descripcionseo: '',
+      marcas: []
     },
     validationSchema: SchemaClasificado,
     onSubmit: savePreventa
@@ -1006,6 +1050,85 @@ export const EditarClasificados = (): JSX.Element => {
                           {values.tipoenfoque &&
                             <AgregarProductos arrayPesos={arrayPesos} setarrayPesos={setarrayPesos} open={open} setOpen={setOpen} imagenproducto={imagenproducto} setImagenproducto={setImagenproducto} />
                           }
+                      </AccordionDetails>
+                    </Accordion>
+                    <Accordion
+                      expanded={expanded === 'panel6'}
+                      onChange={handleChange2('panel6')}
+                      className="w-full"
+                    >
+                      <AccordionSummary
+                        expandIcon={<CgArrowsExpandRight />}
+                        aria-controls="panel6bh-content"
+                        id="panel6bh-header"
+                      >
+                        <h2 className="font-bold text-base uppercase">
+                          Descripción e imagen - SEO
+                        </h2>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <div className="w-full grid grid-cols-2 gap-3 md:flex-row p-4">
+                          <div className="w-full md:w-full relative h-fit">
+                            <div className="w-full relative">
+                              <p className="bg-white pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600 absolute">
+                                Imagen
+                              </p>
+                              <ImageUpdateClasificados
+                                carpeta="clasificados"
+                                url={urlseo}
+                                setUrl={setUrlseo}
+                                boton={botonseo}
+                                setBoton={setBotonseo}
+                                imagen={imagenseo}
+                                setImagen={SetImagenNuevaseo}
+                                clase="seo"
+                                disabled={false}
+                              />
+                            </div>
+                          </div>
+                          <div className="w-full md:w-full relative h-full">
+                            <TitleBriefs titulo="Descripción de la empresa" />
+                            <textarea
+                              className="border placeholder-gray-400 focus:outline-none
+                                                      focus:border-black w-full pr-4 h-full pl-4 pt-4 mr-0 mb-0 ml-0 text-base block bg-white
+                                                      border-gray-300 rounded-md transition-all"
+                              name="descripcionseo"
+                              value={values.descripcionseo}
+                              disabled={false}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            ></textarea>
+                            <Errors
+                              errors={errors.descripcionseo}
+                              touched={touched.descripcionseo}
+                            />
+                          </div>
+                        </div>
+                      </AccordionDetails>
+                    </Accordion>
+                    <Accordion
+                      expanded={expanded === 'panel7'}
+                      onChange={handleChange2('panel7')}
+                      className="w-full"
+                    >
+                      <AccordionSummary
+                        expandIcon={<CgArrowsExpandRight />}
+                        aria-controls="panel7bh-content"
+                        id="panel7bh-header"
+                      >
+                        <h2 className="font-bold text-base uppercase">
+                          MARCAS
+                        </h2>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <div className="w-full flex gap-3 justify-between items-center px-4 py-2">
+                          <button
+                          type='button'
+                          className='bg-main px-4 py-2 text-white rounded-md'
+                          onClick={() => { setOpen2(!open2) }}
+                          >Agregar</button>
+                        </div>
+                        <AgregarMarca arrayPesos={arrayMarcas} setarrayPesos={setarrayMarcas} open={open2} setOpen={setOpen2} imagenproducto={imagenmarca} setImagenproducto={setImagenmarca} />
                       </AccordionDetails>
                     </Accordion>
                   </div>

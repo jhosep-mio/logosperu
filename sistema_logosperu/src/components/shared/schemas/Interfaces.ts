@@ -46,7 +46,10 @@ export interface clasificadosRegistroValues {
   //   PRODUCTOS - SERCIVIOS
   tipoenfoque: string
   productos: arrayImagesClasificados []
-//   productos: string
+  //   SEO
+  imagenseo: string
+  descripcionseo: string
+  marcas: arrayCategoriasToPortafolio []
 }
 
 export interface usurioValues {

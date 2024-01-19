@@ -129,82 +129,24 @@ export const VistaAdministrador = ({
     setIdEdicion(null)
   }
 
-  //   const eliminarResumen = async (
-  //     idResumen: number | null,
-  //     idRespuesta: number | null
-  //   ): Promise<void> => {
-  //     const confirmacion = await Swal.fire({
-  //       title: '¿Estás seguro?',
-  //       text: 'La respuesta seleccionada será eliminada.',
-  //       icon: 'warning',
-  //       showCancelButton: true,
-  //       confirmButtonColor: '#3085d6',
-  //       cancelButtonColor: '#d33',
-  //       confirmButtonText: 'Sí, eliminar',
-  //       cancelButtonText: 'Cancelar'
-  //     })
-  //     if (!confirmacion.isConfirmed) {
-  //       // Si el usuario cancela, no hacemos nada
-  //       return
-  //     }
-  //     setResumen((resumenesPrevios) => {
-  //       const nuevosResumenes = resumenesPrevios.map((resu) => {
-  //         if (resu.id === idResumen) {
-  //           const respuestasSinEliminar = resu.respuestas.filter(
-  //             (resp) => resp.id !== idRespuesta
-  //           )
-  //           return {
-  //             ...resu,
-  //             respuestas: respuestasSinEliminar
-  //           }
-  //         }
-  //         return resu
-  //       })
-  //       const enviarDatos = async (): Promise<void> => {
-  //         const data = new FormData()
-  //         data.append('resumen', JSON.stringify(nuevosResumenes))
-  //         data.append('_method', 'PUT')
+  const formatearTexto = (texto: string): JSX.Element => {
+    const lineas = texto.split('\n')
 
-  //         try {
-  //           const respuesta = await axios.post(
-  //             `${Global.url}/saveChat/${id ?? ''}`,
-  //             data,
-  //             {
-  //               headers: {
-  //                 Authorization: `Bearer ${
-  //                   token !== null && token !== '' ? token : ''
-  //                 }`
-  //               }
-  //             }
-  //           )
+    const lineasFormateadas = lineas.map((linea, index) => {
+      const primeraLetraMayuscula = linea.trim().charAt(0).toUpperCase()
+      const restoTexto = linea.trim().slice(1)
+      const textoFormateado = primeraLetraMayuscula + restoTexto
 
-  //           if (respuesta.data.status === 'success') {
-  //             setRespuestaAdmin('')
-  //             setShowError({
-  //               estado: 'success',
-  //               texto: 'Comentario eliminado'
-  //             })
-  //             getOneBrief()
-  //           } else {
-  //             setShowError({
-  //               estado: 'warning',
-  //               texto: 'Error al eliminar'
-  //             })
-  //           }
-  //         } catch (error: unknown) {
-  //           setShowError({
-  //             estado: 'warning',
-  //             texto: 'Error al eliminar'
-  //           })
-  //         }
-  //       }
-  //       enviarDatos()
-  //       return nuevosResumenes
-  //     })
+      return (
+        <p key={index} className="text-black pt-4 lowercase first-letter:uppercase break-words">
+          {'• '}
+          {textoFormateado}
+        </p>
+      )
+    })
 
-  //     // Limpiar el estado de edición
-  //     setIdEdicion(null)
-  //   }
+    return <>{lineasFormateadas}</>
+  }
 
   return (
     <>
@@ -244,9 +186,12 @@ export const VistaAdministrador = ({
                     ? 'ADMINISTRACIÓN'
                     : resu.user}
                   </span>
-                  <p className="text-black pt-4 lowercase first-letter:uppercase break-words">
-                    {resu.texto}
-                  </p>
+                 { formatearTexto(resu.texto)}
+                  {/* <p
+                        className="text-black pt-4 lowercase break-words"
+                        style={{ whiteSpace: 'pre-line' }}
+                        dangerouslySetInnerHTML={{ __html: formatearTexto(resu.texto) }}
+                    /> */}
                   <span className="w-full flex justify-end text-gray-400">
                     {resu.hora}
                   </span>

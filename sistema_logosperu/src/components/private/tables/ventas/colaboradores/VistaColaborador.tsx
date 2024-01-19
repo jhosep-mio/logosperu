@@ -149,6 +149,25 @@ export const VistaColaborador = ({
     return diferenciaDias <= 4
   }
 
+  const formatearTexto = (texto: string): JSX.Element => {
+    const lineas = texto.split('\n')
+
+    const lineasFormateadas = lineas.map((linea, index) => {
+      const primeraLetraMayuscula = linea.trim().charAt(0).toUpperCase()
+      const restoTexto = linea.trim().slice(1)
+      const textoFormateado = primeraLetraMayuscula + restoTexto
+
+      return (
+        <p key={index} className="text-black pt-4 lowercase first-letter:uppercase break-words">
+          {'• '}
+          {textoFormateado}
+        </p>
+      )
+    })
+
+    return <>{lineasFormateadas}</>
+  }
+
   return (
     <>
       {resumenOrdenado.length > 0
@@ -227,7 +246,8 @@ export const VistaColaborador = ({
                     ></textarea>
                       )
                     : (
-                    <p className="text-black pt-4 break-words">{resu.texto}</p>
+                        formatearTexto(resu.texto)
+                  // <p className="text-black pt-4 break-words">{resu.texto}</p>
                       )}
                   <span className="w-full flex justify-end text-black">
                     {resu.hora}

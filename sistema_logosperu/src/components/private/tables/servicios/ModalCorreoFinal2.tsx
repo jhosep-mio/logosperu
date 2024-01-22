@@ -30,6 +30,7 @@ interface valuesDatos {
   email: string
   marca: string
   celular: string
+  id_contrato: string
 }
 
 interface values {
@@ -73,6 +74,7 @@ export const ModalCorreoFinal2 = ({
       data.append('titulo', asunto)
       if (datos != null) {
         data.append('nombres', datos.nombres)
+        data.append('contrato', datos.id_contrato)
         data.append('marca', marca)
         data.append('contexto', contexto)
         data.append('email', auth.email)

@@ -9,10 +9,15 @@ import { SubirArchivosPDF } from '../../../shared/modals/SubirArchivosPDF'
 import { nodata, pdf, zip } from '../../../shared/Images'
 import Skeleton from '@mui/material/Skeleton'
 import { IoEyeSharp } from 'react-icons/io5'
+import { type archivoavancesValues, type ValuesPlanes } from '../../../shared/schemas/Interfaces'
+import { motion, AnimatePresence } from 'framer-motion'
+import { SubirAvances } from './avancesArchivos/SubirAvances'
+import filarachive from '../../../../assets/plataformas/archivo.png'
 
 interface valuesPropuesta {
   propuestas: string
   link_final: string
+  archivos_avances: string
 }
 
 interface valuesData {
@@ -22,6 +27,7 @@ interface valuesData {
   setpdfName: Dispatch<SetStateAction<string | undefined>>
   fechaCreacion: Date | null
   limite: number
+  plan: ValuesPlanes | null
 }
 
 export const ArchivosFinales = ({
@@ -30,13 +36,16 @@ export const ArchivosFinales = ({
   values,
   pdfName,
   setpdfName,
-  fechaCreacion
+  fechaCreacion,
+  plan
 }: valuesData): JSX.Element => {
   const { id } = useParams()
   const token = localStorage.getItem('token')
   const [loadingDescarga, setLoadingDescarga] = useState(false)
   const [open, setOpen] = useState(false)
+  const [seleccion, setSeleccion] = useState(false)
   const [openPDF, setOpenPDF] = useState(false)
+  const [openAvance, setOpenAvance] = useState(false)
 
   //   NUEVO
   const plazo = 30 * 24 * 60 * 60 * 1000 // 30 días en milisegundos
@@ -150,6 +159,85 @@ export const ArchivosFinales = ({
     }
   }
 
+  const preguntarArchivo = (id: string, nombre: string): void => {
+    Swal.fire({
+      title: '¿Estas seguro de eliminar el archivo?',
+      showDenyButton: true,
+      confirmButtonText: 'Eliminar',
+      denyButtonText: 'Cancelar'
+    }).then(async (result: SweetAlertResult) => {
+      if (result.isConfirmed) {
+        eliminarArchivoAvance(id, nombre)
+      }
+    })
+  }
+
+  const eliminarImagen = async (nombre: string): Promise<void> => {
+    await axios.delete(
+        `${Global.url}/eliminarArchivoAvance/${nombre ?? ''}`, {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+          }
+        }
+    )
+  }
+
+  const eliminarArchivoAvance = async (idarchivo: string, nombre: string): Promise<void> => {
+    const nuevoArray = JSON.parse(values.archivos_avances).filter((avance: archivoavancesValues) => avance.id !== idarchivo)
+    const data = new FormData()
+    data.append('archivos_avances', JSON.stringify(nuevoArray))
+    data.append('_method', 'PUT')
+    try {
+      const respuesta = await axios.post(
+        `${Global.url}/updateArchivoAvance/${id ?? ''}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+          }
+        }
+      )
+      if (respuesta.data.status == 'success') {
+        Swal.fire('Se elimino el archivo correctamente', '', 'success')
+        getOneBrief()
+        await eliminarImagen(nombre)
+      }
+    } catch (error) {
+      Swal.fire('Error al eliminar el archivo', '', 'error')
+      console.log(error)
+    }
+  }
+
+  const descargarArchivoZip = async (nombre: string): Promise<void> => {
+    setLoadingDescarga(true)
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `${Global.url}/descargarArchivosAvances/${nombre ?? ''}`,
+        responseType: 'blob', // Indicar que la respuesta es un blob (archivo)
+        headers: {
+          Authorization: `Bearer ${
+            token !== null && token !== '' ? `Bearer ${token}` : ''
+          }`
+        }
+      })
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${formatFileName(nombre)}` // Cambiar por el nombre real del archivo
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+    } catch (error) {
+      console.error(error)
+    }
+    setLoadingDescarga(false)
+  }
+
   const preguntarPDF = (): void => {
     Swal.fire({
       title: '¿Estas seguro de eliminar el PDF?',
@@ -208,7 +296,7 @@ export const ArchivosFinales = ({
     h %= 24
     m %= 60
     s %= 60
-    return `${d} días ${h} horas ${m} minutos ${s} segundos`
+    return `${d} días ${h} horas ${m} min`
   }
 
   return (
@@ -216,7 +304,7 @@ export const ArchivosFinales = ({
       <div className="flex flex-row gap-0 justify-between lg:gap-3 mb-2 ">
         <div className="flex flex-col gap-3 mb-6 ">
           <h2 className="text-xl lg:text-2xl font-bold text-black">
-            Archivos finales  <span className='text-gray-400'>-- {limite} de 3</span>
+            Archivos finales{' '}
           </h2>
           <h3 className="font-bold text-base">
             <span className="text-gray-400 text-sm lg:text-base">
@@ -224,52 +312,153 @@ export const ArchivosFinales = ({
             </span>{' '}
           </h3>
         </div>
-        <div className="w-full lg:w-1/3 flex justify-end items-start flex-row  gap-2 lg:gap-5 ">
+        <div className="w-40 relative h-fit flex justify-end">
           <button
             type="button"
-            className="w-full lg:w-40  bg-green-600 rounded-xl font-normal text-white px-4 py-2"
+            className="w-40 px-4 h-fit bg-gray-500  rounded-xl font-normal text-white py-1"
             onClick={() => {
-              setOpen(true)
+              setSeleccion(!seleccion)
             }}
           >
-            Subir archivo final
+            Subir archivo
           </button>
-          <div className="w-full lg:w-40 relative cursor-pointer">
-            <button
-              type="button"
-              className="w-full bg-main rounded-xl font-normal text-white px-4 py-2 cursor-pointer"
-              onClick={() => {
-                setOpenPDF(true)
-              }}
-            >
-              Subir propuesta
-            </button>
-          </div>
+
+          <AnimatePresence>
+            {seleccion && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute bg-white shadow-lg rounded-md overflow-hidden w-40 h-auto left-0 right-0 mx-auto top-full mt-3 flex flex-col z-20"
+              >
+                {plan?.tipo.includes('Diseño Logotipo') && (
+                  <div className="w-full lg:w-40 relative cursor-pointer">
+                    <button
+                      type="button"
+                      className="w-full hover:text-white hover:bg-main font-normal transition-colors text-gray-600 px-4 py-2 cursor-pointer"
+                      onClick={() => {
+                        setOpenPDF(true)
+                        setSeleccion(false)
+                      }}
+                    >
+                      Subir propuesta
+                    </button>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  className="w-full lg:w-40  hover:text-white hover:bg-yellow-600 transition-colors font-normal text-gray-600 px-4 py-2"
+                  onClick={() => {
+                    setOpenAvance(true)
+                    setSeleccion(false)
+                  }}
+                >
+                  Subir avance
+                </button>
+                <button
+                  type="button"
+                  className="w-full lg:w-40  hover:text-white hover:bg-green-600  font-normal text-gray-600 px-4 py-2"
+                  onClick={() => {
+                    setOpen(true)
+                    setSeleccion(false)
+                  }}
+                >
+                  Subir archivo final
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
       {values.link_final || pdfName
         ? <section className="mb-4 flex flex-col lg:flex-row gap-3 w-full">
           <div className="bg-[#fff] p-0 lg:p-0 rounded-xl w-full lg:w-full relative">
-            <div className="hidden md:grid grid-cols-1 md:grid-cols-5 gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300 w-full">
+            <div className="hidden md:grid grid-cols-1 md:grid-cols-7 gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300 w-full">
               <h5 className="md:text-left col-span-2">Archivo </h5>
               <h5 className="md:text-left">Tipo de archivo</h5>
               <h5 className="md:text-left bg-yellow-500/70 text-black w-fit px-2 col-span-2">
                 Tiempo de expiración{' '}
               </h5>
+              <h5 className="text-center w-full text-black  px-2">
+                Intentos
+              </h5>
+              <h5 className="md:text-left"></h5>
             </div>
-            {values.link_final && (
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center mb-4 bg-gray-50 p-4 rounded-xl shadow-sm cursor-pointer w-full">
+            {values.archivos_avances && (
+                <>
+                {JSON.parse(values.archivos_avances).map((avances: archivoavancesValues) => (
+                    <div key={avances.id} className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center mb-4 bg-gray-50 p-4 rounded-xl shadow-sm cursor-pointer w-full">
+                        <div className="hidden md:block md:text-center col-span-2">
+                            <div className="text-left flex gap-3 items-center">
+                                <img src={filarachive} alt="" className="w-10 h-10" />
+                                <span className="line-clamp-2 text-black">
+                                {formatFileName(avances.nombre)}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="hidden md:block md:text-center">
+                            <span className="text-left flex gap-2 font-bold items-center w-fit px-2 text-white bg-yellow-600">
+                                Avance
+                            </span>
+                        </div>
+                        <div className="hidden md:block md:text-center col-span-2">
+                            <span className="text-left flex gap-2 items-center w-fit px-2 text-black">
+                                {tiempoRestante != null && tiempoRestante > 0
+                                  ? (
+                                <span className="text-left flex gap-2 items-center w-fit px-2">
+                                    {formatTime(tiempoRestante)}
+                                </span>
+                                    )
+                                  : (
+                                <Skeleton
+                                    variant="rectangular"
+                                    className="w-[70%] h-full"
+                                />
+                                    )}
+                            </span>
+                        </div>
+                        <div className="hidden md:block md:text-center ">
+                            <span className="w-fit px-2 text-black">
+                                {avances.limite}
+                            </span>
+                        </div>
+                        <div className="hidden md:flex md:justify-end items-center gap-4 ">
+                        {!loadingDescarga
+                          ? (
+                            <BsFillCloudArrowDownFill
+                            className=" text-green-600 text-3xl w-fit lg:w-fit text-center"
+                            onClick={() => {
+                              descargarArchivoZip(avances.nombre)
+                            }}
+                            />
+                            )
+                          : (
+                            <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-fit text-center" />
+                            )}
+                        <BsFillTrashFill
+                            className=" text-red-600 text-2xl w-fit lg:w-fit text-center"
+                            onClick={() => {
+                              preguntarArchivo(avances.id, avances.nombre)
+                            }}
+                        />
+                        </div>
+                    </div>
+                ))}
+                </>
+            )}
+            {pdfName != undefined && (
+              <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center mb-4 bg-gray-50 p-4 rounded-xl shadow-sm cursor-pointer w-full">
                 <div className="hidden md:block md:text-center col-span-2">
                   <div className="text-left flex gap-3 items-center">
-                    <img src={zip} alt="" className="w-10 h-10" />
+                    <img src={pdf} alt="" className="w-10 h-10" />
                     <span className="line-clamp-2 text-black">
-                      {formatFileName(values.link_final)}
+                      {formatFileName(pdfName)}
                     </span>
                   </div>
                 </div>
                 <div className="hidden md:block md:text-center">
-                  <span className="text-left flex gap-2 font-bold items-center w-fit px-2 text-black">
-                    Editables
+                  <span className="text-left flex gap-2 font-bold items-center w-fit px-2 text-white bg-red-600">
+                    Sustentación
                   </span>
                 </div>
                 <div className="hidden md:block md:text-center col-span-2">
@@ -288,7 +477,77 @@ export const ArchivosFinales = ({
                         )}
                   </span>
                 </div>
-                <div className="hidden md:flex md:justify-center items-center gap-4 absolute right-20">
+                <div className="hidden md:block md:text-center ">
+                    <span className="w-fit px-2 text-black">
+                    </span>
+                </div>
+                <div className="hidden md:flex md:justify-end items-center gap-4 ">
+                  <a
+                    href={`${Global.urlImages}/propuestas/${pdfName ?? ''}`}
+                    target="_blank"
+                    className="text-center flex gap-2 items-center w-fit px-2 justify-center"
+                    rel="noreferrer"
+                  >
+                    <IoEyeSharp className="text-3xl text-center text-violet-500 hover:text-violet-700 transition-colors cursor-pointer" />
+                  </a>
+                  {!loadingDescarga
+                    ? (
+                    <BsFillCloudArrowDownFill
+                      className=" text-green-600 text-3xl w-fit lg:w-fit text-center"
+                      onClick={() => {
+                        descargarPDF()
+                      }}
+                    />
+                      )
+                    : (
+                    <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-fit text-center" />
+                      )}
+                  <BsFillTrashFill
+                    className=" text-red-600 text-2xl w-fit lg:w-fit text-center"
+                    onClick={() => {
+                      preguntarPDF()
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+            {values.link_final && (
+              <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center mb-4 bg-gray-50 p-4 rounded-xl shadow-sm cursor-pointer w-full">
+                <div className="hidden md:block md:text-center col-span-2">
+                  <div className="text-left flex gap-3 items-center">
+                    <img src={zip} alt="" className="w-10 h-10" />
+                    <span className="line-clamp-2 text-black">
+                      {formatFileName(values.link_final)}
+                    </span>
+                  </div>
+                </div>
+                <div className="hidden md:block md:text-center">
+                  <span className="text-left flex gap-2 font-bold items-center w-fit px-2 text-white bg-green-600">
+                    Archivo final
+                  </span>
+                </div>
+                <div className="hidden md:block md:text-center col-span-2">
+                  <span className="text-left flex gap-2 items-center w-fit px-2 text-black">
+                    {tiempoRestante != null && tiempoRestante > 0
+                      ? (
+                      <span className="text-left flex gap-2 items-center w-fit px-2">
+                        {formatTime(tiempoRestante)}
+                      </span>
+                        )
+                      : (
+                      <Skeleton
+                        variant="rectangular"
+                        className="w-[70%] h-full"
+                      />
+                        )}
+                  </span>
+                </div>
+                <div className="hidden md:block md:text-center ">
+                    <span className="w-fit px-2 text-black">
+                        {limite}
+                    </span>
+                </div>
+                <div className="hidden md:flex md:justify-end items-center gap-4 ">
                   {!loadingDescarga
                     ? (
                     <BsFillCloudArrowDownFill
@@ -310,102 +569,6 @@ export const ArchivosFinales = ({
                 </div>
               </div>
             )}
-            {pdfName != undefined && (
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center mb-4 bg-gray-50 p-4 rounded-xl shadow-sm cursor-pointer w-full">
-                <div className="hidden md:block md:text-center col-span-2">
-                  <div className="text-left flex gap-3 items-center">
-                    <img src={pdf} alt="" className="w-10 h-10" />
-                    <span className="line-clamp-2 text-black">
-                      {formatFileName(pdfName)}
-                    </span>
-                  </div>
-                </div>
-                <div className="hidden md:block md:text-center">
-                  <span className="text-left flex gap-2 font-bold items-center w-fit px-2 text-black">
-                    Sustentación
-                  </span>
-                </div>
-                <div className="hidden md:block md:text-center col-span-2">
-                  <span className="text-left flex gap-2 items-center w-fit px-2 text-black">
-                    {tiempoRestante != null && tiempoRestante > 0
-                      ? (
-                      <span className="text-left flex gap-2 items-center w-fit px-2">
-                        {formatTime(tiempoRestante)}
-                      </span>
-                        )
-                      : (
-                      <Skeleton
-                        variant="rectangular"
-                        className="w-[70%] h-full"
-                      />
-                        )}
-                  </span>
-                </div>
-                <div className="hidden md:flex md:justify-center items-center gap-4 absolute right-20">
-                <a
-                    href={`${Global.urlImages}/propuestas/${pdfName ?? ''}`}
-                    target="_blank"
-                    className="text-center flex gap-2 items-center w-fit px-2 justify-center"
-                    rel="noreferrer"
-                >
-                    <IoEyeSharp className="text-3xl text-center text-violet-500 hover:text-violet-700 transition-colors cursor-pointer" />
-                </a>
-                  {!loadingDescarga
-                    ? (
-                    <BsFillCloudArrowDownFill
-                      className=" text-green-600 text-3xl w-fit lg:w-fit text-center"
-                      onClick={() => {
-                        descargarPDF()
-                      }}
-                    />
-                      )
-                    : (
-                    <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-fit text-center" />
-                      )}
-                  <BsFillTrashFill
-                    className=" text-red-600 text-2xl w-fit lg:w-fit text-center"
-                    onClick={() => {
-                      preguntarPDF()
-                    }}
-                  />
-                </div>
-              </div>
-              // <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center mb-4 bg-gray-50 p-4 rounded-xl shadow-sm cursor-pointer w-full">
-              //   <div className="hidden md:block md:text-center col-span-2">
-              //     <div className="text-left flex gap-3 items-center">
-              //       <img src={pdf} alt="" className="w-10 h-10" />
-              //       <span className="line-clamp-2 text-black">
-              //         {formatFileName(pdfName)}
-              //       </span>
-              //     </div>
-              //   </div>
-              //   <div className="hidden md:block md:text-center">
-              //     <span className="text-left flex gap-2 font-bold items-center w-fit px-2 text-black">
-              //       Sustentacion
-              //     </span>
-              //   </div>
-              //   <div className="md:text-center flex gap-5 justify-left">
-              //     {!loadingDescarga
-              //       ? (
-              //       <BsFillCloudArrowDownFill
-              //         className=" text-green-600 text-3xl w-fit lg:w-fit text-center"
-              //         onClick={() => {
-              //           descargarPDF()
-              //         }}
-              //       />
-              //         )
-              //       : (
-              //       <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-fit text-center" />
-              //         )}
-              //     <BsFillTrashFill
-              //       className=" text-red-600 text-2xl w-fit lg:w-fit text-center"
-              //       onClick={() => {
-              //         preguntarPDF()
-              //       }}
-              //     />
-              //   </div>
-              // </div>
-            )}
           </div>
         </section>
         : (
@@ -423,6 +586,12 @@ export const ArchivosFinales = ({
       <SubirArchivosFinales
         open={open}
         setOpen={setOpen}
+        id={id}
+        getOneBrief={getOneBrief}
+      />
+      <SubirAvances
+        open={openAvance}
+        setOpen={setOpenAvance}
         id={id}
         getOneBrief={getOneBrief}
       />

@@ -15,7 +15,8 @@ import {
   type valuesResumen,
   type FinalValues,
   type arrayCorreos,
-  type avanceValues
+  type avanceValues,
+  type ValuesPlanes
 } from '../../../shared/schemas/Interfaces'
 import { ArchivosFinales } from './ArchivosFinales'
 import { ViewFinal } from './ViewFinal'
@@ -37,6 +38,7 @@ interface valuesDatos {
   email: string
   marca: string
   celular: string
+  id_contrato: string
 }
 
 interface values {
@@ -48,6 +50,10 @@ interface values {
   hora_acta: string
   nombre_marca: string
   archivos: string
+  id_contrato: string
+  fecha_fin: string
+  fecha_inicio: string
+  observaciones: string
 }
 
 export const Avances = (): JSX.Element => {
@@ -56,6 +62,7 @@ export const Avances = (): JSX.Element => {
   const token = localStorage.getItem('token')
   const { setTitle } = useAuth()
   const [loading, setLoading] = useState(true)
+  const [plan, setplan] = useState<ValuesPlanes | null>(null)
   const [open, setOpen] = useState(false)
   const [openCorreoActa, setOpenCorreoActa] = useState(false)
   const [openAvisoNotificacion, setOpenAvisoNotificacion] = useState(false)
@@ -70,18 +77,19 @@ export const Avances = (): JSX.Element => {
     fecha: '',
     hora_acta: '',
     nombre_marca: '',
-    archivos: ''
+    archivos: '',
+    id_contrato: '',
+    fecha_fin: '',
+    fecha_inicio: '',
+    observaciones: ''
   })
   //   const [openChat, setOpenChat] = useState(false)
   const [openMail, setOpenMail] = useState(false)
-
   const [openCorreoFinal, setOpenCorreoFinal] = useState(false)
-
   const [arrayAvances, setArrayAvances] = useState([])
   const [arrayFinal, setArrayFinal] = useState([])
   const [arrayActa, setArrayActa] = useState([])
   const [openActa, setOpenActa] = useState(false)
-
   const [datos2, setDatos2] = useState<valuesDatos | null>(null)
   const [pdfName, setpdfName] = useState<string | undefined>('')
   const [avance, setAvance] = useState<avanceValues>({
@@ -115,7 +123,6 @@ export const Avances = (): JSX.Element => {
   const [colaboradores, setColaboradores] = useState([])
   const [colaborador, setColaborador] = useState([])
   const [limite, setLimite] = useState(0)
-
   const [openMailFinal, setOpenMailFinal] = useState(false)
 
   const updatePropuestas = async (): Promise<void> => {
@@ -168,7 +175,8 @@ export const Avances = (): JSX.Element => {
       link_final: '',
       fecha_fin: '',
       comentarios: '',
-      propuestas: ''
+      propuestas: '',
+      archivos_avances: ''
     },
     validationSchema: SchemaPropuestas,
     onSubmit: updatePropuestas
@@ -183,6 +191,19 @@ export const Avances = (): JSX.Element => {
           }`
         }
       })
+      console.log(request.data[0].archivos_avances)
+      const codContr: string = (request.data[0].id_contrato.split('_')[0])
+
+      const requestPlan = await axios.get(`${Global.url}/onePlanToNombre/${codContr ?? ''}`, {
+        headers: {
+          Authorization: `Bearer ${
+              token !== null && token !== '' ? `Bearer ${token}` : ''
+            }`
+        }
+      })
+      setplan(requestPlan.data[0])
+
+      //   setplanes(requestPlan.data[0])
       if (request.data[0].limitar_archivos) {
         setLimite(request.data[0].limitar_archivos)
       }
@@ -191,7 +212,8 @@ export const Avances = (): JSX.Element => {
         comentarios: request.data[0].comentarios,
         link_final: request.data[0].archivos_finales,
         propuestas: request.data[0].propuestas,
-        fecha_fin: request.data[0].fecha_fin
+        fecha_fin: request.data[0].fecha_fin,
+        archivos_avances: request.data[0].archivos_avances
       })
       setDatos2({
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -199,7 +221,8 @@ export const Avances = (): JSX.Element => {
         idCliente: request.data[0].id_cliente,
         celular: request.data[0].celular,
         email: request.data[0].email,
-        marca: request.data[0].nombre_marca
+        marca: request.data[0].nombre_marca,
+        id_contrato: request.data[0].id_contrato
       })
       setpdfName(request.data[0].propuestas)
       setColaborador(
@@ -258,7 +281,11 @@ export const Avances = (): JSX.Element => {
           request.data[0].nombre_marca ? request.data[0].nombre_marca : ''
         }`,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        archivos: `${request.data[0].acta_aceptacion}`
+        archivos: `${request.data[0].acta_aceptacion}`,
+        id_contrato: request.data[0].id_contrato,
+        fecha_fin: request.data[0].fecha_fin,
+        fecha_inicio: request.data[0].fecha_inicio,
+        observaciones: request.data[0].observaciones
       }))
       if (request.data[0].email && request.data[0].email != null) {
         setCorreos([
@@ -380,6 +407,7 @@ export const Avances = (): JSX.Element => {
                 setpdfName={setpdfName}
                 fechaCreacion={fechaCreacion}
                 limite={limite}
+                plan={plan}
               />
             </div>
             <div className="bg-white p-8 rounded-xl mt-6">

@@ -667,7 +667,7 @@ export const ListaVentas = (): JSX.Element => {
                     {/* <BsGraphUp className="hidden lg:block" /> */}
                     <span className="text-center gap-2 font-bold px-2 line-clamp-1 ">
                       En cola
-                    </span>y
+                    </span>
                   </>
                           )
                         : (

@@ -61,7 +61,7 @@ export const ModalQuestion = ({
                     <option value="aviso">Aviso de notificación</option>
                 }
                 {auth.id == '1' && values.fecha_fin &&
-                    <option value="actaaceptacion">Acta de aceptación</option>
+                    <option value="actaaceptacion">Acta de conformidad y conclusión</option>
                 }
             </select>
           </>

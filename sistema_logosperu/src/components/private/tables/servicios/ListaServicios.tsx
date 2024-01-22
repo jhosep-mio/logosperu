@@ -41,6 +41,7 @@ interface valuesDatos {
   email: string
   marca: string
   celular: string
+  id_contrato: string
 }
 
 type ValuePiece = Date | null
@@ -633,7 +634,8 @@ export const ListaServicios = (): JSX.Element => {
                               nombres: `${orden.nombres} ${orden.apellidos}`,
                               email: orden.email,
                               marca: orden.nombre_marca,
-                              celular: orden.celular
+                              celular: orden.celular,
+                              id_contrato: orden.id_contrato
                             })
                             setOpenFinal(true)
                           } else {

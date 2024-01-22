@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import { Global } from '../../../../../helper/Global'
-import { zip } from '../../../../shared/Images'
+import { pdf, zip } from '../../../../shared/Images'
 import axios from 'axios'
 
 interface values {
@@ -27,6 +27,31 @@ export const ViewSwiperArchivos = ({ arrayImagenes }: values): JSX.Element => {
     const link = document.createElement('a')
     link.href = url
     link.setAttribute('download', nombre) // Asigna el nombre al archivo descargado
+    document.body.appendChild(link)
+    link.click()
+
+    // Limpieza después de la descarga
+    if (link.parentNode) {
+      link.parentNode.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    }
+  }
+
+  const descargarActaAceptacion = async (nombre: string): Promise<void> => {
+    const nombrecompleto = `${nombre}.pdf`
+    const response = await axios.get(
+          `${Global.url}/descargarArchivosActa/${nombrecompleto ?? ''}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token ?? ''}`
+            },
+            responseType: 'blob'
+          }
+    )
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', nombrecompleto) // Asigna el nombre al archivo descargado
     document.body.appendChild(link)
     link.click()
 
@@ -61,7 +86,30 @@ export const ViewSwiperArchivos = ({ arrayImagenes }: values): JSX.Element => {
         }}
       >
         {arrayImagenes.map((imagen: arrayImagenes) => (
-          <SwiperSlide
+            <>
+           {
+           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+           // @ts-expect-error
+           imagen.imagen1.archivo == 'acta_aceptacion'
+             ? <SwiperSlide
+            key={imagen.id}
+            className="w-full relative bg-transparent flex ga-2  rounded-xl items-center justify-between group h-20"
+          >
+            {imagen.imagen1.archivo != null && (
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
+              <div className="relative group cursor-pointer" onClick={
+                async () => { await descargarActaAceptacion(imagen.imagen1.archivoName) }}>
+                <img
+                  src={pdf}
+                  className="w-20 h-20 md:m-auto object-contain cursor-pointer mx-auto group-hover:opacity-0 transition-opacity"
+                />
+                <p className="opacity-0 group-hover:opacity-100 transition-opacity absolute inset-0 w-full h-20 flex items-center justify-center text-center text-black font-bold">
+                  Descargar
+                </p>
+              </div>
+            )}
+          </SwiperSlide>
+             : <SwiperSlide
             key={imagen.id}
             className="w-full relative bg-transparent flex ga-2  rounded-xl items-center justify-between group h-20"
           >
@@ -78,7 +126,9 @@ export const ViewSwiperArchivos = ({ arrayImagenes }: values): JSX.Element => {
                 </p>
               </div>
             )}
-          </SwiperSlide>
+          </SwiperSlide>}
+            </>
+
         ))}
       </Swiper>
     </>

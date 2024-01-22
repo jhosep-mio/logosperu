@@ -14,7 +14,6 @@ export const getClasificados = async (ruta: string, setDatos: Dispatch<SetStateA
     }
   })
   setDatos(request.data)
-  console.log(request.data)
   setTotalRegistros(request.data.length)
 }
 
@@ -54,7 +53,6 @@ export const getVentas = async (ruta: string, setDatos: Dispatch<SetStateAction<
     }
   })
   setDatos(request.data)
-  console.log(request.data)
   setTotalRegistros(request.data.length)
 }
 

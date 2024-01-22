@@ -31,10 +31,8 @@ export const ImageUpdateClasificados = ({
         const dimensionesValidas = anchoOriginal === anchoRequerido && altoOriginal === altoRequerido
 
         if (dimensionesValidas) {
-          console.log('Dimensiones válidas')
           resolve(true)
         } else {
-          console.log('Dimensiones no válidas')
           resolve(false)
         }
       }

@@ -1,5 +1,13 @@
 import { type Dispatch, type SetStateAction } from 'react'
 
+// AVANCES DE archivo
+
+export interface archivoavancesValues {
+  id: string
+  nombre: string
+  limite: string
+}
+
 export interface clasificadosValues {
   id: number
   nombre: string

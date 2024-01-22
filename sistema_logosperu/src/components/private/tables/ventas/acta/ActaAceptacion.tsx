@@ -220,63 +220,13 @@ export const ActaAceptacion = ({ id }: { id: string | undefined }): JSX.Element 
     })
   }
 
-  //   const preguntarCorreo = (): void => {
-  //     Swal.fire({
-  //       title: '¿Estas seguro de enviar el correo de aceptación?',
-  //       showDenyButton: true,
-  //       confirmButtonText: 'Enviar',
-  //       denyButtonText: 'Cancelar'
-  //     }).then(async (result: SweetAlertResult) => {
-  //       if (result.isConfirmed) {
-  //         enviarCorreo()
-  //       }
-  //     })
-  //   }
-
-  //   const enviarCorreo = async (): Promise<void> => {
-  //     if (JSON.parse(values.acta_aceptacion).length > 0) {
-  //       setLoading(true)
-  //       const data = new FormData()
-  //       data.append('nombres', values.nombres_cliente)
-  //       data.append('email_cliente', values.email_cliente)
-  //       data.append('nombre_marca', values.nombre_marca)
-  //       data.append('email', auth.email)
-  //       data.append('email_alter', auth.email_alter)
-  //       data.append('password', auth.pass_email)
-  //       data.append('firma', auth.firma)
-
-  //       try {
-  //         const respuesta = await axios.post(`${Global.url}/correoActaFinal/${id ?? ''}`, data, {
-  //           headers: {
-  //             Authorization: `Bearer ${
-  //               token !== null && token !== '' ? token : ''
-  //             }`
-  //           }
-  //         })
-
-  //         if (respuesta.data.status == 'success') {
-  //           setOpen(false)
-  //           getData()
-  //           Swal.fire('enviado', '', 'success')
-  //         } else {
-  //           Swal.fire('Error al registrar', '', 'error')
-  //         }
-  //       } catch (error: unknown) {
-  //         console.log(error)
-  //         Swal.fire('Error', '', 'error')
-  //       }
-  //       setLoading(false)
-  //     } else {
-  //       Swal.fire('Aun no sube ninguna acta de aceptación', '', 'warning')
-  //     }
-  //   }
-
   return (
     <div className="">
       {loading
         ? <Loading />
         : (
         <div className="card">
+
           <form
             className="flex flex-col bg-white rounded-md  relative"
             onSubmit={handleSubmit}
@@ -395,7 +345,7 @@ export const ActaAceptacion = ({ id }: { id: string | undefined }): JSX.Element 
                     </div>
                   </div>
                 </div>
-                <div className="flex w-full justify-end gap-3 rounded-md text-black mt-5 mb-10">
+                <div className="flex w-full justify-end gap-3 rounded-md text-black mt-5 mb-10 px-4">
                   <button
                     type="button"
                     onClick={() => {
@@ -442,7 +392,7 @@ export const ActaAceptacion = ({ id }: { id: string | undefined }): JSX.Element 
                     </div>
                   </div>
                 </div>
-                <div className="flex w-full justify-end gap-3 rounded-md text-black mt-5 mb-10">
+                <div className="flex w-full justify-end gap-3 rounded-md text-black mt-5 mb-10 px-4">
                   <button
                     type="button"
                     onClick={() => {

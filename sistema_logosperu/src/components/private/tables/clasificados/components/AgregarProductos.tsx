@@ -66,7 +66,7 @@ export const AgregarProductos = ({
   }
 
   const eliminarImagen = async (nombre: string): Promise<void> => {
-    const respuesta = await axios.delete(
+    await axios.delete(
         `${Global.url}/eliminarImagenClasificado/${nombre ?? ''}`, {
           headers: {
             Authorization: `Bearer ${
@@ -75,7 +75,6 @@ export const AgregarProductos = ({
           }
         }
     )
-    console.log(respuesta)
   }
 
   const eliminarArray = async (id: number | null, nombre: string): Promise<void> => {

@@ -122,10 +122,10 @@
   cursor: pointer;
 }
 
-.forzar_alto{
-    width: 100% !important;
-    height: 700px !important;
-    font-size: 30px !important;
+.forzar_alto {
+  width: 100% !important;
+  height: 700px !important;
+  font-size: 30px !important;
 }
 
 .rbc-btn-group button:active,
@@ -165,8 +165,8 @@
 .acordion_notifiacte {
   border: none !important;
 
-  & .MuiAccordionDetails-root{
-  border: none !important;
+  & .MuiAccordionDetails-root {
+    border: none !important;
   }
 }
 
@@ -289,6 +289,14 @@
 .swiper-correos {
   .swiper-wrapper {
     padding: 0 !important;
+  }
+}
+
+.content_acta_Acaptacion {
+  .content_editor {
+    & .ql-container {
+      min-height: 100px;
+    }
   }
 }
 

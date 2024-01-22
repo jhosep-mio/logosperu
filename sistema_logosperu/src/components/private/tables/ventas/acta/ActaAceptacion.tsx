@@ -1,25 +1,23 @@
 import { useFormik } from 'formik'
 import useAuth from '../../../../../hooks/useAuth'
 import { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
 import { type ValuesActa } from '../../../../shared/schemas/Interfaces'
 import { Global } from '../../../../../helper/Global'
 import axios from 'axios'
 import Swal, { type SweetAlertResult } from 'sweetalert2'
 import { SchemaGenerarActa } from '../../../../shared/schemas/Schemas'
 import { Loading } from '../../../../shared/Loading'
-import { logo, pdf } from '../../../../shared/Images'
+import { pdf } from '../../../../shared/Images'
 import { TitleBriefs } from '../../../../shared/TitleBriefs'
 import Editor from '../../../../shared/modals/ModalPDF'
 import { formatAPIdate } from '../../../../shared/functions/QuitarAcerntos'
 import { BsFillCloudArrowDownFill } from 'react-icons/bs'
 import { IoCloseSharp, IoEyeSharp } from 'react-icons/io5'
 
-export const ActaAceptacion = (): JSX.Element => {
-  const { setTitle, auth } = useAuth()
+export const ActaAceptacion = ({ id }: { id: string | undefined }): JSX.Element => {
+  const { setTitle } = useAuth()
   const token = localStorage.getItem('token')
-  const [loading, setLoading] = useState(true)
-  const { id } = useParams()
+  const [loading, setLoading] = useState(false)
   const [contenido, setContenido] = useState('')
   const [observaciones, setobservaciones] = useState('')
   const [alta, setalta] = useState('')
@@ -222,78 +220,56 @@ export const ActaAceptacion = (): JSX.Element => {
     })
   }
 
-  const preguntarCorreo = (): void => {
-    Swal.fire({
-      title: '¿Estas seguro de enviar el correo de aceptación?',
-      showDenyButton: true,
-      confirmButtonText: 'Enviar',
-      denyButtonText: 'Cancelar'
-    }).then(async (result: SweetAlertResult) => {
-      if (result.isConfirmed) {
-        enviarCorreo()
-      }
-    })
-  }
+  //   const preguntarCorreo = (): void => {
+  //     Swal.fire({
+  //       title: '¿Estas seguro de enviar el correo de aceptación?',
+  //       showDenyButton: true,
+  //       confirmButtonText: 'Enviar',
+  //       denyButtonText: 'Cancelar'
+  //     }).then(async (result: SweetAlertResult) => {
+  //       if (result.isConfirmed) {
+  //         enviarCorreo()
+  //       }
+  //     })
+  //   }
 
-  const enviarCorreo = async (): Promise<void> => {
-    if (JSON.parse(values.acta_aceptacion).length > 0) {
-      setLoading(true)
-      const data = new FormData()
-      data.append('nombres', values.nombres_cliente)
-      data.append('email_cliente', values.email_cliente)
-      data.append('nombre_marca', values.nombre_marca)
-      data.append('email', auth.email)
-      data.append('email_alter', auth.email_alter)
-      data.append('password', auth.pass_email)
-      data.append('firma', auth.firma)
+  //   const enviarCorreo = async (): Promise<void> => {
+  //     if (JSON.parse(values.acta_aceptacion).length > 0) {
+  //       setLoading(true)
+  //       const data = new FormData()
+  //       data.append('nombres', values.nombres_cliente)
+  //       data.append('email_cliente', values.email_cliente)
+  //       data.append('nombre_marca', values.nombre_marca)
+  //       data.append('email', auth.email)
+  //       data.append('email_alter', auth.email_alter)
+  //       data.append('password', auth.pass_email)
+  //       data.append('firma', auth.firma)
 
-      try {
-        const respuesta = await axios.post(`${Global.url}/correoActaFinal/${id ?? ''}`, data, {
-          headers: {
-            Authorization: `Bearer ${
-              token !== null && token !== '' ? token : ''
-            }`
-          }
-        })
+  //       try {
+  //         const respuesta = await axios.post(`${Global.url}/correoActaFinal/${id ?? ''}`, data, {
+  //           headers: {
+  //             Authorization: `Bearer ${
+  //               token !== null && token !== '' ? token : ''
+  //             }`
+  //           }
+  //         })
 
-        if (respuesta.data.status == 'success') {
-        //   const data = new FormData()
-        //   data.append('fecha_fin', values.nombre_marca)
-        //   data.append('_method', 'PUT')
-        //   try {
-        //     const respuesta = await axios.post(
-        //       `${Global.url}/subirFinal/${id ?? ''}`,
-        //       data,
-        //       {
-        //         headers: {
-        //           Authorization: `Bearer ${
-        //             token !== null && token !== '' ? token : ''
-        //           }`
-        //         }
-        //       }
-        //     )
-        //     if (respuesta.data.status == 'success') {
-        //       Swal.fire('SERVICIO TERMINADO', '', 'success')
-        //     } else {
-        //       Swal.fire('Error al registrar', '', 'error')
-        //     }
-        //   } catch (error: unknown) {
-        //     console.log(error)
-        //     Swal.fire('Error', '', 'error')
-        //   }
-          Swal.fire('enviado', '', 'success')
-        } else {
-          Swal.fire('Error al registrar', '', 'error')
-        }
-      } catch (error: unknown) {
-        console.log(error)
-        Swal.fire('Error', '', 'error')
-      }
-      setLoading(false)
-    } else {
-      Swal.fire('Aun no sube ninguna acta de aceptación', '', 'warning')
-    }
-  }
+  //         if (respuesta.data.status == 'success') {
+  //           setOpen(false)
+  //           getData()
+  //           Swal.fire('enviado', '', 'success')
+  //         } else {
+  //           Swal.fire('Error al registrar', '', 'error')
+  //         }
+  //       } catch (error: unknown) {
+  //         console.log(error)
+  //         Swal.fire('Error', '', 'error')
+  //       }
+  //       setLoading(false)
+  //     } else {
+  //       Swal.fire('Aun no sube ninguna acta de aceptación', '', 'warning')
+  //     }
+  //   }
 
   return (
     <div className="">
@@ -302,17 +278,11 @@ export const ActaAceptacion = (): JSX.Element => {
         : (
         <div className="card">
           <form
-            className="flex flex-col bg-white rounded-md mt-4 p-4 md:p-10 relative"
+            className="flex flex-col bg-white rounded-md  relative"
             onSubmit={handleSubmit}
           >
-            <img
-              src={logo}
-              alt=""
-              className="mx-auto w-[50%] px-4 md:px-0 md:w-48"
-            />
             <select
-              className="border placeholder-gray-400 focus:outline-none
-                                                        focus:border-black w-full pt-4 pr-4 pb-6 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+              className="border placeholder-gray-400 focus:outline-none outline-none w-full pt-4 pr-4 pb-6 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
                                                         border-gray-300 rounded-md transition-all text-black"
               name="tipoServicio"
               value={tipoServicio}
@@ -321,7 +291,7 @@ export const ActaAceptacion = (): JSX.Element => {
               }}
             >
               {/* FB GOOGLE, VENTAS, POST VENTA, RECOMENDACION, ISNTAGRAM) */}
-              <option value="">Seleccionar</option>
+              <option value="">Seleccionar acta</option>
               <option value="LP69">DISEÑO GRAFICO</option>
               <option value="LPW">WEB INFORMATIVA</option>
               <option value="LPWA">WEB ADMINISTRABLE</option>
@@ -493,8 +463,8 @@ export const ActaAceptacion = (): JSX.Element => {
                   : null}
           </form>
 
-          <section className="flex flex-col bg-white rounded-md mt-4 p-4 md:p-10 relative">
-            {JSON.parse(values.acta_aceptacion).length > 0 && (
+          <section className="flex flex-col bg-white rounded-md relative py-2 px-2">
+            {values.acta_aceptacion && JSON.parse(values.acta_aceptacion).length > 0 && (
               <>
                 <div className="hidden md:grid grid-cols-1 md:grid-cols-5 gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300 w-full ">
                   <h5 className="md:text-left col-span-3 text-black">
@@ -565,19 +535,6 @@ export const ActaAceptacion = (): JSX.Element => {
                 )}
               </>
             )}
-            <div className="flex w-full justify-end gap-3 rounded-md text-black mt-5 mb-10">
-              <Link
-                to="/admin/lista-clientes"
-                className="bg-red-600 px-3 py-2 rounded-md text-white cursor-pointer"
-              >
-                Regresar
-              </Link>
-              <button
-                type="button"
-                onClick={() => { preguntarCorreo() }}
-                className="bg-secondary-150 px-3 py-2 text-white rounded-md cursor-pointer"
-              >Enviar Correo</button>
-            </div>
           </section>
         </div>
           )}

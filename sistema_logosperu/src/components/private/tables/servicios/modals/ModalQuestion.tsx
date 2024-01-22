@@ -8,18 +8,29 @@ import {
 import { type Dispatch, type SetStateAction, useState } from 'react'
 import useAuth from '../../../../../hooks/useAuth'
 
+interface valuesData {
+  link_final: string
+  fecha_fin: string
+  comentarios: string
+  propuestas: string
+}
+
 export const ModalQuestion = ({
   open,
   setOpen,
   openCorreo,
   setOpenCorreoActa,
-  setOpenAvisoNotificacion
+  setOpenAvisoNotificacion,
+  setOpenActaAceptacion,
+  values
 }: {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
   openCorreo: Dispatch<SetStateAction<boolean>>
   setOpenCorreoActa: Dispatch<SetStateAction<boolean>>
   setOpenAvisoNotificacion: Dispatch<SetStateAction<boolean>>
+  setOpenActaAceptacion: Dispatch<SetStateAction<boolean>>
+  values: valuesData
 }): JSX.Element => {
   const { auth } = useAuth()
   const [tipo, setTipo] = useState('')
@@ -49,6 +60,9 @@ export const ModalQuestion = ({
                 {auth.id == '1' &&
                     <option value="aviso">Aviso de notificación</option>
                 }
+                {auth.id == '1' && values.fecha_fin &&
+                    <option value="actaaceptacion">Acta de aceptación</option>
+                }
             </select>
           </>
         </DialogContentText>
@@ -74,6 +88,9 @@ export const ModalQuestion = ({
             } else if (tipo == 'aviso') {
               setOpen(false)
               setOpenAvisoNotificacion(true)
+            } else if (tipo == 'actaaceptacion') {
+              setOpen(false)
+              setOpenActaAceptacion(true)
             }
           }}
         >

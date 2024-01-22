@@ -53,7 +53,6 @@ import { AsignacionComunity } from '../components/private/tables/brief_comunity/
 import { ListaServicios } from '../components/private/tables/servicios/ListaServicios'
 import { ViewServicio } from '../components/private/tables/servicios/ViewServicio'
 import { Avances } from '../components/private/tables/servicios/Avances'
-import { ActaAceptacion } from '../components/private/tables/ventas/acta/ActaAceptacion'
 import { ViewPreventa } from '../components/private/tables/preventa/ViewPreventa'
 import { Status } from '../components/private/tables/ventas/Status'
 import { EditarPreventa } from '../components/private/tables/preventa/EditarPreventa'
@@ -144,7 +143,7 @@ export const Routing = (): JSX.Element => {
             <Route path="lista-ventas-agencia" element={<ListaProyectosAgencia />} />
             <Route path="lista-ventas/view/:id" element={<ViewVenta />} />
             <Route path="lista-ventas/editar/:id" element={<EditarVentas />} />
-            <Route path="lista-ventas/acta-aceptacion/:id" element={<ActaAceptacion />} />
+            {/* <Route path="lista-ventas/acta-aceptacion/:id" element={<ActaAceptacion />} /> */}
             <Route path="lista-ventas/generarContrato/:id" element={<GenerarContrato />} />
             <Route path="lista-prueba" element={<ListaPrueba />} />
             {/* VENTAS VENCIDOS */}

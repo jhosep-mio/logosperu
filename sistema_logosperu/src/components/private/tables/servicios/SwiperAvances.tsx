@@ -135,8 +135,8 @@ export const SwiperAvances = ({
               </p>
               <div className="w-full flex flex-col justify-center">
                 <p className="text-gray-400 w-full text-center">
-                  {JSON.parse(datos.hora_acta).fecha} <br />
-                  {JSON.parse(datos.hora_acta).hora}
+                  {datos.hora_acta && JSON.parse(datos.hora_acta).fecha} <br />
+                  {datos.hora_acta && JSON.parse(datos.hora_acta).hora}
                 </p>
               </div>
             </div>

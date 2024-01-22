@@ -19,7 +19,7 @@ import { ModalCorreoFinal } from './ModalCorreoFinal'
 import Swal, { type SweetAlertResult } from 'sweetalert2'
 import { IoShareSocialSharp } from 'react-icons/io5'
 import { RegistroEmail } from './RegistroEmail'
-import { BsCheckCircle, BsGraphUp, BsCardChecklist } from 'react-icons/bs'
+import { BsCardChecklist } from 'react-icons/bs'
 import { ResumenAdicional } from './ResumenAdicional'
 import axios from 'axios'
 import { Global } from '../../../../helper/Global'
@@ -27,6 +27,7 @@ import { AlertSucess } from '../../../shared/alerts/AlertSucess'
 // import { GeneradorExcel } from '../../../shared/EXCEL/GeneradorExcel'
 import { AnimatePresence } from 'framer-motion'
 import { ModalFechaAlta } from './modals/ModalFechaAlta'
+import { RegistroMarcaList } from './modals/RegistroMarcaList'
 
 interface Filters {
   estado?: number | null
@@ -48,6 +49,7 @@ type Value = ValuePiece | [ValuePiece, ValuePiece]
 export const ListaServicios = (): JSX.Element => {
   const { setTitle, auth } = useAuth()
   const [openChat, setOpenChat] = useState(false)
+  const [openMarca, setOpenMarca] = useState(false)
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
   const [resumen, setResumen] = useState<valuesResumen[]>([])
   const [productos, setProductos] = useState<ValuesVenta[]>([])
@@ -243,6 +245,19 @@ export const ListaServicios = (): JSX.Element => {
       }
     }, 3000)
   }, [showError])
+
+  const mostrarAlerta = (): void => {
+    Swal.fire({
+      title: 'Aun no cuenta con una marca registrada',
+      showDenyButton: true,
+      confirmButtonText: 'Registrar marca',
+      denyButtonText: 'Cancelar'
+    }).then(async (result: SweetAlertResult) => {
+      if (result.isConfirmed) {
+        setOpenMarca(true)
+      }
+    })
+  }
 
   return (
     <>
@@ -472,7 +487,6 @@ export const ListaServicios = (): JSX.Element => {
                 {orden.estado == '1'
                   ? (
                   <>
-                    <BsCheckCircle className="hidden lg:block" />
                     <span className="text-center bg-red-600 text-white font-bold w-fit line-clamp-1">
                       Abandono
                     </span>
@@ -481,17 +495,15 @@ export const ListaServicios = (): JSX.Element => {
                   : orden.fecha_fin != null
                     ? (
                   <>
-                    <BsCheckCircle className="hidden lg:block" />
                     <span className="text-center bg-[#1A5515] text-white font-bold w-fit line-clamp-1">
-                      Terminado
+                      Finalizado
                     </span>
                   </>
                       )
                     : (
                   <>
-                    <BsGraphUp className="hidden lg:block" />
                     <span className="text-center gap-2 font-bold w-fit line-clamp-1">
-                      Pendiente
+                      En proceso
                     </span>
                   </>
                       )}
@@ -536,13 +548,21 @@ export const ListaServicios = (): JSX.Element => {
                     )}
                   </MenuItem>
                   <MenuItem className="p-0 hover:bg-transparent">
+
                     {orden.id != null && (
-                      <Link
-                        to={`/admin/seguimiento/${orden.id}`}
+                      <button
+                        onClick={() => {
+                          if (orden.nombre_marca && orden.nombre_marca.length > 0) {
+                            navigate(`/admin/seguimiento/${orden.id}`)
+                          } else {
+                            setSelectID(orden.id)
+                            mostrarAlerta()
+                          }
+                        }}
                         className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
                       >
                         Reporte
-                      </Link>
+                      </button>
                     )}
                   </MenuItem>
                   <MenuItem className="p-0 hover:bg-transparent">
@@ -695,6 +715,14 @@ export const ListaServicios = (): JSX.Element => {
         id={auth.id}
         resumen={resumen}
         setResumen={setResumen}
+      />
+
+      <RegistroMarcaList
+        open={openMarca}
+        setOpen={setOpenMarca}
+        id={selectID}
+        setProductos={setProductos}
+        setTotalRegistros={setTotalRegistros}
       />
 
       <AnimatePresence>

@@ -21,7 +21,6 @@ import {
   limpiarCadena,
   quitarAcentos
 } from '../../../shared/functions/QuitarAcerntos'
-import { BsCheckCircle, BsGraphUp } from 'react-icons/bs'
 import { FaComments } from 'react-icons/fa6'
 import { MdChevronRight } from 'react-icons/md'
 // import { GeneradorExcel } from '../../../shared/EXCEL/GeneradorExcel'
@@ -344,7 +343,7 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
                 toggleFilter('sinFechaFinYNo1', true)
               }}
             >
-              Pendientes
+              En proceso
             </button>
             <button
               className={`bg-green-600 text-white px-2 md:px-4 text-sm md:text-base py-1 lg:py- rounded-xl line-clamp-1 font-bold ${
@@ -660,7 +659,7 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
                 {orden.estado == '1'
                   ? (
                   <>
-                    <BsCheckCircle className="hidden lg:block" />
+                    {/* <BsCheckCircle className="hidden lg:block" /> */}
                     <span className="text-center bg-red-600 text-white font-bold w-fit line-clamp-1">
                       Abandono
                     </span>
@@ -669,7 +668,7 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
                   : orden.fecha_fin != null
                     ? (
                   <>
-                    <BsCheckCircle className="hidden lg:block" />
+                    {/* <BsCheckCircle className="hidden lg:block" /> */}
                     <span className="text-center bg-[#1A5515] text-white font-bold w-fit line-clamp-1">
                       Finalizado
                     </span>
@@ -678,7 +677,7 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
                     : !orden.fecha_inicio && !orden.fecha_alta
                         ? (
                   <>
-                    <BsGraphUp className="hidden lg:block" />
+                    {/* <BsGraphUp className="hidden lg:block" /> */}
                     <span className="text-center gap-2 font-bold w-fit line-clamp-1">
                       En cola
                     </span>
@@ -686,9 +685,9 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
                           )
                         : (
                   <>
-                    <BsGraphUp className="hidden lg:block" />
+                    {/* <BsGraphUp className="hidden lg:block" /> */}
                     <span className="text-center gap-2 font-bold w-fit line-clamp-1">
-                      Pendiente
+                      En proceso
                     </span>
                   </>
                           )}
@@ -779,16 +778,6 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
                       </Link>
                     )}
                   </MenuItem>
-                  {orden.fecha_fin != null && (
-                    <MenuItem className="p-0 hover:bg-transparent">
-                      <Link
-                        to={`/admin/lista-ventas/acta-aceptacion/${orden.id}`}
-                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
-                      >
-                        Acta de aceptación
-                      </Link>
-                    </MenuItem>
-                  )}
                   <MenuItem className="p-0 hover:bg-transparent">
                     <Link
                       to={`generarContrato/${orden.id}`}

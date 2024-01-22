@@ -5,20 +5,14 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContentText from '@mui/material/DialogContentText'
 import Slide from '@mui/material/Slide'
 import { type TransitionProps } from '@mui/material/transitions'
-import EditorContexto from './../EditorContexto'
-import { AgregarCorreos } from './../AgregarCorreos'
-import {
-  type arrayImagenes,
-  type arrayCorreos
-} from '../../../../shared/schemas/Interfaces'
-import { SwiperCorreos } from './../SwiperCorreos'
-import { AgregarImagenes } from './../AgregarImagenes'
-import { SwiperImagenes } from './../SwiperImagenes'
-import { Global } from '../../../../../helper/Global'
 import axios from 'axios'
 import Swal, { type SweetAlertResult } from 'sweetalert2'
+import { type arrayImagenes, type arrayCorreos } from '../../../../shared/schemas/Interfaces'
 import useAuth from '../../../../../hooks/useAuth'
-import { format } from 'date-fns'
+import { Global } from '../../../../../helper/Global'
+import { AgregarCorreos } from '../AgregarCorreos'
+import { SwiperCorreos } from '../SwiperCorreos'
+import { ActaAceptacion } from '../../ventas/acta/ActaAceptacion'
 
 const Transition = React.forwardRef(function Transition (
   props: TransitionProps & {
@@ -45,7 +39,7 @@ interface values {
   setCorreos: React.Dispatch<React.SetStateAction<arrayCorreos[]>>
 }
 
-export const ModalActaEstado = ({
+export const ModalActaAceptacion = ({
   open,
   setOpen,
   idVenta,
@@ -61,14 +55,8 @@ export const ModalActaEstado = ({
   const token = localStorage.getItem('token')
   const [arrayImagenes, setArrayImagenes] = React.useState<arrayImagenes[]>([])
   const [arrayArchivos, setArrayArchivos] = React.useState<arrayImagenes[]>([])
-
   const [contexto, setContexto] = React.useState('')
-  const [conclusion, setConclusion] = React.useState('')
   const [asunto, setAsunto] = React.useState('')
-  const [empresa, setEmpresa] = React.useState('')
-  const [contacto, setContacto] = React.useState('')
-  const [motivo, setMotivo] = React.useState('')
-  const [fechaacta, setFecha] = React.useState('')
   const [loading, setLoading] = React.useState(false)
 
   const guardarAvance = async (): Promise<void> => {
@@ -77,13 +65,8 @@ export const ModalActaEstado = ({
         setLoading(true)
         const data = new FormData()
         data.append('titulo', asunto)
-        data.append('empresa', empresa)
-        data.append('contacto', contacto)
-        data.append('motivo', motivo)
-        data.append('fecha', fechaacta)
         data.append('nombres', datos.nombres)
         data.append('contexto', contexto)
-        data.append('conclusion', conclusion)
         data.append('email', auth.email)
         data.append('email_alter', auth.email_alter)
         data.append('correos', JSON.stringify(correos))
@@ -94,15 +77,10 @@ export const ModalActaEstado = ({
           fecha,
           hora,
           asunto,
-          empresa,
-          contacto,
-          motivo,
-          fechaacta,
           imagenes: arrayImagenes,
           archivos: arrayArchivos,
           correos,
           contexto,
-          conclusion,
           firma: auth.firma
         }
         avance.imagenes.forEach((image1, index1) => {
@@ -111,11 +89,7 @@ export const ModalActaEstado = ({
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             const uniqueFilename = `${new Date().getTime()}_${index1}.${fileExtension}`
             image1.imagen1.archivoName = uniqueFilename
-            data.append(
-                      `images1[${index1}]`,
-                      image1.imagen1.archivo,
-                      uniqueFilename
-            )
+            data.append(`images1[${index1}]`, image1.imagen1.archivo, uniqueFilename)
             data.append(`names1[${index1}]`, uniqueFilename)
           }
         })
@@ -123,25 +97,21 @@ export const ModalActaEstado = ({
         avance.archivos.forEach((image1, index1) => {
           if (image1.imagen1.archivo) {
             const originalFilename = image1.imagen1.archivo.name
-            data.append(
-                      `images2[${index1}]`,
-                      image1.imagen1.archivo,
-                      originalFilename
-            )
+            data.append(`images2[${index1}]`, image1.imagen1.archivo, originalFilename)
             data.append(`names2[${index1}]`, originalFilename)
           }
         })
         try {
           const respuesta = await axios.post(
-                    `${Global.url}/enviarActaEstado`,
-                    data,
-                    {
-                      headers: {
-                        Authorization: `Bearer ${
-                          token !== null && token !== '' ? token : ''
-                        }`
-                      }
-                    }
+              `${Global.url}/enviarAvances`,
+              data,
+              {
+                headers: {
+                  Authorization: `Bearer ${
+                    token !== null && token !== '' ? token : ''
+                  }`
+                }
+              }
           )
 
           if (respuesta.data.status == 'success') {
@@ -165,19 +135,19 @@ export const ModalActaEstado = ({
             data.append('_method', 'PUT')
             try {
               const respuesta = await axios.post(
-                `${Global.url}/subirAvances/${idVenta ?? ''}`,
-                data,
-                {
-                  headers: {
-                    Authorization: `Bearer ${
-                      token !== null && token !== '' ? token : ''
-                    }`
+                  `${Global.url}/subirAvances/${idVenta ?? ''}`,
+                  data,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${
+                        token !== null && token !== '' ? token : ''
+                      }`
+                    }
                   }
-                }
               )
 
               if (respuesta.data.status == 'success') {
-                Swal.fire('Se subio el acta correctamente', '', 'success')
+                Swal.fire('Se subio el aviso de notificación correctamente', '', 'success')
                 const enviarNotificacion = async (): Promise<void> => {
                   const data = new FormData()
                   const currentUrl = window.location.href
@@ -191,17 +161,17 @@ export const ModalActaEstado = ({
                   data.append('url', pathName)
                   data.append(
                     'contenido',
-                      `Ha enviado un acta de estado para el proyecto ${
-                        datos.nombre_marca ?? ''
-                      }  (${datos?.nombres ?? ''})`
+                        `Ha enviado un aviso de notificación para el proyecto ${
+                          datos.nombre_marca ?? ''
+                        }  (${datos?.nombres ?? ''})`
                   )
                   data.append('hidden_users', '')
                   try {
                     await axios.post(`${Global.url}/nuevaNotificacion`, data, {
                       headers: {
                         Authorization: `Bearer ${
-                            token !== null && token !== '' ? token : ''
-                          }`
+                              token !== null && token !== '' ? token : ''
+                            }`
                       }
                     })
                   } catch (error: unknown) {
@@ -212,14 +182,9 @@ export const ModalActaEstado = ({
                 enviarNotificacion()
                 setArrayImagenes([])
                 setArrayArchivos([])
-                setContexto('')
-                setConclusion('')
                 setAsunto('')
-                setEmpresa('')
-                setContacto('')
+                setContexto('')
                 setCorreos([])
-                setMotivo('')
-                setFecha('')
                 getOneBrief()
                 setOpen(false)
               } else {
@@ -256,13 +221,8 @@ export const ModalActaEstado = ({
         setLoading(true)
         const data = new FormData()
         data.append('titulo', asunto)
-        data.append('empresa', empresa)
-        data.append('contacto', contacto)
-        data.append('motivo', motivo)
-        data.append('fecha', fechaacta)
         data.append('nombres', datos.nombres)
         data.append('contexto', contexto)
-        data.append('conclusion', conclusion)
         data.append('email', auth.email)
         data.append('email_alter', auth.email_alter)
         data.append('correos', JSON.stringify(correos))
@@ -273,15 +233,10 @@ export const ModalActaEstado = ({
           fecha,
           hora,
           asunto,
-          empresa,
-          contacto,
-          motivo,
-          fechaacta,
           imagenes: arrayImagenes,
           archivos: arrayArchivos,
           correos,
           contexto,
-          conclusion,
           firma: auth.firma
         }
         avance.imagenes.forEach((image1, index1) => {
@@ -290,83 +245,66 @@ export const ModalActaEstado = ({
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             const uniqueFilename = `${new Date().getTime()}_${index1}.${fileExtension}`
             image1.imagen1.archivoName = uniqueFilename
-            data.append(
-                  `images1[${index1}]`,
-                  image1.imagen1.archivo,
-                  uniqueFilename
-            )
+            data.append(`images1[${index1}]`, image1.imagen1.archivo, uniqueFilename)
             data.append(`names1[${index1}]`, uniqueFilename)
           }
         })
-
         avance.archivos.forEach((image1, index1) => {
           if (image1.imagen1.archivo) {
             const originalFilename = image1.imagen1.archivo.name
-            data.append(
-                  `images2[${index1}]`,
-                  image1.imagen1.archivo,
-                  originalFilename
-            )
+            data.append(`images2[${index1}]`, image1.imagen1.archivo, originalFilename)
             data.append(`names2[${index1}]`, originalFilename)
           }
         })
         try {
           const respuesta = await axios.post(
-                `${Global.url}/enviarActaEstado`,
-                data,
-                {
-                  headers: {
-                    Authorization: `Bearer ${
-                      token !== null && token !== '' ? token : ''
-                    }`
-                  }
+              `${Global.url}/enviarAvances`,
+              data,
+              {
+                headers: {
+                  Authorization: `Bearer ${
+                    token !== null && token !== '' ? token : ''
+                  }`
                 }
+              }
           )
 
           if (respuesta.data.status == 'success') {
             const data = new FormData()
             data.append('array_avances', JSON.stringify(avance))
-
             avance.imagenes.forEach((image1, index1) => {
               if (image1.imagen1.archivo) {
                 data.append(`images1[${index1}]`, image1.imagen1.archivo)
                 data.append(`names1[${index1}]`, image1.imagen1.archivoName)
               }
             })
-
             avance.archivos.forEach((image1, index1) => {
               if (image1.imagen1.archivo) {
                 data.append(`images2[${index1}]`, image1.imagen1.archivo)
                 data.append(`names2[${index1}]`, image1.imagen1.archivo)
               }
             })
-
             data.append('_method', 'PUT')
             try {
               const respuesta = await axios.post(
-                `${Global.url}/subirAvances/${idVenta ?? ''}`,
-                data,
-                {
-                  headers: {
-                    Authorization: `Bearer ${
-                      token !== null && token !== '' ? token : ''
-                    }`
+                  `${Global.url}/subirAvances/${idVenta ?? ''}`,
+                  data,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${
+                        token !== null && token !== '' ? token : ''
+                      }`
+                    }
                   }
-                }
               )
 
               if (respuesta.data.status == 'success') {
-                Swal.fire('Se subio el acta correctamente', '', 'success')
+                Swal.fire('Se subio el avance correctamente', '', 'success')
                 setArrayImagenes([])
                 setArrayArchivos([])
-                setContexto('')
-                setConclusion('')
                 setAsunto('')
-                setEmpresa('')
-                setContacto('')
+                setContexto('')
                 setCorreos([])
-                setMotivo('')
-                setFecha('')
                 getOneBrief()
                 setOpen(false)
               } else {
@@ -402,16 +340,9 @@ export const ModalActaEstado = ({
   }
 
   React.useEffect(() => {
-    const fechaActual = new Date()
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const fechaFormateada = format(fechaActual, 'dd/MM/yyyy', { timeZone: 'America/Lima' })
-    setAsunto(`ACTA DE ESTADO DE PROYECTO - ${(datos.nombre_marca).toUpperCase()}`)
-    setEmpresa((datos.nombre_marca).toUpperCase())
-    setMotivo('ACTA DE ESTADO DE PROYECTO')
-    setContacto((datos.nombres).toUpperCase())
-    setFecha(fechaFormateada)
-  }, [datos])
+    setAsunto(`ACTA DE ACEPTACIÓN - ${datos.nombre_marca}`)
+    setContexto(`<p>Por el presente debemos informarle sobre la notificación de aviso (adjuntado)</p><p>El cual el área Administrativa Remite hacia su persona.</p><p><br></p><p>En el presente</p><p>Según lo acordado con Área Diseño, Área Desarrollo, Área administrativa y Gerencia llegado a la fecha limite:</p><p>SE DARA POR CONCLUIDO EL PROYECTO <strong style="background-color: yellow;">${datos.nombre_marca ?? ''}</strong><strong> </strong></p><p><br></p>`)
+  }, [])
 
   return (
     <Dialog
@@ -420,119 +351,36 @@ export const ModalActaEstado = ({
       keepMounted
       onClose={handleClose}
       aria-describedby="alert-dialog-slide-description"
-      className="moda_registro moda_registro2"
+      className="moda_registro"
     >
       <DialogContentText id="alert-dialog-slide-description">
         <h2 className="w-full font-bold text-2xl text-center text-white bg-main/80 py-2">
-          ACTA DE ESTADO DE PROYECTO
+          ACTA DE ACEPTACIÓN
         </h2>
         <div className="w-full flex gap-2 items-center justify-center">
           <AgregarCorreos correos={correos} setCorreos={setCorreos} />
           <SwiperCorreos correos={correos} setCorreos={setCorreos} />
         </div>
-        <div className="flex items-center  border border-b-gray-400">
-          <p className="block h-full py-3 px-4 border-r border-r-gray-400 text-gray-500 font-bold w-[150px]">
-            ASUNTO:
-          </p>
-          <input
-            type="text"
-            className="uppercase text-gray-500 outline-none px-4 py-3 w-full"
-            value={asunto}
-            onChange={(e) => {
-              setAsunto(e.target.value)
-            }}
-          />
-        </div>
-        <div className="flex items-center  border border-b-gray-400">
-          <p className="block h-full py-3 px-4 border-r border-r-gray-400 text-black font-bold w-[150px]">
-            EMPRESA:
-          </p>
-          <input
-            type="text"
-            className="uppercase text-black outline-none px-4 py-3 w-full"
-            value={empresa}
-            onChange={(e) => {
-              setEmpresa(e.target.value)
-            }}
-          />
-        </div>
-        <div className="flex items-center  border border-b-gray-400">
-          <p className="block h-full py-3 px-4 border-r border-r-gray-400 text-black font-bold w-[150px]">
-            CONTACTO:
-          </p>
-          <input
-            type="text"
-            className="uppercase text-black outline-none px-4 py-3 w-full"
-            value={contacto}
-            onChange={(e) => {
-              setContacto(e.target.value)
-            }}
-          />
-        </div>
-        <div className="flex items-center  border border-b-gray-400">
-          <p className="block h-full py-3 px-4 border-r border-r-gray-400 text-gray-500 font-bold w-[150px]">
-            MOTIVO:
-          </p>
-          <input
-            type="text"
-            className="uppercase text-gray-500 outline-none px-4 py-3 w-full"
-            value={motivo}
-            onChange={(e) => {
-              setMotivo(e.target.value)
-            }}
-          />
-        </div>
-        <div className="flex items-center  border border-b-gray-400">
-          <p className="block h-full py-3 px-4 border-r border-r-gray-400 text-black font-bold w-[150px]">
-            FECHA:
-          </p>
-          <input
-            type="text"
-            className="uppercase text-black outline-none px-4 py-3 w-full"
-            value={fechaacta}
-            onChange={(e) => {
-              setFecha(e.target.value)
-            }}
-          />
-        </div>
-        <p className="block h-full py-3 px-4  text-black font-bold w-[150px]">
-            CONTENIDO:
-        </p>
-        <section className="px-0 py-2 flex flex-col gap-4">
-          <EditorContexto content={contexto} setContent={setContexto} />
-        </section>
-        <section className="px-2">
-          <AgregarImagenes
-            arrayImagenes={arrayImagenes}
-            arrayArchivos={arrayArchivos}
-            setArrayImagenes={setArrayImagenes}
-            setArrayArchivos={setArrayArchivos}
-          />
-          <SwiperImagenes
-            arrayImagenes={arrayImagenes}
-            arrayArchivos={arrayArchivos}
-            setArrayImagenes={setArrayImagenes}
-            setArrayArchivos={setArrayArchivos}
-          />
-        </section>
-        <p className="block h-full py-3 px-4 text-black font-bold w-[150px]">
-            CONCLUSIÓN:
-        </p>
-        <section className="px-0 py-2 flex flex-col gap-4">
-          <EditorContexto content={conclusion} setContent={setConclusion} />
-        </section>
+        <input
+          type="text"
+          disabled
+          placeholder="ASUNTO"
+          className="text-black outline-none px-4 py-3 border border-b-gray-400 w-full bg-gray-200"
+          value={asunto}
+        />
+        <ActaAceptacion id={idVenta} />
       </DialogContentText>
       <DialogActions>
         <Button onClick={handleClose}>CERRAR</Button>
         {!loading
           ? <button
-            className="w-fit px-3 py-1 bg-secondary-150 text-white font-bold rounded-xl"
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          className="w-fit px-3 py-1 bg-secondary-150 text-white font-bold rounded-xl"
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onClick={async () => {
               await guardarAvance()
             }}
           >
-            ENVIAR ACTA
+            ENVIAR NOTIFICACIÓN
           </button>
           : (
           <button className="w-fit px-3 py-1 bg-[#4E4263] text-white font-bold rounded-xl">

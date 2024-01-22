@@ -21,7 +21,6 @@ import {
   limpiarCadena,
   quitarAcentos
 } from '../../../../shared/functions/QuitarAcerntos'
-import { BsCheckCircle } from 'react-icons/bs'
 import { MdChevronRight } from 'react-icons/md'
 
 interface Filters {
@@ -542,15 +541,13 @@ export const ListaVentasVencidos = (): JSX.Element => {
                 orden.limitar_archivos != null
                   ? (
                   <>
-                    <BsCheckCircle className="hidden lg:block" />
                     <span className="text-center  bg-[#1A5515] text-white font-bold w-fit line-clamp-1">
                       Si descargo
                     </span>
                   </>
                     )
                   : <>
-                    {/* <BsCheckCircle className="hidden lg:block" /> */}
-                    <span className="text-center bg-red-600 px-2 text-white font-bold w-fit line-clamp-1">
+                    <span className="text-center bg-red-600 text-white font-bold w-fit line-clamp-1">
                       No descargo
                     </span>
                   </>
@@ -626,16 +623,6 @@ export const ListaVentasVencidos = (): JSX.Element => {
                       </Link>
                     )}
                   </MenuItem>
-                  {orden.fecha_fin != null && (
-                    <MenuItem className="p-0 hover:bg-transparent">
-                      <Link
-                        to={`/admin/lista-ventas/acta-aceptacion/${orden.id}`}
-                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
-                      >
-                        Acta de aceptación
-                      </Link>
-                    </MenuItem>
-                  )}
                   <MenuItem className="p-0 hover:bg-transparent">
                     <Link
                       to={`/admin/lista-ventas/generarContrato/${orden.id}`}

@@ -29,6 +29,7 @@ import { ModalActaEstado } from './modals/ModalActaEstado'
 import { ModalCorreoFinal2 } from './ModalCorreoFinal2'
 import { RegistroEmail2 } from './RegistroEmail2'
 import { ModalaAvisonNotificacion } from './avisoNotificacion/ModalaAvisonNotificacion'
+import { ModalActaAceptacion } from './actaAceptacion/ModalActaAceptacion'
 
 interface valuesDatos {
   idCliente: string
@@ -58,6 +59,7 @@ export const Avances = (): JSX.Element => {
   const [open, setOpen] = useState(false)
   const [openCorreoActa, setOpenCorreoActa] = useState(false)
   const [openAvisoNotificacion, setOpenAvisoNotificacion] = useState(false)
+  const [openActaAceptacion, setOpenActaAceptacion] = useState(false)
   const [openQuestion, setOpenQuestion] = useState(false)
   const [selectIDCLIENTE, setSelectIDCLIENTE] = useState(0)
   const [datos, setDatos] = useState<values>({
@@ -473,6 +475,8 @@ export const Avances = (): JSX.Element => {
               openCorreo={setOpen}
               setOpenCorreoActa={setOpenCorreoActa}
               setOpenAvisoNotificacion={setOpenAvisoNotificacion}
+              values={values}
+              setOpenActaAceptacion={setOpenActaAceptacion}
             />
             <ModalActaEstado
               open={openCorreoActa}
@@ -496,6 +500,16 @@ export const Avances = (): JSX.Element => {
             <ModalaAvisonNotificacion
               open={openAvisoNotificacion}
               setOpen={setOpenAvisoNotificacion}
+              idVenta={id}
+              getOneBrief={getOneBrief}
+              datos={datos}
+              correos={correos}
+              setCorreos={setCorreos}
+            />
+
+            <ModalActaAceptacion
+              open={openActaAceptacion}
+              setOpen={setOpenActaAceptacion}
               idVenta={id}
               getOneBrief={getOneBrief}
               datos={datos}
@@ -549,14 +563,6 @@ export const Avances = (): JSX.Element => {
           </button>
         </>
           )}
-      {/* <Chat
-        open={openChat}
-        setOpen={setOpenChat}
-        id={id}
-        getOneBrief={getOneBrief}
-        resumen={resumen}
-        setResumen={setResumen}
-      /> */}
       <RegistroMarca
         open={openMarca}
         setOpen={setOpenMarca}

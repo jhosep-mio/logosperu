@@ -1,8 +1,8 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import Swal from 'sweetalert2'
+import React from 'react'
 import { IoCartOutline } from 'react-icons/io5'
-import { carrito, productosValues } from '../interfaces/interfaces'
+import { productosValues } from '../interfaces/interfaces'
+import useAuth from '../hooks/useAuth'
 
 interface ComponentProps {
   producto: productosValues
@@ -13,16 +13,7 @@ export const AddProducto: React.FC<ComponentProps> = ({
   producto,
   contador
 }) => {
-  const [cart, setCart] = useState<carrito[]>([])
-
-  useEffect(() => {
-    // Recuperar el carrito del almacenamiento local cuando la página se cargue
-    const storedCart = localStorage.getItem('cart')
-    if (storedCart) {
-      const parsedCart = JSON.parse(storedCart)
-      setCart(parsedCart)
-    }
-  }, [])
+  const { cart, setCart, setShowError } = useAuth()
 
   function addProduct (product: productosValues, cantidad: number): void {
     const itemIndex = cart.findIndex(
@@ -39,7 +30,8 @@ export const AddProducto: React.FC<ComponentProps> = ({
           titulo: product.titulo,
           cantidad,
           imagen1: imagen,
-          categoria: product.categoria
+          categoria: product.categoria,
+          precio: product.precio
         }
       ])
       localStorage.setItem(
@@ -51,11 +43,15 @@ export const AddProducto: React.FC<ComponentProps> = ({
             titulo: product.titulo,
             cantidad,
             imagen1: imagen,
-            categoria: product.categoria
+            categoria: product.categoria,
+            precio: product.precio
           }
         ])
       )
-      Swal.fire(`${product.titulo} agregado al carrito`, '', 'success')
+      setShowError({
+        estado: 'success',
+        texto: `${product.titulo} agregado al carrito`
+      })
     } else {
       // Ya existe un elemento en el carrito con el mismo id y titulo, actualizar la cantidad
       const updatedItems = [...cart]
@@ -64,7 +60,10 @@ export const AddProducto: React.FC<ComponentProps> = ({
           (updatedItems[itemIndex].cantidad ?? 0) + cantidad
       }
       setCart(updatedItems)
-      Swal.fire(`Se agrego mas unidades a ${product.titulo}`, '', 'success')
+      setShowError({
+        estado: 'success',
+        texto: `Se agrego mas unidades a ${product.titulo}`
+      })
       localStorage.setItem('cart', JSON.stringify(updatedItems))
     }
   }

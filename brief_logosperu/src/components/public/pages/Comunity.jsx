@@ -149,7 +149,7 @@ const Comunity = () => {
       <main className="main" ref={setCaptureRef}>
         <section className="main__right">
           <div className="main__right__title">
-            <h2>Cuestionario para Comunity Manager </h2>
+            <h2>Cuestionario para Community Manager </h2>
           </div>
           <div className="main__right__form">
             <form action="" className="" onSubmit={handleSubmit}>

@@ -292,6 +292,10 @@
   }
 }
 
+.grid_cols_15 {
+    grid-template-columns: repeat(13, 1fr);
+}
+
 .content_acta_Acaptacion {
   .content_editor {
     & .ql-container {

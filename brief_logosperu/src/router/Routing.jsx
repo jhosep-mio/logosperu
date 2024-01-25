@@ -11,6 +11,7 @@ import { Landing } from '../components/public/pages/Landing';
 import Brochure from '../components/public/pages/Brochure';
 import Flyer from '../components/public/pages/Flyer';
 import Comunity from '../components/public/pages/Comunity';
+import Clasificados from '../components/public/pages/Clasificados';
 
 
 export const Routing = () => {
@@ -27,9 +28,10 @@ export const Routing = () => {
                 <Route path='desarrollo/administrables' element={<Administrables/>}/>
                 <Route path='desarrollo/tiendas' element={<Tienda/>}/>
                 <Route path='desarrollo/landing-page' element={<Landing/>}/>
-                <Route path='briefbrochure' element={<Brochure/>}/>
-                <Route path='briefFlyer' element={<Flyer/>}/>
-                <Route path='briefComunity' element={<Comunity/>}/>
+                <Route path='brochure' element={<Brochure/>}/>
+                <Route path='Flyer' element={<Flyer/>}/>
+                <Route path='community' element={<Comunity/>}/>
+                <Route path='clasificados' element={<Clasificados/>}/>
                 <Route path='send-success/:id' element={<Send/>}/>
             </Route>
             

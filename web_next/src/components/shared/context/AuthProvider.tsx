@@ -8,7 +8,7 @@ import {
   type SetStateAction
 } from 'react'
 import {
-  carrito
+  carrito, errorValues
 } from '../interfaces/interfaces'
 
 export interface AuthContextValue {
@@ -18,6 +18,8 @@ export interface AuthContextValue {
   setHeard: Dispatch<SetStateAction<carrito[]>>;
   carrito: boolean
   setCarrito: Dispatch<SetStateAction<boolean>>;
+  setShowError: Dispatch<SetStateAction<errorValues | null>>
+  showError: errorValues | null
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -39,6 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setHeard(parsedHeardt)
     }
   }, [])
+  const [showError, setShowError] = useState<errorValues | null>(null)
 
   return (
     <AuthContext.Provider
@@ -48,7 +51,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         heard,
         setCart,
         carrito,
-        setCarrito
+        setCarrito,
+        showError,
+        setShowError
       }}
     >
       {children}

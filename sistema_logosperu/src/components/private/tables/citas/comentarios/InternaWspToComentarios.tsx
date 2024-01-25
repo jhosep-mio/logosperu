@@ -521,8 +521,8 @@ export const InternaWspToComentarios = ({
     <>
       <section className="w-full flex flex-col justify-between fondo_wsp_s relative min-h-[89vh]">
         <div className="w-full md:px-4 flex flex-col gap-4 h-auto flex-1 pb-[56px]">
-          {auth.id_rol == 99
-            ? (
+          {/* {auth.id_rol == 99
+            ? ( */}
             <AnexoAdmin
               getOneBrief={getOneBrief}
               resumen={resumen}
@@ -542,8 +542,8 @@ export const InternaWspToComentarios = ({
               setTextoEditado={setTextoEditado}
               handleUpdateEdit={handleUpdateEdit}
             />
-              )
-            : null}
+              {/* )
+            : null} */}
         </div>
         <div className="h-fit w-full xl:pl-[14%]  left-0 right-0 flex items-center justify-center border border-t-gray-300 fixed bottom-0 z-20 bg-white">
           <AnimatePresence>

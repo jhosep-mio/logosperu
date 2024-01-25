@@ -1,5 +1,16 @@
 import * as Yup from 'yup'
 
+export const SchemaCupon = Yup.object().shape({
+  nombres: Yup.string()
+    .required('Este campo es requerido').min(3, 'Debe tener almenos 3 digitos'),
+  apellidos: Yup.string()
+    .required('Este campo es requerido').min(3, 'Debe tener almenos 3 digitos'),
+  celular: Yup.string()
+    .required('Este campo es requerido').min(7, 'Debe tener almenos 7 digitos'),
+  correo: Yup.string().email('Digite un email valido')
+    .required('Este campo es requerido')
+})
+
 export const SchemaCompras = Yup.object().shape({
   nombre: Yup.string()
     .required('Este campo es requerido')

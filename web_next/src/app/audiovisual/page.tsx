@@ -7,6 +7,7 @@ import { Cotizacion } from './animation/Cotizacion'
 import { Proceso } from './animation/Proceso'
 import { Requisitos } from './animation/Requisitos'
 import { SwiperWebs } from './SwiperWebs'
+import SwiperPlanes from './planes/SwiperPlanes'
 
 export const metadata = {
   title: 'Producción Audiovisual - Logos Perú',
@@ -307,6 +308,16 @@ export default async function Audiovisual () {
     <>
       <Titulo />
       <Cotizacion />
+      <section className='container font_baloo mb-10 flex items-center justify-center flex-col mt-24 md:mt-32'>
+        <h1 className='text-secondary font-extrabold text-[2.8rem] md:text-6xl'>PLANES DE DISEÑO DE REEL </h1>
+        <div className='flex gap-4'>
+          <hr className='hr_first' />
+          <hr className='hr_second' />
+        </div>
+      </section>
+      <section className='container relative mb-32' id='swiper_button'>
+        <SwiperPlanes />
+      </section>
       <Proceso />
       <Requisitos />
       <section className='portafolios mx-auto pt-10 lg:pt-40 border-t-gray-700 border-t-[6px]'>

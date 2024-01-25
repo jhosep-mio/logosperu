@@ -9,6 +9,7 @@ import {
 } from 'react-icons/ri'
 import { Loading } from '../../../shared/Loading'
 import {
+  type valuesResumen,
   type ValuesPlanes,
   type ValuesVenta
 } from '../../../shared/schemas/Interfaces'
@@ -23,6 +24,7 @@ import {
   quitarAcentos
 } from '../../../shared/functions/QuitarAcerntos'
 import { MdChevronRight } from 'react-icons/md'
+import { IoShareSocialSharp } from 'react-icons/io5'
 // import { GeneradorExcel } from '../../../shared/EXCEL/GeneradorExcel'
 
 interface Filters {
@@ -34,10 +36,11 @@ interface Filters {
 }
 
 export const ListaProyectosAgencia = (): JSX.Element => {
-  const { setTitle } = useAuth()
+  const { setTitle, auth } = useAuth()
   const token = localStorage.getItem('token')
   const [productos, setProductos] = useState<ValuesVenta[]>([])
   const [loading, setLoading] = useState(true)
+  const [resumen, setResumen] = useState<valuesResumen[]>([])
   const [totalRegistros, setTotalRegistros] = useState(0)
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
@@ -67,12 +70,30 @@ export const ListaProyectosAgencia = (): JSX.Element => {
     setColaboradores(request.data)
   }
 
+  const getResumen = async (): Promise<void> => {
+    try {
+      const request = await axios.get(`${Global.url}/indexShow/${auth.id}`, {
+        headers: {
+          Authorization: `Bearer ${
+            token !== null && token !== '' ? `Bearer ${token}` : ''
+          }`
+        }
+      })
+      if (JSON.parse(request.data[0].resumen_adicional).length > 0) {
+        setResumen(JSON.parse(request.data[0].resumen_adicional))
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     setTitle('Listado de proyectos de agencia')
     Promise.all([
       getColaboradores(),
       getDataToPlanes('getPlanes', setplanes, setTotalRegistros),
-      getDataVentas('getVentasAgencia', setProductos, setTotalRegistros)
+      getDataVentas('getVentasAgencia', setProductos, setTotalRegistros),
+      getResumen()
     ]).then(() => {
       setLoading(false)
     })
@@ -283,6 +304,54 @@ export const ListaProyectosAgencia = (): JSX.Element => {
     }
   }, [ordenAscendente, ordenDescente, ordenAscendente2, ordenDescente2])
 
+  const exportarWsp = (): void => {
+    const fechaActual = new Date().toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric'
+    })
+    // Filtra los comentarios del día actual
+    const comentarios = productos.flatMap((producto) => {
+      if (!producto.resumen) {
+        // Verifica si resumen es null o undefined
+        return [] // Retorna un array vacío si resumen es null o undefined
+      }
+      return JSON.parse(producto.resumen)
+        .filter((comentario: valuesResumen) => (comentario.fecha == fechaActual && comentario.userId == auth.id))
+        .map((comentario: valuesResumen) => ({
+          ...comentario,
+          cliente: `${producto.nombre_marca} (${producto.nombres} ${producto.apellidos})`
+        }))
+    })
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    let mensajeWsp = `RESUMEN ${comentarios[0].user.toUpperCase()} / ${fechaActual.replace(
+      /\//g,
+      '-'
+    )}\n\n`
+    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+    comentarios.forEach((comentario: valuesResumen, index: number) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      mensajeWsp += `- ${comentario.cliente.toUpperCase()}: ${comentario.texto.toUpperCase()}`
+      if (index < comentarios.length - 1) {
+        mensajeWsp += '\n\n' // Añadir salto de línea doble si no es el último comentario
+      }
+    })
+    resumen
+      .filter((comentario: valuesResumen) => (comentario.fecha == fechaActual && comentario.userId == auth.id))
+      .forEach((comentario: valuesResumen) => {
+        mensajeWsp += '\n\n'
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        mensajeWsp += `- AGENCIA: ${comentario.texto.toUpperCase()}`
+      })
+
+    const mensajeWspEncoded = encodeURIComponent(mensajeWsp)
+    const urlWhatsApp = `https://web.whatsapp.com/send?text=${mensajeWspEncoded}`
+    // Abrir WhatsApp con el mensaje predefinido en una nueva ventana o pestaña
+    window.open(urlWhatsApp, '_blank')
+  }
+
   return (
     <>
       <div className="flex flex-col md:flex-row items-center justify-between gap-y-4 mb-3 md:mb-5 gap-2">
@@ -367,6 +436,16 @@ export const ListaProyectosAgencia = (): JSX.Element => {
           <Link to={'metricas'}>
             <RiBarChartFill className="text-main text-2xl md:text-3xl cursor-pointer" />
           </Link>
+          {auth.id == '8' &&
+            <button
+            type="button"
+            onClick={() => {
+              exportarWsp()
+            }}
+            >
+                <IoShareSocialSharp className="text-main text-3xl cursor-pointer" />
+            </button>
+          }
         </div>
       </div>
       {loading

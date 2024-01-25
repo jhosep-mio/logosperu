@@ -10,7 +10,6 @@ export const Whatsapp = () => {
       chatMessage='Bienvenido a Logos Perú! 🤝, ¿Por cual de nuestros servicios esta interesado?'
       avatar='/logos/iconowsp.jpg'
       allowEsc
-      allowClickAway
       notification
       notificationSound
     />

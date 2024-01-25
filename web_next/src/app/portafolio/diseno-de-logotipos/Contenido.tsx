@@ -43,7 +43,7 @@ export const Contenido = ({ items }: { items: ValuesItemsPortafolio[] }) => {
         {filterDate(items)
           .map((item) => (
             <div
-              className=' box_portafolio_new rounded-lg group relative marg_b_0 h-[270px] w-full max-w-[300px] md:h-[320px] md:max-w-full md:w-[320px] lg:w-[280px] hover:translate-y-[-10px] transition-transform overflow-hidden'
+              className=' box_portafolio_new rounded-lg group relative marg_b_0 h-[270px] w-full max-w-[300px] md:h-[320px] md:max-w-full md:w-[320px] lg:w-[280px] hover:translate-y-[-10px] hover:scale-105 transition-transform overflow-hidden'
               key={item.id}
             >
               <div className='p-0 rounded-t-lg h-[70%] md:h-[82%] relative '>
@@ -81,7 +81,7 @@ export const Contenido = ({ items }: { items: ValuesItemsPortafolio[] }) => {
                                     <img
                                       src={`${Global.urlImages}/itemsportafolios/${pro.imagen1.archivoName}`}
                                       alt=''
-                                      className='rounded-lg object-cover w-full h-full rounded-b-none group-hover:scale-125 transition-transform overflow-hidden cursor-pointer'
+                                      className='rounded-lg object-cover w-full h-full rounded-b-none group-hover:scale-150 transition-transform overflow-hidden cursor-pointer'
                                     />
                                     )}
                               </div>

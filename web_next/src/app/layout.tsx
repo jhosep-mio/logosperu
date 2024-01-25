@@ -5,6 +5,7 @@ import { ReactNode } from 'react'
 import Footer from '@/components/estructura/Footer'
 import './../../public/plugin/bootstrap.min.css'
 import { Google } from '@/components/google/Google'
+import { AuthProvider } from '@/components/shared/context/AuthProvider'
 
 export const metadata = {
   title: 'Logos Perú | Agencia de Diseño de logos, logotipos y Diseño Grafico',
@@ -174,15 +175,19 @@ export default function RootLayout ({ children }: { children: ReactNode }) {
           href='https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Baloo+2:wght@400;500;600;700;800&display=swap'
           rel='stylesheet'
         />
+
+        <script src='https://checkout.culqi.com/js/v4' />
       </head>
       <Google />
       <body>
         {/* <CaritoModal open={carrito} setOpen={setCarrito} /> */}
-        <main>
-          <Header />
-          {children}
-          <Footer />
-        </main>
+        <AuthProvider>
+          <main>
+            <Header />
+            {children}
+            <Footer />
+          </main>
+        </AuthProvider>
       </body>
     </html>
   )

@@ -28,6 +28,7 @@ import { AlertSucess } from '../../../shared/alerts/AlertSucess'
 import { AnimatePresence } from 'framer-motion'
 import { ModalFechaAlta } from './modals/ModalFechaAlta'
 import { RegistroMarcaList } from './modals/RegistroMarcaList'
+import { ModalCliente } from './ModalClientes/ModalCliente'
 
 interface Filters {
   estado?: number | null
@@ -50,6 +51,9 @@ type Value = ValuePiece | [ValuePiece, ValuePiece]
 export const ListaServicios = (): JSX.Element => {
   const { setTitle, auth } = useAuth()
   const [openChat, setOpenChat] = useState(false)
+
+  const [openCliente, setOpenCliente] = useState(false)
+
   const [openMarca, setOpenMarca] = useState(false)
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
   const [resumen, setResumen] = useState<valuesResumen[]>([])
@@ -549,6 +553,21 @@ export const ListaServicios = (): JSX.Element => {
                     )}
                   </MenuItem>
                   <MenuItem className="p-0 hover:bg-transparent">
+                    {orden.id != null && (
+                      <Link
+                        to=''
+                        onClick={() => {
+                          setOpenCliente(!openCliente)
+                          // @ts-expect-error-error
+                          setSelectIDCLIENTE(orden.id_cliente)
+                        }}
+                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                      >
+                        Datos del cliente
+                      </Link>
+                    )}
+                  </MenuItem>
+                  <MenuItem className="p-0 hover:bg-transparent">
 
                     {orden.id != null && (
                       <button
@@ -726,6 +745,8 @@ export const ListaServicios = (): JSX.Element => {
         setProductos={setProductos}
         setTotalRegistros={setTotalRegistros}
       />
+
+      <ModalCliente open={openCliente} setOpen={setOpenCliente} id={selectIDCLIENTE}/>
 
       <AnimatePresence>
         {showError != null && <AlertSucess showError={showError} />}

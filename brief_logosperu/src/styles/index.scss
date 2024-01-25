@@ -7,6 +7,10 @@
     width: 0px;
 }
 
+.content_editor{
+    height: 100px !important;
+}
+
 .obtener-ubicacion-button {
   position: absolute;
   top: 10px;
@@ -28,7 +32,7 @@
         margin: 0 !important;
     }
     .swal2-actions{
-        display: none !important;
+        font-size: 16px !important;
     }
     width: fit-content !important;
 }

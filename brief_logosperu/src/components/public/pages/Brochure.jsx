@@ -112,8 +112,6 @@ const Brochure = () => {
         "warning"
       );
     } else if (!option3Checked && !option4Checked) {
-      console.log(option3Checked);
-      console.log(option4Checked);
       Swal.fire("", "Debe seleccionar las medidas para el brochure", "warning");
     } else if (
       (option4Checked && values.medida1.length == 0) ||

@@ -1,5 +1,5 @@
 .header_top {
-  z-index: 999;
+  z-index: 600;
   background-color: #fff;
   height: 100px;
   width: 100%;
@@ -7,9 +7,8 @@
   position: fixed;
   background-position: center;
   background-size: cover;
-  background-image: url(../../public/header/fondo.png);
+  background-image: url(../../public/header/fondo.jpg);
   top: 0;
-  z-index: 998;
   margin: 0 auto;
   left: 0;
   right: 0;
@@ -92,8 +91,8 @@
           button {
             text-decoration: none !important;
             /** QUITAR DESPUES DE NAVIDAD XD **/
-            color: #fff !important;
-            // color: #4e54c8 !important;
+            // color: #fff !important;
+            color: #4e54c8 !important;
             font-family: Raleway, sans-serif;
             text-align: center;
             height: 100%;
@@ -112,55 +111,6 @@
               margin-left: 10px;
             }
           }
-
-        //   a {
-        //     text-decoration: none !important;
-        //     color: #4e54c8 !important;
-        //     font-family: Raleway, sans-serif;
-        //     text-align: center;
-        //     height: 100%;
-        //     padding: 10px 20px;
-        //     font-weight: 700;
-        //     font-size: 18px;
-        //     display: flex;
-        //     align-items: center;
-        //     justify-content: center;
-
-        //     &:hover {
-        //       & .diseno_Web_menu {
-        //         clip-path: polygon(0 0, 100% 0%, 100% 100%, 0 100%);
-        //         transition: all 800ms;
-        //       }
-        //       &::before {
-        //         animation: ani 250ms linear forwards;
-        //         content: "";
-        //         position: absolute;
-        //         width: 0;
-        //         height: 5px;
-        //         background-color: #d23741;
-        //         top: calc(100% + 1px);
-        //         border-radius: 5px;
-        //         left: 0;
-        //         right: 0;
-        //         transition: all 500ms;
-
-        //         @keyframes ani {
-        //           from {
-        //             width: 0;
-        //           }
-        //           to {
-        //             width: 100%;
-        //           }
-        //         }
-        //       }
-        //     }
-
-        //     i {
-        //       font-size: 12px;
-        //       font-weight: bold;
-        //       margin-left: 10px;
-        //     }
-        //   }
         }
 
         & .diseno_Web_menu {
@@ -215,6 +165,8 @@
   }
 }
 
+
+
 .css-1t1j96h-MuiPaper-root-MuiDialog-paper, .MuiPaper-root-MuiDialog-paper{
   max-width: 800px !important;
 }
@@ -246,7 +198,7 @@
 
   /**QUITAR DESPUES DE NAVIDAD XD **/
   span{
-    color: #fff !important;
+    color: #4e54c8;
   }
 
   i {
@@ -308,6 +260,10 @@
       margin-left: 15px;
     }
   }
+}
+
+.span_cart{
+    color: white !important;
 }
 
   .header_content_top2 {

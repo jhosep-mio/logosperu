@@ -10,12 +10,21 @@ import { Oferta } from '../home/oferta/Oferta'
 import { useRouter } from 'next/navigation'
 import { FaRegImages } from 'react-icons/fa'
 import { RiBrushFill, RiCameraLine, RiComputerLine } from 'react-icons/ri'
-
+import { MdScreenSearchDesktop, MdLaptopChromebook } from 'react-icons/md'
+import { CgWebsite } from 'react-icons/cg'
+import { CaritoModal } from './CarritoModal'
+import useAuth from '../shared/hooks/useAuth'
+import { Alerta } from '../shared/alerts/Alerta'
+import { AnimatePresence } from 'framer-motion'
+import { HeardModal } from './HeardModal'
 export const Header = () => {
+  const { showError, setShowError, cart } = useAuth()
   const [open, setOpen] = useState(false)
   const [seleccion, setSeleccion] = useState(0)
   const [openoferta, setopenoferta] = useState(false)
   const router = useRouter()
+  const [openCart, setOpenCart] = useState(false)
+  const [openHeard, setOpenHeard] = useState(false)
 
   useEffect(() => {
     setInterval(() => {
@@ -27,6 +36,14 @@ export const Header = () => {
       ofertali?.classList.add('showOffer')
     }, 8000)
   }, [])
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (showError != null) {
+        setShowError(null)
+      }
+    }, 3000)
+  }, [setShowError, showError])
 
   return (
     <>
@@ -51,6 +68,7 @@ export const Header = () => {
           </div>
         </div>
       </div>
+
       <section className='social_icon transition-all'>
         <ul>
           <li className='iconomorado'>
@@ -79,7 +97,9 @@ export const Header = () => {
           </li>
         </ul>
       </section>
-      <header className='header_top transition-all '>
+
+      <header className='header_top transition-all relative'>
+        <HeardModal open={openHeard} setOpen={setOpenHeard} />
         <div className='header_content_top'>
           <div className='img_header_top'>
             <Link href='/'>
@@ -367,26 +387,26 @@ export const Header = () => {
                   Recursos <i className='fa-solid fa-chevron-down' />
                 </button>
                 <div className='w-fit bg-white border border-gray-400 shadow-sm absolute top-full mt-2 left-[-20px] right-0 div'>
-                  <div className='p-4 grid grid-cols-1 gap-4 w-[260px]'>
+                  <div className='p-4 px-2 grid grid-cols-1 gap-4 w-[260px]'>
                     <div>
                       <div className='flex flex-col pl-[1.5rem] gap-4 mt-4'>
                         <Link
                           href='/portafolio'
                           className='flex text-[18px] items-center justify-left m-0 hover:underline text-black/80 font_baloo'
                         >
-                          Portafolios
+                          <CgWebsite className='w-14 h-14 p-2 bg-[#F6F9FC] text-primary/80' />Portafolios
                         </Link>
                         <a
                           href='https://demo.logosperu.com/'
-                          className='flex text-[18px] items-center justify-left m-0 hover:underline text-black/80 font_baloo'
+                          className='flex gap-1 text-[18px] items-center justify-left m-0 hover:underline text-black/80 font_baloo'
                         >
-                          Demo web administrable
+                          <MdLaptopChromebook className='w-14 h-14 p-2 bg-[#F6F9FC] text-primary/80' /> Demo web administrable
                         </a>
                         <a
                           href='https://demo2.logosperu.com/'
-                          className='flex text-[18px] items-center justify-left m-0 hover:underline text-black/80 font_baloo'
+                          className='flex gap-1 text-[18px] items-center justify-left m-0 hover:underline text-black/80 font_baloo'
                         >
-                          Demo tienda virtual
+                          <MdScreenSearchDesktop className='w-14 h-14 p-2 bg-[#F6F9FC] text-primary/80' />Demo tienda virtual
                         </a>
                       </div>
                     </div>
@@ -405,19 +425,22 @@ export const Header = () => {
                 <Link
                   href='#'
                   aria-label='Visita nuestra página de Twitter'
+                  onClick={() => setOpenHeard(!openHeard)}
                   className='hover:bg-[#BC3741]'
                 >
                   <IoHeartSharp className='text-white text-4xl' />
                 </Link>
               </div>
-              <div className='primero_box_header'>
+              <div className='primero_box_header relative'>
                 <Link
                   href='#'
+                  onClick={() => setOpenCart(!openCart)}
                   className='hover:bg-[#BC3741]'
                   aria-label='Visita nuestra página de Facebook'
                 >
                   <IoCartSharp className='text-white text-4xl' />
                 </Link>
+                <span className='absolute -top-4 -right-4 bg-secondary span_cart text-white rounded-full w-10 h-10 flex items-center justify-center'>{cart.length}</span>
               </div>
             </div>
             <span
@@ -433,7 +456,6 @@ export const Header = () => {
           </div>
 
         </div>
-
         <div className='header_content_top2'>
           <div
             className={`box_primero_header_mobil ${
@@ -923,6 +945,7 @@ export const Header = () => {
           </CSSTransition>
         </div>
       </header>
+
       <section className='fixed bottom-0 left-0 m-6 z-50'>
         <div className='w-full items-center justify-center gap-6 cambiar_ss'>
           <div
@@ -954,7 +977,14 @@ export const Header = () => {
           </div>
         </div>
       </section>
+
       <Oferta open={openoferta} setOpen={setopenoferta} />
+
+      <CaritoModal open={openCart} setOpen={setOpenCart} />
+
+      <AnimatePresence>
+        {showError != null && <Alerta showError={showError} />}
+      </AnimatePresence>
     </>
   )
 }

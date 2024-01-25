@@ -85,6 +85,30 @@ export const ListaColaboradores = (): JSX.Element => {
     setSearch(target.value)
   }
 
+  //   const exportarWsp = (resumen: string, id: string | undefined): void => {
+  //     const fechaActual = new Date().toLocaleDateString('es-ES', {
+  //       day: 'numeric',
+  //       month: 'numeric',
+  //       year: 'numeric'
+  //     })
+  //     const comentarios = JSON.parse(resumen)
+  //     let mensajeWsp = `RESUMEN ${(auth.name).toUpperCase()} / ${fechaActual.replace(
+  //       /\//g,
+  //       '-'
+  //     )}\n\n`
+  //     comentarios
+  //       .filter((comentario: valuesResumen) => (comentario.fecha == fechaActual && comentario.userId == id))
+  //       .forEach((comentario: valuesResumen) => {
+  //         console.log(comentario)
+  //         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  //         mensajeWsp += `- AGENCIA: ${comentario.texto.toUpperCase()}`
+  //       })
+  //     const mensajeWspEncoded = encodeURIComponent(mensajeWsp)
+  //     const urlWhatsApp = `https://web.whatsapp.com/send?text=${mensajeWspEncoded}`
+  //     // Abrir WhatsApp con el mensaje predefinido en una nueva ventana o pestaña
+  //     window.open(urlWhatsApp, '_blank')
+  //   }
+
   return (
     <>
       <div

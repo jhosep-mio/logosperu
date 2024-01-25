@@ -331,7 +331,7 @@ export const ArchivosFinales = ({
                 exit={{ opacity: 0 }}
                 className="absolute bg-white shadow-lg rounded-md overflow-hidden w-40 h-auto left-0 right-0 mx-auto top-full mt-3 flex flex-col z-20"
               >
-                {plan?.tipo.includes('Diseño Logotipo') && (
+                {plan?.tipo && plan?.tipo.includes('Diseño Logotipo') && (
                   <div className="w-full lg:w-40 relative cursor-pointer">
                     <button
                       type="button"
@@ -370,7 +370,7 @@ export const ArchivosFinales = ({
           </AnimatePresence>
         </div>
       </div>
-      {values.link_final || pdfName
+      {values.link_final ?? pdfName ?? (values.archivos_avances && JSON.parse(values.archivos_avances).length > 0)
         ? <section className="mb-4 flex flex-col lg:flex-row gap-3 w-full">
           <div className="bg-[#fff] p-0 lg:p-0 rounded-xl w-full lg:w-full relative">
             <div className="hidden md:grid grid-cols-1 md:grid-cols-7 gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300 w-full">

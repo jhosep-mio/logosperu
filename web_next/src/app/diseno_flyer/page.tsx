@@ -3,6 +3,7 @@ import { SwiperWebs } from './SwiperWebs'
 import { Global } from '@/components/shared/Helper/global'
 import { ValuesItemsPortafolio } from '@/components/shared/interfaces/interfaces'
 import Link from 'next/link'
+import SwiperPlanes from './planes/SwiperPlanes'
 
 export const metadata = {
   title: 'Diseño de Flyers - Logos Perú',
@@ -325,6 +326,16 @@ export default async function DisenoFlyer () {
             </div>
           </div>
         </div>
+      </section>
+      <section className='container font_baloo mb-10 flex items-center justify-center flex-col mt-24 md:mt-32'>
+        <h1 className='text-secondary font-extrabold text-[2.8rem] md:text-6xl'>PLANES DE DISEÑO DE FLYER </h1>
+        <div className='flex gap-4'>
+          <hr className='hr_first' />
+          <hr className='hr_second' />
+        </div>
+      </section>
+      <section className='container relative mb-32' id='swiper_button'>
+        <SwiperPlanes />
       </section>
       <section className='procesos'>
         <div className='container max-w-[1200px]'>

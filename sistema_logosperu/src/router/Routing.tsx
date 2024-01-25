@@ -76,6 +76,8 @@ import { MetricasVencidos } from '../components/private/tables/ventas/vencidos/M
 import { ListaClasificados } from '../components/private/tables/clasificados/ListaClasificados'
 import { RegistrarClasificados } from '../components/private/tables/clasificados/RegistrarClasificados'
 import { EditarClasificados } from '../components/private/tables/clasificados/EditarClasificados'
+import { ListaClientesColaboradores } from '../components/private/tables/clientes-colaboradores/ListaClientesColaboradores'
+import { ListaTransacciones } from '../components/private/tables/transacciones/ListaTransacciones'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -157,6 +159,10 @@ export const Routing = (): JSX.Element => {
             <Route path="lista-servicios" element={<ListaServicios />} />
             <Route path="lista-servicios/view/:id" element={<ViewServicio />} />
             <Route path="lista-servicios/avances/:id" element={<Avances/>} />
+            <Route path="clientes" element={<ListaClientesColaboradores/>} />
+            <Route path="clientes/resumen/:id" element={<ComentariosClientes />} />
+            {/* TRANSACCIONES */}
+            <Route path="transacciones" element={<ListaTransacciones />} />
 
             {/* DISEÑO NEW */}
             <Route

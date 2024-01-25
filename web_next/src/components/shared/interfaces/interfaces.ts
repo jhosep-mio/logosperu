@@ -55,7 +55,15 @@ export interface ValuesItemsPortafolio {
   categoria: string
   array: string
   titulo: string
+  precio: string
 }
+
+export interface cuponValues {
+    nombres: string
+    apellidos: string
+    celular: string
+    correo: string
+  }
 
 export interface productosValues {
   id: number
@@ -66,6 +74,7 @@ export interface productosValues {
   categoria: string
   array: string
   titulo: string
+  precio: string
 }
 
 export interface productosValues2 {
@@ -81,6 +90,7 @@ export interface carrito {
   cantidad: number | null
   imagen1: string
   categoria: string
+  precio: string
 }
 
 export interface ImagenState {
@@ -93,3 +103,8 @@ export interface arrayCategoriasToPortafolio {
   url: string
   imagen1: ImagenState
 }
+
+export interface errorValues {
+    estado: string
+    texto: string
+  }

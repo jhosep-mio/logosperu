@@ -25,9 +25,17 @@ import {
 } from 'react-icons/fa6'
 import { BsPersonVcardFill } from 'react-icons/bs'
 import { HiRectangleGroup } from 'react-icons/hi2'
+import { GrTransaction } from 'react-icons/gr'
 
 const SideBar = (): JSX.Element => {
-  const { auth, setAuth, roles, setLoadingComponents, loadingComponents, totalNotificaciones } = useAuth()
+  const {
+    auth,
+    setAuth,
+    roles,
+    setLoadingComponents,
+    loadingComponents,
+    totalNotificaciones
+  } = useAuth()
   const token = localStorage.getItem('token')
   const [showMenu, setShowMenu] = useState(false)
   //   const [showSubmenu, setShowSubmenu] = useState(false)
@@ -88,633 +96,673 @@ const SideBar = (): JSX.Element => {
   }, [])
 
   return (
-        <>
-          <div
-            className={`manejar_Scroll xl:h-[100vh] md:overflow-y-scroll fixed xl:static w-[80%] md:w-[40%] lg:w-[30%] xl:w-auto h-full top-0 bg-[#f1f1f1] shadow-xl p-4 flex flex-col justify-between z-50 ${
-              showMenu ? 'left-0' : 'left-full'
-            } transition-all`}
-          >
-            <div>
-              <h1 className="text-center text-2xl font-bold text-black mb-5">
-                <img src={logo} alt="" className="m-auto w-28" />
-              </h1>
-              <hr className="mb-5" />
-              <ul className="ml-0 p-0">
-                <li className=''>
-                  <button
-                    className={
-                      'flex items-center gap-3 py-2 pl-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full relative'
-                    }
-                    onClick={() => {
-                      setLoadingComponents(!loadingComponents)
-                      setShowMenu(false)
-                    }}
-                  >
-                  <MdNotificationsActive className="text-main/80 text-2xl" />Notificaciones
-                  <span className='bg-main text-white w-5 h-5 text-xs flex justify-center items-center  rounded-md '>{totalNotificaciones}</span>
-                  </button>
-                </li>
-                {roles.map(
-                  (role: RolsValues): React.ReactNode =>
-                    auth.id_rol == role.id &&
-                    JSON.parse(role.accesos).map((route: { peso: string }) => (
+    <>
+      <div
+        className={`manejar_Scroll xl:h-[100vh] md:overflow-y-scroll fixed xl:static w-[80%] md:w-[40%] lg:w-[30%] xl:w-auto h-full top-0 bg-[#f1f1f1] shadow-xl p-4 flex flex-col justify-between z-50 ${
+          showMenu ? 'left-0' : 'left-full'
+        } transition-all`}
+      >
+        <div>
+          <h1 className="text-center text-2xl font-bold text-black mb-5">
+            <img src={logo} alt="" className="m-auto w-28" />
+          </h1>
+          <hr className="mb-5" />
+          <ul className="ml-0 p-0">
+            <li className="">
+              <button
+                className={
+                  'flex items-center gap-3 py-2 pl-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full relative'
+                }
+                onClick={() => {
+                  setLoadingComponents(!loadingComponents)
+                  setShowMenu(false)
+                }}
+              >
+                <MdNotificationsActive className="text-main/80 text-2xl" />
+                Notificaciones
+                <span className="bg-main text-white w-5 h-5 text-xs flex justify-center items-center  rounded-md ">
+                  {totalNotificaciones}
+                </span>
+              </button>
+            </li>
+            {roles.map(
+              (role: RolsValues): React.ReactNode =>
+                auth.id_rol == role.id &&
+                JSON.parse(role.accesos).map((route: { peso: string }) => (
+                  <>
+                    {route.peso == 'superusuario'
+                      ? (
                       <>
-                        {route.peso == 'superusuario'
-                          ? (
-                          <>
-                            <li key={22}>
+                        <li key={22}>
+                          <button
+                            onClick={() => {
+                              setShowSubmenu8(!showSubmenu8)
+                            }}
+                            className="flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full"
+                          >
+                            <span className="flex items-center gap-4 w-full">
+                              <FaUserGroup className="text-main/80 text-xl" />{' '}
+                              Clientes
+                            </span>
+                            <RiArrowRightSLine
+                              className={`mt-1 ${
+                                showSubmenu8 ? 'rotate-90' : ''
+                              } transition-all`}
+                            />
+                          </button>
+                          <ul
+                            className={` ml-0 ${
+                              showSubmenu8 ? '' : 'h-0'
+                            } overflow-hidden transition-all`}
+                          >
+                            <li>
+                              <Link
+                                to="lista-clientes"
+                                className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                  activeItem == 399
+                                    ? 'before:bg-main'
+                                    : 'before:bg-gray-500'
+                                } hover:text-main transition-colors`}
+                                onClick={() => {
+                                  handleItemClick(399)
+                                  setShowMenu(false)
+                                  setLoadingComponents(false)
+                                }}
+                              >
+                                Clientes
+                              </Link>
+                              <Link
+                                to="lista-pre-clientes"
+                                className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                  activeItem == 339
+                                    ? 'before:bg-main'
+                                    : 'before:bg-gray-500'
+                                } hover:text-main transition-colors`}
+                                onClick={() => {
+                                  handleItemClick(339)
+                                  setShowMenu(false)
+                                  setLoadingComponents(false)
+                                }}
+                              >
+                                Pre-Clientes
+                              </Link>
+                            </li>
+                            <ul
+                              className={` ${
+                                showSubmenu8 ? '' : 'h-0'
+                              } overflow-hidden transition-all`}
+                            >
                               <button
                                 onClick={() => {
-                                  setShowSubmenu8(!showSubmenu8)
+                                  setShowSubmenu9(!showSubmenu9)
+                                  handleItemClick(397)
                                 }}
-                                className="flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full"
+                                className={`bg-transparent ${
+                                  showSubmenu9
+                                    ? 'after:absolute after:w-4 after:bg-gray-500 after:h-[1px] after:bottom-0 after:left-0'
+                                    : ''
+                                }  py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                  activeItem == 397
+                                    ? 'before:bg-main'
+                                    : 'before:bg-gray-500'
+                                } hover:text-main transition-colors`}
                               >
-                                <span className="flex items-center gap-4 w-full">
-                                  <FaUserGroup className="text-main/80 text-xl" />{' '}
-                                  Clientes
+                                <span className="flex items-center gap-4 w-full ">
+                                  Citas
                                 </span>
                                 <RiArrowRightSLine
-                                  className={`mt-1 ${
-                                    showSubmenu8 ? 'rotate-90' : ''
+                                  className={`mt-1  ${
+                                    showSubmenu7 ? 'rotate-90' : ''
                                   } transition-all`}
                                 />
                               </button>
                               <ul
-                                className={` ml-0 ${
-                                  showSubmenu8 ? '' : 'h-0'
-                                } overflow-hidden transition-all`}
+                                className={` ml-4 ${
+                                  showSubmenu9 ? '' : 'h-0'
+                                } overflow-y-hidden transition-all`}
                               >
                                 <li>
                                   <Link
-                                    to="lista-clientes"
-                                    className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                      activeItem == 399
+                                    to={'/admin/llamadas-pendientes'}
+                                    className={`py-2 px-4 border-l  flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                      activeItem == 375
                                         ? 'before:bg-main'
                                         : 'before:bg-gray-500'
                                     } hover:text-main transition-colors`}
                                     onClick={() => {
-                                      handleItemClick(399)
+                                      handleItemClick(375)
                                       setShowMenu(false)
                                       setLoadingComponents(false)
                                     }}
                                   >
-                                    Clientes
-                                  </Link>
-                                  <Link
-                                    to="lista-pre-clientes"
-                                    className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                      activeItem == 339
-                                        ? 'before:bg-main'
-                                        : 'before:bg-gray-500'
-                                    } hover:text-main transition-colors`}
-                                    onClick={() => {
-                                      handleItemClick(339)
-                                      setShowMenu(false)
-                                      setLoadingComponents(false)
-                                    }}
-                                  >
-                                    Pre-Clientes
+                                    Pendientes
                                   </Link>
                                 </li>
-                                <ul
-                                  className={` ${
-                                    showSubmenu8 ? '' : 'h-0'
-                                  } overflow-hidden transition-all`}
-                                >
-                                  <button
-                                    onClick={() => {
-                                      setShowSubmenu9(!showSubmenu9)
-                                      handleItemClick(397)
-                                    }}
-                                    className={`bg-transparent ${
-                                      showSubmenu9
-                                        ? 'after:absolute after:w-4 after:bg-gray-500 after:h-[1px] after:bottom-0 after:left-0'
-                                        : ''
-                                    }  py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                      activeItem == 397
+                                <li>
+                                  <Link
+                                    to={'/admin/lista-historial'}
+                                    className={`py-2 px-4 border-l  flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                      activeItem == 395
                                         ? 'before:bg-main'
                                         : 'before:bg-gray-500'
                                     } hover:text-main transition-colors`}
+                                    onClick={() => {
+                                      handleItemClick(395)
+                                      setShowMenu(false)
+                                      setLoadingComponents(false)
+                                    }}
                                   >
-                                    <span className="flex items-center gap-4 w-full ">
-                                      Citas
-                                    </span>
-                                    <RiArrowRightSLine
-                                      className={`mt-1  ${
-                                        showSubmenu7 ? 'rotate-90' : ''
-                                      } transition-all`}
-                                    />
-                                  </button>
-                                  <ul
-                                    className={` ml-4 ${
-                                      showSubmenu9 ? '' : 'h-0'
-                                    } overflow-y-hidden transition-all`}
-                                  >
-                                    <li >
-                                        <Link
-                                            to={'/admin/llamadas-pendientes'}
-                                            className={`py-2 px-4 border-l  flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                            activeItem == 375
-                                                ? 'before:bg-main'
-                                                : 'before:bg-gray-500'
-                                            } hover:text-main transition-colors`}
-                                            onClick={() => {
-                                              handleItemClick(375)
-                                              setShowMenu(false)
-                                              setLoadingComponents(false)
-                                            }}
-                                        >
-                                            Pendientes
-                                        </Link>
-                                    </li>
-                                    <li >
-                                        <Link
-                                            to={'/admin/lista-historial'}
-                                            className={`py-2 px-4 border-l  flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                            activeItem == 395
-                                                ? 'before:bg-main'
-                                                : 'before:bg-gray-500'
-                                            } hover:text-main transition-colors`}
-                                            onClick={() => {
-                                              handleItemClick(395)
-                                              setShowMenu(false)
-                                              setLoadingComponents(false)
-                                            }}
-                                        >
-                                            Historial
-                                        </Link>
-                                    </li>
-                                  </ul>
-                                </ul>
+                                    Historial
+                                  </Link>
+                                </li>
                               </ul>
-                            </li>
-                            <li key={23}>
+                            </ul>
+                          </ul>
+                        </li>
+                        <li key={23}>
+                          <Link
+                            to="lista-preventa"
+                            className={
+                              'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                            }
+                            onClick={() => {
+                              handleItemClick2(1)
+                              setShowMenu(false)
+                              setLoadingComponents(false)
+                            }}
+                          >
+                            <FaRectangleList className="text-main/80 text-xl" />{' '}
+                            Preventa
+                          </Link>
+                        </li>
+                        <li key={24}>
+                          <button
+                            onClick={() => {
+                              setShowSubmenu6(!showSubmenu6)
+                            }}
+                            className="flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full"
+                          >
+                            <span className="flex items-center gap-4 w-full">
+                              <FaChartSimple className="text-main/80 text-xl" />{' '}
+                              Proyectos
+                            </span>
+                            <RiArrowRightSLine
+                              className={`mt-1 ${
+                                showSubmenu6 ? 'rotate-90' : ''
+                              } transition-all`}
+                            />
+                          </button>
+                          <ul
+                            className={` ml-0 ${
+                              showSubmenu6 ? '' : 'h-0'
+                            } overflow-hidden transition-all`}
+                          >
+                            <li>
                               <Link
-                                to="lista-preventa"
+                                to="lista-ventas"
+                                className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                  activeItem == 299
+                                    ? 'before:bg-main'
+                                    : 'before:bg-gray-500'
+                                } hover:text-main transition-colors`}
+                                onClick={() => {
+                                  handleItemClick(299)
+                                  setShowMenu(false)
+                                  setLoadingComponents(false)
+                                }}
+                              >
+                                Todos
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                to="lista-ventas-agencia"
+                                className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                  activeItem == 291
+                                    ? 'before:bg-main'
+                                    : 'before:bg-gray-500'
+                                } hover:text-main transition-colors`}
+                                onClick={() => {
+                                  handleItemClick(291)
+                                  setShowMenu(false)
+                                  setLoadingComponents(false)
+                                }}
+                              >
+                                Proyectos de agencia
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                to="lista-ventas-vencidos"
+                                className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                  activeItem == 298
+                                    ? 'before:bg-main'
+                                    : 'before:bg-gray-500'
+                                } hover:text-main transition-colors`}
+                                onClick={() => {
+                                  handleItemClick(298)
+                                  setShowMenu(false)
+                                  setLoadingComponents(false)
+                                }}
+                              >
+                                Plazo vencido
+                              </Link>
+                            </li>
+                            <ul
+                              className={` ${
+                                showSubmenu6 ? '' : 'h-0'
+                              } overflow-hidden transition-all`}
+                            >
+                              <button
+                                onClick={() => {
+                                  setShowSubmenu7(!showSubmenu7)
+                                  handleItemClick(297)
+                                }}
+                                className={`bg-transparent ${
+                                  showSubmenu7
+                                    ? 'after:absolute after:w-4 after:bg-gray-500 after:h-[1px] after:bottom-0 after:left-0'
+                                    : ''
+                                }  py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                  activeItem == 297
+                                    ? 'before:bg-main'
+                                    : 'before:bg-gray-500'
+                                } hover:text-main transition-colors`}
+                              >
+                                <span className="flex items-center gap-4 w-full ">
+                                  Colaboradores
+                                </span>
+                                <RiArrowRightSLine
+                                  className={`mt-1  ${
+                                    showSubmenu7 ? 'rotate-90' : ''
+                                  } transition-all`}
+                                />
+                              </button>
+                              <ul
+                                className={` ml-4 ${
+                                  showSubmenu7 ? '' : 'h-0'
+                                } overflow-y-hidden transition-all`}
+                              >
+                                {colaboradores
+                                  .filter(
+                                    (colaborador: {
+                                      id_rol: string
+                                      id: string
+                                    }) =>
+                                      colaborador.id_rol != '99' ||
+                                      colaborador.id == '8'
+                                  )
+                                  .map(
+                                    (colaborador: {
+                                      name: string
+                                      id: number
+                                    }) => (
+                                      <li key={colaborador.id}>
+                                        <Link
+                                          to={`/admin/lista-ventas/${colaborador.id}`}
+                                          className={`py-2 px-4 border-l  flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                            activeItem == colaborador.id
+                                              ? 'before:bg-main'
+                                              : 'before:bg-gray-500'
+                                          } hover:text-main transition-colors`}
+                                          onClick={() => {
+                                            handleItemClick(colaborador.id)
+                                            setShowMenu(false)
+                                            setLoadingComponents(false)
+                                          }}
+                                        >
+                                          {colaborador.name}
+                                        </Link>
+                                      </li>
+                                    )
+                                  )}
+                              </ul>
+                            </ul>
+                          </ul>
+                        </li>
+
+                        <li key={23}>
+                            <Link
+                                to="transacciones"
                                 className={
-                                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                                'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
                                 }
                                 onClick={() => {
                                   handleItemClick2(1)
                                   setShowMenu(false)
                                   setLoadingComponents(false)
                                 }}
-                              >
-                                <FaRectangleList className="text-main/80 text-xl" />{' '}
-                                Preventa
-                              </Link>
-                            </li>
-                            <li key={24}>
-                              <button
-                                onClick={() => {
-                                  setShowSubmenu6(!showSubmenu6)
-                                }}
-                                className="flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full"
-                              >
-                                <span className="flex items-center gap-4 w-full">
-                                  <FaChartSimple className="text-main/80 text-xl" />{' '}
-                                  Proyectos
-                                </span>
-                                <RiArrowRightSLine
-                                  className={`mt-1 ${
-                                    showSubmenu6 ? 'rotate-90' : ''
-                                  } transition-all`}
-                                />
-                              </button>
-                              <ul
-                                className={` ml-0 ${
-                                  showSubmenu6 ? '' : 'h-0'
-                                } overflow-hidden transition-all`}
-                              >
-                                <li>
-                                  <Link
-                                    to="lista-ventas"
-                                    className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                      activeItem == 299
-                                        ? 'before:bg-main'
-                                        : 'before:bg-gray-500'
-                                    } hover:text-main transition-colors`}
-                                    onClick={() => {
-                                      handleItemClick(299)
-                                      setShowMenu(false)
-                                      setLoadingComponents(false)
-                                    }}
-                                  >
-                                    Todos
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    to="lista-ventas-agencia"
-                                    className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                      activeItem == 291
-                                        ? 'before:bg-main'
-                                        : 'before:bg-gray-500'
-                                    } hover:text-main transition-colors`}
-                                    onClick={() => {
-                                      handleItemClick(291)
-                                      setShowMenu(false)
-                                      setLoadingComponents(false)
-                                    }}
-                                  >
-                                    Proyectos de agencia
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    to="lista-ventas-vencidos"
-                                    className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                      activeItem == 298
-                                        ? 'before:bg-main'
-                                        : 'before:bg-gray-500'
-                                    } hover:text-main transition-colors`}
-                                    onClick={() => {
-                                      handleItemClick(298)
-                                      setShowMenu(false)
-                                      setLoadingComponents(false)
-                                    }}
-                                  >
-                                    Plazo vencido
-                                  </Link>
-                                </li>
-                                <ul
-                                  className={` ${
-                                    showSubmenu6 ? '' : 'h-0'
-                                  } overflow-hidden transition-all`}
-                                >
-                                  <button
-                                    onClick={() => {
-                                      setShowSubmenu7(!showSubmenu7)
-                                      handleItemClick(297)
-                                    }}
-                                    className={`bg-transparent ${
-                                      showSubmenu7
-                                        ? 'after:absolute after:w-4 after:bg-gray-500 after:h-[1px] after:bottom-0 after:left-0'
-                                        : ''
-                                    }  py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                      activeItem == 297
-                                        ? 'before:bg-main'
-                                        : 'before:bg-gray-500'
-                                    } hover:text-main transition-colors`}
-                                  >
-                                    <span className="flex items-center gap-4 w-full ">
-                                      Colaboradores
-                                    </span>
-                                    <RiArrowRightSLine
-                                      className={`mt-1  ${
-                                        showSubmenu7 ? 'rotate-90' : ''
-                                      } transition-all`}
-                                    />
-                                  </button>
-                                  <ul
-                                    className={` ml-4 ${
-                                      showSubmenu7 ? '' : 'h-0'
-                                    } overflow-y-hidden transition-all`}
-                                  >
-                                    {colaboradores
-                                      .filter(
-                                        (colaborador: { id_rol: string, id: string }) => colaborador.id_rol != '99' || colaborador.id == '8')
-                                      .map(
-                                        (colaborador: {
-                                          name: string
-                                          id: number
-                                        }) => (
-                                          <li key={colaborador.id}>
-                                            <Link
-                                              to={`/admin/lista-ventas/${colaborador.id}`}
-                                              className={`py-2 px-4 border-l  flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                                activeItem == colaborador.id
-                                                  ? 'before:bg-main'
-                                                  : 'before:bg-gray-500'
-                                              } hover:text-main transition-colors`}
-                                              onClick={() => {
-                                                handleItemClick(colaborador.id)
-                                                setShowMenu(false)
-                                                setLoadingComponents(false)
-                                              }}
-                                            >
-                                              {colaborador.name}
-                                            </Link>
-                                          </li>
-                                        )
-                                      )}
-                                  </ul>
-                                </ul>
-                              </ul>
-                            </li>
-                            <li key={25}>
-                              <Link
-                                to="lista-planes"
-                                className={
-                                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
-                                }
-                                onClick={() => {
-                                  handleItemClick2(25)
-                                  setShowMenu(false)
-                                  setLoadingComponents(false)
-                                }}
-                              >
-                                <FaReceipt className="text-main/80 text-xl" />{' '}
-                                Planes
-                              </Link>
-                            </li>
-                            <li key={77}>
-                              <Link
-                                to="colaboradores"
-                                className={
-                                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
-                                }
-                                onClick={() => {
-                                  handleItemClick2(77)
-                                  setShowMenu(false)
-                                  setLoadingComponents(false)
-                                }}
-                              >
-                                <BsPersonVcardFill className="text-main/80 text-xl" />{' '}
-                                Colaboradores
-                              </Link>
-                            </li>
-                            <li key={26}>
-                              <button
-                                onClick={() => {
-                                  setShowSubmenu4(!showSubmenu4)
-                                }}
-                                className="flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full"
-                              >
-                                <span className="flex items-center gap-4 w-full">
-                                  <RiCodeBoxFill className="text-main/80 text-[1.35rem]" />{' '}
-                                  Pagina web
-                                </span>
-                                <RiArrowRightSLine
-                                  className={`mt-1 ${
-                                    showSubmenu4 ? 'rotate-90' : ''
-                                  } transition-all`}
-                                />
-                              </button>
-                              <ul
-                                className={` ${
-                                  showSubmenu4 ? 'max-h-[160px]' : 'h-0'
-                                } overflow-y-hidden transition-all`}
-                              >
-                                <button
-                                  onClick={() => {
-                                    setShowSubmenu5(!showSubmenu5)
-                                    handleItemClick2(2)
-                                  }}
-                                  className={`bg-transparent ${
-                                    showSubmenu5
-                                      ? 'after:absolute after:w-4 after:bg-gray-500 after:h-[1px] after:bottom-0 after:left-0'
-                                      : ''
-                                  } py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                    activeItem2 == 2
+                            >
+                            <GrTransaction className="text-main/80 text-xl" />{' '} Transacciones
+                            </Link>
+                        </li>
+
+                        <li key={25}>
+                          <Link
+                            to="lista-planes"
+                            className={
+                              'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                            }
+                            onClick={() => {
+                              handleItemClick2(25)
+                              setShowMenu(false)
+                              setLoadingComponents(false)
+                            }}
+                          >
+                            <FaReceipt className="text-main/80 text-xl" />{' '}
+                            Planes
+                          </Link>
+                        </li>
+                        <li key={77}>
+                          <Link
+                            to="colaboradores"
+                            className={
+                              'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                            }
+                            onClick={() => {
+                              handleItemClick2(77)
+                              setShowMenu(false)
+                              setLoadingComponents(false)
+                            }}
+                          >
+                            <BsPersonVcardFill className="text-main/80 text-xl" />{' '}
+                            Colaboradores
+                          </Link>
+                        </li>
+                        <li key={26}>
+                          <button
+                            onClick={() => {
+                              setShowSubmenu4(!showSubmenu4)
+                            }}
+                            className="flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full"
+                          >
+                            <span className="flex items-center gap-4 w-full">
+                              <RiCodeBoxFill className="text-main/80 text-[1.35rem]" />{' '}
+                              Pagina web
+                            </span>
+                            <RiArrowRightSLine
+                              className={`mt-1 ${
+                                showSubmenu4 ? 'rotate-90' : ''
+                              } transition-all`}
+                            />
+                          </button>
+                          <ul
+                            className={` ${
+                              showSubmenu4 ? 'max-h-[160px]' : 'h-0'
+                            } overflow-y-hidden transition-all`}
+                          >
+                            <button
+                              onClick={() => {
+                                setShowSubmenu5(!showSubmenu5)
+                                handleItemClick2(2)
+                              }}
+                              className={`bg-transparent ${
+                                showSubmenu5
+                                  ? 'after:absolute after:w-4 after:bg-gray-500 after:h-[1px] after:bottom-0 after:left-0'
+                                  : ''
+                              } py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                activeItem2 == 2
+                                  ? 'before:bg-main'
+                                  : 'before:bg-gray-500'
+                              } hover:text-main transition-colors`}
+                            >
+                              <span className="flex items-center gap-4 w-full">
+                                <RiStackFill className="text-main" /> Portafolio
+                              </span>
+                              <RiArrowRightSLine
+                                className={`mt-1  ${
+                                  showSubmenu5 ? 'rotate-90' : ''
+                                } transition-all`}
+                              />
+                            </button>
+                            <ul
+                              className={` ml-4 ${
+                                showSubmenu5 ? 'h-[260px]' : 'h-0'
+                              } overflow-y-hidden transition-all`}
+                            >
+                              <li>
+                                <Link
+                                  to="categorias-portafolio"
+                                  className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                    activeItem == 1
                                       ? 'before:bg-main'
                                       : 'before:bg-gray-500'
                                   } hover:text-main transition-colors`}
+                                  onClick={() => {
+                                    handleItemClick(1)
+                                  }}
                                 >
-                                  <span className="flex items-center gap-4 w-full">
-                                    <RiStackFill className="text-main" />{' '}
-                                    Portafolio
-                                  </span>
-                                  <RiArrowRightSLine
-                                    className={`mt-1  ${
-                                      showSubmenu5 ? 'rotate-90' : ''
-                                    } transition-all`}
-                                  />
-                                </button>
-                                <ul
-                                  className={` ml-4 ${
-                                    showSubmenu5 ? 'h-[260px]' : 'h-0'
-                                  } overflow-y-hidden transition-all`}
+                                  Categorias
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  to="subcategorias-portafolio"
+                                  className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                    activeItem == 2
+                                      ? 'before:bg-main'
+                                      : 'before:bg-gray-500'
+                                  } hover:text-main transition-colors`}
+                                  onClick={() => {
+                                    handleItemClick(2)
+                                  }}
                                 >
-                                  <li>
-                                    <Link
-                                      to="categorias-portafolio"
-                                      className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                        activeItem == 1
-                                          ? 'before:bg-main'
-                                          : 'before:bg-gray-500'
-                                      } hover:text-main transition-colors`}
-                                      onClick={() => {
-                                        handleItemClick(1)
-                                      }}
-                                    >
-                                      Categorias
-                                    </Link>
-                                  </li>
-                                  <li>
-                                    <Link
-                                      to="subcategorias-portafolio"
-                                      className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                        activeItem == 2
-                                          ? 'before:bg-main'
-                                          : 'before:bg-gray-500'
-                                      } hover:text-main transition-colors`}
-                                      onClick={() => {
-                                        handleItemClick(2)
-                                      }}
-                                    >
-                                      Subcategorias
-                                    </Link>
-                                  </li>
-                                  <li>
-                                    <Link
-                                      to="items-portafolio"
-                                      className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                        activeItem == 3
-                                          ? 'before:bg-main'
-                                          : 'before:bg-gray-500'
-                                      } hover:text-main transition-colors`}
-                                      onClick={() => {
-                                        handleItemClick(3)
-                                      }}
-                                    >
-                                      Items
-                                    </Link>
-                                  </li>
+                                  Subcategorias
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  to="items-portafolio"
+                                  className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                    activeItem == 3
+                                      ? 'before:bg-main'
+                                      : 'before:bg-gray-500'
+                                  } hover:text-main transition-colors`}
+                                  onClick={() => {
+                                    handleItemClick(3)
+                                  }}
+                                >
+                                  Items
+                                </Link>
+                              </li>
 
-                                  <li>
-                                    <Link
-                                      to="lista-briefs-landing"
-                                      className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                        activeItem == 4
-                                          ? 'before:bg-main'
-                                          : 'before:bg-gray-500'
-                                      } hover:text-main transition-colors`}
-                                      onClick={() => {
-                                        handleItemClick(4)
-                                      }}
-                                    >
-                                      Landing Page
-                                    </Link>
-                                  </li>
-                                </ul>
-                              </ul>
-                            </li>
-                            <li key='clasificados'>
-                              <Link
-                                to="lista-clasificados"
-                                className={
-                                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
-                                }
-                                onClick={() => {
-                                  handleItemClick2(25)
-                                  setShowMenu(false)
-                                  setLoadingComponents(false)
-                                }}
-                              >
-                                <HiRectangleGroup className="text-main/80 text-xl" />{' '}
-                                Clasificados
-                              </Link>
-                            </li>
-                          </>
-                            )
-                          : (
-                              ''
-                            )}
+                              <li>
+                                <Link
+                                  to="lista-briefs-landing"
+                                  className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                    activeItem == 4
+                                      ? 'before:bg-main'
+                                      : 'before:bg-gray-500'
+                                  } hover:text-main transition-colors`}
+                                  onClick={() => {
+                                    handleItemClick(4)
+                                  }}
+                                >
+                                  Landing Page
+                                </Link>
+                              </li>
+                            </ul>
+                          </ul>
+                        </li>
+                        <li key="clasificados">
+                          <Link
+                            to="lista-clasificados"
+                            className={
+                              'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                            }
+                            onClick={() => {
+                              handleItemClick2(25)
+                              setShowMenu(false)
+                              setLoadingComponents(false)
+                            }}
+                          >
+                            <HiRectangleGroup className="text-main/80 text-xl" />{' '}
+                            Clasificados
+                          </Link>
+                        </li>
                       </>
-                    ))
-                )}
+                        )
+                      : (
+                          ''
+                        )}
+                  </>
+                ))
+            )}
+            {roles.map(
+              (role: RolsValues): React.ReactNode =>
+                auth.id_rol == role.id &&
+                JSON.parse(role.accesos).map((route: { peso: string }) => (
+                  <>
+                    {route.peso != 'superusuario' && (
+                      <li>
+                        <Link
+                          to="lista-servicios"
+                          className={
+                            'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                          }
+                          onClick={() => {
+                            setShowMenu(false)
+                            setLoadingComponents(false)
+                          }}
+                        >
+                          <FaChartSimple className="text-main/80 text-xl" />{' '}
+                          Proyectos
+                        </Link>
+                      </li>
+                    )}
+                  </>
+                ))
+            )}
+
+            {auth.id == '9' &&
+            <li key={23}>
+              <Link
+                to="clientes"
+                className={
+                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                }
+                onClick={() => {
+                  handleItemClick2(1)
+                  setShowMenu(false)
+                  setLoadingComponents(false)
+                }}
+              >
+              <FaUserGroup className="text-main/80 text-xl" />{' '} Clientes
+              </Link>
+            </li>}
+
+            <li>
+              <button
+                onClick={() => {
+                  setShowSubmenu3(!showSubmenu3)
+                }}
+                className="flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full"
+              >
+                <span className="flex items-center gap-4 w-full">
+                  <FaBriefcase className="text-main/80 text-[1.15rem] ml-1" />{' '}
+                  Briefs
+                </span>
+                <RiArrowRightSLine
+                  className={`mt-1 ${
+                    showSubmenu3 ? 'rotate-90' : ''
+                  } transition-all`}
+                />
+              </button>
+              <ul
+                className={` ${
+                  showSubmenu3 ? 'h-[160px]' : 'h-0'
+                } overflow-y-hidden transition-all`}
+              >
                 {roles.map(
                   (role: RolsValues): React.ReactNode =>
                     auth.id_rol == role.id &&
-                    JSON.parse(role.accesos).map((route: { peso: string }) => (
-                      <>
-                        {route.peso != 'superusuario' && (
-                          <li>
-                            <Link
-                              to="lista-servicios"
-                              className={
-                                'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
-                              }
-                              onClick={() => {
-                                setShowMenu(false)
-                                setLoadingComponents(false)
-                              }}
-                            >
-                              <FaChartSimple className="text-main/80 text-xl" />{' '}
-                              Proyectos
-                            </Link>
-                          </li>
-                        )}
-                      </>
-                    ))
+                    JSON.parse(role.accesos).map(
+                      (route: { peso: string }, index: number) => (
+                        <>
+                          {route.peso == 'superusuario' ||
+                          route.peso == 'diseño'
+                            ? (
+                            <Fragment key={index}>
+                              <li>
+                                <Link
+                                  to="lista-briefs-diseños-new"
+                                  className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                    activeItem2 == 1
+                                      ? 'before:bg-main'
+                                      : 'before:bg-gray-500'
+                                  } hover:text-main transition-colors`}
+                                  onClick={() => {
+                                    handleItemClick2(1)
+                                    setShowMenu(false)
+                                    setLoadingComponents(false)
+                                  }}
+                                >
+                                  <RiStackFill className="text-main" /> Logotipo
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  to="lista-briefs-brochure"
+                                  className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                    activeItem2 == 999
+                                      ? 'before:bg-main'
+                                      : 'before:bg-gray-500'
+                                  } hover:text-main transition-colors`}
+                                  onClick={() => {
+                                    handleItemClick2(999)
+                                    setShowMenu(false)
+                                    setLoadingComponents(false)
+                                  }}
+                                >
+                                  <RiStackFill className="text-main" /> Brochure
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  to="lista-briefs-flyer"
+                                  className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                    activeItem2 == 998
+                                      ? 'before:bg-main'
+                                      : 'before:bg-gray-500'
+                                  } hover:text-main transition-colors`}
+                                  onClick={() => {
+                                    handleItemClick2(998)
+                                    setShowMenu(false)
+                                    setLoadingComponents(false)
+                                  }}
+                                >
+                                  <RiStackFill className="text-main" /> Flyer
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  to="lista-briefs-comunity"
+                                  className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                    activeItem2 == 997
+                                      ? 'before:bg-main'
+                                      : 'before:bg-gray-500'
+                                  } hover:text-main transition-colors`}
+                                  onClick={() => {
+                                    handleItemClick2(997)
+                                    setShowMenu(false)
+                                    setLoadingComponents(false)
+                                  }}
+                                >
+                                  <RiStackFill className="text-main" /> Comunity
+                                </Link>
+                              </li>
+                            </Fragment>
+                              )
+                            : (
+                                ''
+                              )}
+                        </>
+                      )
+                    )
                 )}
-                <li>
-                  <button
-                    onClick={() => {
-                      setShowSubmenu3(!showSubmenu3)
-                    }}
-                    className="flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full"
-                  >
-                    <span className="flex items-center gap-4 w-full">
-                      <FaBriefcase className="text-main/80 text-[1.15rem] ml-1" />{' '}
-                      Briefs
-                    </span>
-                    <RiArrowRightSLine
-                      className={`mt-1 ${
-                        showSubmenu3 ? 'rotate-90' : ''
-                      } transition-all`}
-                    />
-                  </button>
-                  <ul
-                    className={` ${
-                      showSubmenu3 ? 'h-[160px]' : 'h-0'
-                    } overflow-y-hidden transition-all`}
-                  >
-                    {roles.map(
-                      (role: RolsValues): React.ReactNode =>
-                        auth.id_rol == role.id &&
-                        JSON.parse(role.accesos).map(
-                          (route: { peso: string }, index: number) => (
-                            <>
-                              {route.peso == 'superusuario' ||
-                              route.peso == 'diseño'
-                                ? (
-                                <Fragment key={index}>
-                                  <li>
-                                    <Link
-                                      to="lista-briefs-diseños-new"
-                                      className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                        activeItem2 == 1
-                                          ? 'before:bg-main'
-                                          : 'before:bg-gray-500'
-                                      } hover:text-main transition-colors`}
-                                      onClick={() => {
-                                        handleItemClick2(1)
-                                        setShowMenu(false)
-                                        setLoadingComponents(false)
-                                      }}
-                                    >
-                                      <RiStackFill className="text-main" />{' '}
-                                      Logotipo
-                                    </Link>
-                                  </li>
-                                  <li>
-                                    <Link
-                                      to="lista-briefs-brochure"
-                                      className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                        activeItem2 == 999
-                                          ? 'before:bg-main'
-                                          : 'before:bg-gray-500'
-                                      } hover:text-main transition-colors`}
-                                      onClick={() => {
-                                        handleItemClick2(999)
-                                        setShowMenu(false)
-                                        setLoadingComponents(false)
-                                      }}
-                                    >
-                                      <RiStackFill className="text-main" />{' '}
-                                      Brochure
-                                    </Link>
-                                  </li>
-                                  <li>
-                                    <Link
-                                      to="lista-briefs-flyer"
-                                      className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                        activeItem2 == 998
-                                          ? 'before:bg-main'
-                                          : 'before:bg-gray-500'
-                                      } hover:text-main transition-colors`}
-                                      onClick={() => {
-                                        handleItemClick2(998)
-                                        setShowMenu(false)
-                                        setLoadingComponents(false)
-                                      }}
-                                    >
-                                      <RiStackFill className="text-main" />{' '}
-                                      Flyer
-                                    </Link>
-                                  </li>
-                                  <li>
-                                    <Link
-                                      to="lista-briefs-comunity"
-                                      className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
-                                        activeItem2 == 997
-                                          ? 'before:bg-main'
-                                          : 'before:bg-gray-500'
-                                      } hover:text-main transition-colors`}
-                                      onClick={() => {
-                                        handleItemClick2(997)
-                                        setShowMenu(false)
-                                        setLoadingComponents(false)
-                                      }}
-                                    >
-                                      <RiStackFill className="text-main" />{' '}
-                                      Comunity
-                                    </Link>
-                                  </li>
-                                </Fragment>
-                                  )
-                                : (
-                                    ''
-                                  )}
-                            </>
-                          )
-                        )
-                    )}
-                  </ul>
-                </li>
-                {/* <li>
+              </ul>
+            </li>
+
+            {/* <li>
                   <button
                     onClick={() => {
                       setShowSubmenu2(!showSubmenu2)
@@ -869,29 +917,29 @@ const SideBar = (): JSX.Element => {
                     )}
                   </ul>
                 </li> */}
-              </ul>
-            </div>
-            <nav>
-              <Link
-                to={''}
-                onClick={() => {
-                  void cerrarSession()
-                }}
-                className="flex items-center gap-4 py-2 px-4 rounded-lg hover:bg-main_2-100 text-main transition-colors hover:text-main"
-              >
-                <RiLogoutCircleRLine className="text-main " /> Cerrar sesión
-              </Link>
-            </nav>
-          </div>
-          <button
+          </ul>
+        </div>
+        <nav>
+          <Link
+            to={''}
             onClick={() => {
-              setShowMenu(!showMenu)
+              void cerrarSession()
             }}
-            className="xl:hidden fixed bottom-4 right-4 bg-main text-white p-3 rounded-full z-50"
+            className="flex items-center gap-4 py-2 px-4 rounded-lg hover:bg-main_2-100 text-main transition-colors hover:text-main"
           >
-            {showMenu ? <RiCloseLine /> : <RiMenu3Line />}
-          </button>
-        </>
+            <RiLogoutCircleRLine className="text-main " /> Cerrar sesión
+          </Link>
+        </nav>
+      </div>
+      <button
+        onClick={() => {
+          setShowMenu(!showMenu)
+        }}
+        className="xl:hidden fixed bottom-4 right-4 bg-main text-white p-3 rounded-full z-50"
+      >
+        {showMenu ? <RiCloseLine /> : <RiMenu3Line />}
+      </button>
+    </>
   )
 }
 

@@ -380,6 +380,18 @@ export interface VluesToExcel {
   created_at: string
 }
 
+export interface valuesTransaccion {
+  id: number
+  total_pago: string
+  nombres: string
+  apellidos: string
+  email: string
+  celular: string
+  id_transaccion: string
+  tipo: string
+  created_at: string
+}
+
 export interface ValuesVenta {
   id: number
   nombre_empresa: string

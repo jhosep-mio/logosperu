@@ -16,6 +16,7 @@ import { SchemaValidarVentas } from '../../../shared/schemas/Schemas'
 import { quitarAcentos } from '../../../shared/functions/QuitarAcerntos'
 import { GeneracionVentas } from './GeneracionVentas'
 import { IoCalendarOutline } from 'react-icons/io5'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export const ListaClientes = (): JSX.Element => {
   const { setTitle } = useAuth()
@@ -26,6 +27,7 @@ export const ListaClientes = (): JSX.Element => {
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(14)
+  const [expandedContact, setExpandedContact] = useState<number | null>(null)
 
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
 
@@ -53,6 +55,8 @@ export const ListaClientes = (): JSX.Element => {
       plan: '',
       id_contrato: '',
       dni_ruc: '',
+      nombre_cliente: '',
+      arraycontacto: '',
       id_cliente: ''
     },
     validationSchema: SchemaValidarVentas,
@@ -113,8 +117,11 @@ export const ListaClientes = (): JSX.Element => {
               type="search"
             />
           </button>
-          <Link to='/admin/citas'>
-            <IoCalendarOutline className='text-4xl text-main' title='Calendario de citas'/>
+          <Link to="/admin/citas">
+            <IoCalendarOutline
+              className="text-4xl text-main"
+              title="Calendario de citas"
+            />
           </Link>
         </div>
         <div className="w-full md:w-fit flex flex-col-reverse md:flex-row items-center md:gap-4">
@@ -127,9 +134,7 @@ export const ListaClientes = (): JSX.Element => {
         </div>
       </div>
       {loading
-        ? (
-        <Loading />
-          )
+        ? <Loading />
         : (
         <div className="md:bg-[#fff] p-0 md:p-8 rounded-xl">
           <div className="hidden md:grid grid-cols-1 md:grid-cols-9 gap-3 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300">
@@ -146,421 +151,381 @@ export const ListaClientes = (): JSX.Element => {
           </div>
           {filterDate().map(
             (orden: ValuesPreventaModificate, index: number) => (
-               <>
+              <>
                 <div
-                    className={`grid grid-cols-1 md:grid-cols-9 relative gap-3 items-center z-20 mb-3 md:mb-0 ${
+                  className={`grid grid-cols-1 md:grid-cols-9 relative gap-3 items-center  mb-3 md:mb-0 ${
                     index % 2 == 0 ? 'bg-transparent' : 'bg-gray-200'
-                    } md:px-4 md:py-1 rounded-xl relative shadow_class`}
-                    key={orden.id}
+                  } md:px-4 md:py-1 rounded-xl relative shadow_class`}
+                  key={orden.id}
                 >
-                    <div className="flex flex-col gap-3 md:hidden bg-form p-4 rounded-xl">
+                  <div className="flex flex-col gap-3 md:hidden bg-form p-4 rounded-xl">
                     <div className="flex md:hidden items-center gap-2">
-                        <h5 className="md:hidden text-black font-bold mb-0 text-sm">
+                      <h5 className="md:hidden text-black font-bold mb-0 text-sm">
                         ID:
-                        </h5>
-                        <span className="flex md:justify-left items-center gap-3 font-bold text-black">
+                      </h5>
+                      <span className="flex md:justify-left items-center gap-3 font-bold text-black">
                         #{orden.id}
-                        </span>
+                      </span>
                     </div>
                     <div className="md:hidden flex justify-between gap-3">
-                        <div className="md:text-center ">
+                      <div className="md:text-center ">
                         <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                            Cliente
+                          Cliente
                         </h5>
                         <span className="text-left w-full text-black line-clamp-1">
-                            {orden.nombres} {orden.apellidos}
+                          {orden.nombres} {orden.apellidos}
                         </span>
-                        </div>
-                        <div className="md:text-right ">
+                      </div>
+                      <div className="md:text-right ">
                         <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
-                            Celular
+                          Celular
                         </h5>
                         <span className="text-right w-full text-black line-clamp-1">
-                            {orden.celular}
+                          {orden.celular}
                         </span>
-                        </div>
+                      </div>
                     </div>
                     {orden.empresa && (
-                        <div className="md:hidden flex justify-between gap-3">
+                      <div className="md:hidden flex justify-between gap-3">
                         <div className="md:text-center ">
-                            <h5 className="md:hidden text-black font-bold mb-0 text-sm">
+                          <h5 className="md:hidden text-black font-bold mb-0 text-sm">
                             Empresa
-                            </h5>
-                            <span className="text-left w-full text-black line-clamp-1">
+                          </h5>
+                          <span className="text-left w-full text-black line-clamp-1">
                             {orden.empresa}
-                            </span>
+                          </span>
                         </div>
-                        </div>
+                      </div>
                     )}
                     <div className="md:hidden flex justify-between gap-3">
-                        <div className="md:text-center ">
+                      <div className="md:text-center ">
                         <h5 className="md:hidden text-[#62be6d] font-bold mb-0 text-sm ">
-                            Fecha de creación
+                          Fecha de creación
                         </h5>
                         <span className="text-left block text-[#62be6d]">
-                            {new Date(orden.created_at).toLocaleDateString(
-                              undefined,
-                              {
-                                year: 'numeric',
-                                month: '2-digit',
-                                day: '2-digit'
-                              }
-                            )}{' '}
+                          {new Date(orden.created_at).toLocaleDateString(
+                            undefined,
+                            {
+                              year: 'numeric',
+                              month: '2-digit',
+                              day: '2-digit'
+                            }
+                          )}{' '}
                         </span>
-                        </div>
-                        <div className="md:text-right ">
+                      </div>
+                      <div className="md:text-right ">
                         <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
-                            DNI/RUC
+                          DNI/RUC
                         </h5>
                         <span className="text-right w-full text-black line-clamp-1">
-                            {orden.dni_ruc}
+                          {orden.dni_ruc}
                         </span>
-                        </div>
+                      </div>
                     </div>
                     {orden.email && (
-                        <div className="md:hidden flex justify-between gap-3">
+                      <div className="md:hidden flex justify-between gap-3">
                         <div className="md:text-left w-full">
-                            <h5 className="md:hidden text-black text-left font-bold mb-0 text-sm ">
+                          <h5 className="md:hidden text-black text-left font-bold mb-0 text-sm ">
                             Email
-                            </h5>
-                            <span className="text-left w-full text-black line-clamp-1">
+                          </h5>
+                          <span className="text-left w-full text-black line-clamp-1">
                             {orden.email}
-                            </span>
+                          </span>
                         </div>
-                        </div>
+                      </div>
                     )}
-                    </div>
-                    <div className="hidden md:block md:text-center">
+                  </div>
+                  <div className="hidden md:block md:text-center">
                     <span className="text-left block text-black w-full line-clamp-1">
-                        #{orden.id}
+                      #{orden.id}
                     </span>
-                    </div>
-                    <div className="hidden md:block md:text-center col-span-2">
-                    <div className="line-clamp-1">
-                        <span className="text-left block text-black w-full lowercase first-letter:uppercase">
+                  </div>
+                  <div className="hidden md:block md:text-center col-span-2">
+                    <div className="line-clamp-1 relative">
+                      <span className="text-left block text-black w-full lowercase first-letter:uppercase">
                         {orden.nombres} {orden.apellidos}
-                        </span>
+                      </span>
+                      {orden.arraycontacto &&
+                        JSON.parse(orden.arraycontacto).length > 0 && (
+                          <div className="flex w-fit ">
+                            <p
+                              onClick={() => {
+                                if (expandedContact == orden.id) {
+                                  setExpandedContact(null)
+                                } else {
+                                  setExpandedContact(orden.id)
+                                }
+                              }}
+                              className="text-xs text-blue-500 hover:underline cursor-pointer transition-all"
+                            >
+                              +{JSON.parse(orden.arraycontacto).length}{' '}
+                              contactos
+                            </p>
+                          </div>
+                      )}
                     </div>
-                    </div>
-                    <div className="hidden md:block md:text-center">
+                  </div>
+                  <div className="hidden md:block md:text-center">
                     <div className="line-clamp-1">
-                        <span className="text-left block text-black w-full lowercase first-letter:uppercase">
+                      <span className="text-left block text-black w-full lowercase first-letter:uppercase">
                         {orden.empresa}
-                        </span>
+                      </span>
                     </div>
-                    </div>
-                    <div className="hidden md:block md:text-center">
+                  </div>
+                  <div className="hidden md:block md:text-center">
                     <span className="text-left block text-black w-full line-clamp-1">
-                        {orden.celular}
+                      {orden.celular}
                     </span>
-                    </div>
-                    <div className="hidden md:block md:text-center">
+                  </div>
+                  <div className="hidden md:block md:text-center">
                     <span className="text-left block text-black w-full line-clamp-1">
-                        {orden.dni_ruc}
+                      {orden.dni_ruc}
                     </span>
-                    </div>
-                    <div className="hidden md:block md:text-center">
+                  </div>
+                  <div className="hidden md:block md:text-center">
                     <span className="text-left block text-black w-full line-clamp-1">
-                        {orden.medio_ingreso == '0'
-                          ? 'Facebook'
-                          : orden.medio_ingreso == '1'
-                            ? 'Google'
-                            : orden.medio_ingreso == '5'
-                              ? 'Instagram'
-                              : orden.medio_ingreso == '2'
-                                ? 'Ventas'
-                                : orden.medio_ingreso == '3'
-                                  ? 'Post Venta'
-                                  : orden.medio_ingreso == '4'
-                                    ? 'Whatsapp'
-                                    : orden.medio_ingreso == '6'
-                                      ? 'Recomendación'
-                                      : orden.medio_ingreso == '7'
-                                        ? 'Logos'
-                                        : ''}
+                      {orden.medio_ingreso == '0'
+                        ? 'Facebook'
+                        : orden.medio_ingreso == '1'
+                          ? 'Google'
+                          : orden.medio_ingreso == '5'
+                            ? 'Instagram'
+                            : orden.medio_ingreso == '2'
+                              ? 'Ventas'
+                              : orden.medio_ingreso == '3'
+                                ? 'Post Venta'
+                                : orden.medio_ingreso == '4'
+                                  ? 'Whatsapp'
+                                  : orden.medio_ingreso == '6'
+                                    ? 'Recomendación'
+                                    : orden.medio_ingreso == '7'
+                                      ? 'Logos'
+                                      : ''}
                     </span>
-                    </div>
-                    <div className="hidden md:block md:text-center">
+                  </div>
+                  <div className="hidden md:block md:text-center">
                     <p className="line-clamp-2 text-black">
-                        {new Date(orden.created_at).toLocaleDateString(undefined, {
+                      {new Date(orden.created_at).toLocaleDateString(
+                        undefined,
+                        {
                           year: 'numeric',
                           month: '2-digit',
                           day: '2-digit'
-                        })}{' '}
-                        {new Date(orden.created_at).toLocaleTimeString()}
-                    </p>
-                    </div>
-                    <div className="md:text-center md:flex md:justify-center items-center absolute md:relative right-0 top-0">
-                    <Menu
-                        menuButton={
-                        <MenuButton className="block p-2">
-                            <RiSettings3Fill className="text-gray-500 text-lg" />
-                        </MenuButton>
                         }
-                        align="end"
-                        arrow
-                        transition
-                        menuClassName="bg-secondary-100 p-4"
+                      )}{' '}
+                      {/* new Date(orden.created_at).toLocaleTimeString() */}
+                    </p>
+                  </div>
+                  <div className="md:text-center md:flex md:justify-center items-center absolute md:relative right-0 top-0">
+                    <Menu
+                      menuButton={
+                        <MenuButton className="block p-2">
+                          <RiSettings3Fill className="text-gray-500 text-lg" />
+                        </MenuButton>
+                      }
+                      align="end"
+                      arrow
+                      transition
+                      menuClassName="bg-secondary-100 p-4"
                     >
-                        <MenuItem className="p-0 hover:bg-transparent">
+                      <MenuItem className="p-0 hover:bg-transparent">
                         <Link
-                            to={`ver/${orden.id}`}
-                            className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                          to={`ver/${orden.id}`}
+                          className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
                         >
-                            Ver
+                          Ver
                         </Link>
-                        </MenuItem>
-                        <MenuItem className="p-0 hover:bg-transparent">
+                      </MenuItem>
+                      <MenuItem className="p-0 hover:bg-transparent">
                         <Link
-                            to={`editar/${orden.id}`}
-                            className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                          to={`editar/${orden.id}`}
+                          className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
                         >
-                            Editar
+                          Editar
                         </Link>
-                        </MenuItem>
-                        <MenuItem className="p-0 hover:bg-transparent">
+                      </MenuItem>
+                      <MenuItem className="p-0 hover:bg-transparent">
                         <Link
-                            to={`resumen/${orden.id}`}
-                            className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                          to={`resumen/${orden.id}`}
+                          className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
                         >
-                            Reporte
+                          Reporte
                         </Link>
-                        </MenuItem>
-                        <MenuItem className="p-0 hover:bg-transparent">
+                      </MenuItem>
+                      <MenuItem className="p-0 hover:bg-transparent">
                         <Link
-                            to=""
-                            onClick={() => {
-                              handleClickOpen()
-                              setValues({
-                                ...values,
-                                id_cliente: String(orden.id),
-                                medio_ingreso: orden.medio_ingreso,
-                                nombre_empresa: orden.empresa
-                                  ? orden.empresa
-                                  : `${orden.nombres} ${orden.apellidos}`,
-                                dni_ruc: `${
+                          to=""
+                          onClick={() => {
+                            handleClickOpen()
+                            setValues({
+                              ...values,
+                              id_cliente: String(orden.id),
+                              medio_ingreso: orden.medio_ingreso,
+                              nombre_empresa: orden.empresa ?? '',
+                              nombre_cliente: `${orden.nombres} ${orden.apellidos}`,
+                              arraycontacto: orden.arraycontacto,
+                              dni_ruc: `${
                                 orden.dni_ruc != null ? orden.dni_ruc : ''
-                                }`
-                              })
-                            }}
-                            className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex justify-center items-center gap-x-4 p-2 flex-1"
+                              }`
+                            })
+                          }}
+                          className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex justify-center items-center gap-x-4 p-2 flex-1"
                         >
-                            Generar venta
+                          Generar venta
                         </Link>
-                        </MenuItem>
+                      </MenuItem>
                     </Menu>
-                    </div>
+                  </div>
                 </div>
-                {orden.arraycontacto && JSON.parse(orden.arraycontacto).length > 0 &&
-                    JSON.parse(orden.arraycontacto).map((contacto: ListcontactoClientes, indexcol: number) => (
-                        <div
-                            className={`
-                            grid grid-cols-1 md:grid-cols-9 relative gap-3 items-center mb-3 md:mb-0 ${
-                            index % 2 == 0 ? 'bg-transparent' : 'bg-gray-200'
-                            } md:px-4 rounded-xl relative shadow_class`}
+                { <AnimatePresence>
+                    {orden.arraycontacto &&
+                      JSON.parse(orden.arraycontacto).length > 0 &&
+                      expandedContact &&
+                      expandedContact == orden.id &&
+                      JSON.parse(orden.arraycontacto).map(
+                        (contacto: ListcontactoClientes, indexcol: number) => (
+                          <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                            className={
+                              'grid grid-cols-1 md:grid-cols-9  gap-3 items-center mb-3 md:mb-0 md:px-4 bg-transparent rounded-xl relative shadow_class'
+                            }
                             key={contacto.id}
-                        >
-                            {/* <div className="flex flex-col gap-3 md:hidden bg-form p-4 rounded-xl">
-                            <div className="flex md:hidden items-center gap-2">
-                                <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                                ID:
-                                </h5>
-                                <span className="flex md:justify-left items-center gap-3 font-bold text-black">
-                                #{orden.id}
-                                </span>
+                          >
+                            <div
+                              className={`hidden md:block h-full md:text-center relative ${
+                                indexcol == 0
+                                  ? 'before:h-[80%] -top-0 after:bottom-5'
+                                  : 'before:h-[95%] -top-4 after:bottom-0'
+                              } before:mt-0 before:w-[2px] before:bg-gray-200 before:absolute before:left-0 before:ml-5
+                                    after:h-[2px] after:w-[90%] after:ml-5 after:bg-gray-200 after:absolute  after:left-0`}
+                            >
+                              <span className="text-left block text-black w-full line-clamp-1 h-[2px] py-2"></span>
                             </div>
-                            <div className="md:hidden flex justify-between gap-3">
-                                <div className="md:text-center ">
-                                <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                                    Cliente
-                                </h5>
-                                <span className="text-left w-full text-black line-clamp-1">
-                                    {orden.nombres} {orden.apellidos}
-                                </span>
-                                </div>
-                                <div className="md:text-right ">
-                                <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
-                                    Celular
-                                </h5>
-                                <span className="text-right w-full text-black line-clamp-1">
-                                    {orden.celular}
-                                </span>
-                                </div>
-                            </div>
-                            {orden.empresa && (
-                                <div className="md:hidden flex justify-between gap-3">
-                                <div className="md:text-center ">
-                                    <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                                    Empresa
-                                    </h5>
-                                    <span className="text-left w-full text-black line-clamp-1">
-                                    {orden.empresa}
-                                    </span>
-                                </div>
-                                </div>
-                            )}
-                            <div className="md:hidden flex justify-between gap-3">
-                                <div className="md:text-center ">
-                                <h5 className="md:hidden text-[#62be6d] font-bold mb-0 text-sm ">
-                                    Fecha de creación
-                                </h5>
-                                <span className="text-left block text-[#62be6d]">
-                                    {new Date(orden.created_at).toLocaleDateString(
-                                    undefined,
-                                    {
-                                        year: 'numeric',
-                                        month: '2-digit',
-                                        day: '2-digit'
-                                    }
-                                    )}{' '}
-                                </span>
-                                </div>
-                                <div className="md:text-right ">
-                                <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
-                                    DNI/RUC
-                                </h5>
-                                <span className="text-right w-full text-black line-clamp-1">
-                                    {orden.dni_ruc}
-                                </span>
-                                </div>
-                            </div>
-                            {orden.email && (
-                                <div className="md:hidden flex justify-between gap-3">
-                                <div className="md:text-left w-full">
-                                    <h5 className="md:hidden text-black text-left font-bold mb-0 text-sm ">
-                                    Email
-                                    </h5>
-                                    <span className="text-left w-full text-black line-clamp-1">
-                                    {orden.email}
-                                    </span>
-                                </div>
-                                </div>
-                            )}
-                            </div> */}
-                            <div className={`hidden md:block h-full md:text-center relative ${indexcol == 0 ? 'before:h-[80%] -top-0 after:bottom-4' : 'before:h-[95%] -top-4 after:bottom-0'} before:mt-0 before:w-[2px] before:bg-gray-200 before:absolute before:left-0 before:ml-5
-                                after:h-[2px] after:w-[90%] after:ml-5 after:bg-gray-200 after:absolute  after:left-0`}>
-                                <span className="text-left block text-black w-full line-clamp-1 h-[2px]">
-                                </span>
-                            </div>
-                            <div className="hidden md:block md:text-center col-span-2">
-                            <div className="line-clamp-1">
+                            <div className="hidden md:block md:text-center col-span-2  py-2">
+                              <div className="line-clamp-1">
                                 <span className="text-left block text-black w-full lowercase first-letter:uppercase">
-                                {contacto.nombres}
+                                  {contacto.nombres}
                                 </span>
-                            </div>
+                              </div>
                             </div>
                             <div className="hidden md:block md:text-center">
-                            <div className="line-clamp-1">
+                              <div className="line-clamp-1">
                                 <span className="text-left block text-black w-full lowercase first-letter:uppercase">
-                                {orden.empresa}
+                                  {contacto.marca}
                                 </span>
-                            </div>
-                            </div>
-                            <div className="hidden md:block md:text-center">
-                            <span className="text-left block text-black w-full line-clamp-1">
-                                {orden.celular}
-                            </span>
+                              </div>
                             </div>
                             <div className="hidden md:block md:text-center">
-                            <span className="text-left block text-black w-full line-clamp-1">
+                              <span className="text-left block text-black w-full line-clamp-1">
+                                {contacto.celular}
+                              </span>
+                            </div>
+                            <div className="hidden md:block md:text-center">
+                              <span className="text-left block text-black w-full line-clamp-1">
                                 {orden.dni_ruc}
-                            </span>
+                              </span>
                             </div>
                             <div className="hidden md:block md:text-center">
-                            <span className="text-left block text-black w-full line-clamp-1">
-                                {orden.medio_ingreso == '0'
-                                  ? 'Facebook'
-                                  : orden.medio_ingreso == '1'
-                                    ? 'Google'
-                                    : orden.medio_ingreso == '5'
-                                      ? 'Instagram'
-                                      : orden.medio_ingreso == '2'
-                                        ? 'Ventas'
-                                        : orden.medio_ingreso == '3'
-                                          ? 'Post Venta'
-                                          : orden.medio_ingreso == '4'
-                                            ? 'Whatsapp'
-                                            : orden.medio_ingreso == '6'
-                                              ? 'Recomendación'
-                                              : orden.medio_ingreso == '7'
-                                                ? 'Logos'
-                                                : ''}
-                            </span>
+                              {/* <span className="text-left block text-black w-full line-clamp-1">
+                                    {orden.medio_ingreso == '0'
+                                      ? 'Facebook'
+                                      : orden.medio_ingreso == '1'
+                                        ? 'Google'
+                                        : orden.medio_ingreso == '5'
+                                          ? 'Instagram'
+                                          : orden.medio_ingreso == '2'
+                                            ? 'Ventas'
+                                            : orden.medio_ingreso == '3'
+                                              ? 'Post Venta'
+                                              : orden.medio_ingreso == '4'
+                                                ? 'Whatsapp'
+                                                : orden.medio_ingreso == '6'
+                                                  ? 'Recomendación'
+                                                  : orden.medio_ingreso == '7'
+                                                    ? 'Logos'
+                                                    : ''}
+                                </span> */}
                             </div>
                             <div className="hidden md:block md:text-center">
-                            {/* <p className="line-clamp-2 text-black">
-                                {new Date(orden.created_at).toLocaleDateString(undefined, {
-                                  year: 'numeric',
-                                  month: '2-digit',
-                                  day: '2-digit'
-                                })}{' '}
-                                {new Date(orden.created_at).toLocaleTimeString()}
-                            </p> */}
+                              <p className="line-clamp-2 text-black">
+                                {new Date(contacto.created_at).toLocaleDateString(
+                                  undefined,
+                                  {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit'
+                                  }
+                                )}{' '}
+                              </p>
                             </div>
                             <div className="md:text-center md:flex md:justify-center items-center absolute md:relative right-0 top-0">
-                            <Menu
-                                menuButton={
-                                <MenuButton className="block p-2">
-                                    <RiSettings3Fill className="text-gray-500 text-lg" />
-                                </MenuButton>
-                                }
-                                align="end"
-                                arrow
-                                transition
-                                menuClassName="bg-secondary-100 p-4"
-                            >
-                                <MenuItem className="p-0 hover:bg-transparent">
-                                <Link
-                                    to={`ver/${orden.id}`}
-                                    className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                              {/* <Menu
+                                    menuButton={
+                                    <MenuButton className="block p-2">
+                                        <RiSettings3Fill className="text-gray-500 text-lg" />
+                                    </MenuButton>
+                                    }
+                                    align="end"
+                                    arrow
+                                    transition
+                                    menuClassName="bg-secondary-100 p-4"
                                 >
-                                    Ver
-                                </Link>
-                                </MenuItem>
-                                <MenuItem className="p-0 hover:bg-transparent">
-                                <Link
-                                    to={`editar/${orden.id}`}
-                                    className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
-                                >
-                                    Editar
-                                </Link>
-                                </MenuItem>
-                                <MenuItem className="p-0 hover:bg-transparent">
-                                <Link
-                                    to={`resumen/${orden.id}`}
-                                    className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
-                                >
-                                    Reporte
-                                </Link>
-                                </MenuItem>
-                                <MenuItem className="p-0 hover:bg-transparent">
-                                <Link
-                                    to=""
-                                    onClick={() => {
-                                      handleClickOpen()
-                                      setValues({
-                                        ...values,
-                                        id_cliente: String(orden.id),
-                                        medio_ingreso: orden.medio_ingreso,
-                                        nombre_empresa: orden.empresa
-                                          ? orden.empresa
-                                          : `${orden.nombres} ${orden.apellidos}`,
-                                        dni_ruc: `${
-                                        orden.dni_ruc != null ? orden.dni_ruc : ''
-                                        }`
-                                      })
-                                    }}
-                                    className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex justify-center items-center gap-x-4 p-2 flex-1"
-                                >
-                                    Generar venta
-                                </Link>
-                                </MenuItem>
-                            </Menu>
+                                    <MenuItem className="p-0 hover:bg-transparent">
+                                    <Link
+                                        to={`ver/${orden.id}`}
+                                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                                    >
+                                        Ver
+                                    </Link>
+                                    </MenuItem>
+                                    <MenuItem className="p-0 hover:bg-transparent">
+                                    <Link
+                                        to={`editar/${orden.id}`}
+                                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                                    >
+                                        Editar
+                                    </Link>
+                                    </MenuItem>
+                                    <MenuItem className="p-0 hover:bg-transparent">
+                                    <Link
+                                        to={`resumen/${orden.id}`}
+                                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                                    >
+                                        Reporte
+                                    </Link>
+                                    </MenuItem>
+                                    <MenuItem className="p-0 hover:bg-transparent">
+                                    <Link
+                                        to=""
+                                        onClick={() => {
+                                          handleClickOpen()
+                                          setValues({
+                                            ...values,
+                                            id_cliente: String(orden.id),
+                                            medio_ingreso: orden.medio_ingreso,
+                                            nombre_empresa: orden.empresa
+                                              ? orden.empresa
+                                              : `${orden.nombres} ${orden.apellidos}`,
+                                            dni_ruc: `${
+                                            orden.dni_ruc != null ? orden.dni_ruc : ''
+                                            }`
+                                          })
+                                        }}
+                                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex justify-center items-center gap-x-4 p-2 flex-1"
+                                    >
+                                        Generar venta
+                                    </Link>
+                                    </MenuItem>
+                                </Menu> */}
                             </div>
-                        </div>
-                    ))
-                }
-               </>
+                          </motion.div>
+                        )
+                      )}
+                </AnimatePresence>
+                  }
+              </>
             )
           )}
 

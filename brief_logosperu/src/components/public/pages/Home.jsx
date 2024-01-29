@@ -263,7 +263,6 @@ const Home = () => {
       const respuesta2 = await axios.post(`${Global.url}/validar-codigo`, {
         codigo,
       }); // Pasar el código en el cuerpo de la solicitud
-
       if (respuesta2.data.status === "success") {
         setIdCliente(respuesta2.data.co);
         setIdCodigo(codigo);
@@ -271,9 +270,15 @@ const Home = () => {
         const respuestaCliente = await axios.get(
           `${Global.url}/getOneCliente/${respuesta2.data.co}`
         );
+        let nombre_contacto = null
+        if(respuesta2.data.contacto){
+            JSON.parse(respuestaCliente.data.arraycontacto).filter((contacto) => contacto.id == respuesta2.data.contacto).map((contacto) => nombre_contacto = contacto.nombres)
+        }
+
         setDatos({
           nombres: respuestaCliente.data.nombres,
           apellidos: respuestaCliente.data.apellidos,
+          contacto: nombre_contacto,
           celular: respuestaCliente.data.celular,
           edad: respuestaCliente.data.edad,
           email: respuestaCliente.data.email,
@@ -1100,17 +1105,17 @@ const Home = () => {
                             <img
                               src={logo1}
                               alt=""
-                              className="w-40 h-40 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                             <img
                               src={logo2}
                               alt=""
-                              className="w-40 h-40 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                             <img
                               src={logo3}
                               alt=""
-                              className="w-40 h-40 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                           </div>
                         </div>
@@ -1133,17 +1138,17 @@ const Home = () => {
                             <img
                               src={logo4}
                               alt=""
-                              className="w-40 h-40 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                             <img
                               src={logo5}
                               alt=""
-                              className="w-40 h-40 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                             <img
                               src={logo6}
                               alt=""
-                              className="w-40 h-40 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                           </div>
                         </div>
@@ -1167,17 +1172,17 @@ const Home = () => {
                             <img
                               src={logo7}
                               alt=""
-                              className="w-40 h-40 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                             <img
                               src={logo8}
                               alt=""
-                              className="w-40 h-40 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                             <img
                               src={logo9}
                               alt=""
-                              className="w-40 h-40 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                           </div>
                         </div>
@@ -1199,17 +1204,17 @@ const Home = () => {
                             <img
                               src={logo10}
                               alt=""
-                              className="w-32 h-32 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                             <img
                               src={logo11}
                               alt=""
-                              className="w-32 h-32 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                             <img
                               src={logo12}
                               alt=""
-                              className="w-32 h-32 object-contain"
+                              className="w-52 h-52 object-contain"
                             />
                           </div>
                         </div>
@@ -1302,9 +1307,25 @@ const Home = () => {
                       <Errors error={errors.apellidos} />
                     </div>
                   </div>
+                  {datos.contacto &&
+                    <div className="flex flex-col lg:flex-row lg: gap-3 mt-2">
+                        <div className="w-full ">
+                        <p className="bg-transparent pt-0 pr-2 pb-0   mr-0 mb-0 ml-1  font-medium text-gray-600  text-[2.2rem]">
+                            Persona a cargo del proyecto
+                        </p>
+                            <input
+                            className="border-[2px] placeholder-gray-400 focus:outline-none
+                                                                    w-full pt-4 pr-4 pb-4 pl-4 mt-2 mr-0 mb-0 ml-0 block bg-white
+                                                                    border-[lightgrey] rounded-md transition-all text-[1.8rem]"
+                            value={datos.contacto}
+                            disabled
+                            />
+                        </div>
+                    </div>
+                  }
                   <div className="w-full flex flex-col md:flex-row gap-2 lg:gap-5">
                     {!datos.celular && (
-                      <div className="w-full  lg:relative">
+                      <div className="w-full lg:relative">
                         <p className="bg-transparent pt-0 pr-2 pb-0   mr-0 mb-0 ml-1  font-medium text-gray-600  text-[2.2rem]">
                           Celular
                         </p>

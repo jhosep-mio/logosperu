@@ -30,6 +30,8 @@ interface valuesVentasTO {
   id_contrato: string
   dni_ruc: string
   id_cliente: string
+  nombre_cliente: string
+  arraycontacto: string
 }
 
 export const ListaPendientes = (): JSX.Element => {
@@ -54,7 +56,9 @@ export const ListaPendientes = (): JSX.Element => {
     plan: '',
     id_contrato: '',
     dni_ruc: '',
-    id_cliente: ''
+    id_cliente: '',
+    nombre_cliente: '',
+    arraycontacto: ''
   })
 
   const getCitas = async (): Promise<void> => {

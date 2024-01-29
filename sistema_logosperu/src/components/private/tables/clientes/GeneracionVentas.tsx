@@ -15,7 +15,7 @@ import { SchemaValidarVentas } from '../../../shared/schemas/Schemas'
 import { Global } from '../../../../helper/Global'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { type arrayAsignacion, type ValuesPlanes } from '../../../shared/schemas/Interfaces'
+import { type ListcontactoClientes, type arrayAsignacion, type ValuesPlanes } from '../../../shared/schemas/Interfaces'
 import { ListaUsuarios } from './ListaUsuarios'
 
 const Transition = React.forwardRef(function Transition (
@@ -35,6 +35,8 @@ interface valuesVentasTO {
   id_contrato: string
   dni_ruc: string
   id_cliente: string
+  nombre_cliente: string
+  arraycontacto: string
 }
 
 interface valuesInterface {
@@ -56,6 +58,7 @@ export const GeneracionVentas = ({
   const token = localStorage.getItem('token')
   const [loadingValidacion, seLoadingValidation] = useState(false)
   const [abrirPlan, setAbrirPlan] = useState(false)
+  const [personContact, setpersonContact] = useState<string | null>(null)
   const [duplicateCode, setDuplicateCode] = useState<boolean>(false)
   const [usuarios, setUsuarios] = useState<never[]>([])
   const [arrayPesos, setarrayPesos] = useState<arrayAsignacion[]>([
@@ -84,8 +87,9 @@ export const GeneracionVentas = ({
       data.append('dni_ruc', values.dni_ruc)
       data.append('nombre_empresa', values.nombre_empresa)
       data.append('id_contrato', values.id_contrato)
+      data.append('id_contacto', personContact ?? '')
       data.append('asignacion', JSON.stringify(arrayPesos))
-      const request = await axios.post(`${Global.url}/generarVenta`, data, {
+      const request = await axios.post(`${Global.url}/generarVenta2`, data, {
         headers: {
           Authorization: `Bearer ${
             token !== null && token !== '' ? token : ''
@@ -131,7 +135,8 @@ export const GeneracionVentas = ({
       plan: '',
       id_contrato: '',
       dni_ruc: '',
-      id_cliente: ''
+      id_cliente: '',
+      nombre_cliente: ''
     },
     validationSchema: SchemaValidarVentas,
     onSubmit: generarVenta
@@ -171,10 +176,10 @@ export const GeneracionVentas = ({
       ...values,
       id: datos.id,
       medio_ingreso: datos.medio_ingreso,
-      nombre_empresa: datos.nombre_empresa,
       plan: datos.plan,
       id_contrato: datos.id_contrato,
       dni_ruc: datos.dni_ruc,
+      nombre_cliente: datos.nombre_cliente,
       id_cliente: datos.id_cliente
     })
     getUsuarios()
@@ -263,7 +268,7 @@ export const GeneracionVentas = ({
               >
                 {!abrirPlan
                   ? <>
-                    <div className="w-full  lg:relative mt-5">
+                    {/* <div className="w-full  lg:relative mt-5">
                       <TitleBriefs titulo=" Nombres/Empresa" />
                       <input
                         className="border placeholder-gray-400 focus:outline-none
@@ -276,6 +281,44 @@ export const GeneracionVentas = ({
                         onBlur={handleBlur}
                         disabled={false}
                       />
+                      <Errors
+                        errors={errors.nombre_empresa}
+                        touched={touched.nombre_empresa}
+                      />
+                    </div> */}
+                    <div className="w-full  lg:relative mt-5">
+                      <TitleBriefs titulo=" Nombres/Empresa" />
+                      <select
+                        className="border placeholder-gray-400 max-w-full focus:outline-none overflow-hidden
+                                    focus:border-black w-full pr-4 h-12 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                    border-gray-300 rounded-md transition-all outline-none"
+                        name="nombre_empresa"
+                        value={values.nombre_empresa}
+                        onChange={(e) => {
+                          if (datos.arraycontacto && JSON.parse(datos.arraycontacto).length > 0) {
+                            const selectedContact = JSON.parse(datos.arraycontacto).find(
+                              (contacto: ListcontactoClientes) => contacto.nombres === e.target.value
+                            )
+                            setpersonContact(selectedContact ? selectedContact.id : null)
+                            handleChange(e) // Call your form-wide change handler if needed
+                          } else {
+                            handleChange(e) // Call your form-wide change handler if needed
+                          }
+                        }}
+                        onBlur={handleBlur}
+                        disabled={false}
+                      >
+                        {datos.nombre_empresa &&
+                            <option value={datos.nombre_empresa}>{datos.nombre_empresa}</option>}
+                         {datos.nombre_cliente &&
+                            <option value={datos.nombre_cliente}>{datos.nombre_cliente}</option> }
+                        {datos.arraycontacto && JSON.parse(datos.arraycontacto).length > 0 &&
+                            JSON.parse(datos.arraycontacto).map((contacto: ListcontactoClientes) => (
+                                <option
+                                value={contacto.nombres} key={contacto.id}>{contacto.nombres} - {contacto.marca}</option>
+                            ))
+                             }
+                      </select>
                       <Errors
                         errors={errors.nombre_empresa}
                         touched={touched.nombre_empresa}

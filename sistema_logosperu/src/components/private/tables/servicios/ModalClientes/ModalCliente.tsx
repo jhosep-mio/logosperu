@@ -2,7 +2,7 @@ import { Dialog, DialogContent } from '@mui/material'
 import { type Dispatch, type SetStateAction } from 'react'
 import { VerCliente } from './VerCliente'
 
-export const ModalCliente = ({ open, setOpen, id }: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, id: number }): JSX.Element => {
+export const ModalCliente = ({ open, setOpen, id, idcontacto }: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, id: number, idcontacto: number }): JSX.Element => {
   return (
     <Dialog
       open={open}
@@ -14,7 +14,7 @@ export const ModalCliente = ({ open, setOpen, id }: { open: boolean, setOpen: Di
       className="dialog_fecha_inicio"
     >
       <DialogContent>
-            <VerCliente id={id}/>
+            <VerCliente id={id} idcontacto={idcontacto}/>
       </DialogContent>
     </Dialog>
   )

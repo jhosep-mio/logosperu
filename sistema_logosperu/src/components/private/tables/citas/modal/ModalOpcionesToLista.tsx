@@ -43,7 +43,9 @@ export const ModalOpcionesToLista = ({
       plan: '',
       id_contrato: '',
       dni_ruc: '',
-      id_cliente: ''
+      id_cliente: '',
+      nombre_cliente: '',
+      arraycontacto: ''
     },
     validationSchema: SchemaValidarVentas,
     onSubmit: generarVenta

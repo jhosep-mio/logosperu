@@ -325,6 +325,21 @@ export const ModalFlyer = ({
           />
         </div>
       </div>
+      {datos.contacto &&
+        <div className="flex flex-col lg:flex-row lg: gap-3 mt-2">
+            <div className="w-full ">
+            <p className="bg-transparent pt-0 pr-2 pb-0   mr-0 mb-0 ml-1  font-medium text-gray-600  text-[2.2rem]">
+                Persona a cargo del proyecto
+            </p>
+                <input
+                className="border-[2px] placeholder-gray-400 focus:outline-none
+                                                        w-full pt-4 pr-4 pb-4 pl-4 mt-2 mr-0 mb-0 ml-0 block bg-white
+                                                        border-[lightgrey] rounded-md transition-all text-[1.8rem]"
+                value={datos.contacto}
+                disabled
+                />
+            </div>
+        </div> }
       <div className="w-full flex flex-col md:flex-row gap-2 lg:gap-5">
         {datos.celular ? null : (
           <div className="w-full  lg:relative">

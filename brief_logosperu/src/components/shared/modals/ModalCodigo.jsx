@@ -35,9 +35,14 @@ export const ModalCodigo = ({
         const respuestaCliente = await axios.get(
           `${Global.url}/getOneCliente/${respuesta2.data.co}`
         );
+        let nombre_contacto = null
+        if(respuesta2.data.contacto){
+            JSON.parse(respuestaCliente.data.arraycontacto).filter((contacto) => contacto.id == respuesta2.data.contacto).map((contacto) => nombre_contacto = contacto.nombres)
+        }
         setDatos({
           nombres: respuestaCliente.data.nombres,
           apellidos: respuestaCliente.data.apellidos,
+          contacto: nombre_contacto,
           celular: respuestaCliente.data.celular,
           edad: respuestaCliente.data.edad,
           email: respuestaCliente.data.email,

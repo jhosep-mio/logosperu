@@ -9,6 +9,7 @@ import {
 } from 'react-icons/ri'
 import { Loading } from '../../../shared/Loading'
 import {
+  type arrayContacto,
   type ValuesPlanes,
   type ValuesVenta
 } from '../../../shared/schemas/Interfaces'
@@ -483,9 +484,20 @@ export const ListaVentas = (): JSX.Element => {
                     <h5 className="md:hidden text-black font-bold mb-0 text-sm">
                       Cliente
                     </h5>
-                    <span className="text-left w-full text-black line-clamp-1">
-                        {orden.nombres} {orden.apellidos}
+                    {orden.id_contacto
+                      ? <>
+                  {orden.arraycontacto && JSON.parse(orden.arraycontacto).length > 0 &&
+                    JSON.parse(orden.arraycontacto).filter((contacto: arrayContacto) => String(contacto.id ?? '') == orden.id_contacto).map((contacto: arrayContacto) => (
+                    <span key={contacto.id} className="text-left w-full text-black line-clamp-1">
+                        {contacto.nombres}
                     </span>
+                    ))
+                    }
+                  </>
+                      : <span className="text-left w-full text-black line-clamp-1">
+                    {orden.nombres} {orden.apellidos}
+                </span>
+                }
                   </div>
                   <div className="md:text-right ">
                     <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
@@ -602,9 +614,21 @@ export const ListaVentas = (): JSX.Element => {
                 </>
               )}
               <div className="hidden md:block md:text-center col-span-2 relative h-full">
-                <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
+                {orden.id_contacto
+                  ? <>
+                  {orden.arraycontacto && JSON.parse(orden.arraycontacto).length > 0 &&
+                    JSON.parse(orden.arraycontacto).filter((contacto: arrayContacto) => String(contacto.id ?? '') == orden.id_contacto).map((contacto: arrayContacto) => (
+                    <span key={contacto.id} className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
+                        {contacto.nombres}
+                    </span>
+                    ))
+                    }
+                  </>
+                  : <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                     {orden.nombres} {orden.apellidos}
-                  </span>
+                </span>
+                }
+
               </div>
               <div className="hidden md:block md:text-center col-span-2 relative h-full">
                 <span className="text-left text-black line-clamp-1 transition-all hover:w-[200%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">

@@ -29,8 +29,9 @@ export const Routing = () => {
                 <Route path='desarrollo/administrables' element={<Administrables/>}/>
                 <Route path='desarrollo/tiendas' element={<Tienda/>}/>
                 <Route path='desarrollo/landing-page' element={<Landing/>}/>
+
                 <Route path='brochure' element={<Brochure/>}/>
-                <Route path='Flyer' element={<Flyer/>}/>
+                <Route path='flyer' element={<Flyer/>}/>
                 <Route path='community' element={<Comunity/>}/>
                 <Route path='clasificados' element={<Clasificados/>}/>
                 <Route path='send-success/:id' element={<Send/>}/>

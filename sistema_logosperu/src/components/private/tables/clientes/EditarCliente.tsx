@@ -140,7 +140,8 @@ export const EditarCliente = (): JSX.Element => {
       created_at: '',
       estado: '',
       antiguo: '',
-      empresa: ''
+      empresa: '',
+      arraycontacto: ''
     },
     validationSchema: SchemeVentas,
     onSubmit: savePreventa
@@ -440,7 +441,7 @@ export const EditarCliente = (): JSX.Element => {
                         ? <div className="rounded-xl grid grid-cols-2 gap-4">
                           {arrayContacto.map((pro: arrayContacto) => (
                             <div
-                              className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center bg-transparent border border-gray-300 p-2 rounded-xl text-black"
+                              className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center bg-transparent border border-gray-300 p-2 rounded-xl text-black"
                               key={pro.id}
                             >
                               <div className="md:text-center">
@@ -449,14 +450,20 @@ export const EditarCliente = (): JSX.Element => {
                                 </h5>
                                 <span>{pro.nombres}</span>
                               </div>
+                              <div className="md:text-center line-clamp-2">
+                                <h5 className="md:hidden text-center text-black font-bold mb-2">
+                                  Marca
+                                </h5>
+                                <span>{pro.marca}</span>
+                              </div>
                               <div className="md:text-center">
                                 <h5 className="md:hidden text-center text-black font-bold mb-2">
                                   Celular
                                 </h5>
                                 <span>{pro.celular}</span>
                               </div>
-                              <div className="md:text-center">
-                                <h5 className="md:hidden text-center text-black font-bold mb-2">
+                              <div className="md:text-center line line-clamp-1">
+                                <h5 className="md:hidden text-center text-black block font-bold mb-2 break-words">
                                   Correo
                                 </h5>
                                 <span>{pro.correo}</span>

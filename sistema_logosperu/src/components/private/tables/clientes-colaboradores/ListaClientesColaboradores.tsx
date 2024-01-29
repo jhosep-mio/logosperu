@@ -28,7 +28,8 @@ export const ListaClientesColaboradores = (): JSX.Element => {
       created_at: '',
       dni_ruc: '',
       antiguo: '',
-      estado: ''
+      estado: '',
+      arraycontacto: ''
     }
   ])
   const [loading, setLoading] = useState(true)

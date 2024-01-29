@@ -28,6 +28,8 @@ interface valuesVentasTO {
   id_contrato: string
   dni_ruc: string
   id_cliente: string
+  nombre_cliente: string
+  arraycontacto: string
 }
 
 export const HistorialLlamadas = (): JSX.Element => {
@@ -51,7 +53,9 @@ export const HistorialLlamadas = (): JSX.Element => {
     plan: '',
     id_contrato: '',
     dni_ruc: '',
-    id_cliente: ''
+    id_cliente: '',
+    nombre_cliente: '',
+    arraycontacto: ''
   })
 
   useEffect(() => {

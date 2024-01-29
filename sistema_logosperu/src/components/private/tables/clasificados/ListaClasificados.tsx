@@ -95,19 +95,20 @@ export const ListaClasificados = (): JSX.Element => {
           )
         : (
         <div className="md:bg-[#fff] p-0 md:p-8 rounded-xl">
-          <div className="hidden md:grid grid-cols-1 md:grid-cols-7 gap-3 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300">
+          <div className="hidden md:grid grid-cols-1 md:grid-cols-8 gap-3 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300">
             <h5 className="md:text-left line-clamp-1">ID</h5>
             <h5 className="md:text-left line-clamp-1 ">Nombre</h5>
             <h5 className="md:text-left line-clamp-1 w-full">Logo</h5>
             <h5 className="md:text-left line-clamp-1 ">Correo</h5>
             <h5 className="md:text-center line-clamp-1 md:block">Celular</h5>
+            <h5 className="md:text-center line-clamp-1 md:block">Contraseña</h5>
             <h5 className="md:text-center line-clamp-1">Fecha de creación</h5>
             <h5 className="md:text-center line-clamp-1"></h5>
           </div>
           {filterDate().map(
             (orden: clasificadosValues, index: number) => (
               <div
-                className={`grid grid-cols-1 md:grid-cols-7 relative gap-3 items-center mb-3 md:mb-0 ${
+                className={`grid grid-cols-1 md:grid-cols-8 relative gap-3 items-center mb-3 md:mb-0 ${
                   index % 2 == 0 ? 'bg-transparent' : 'bg-gray-200'
                 } md:px-4 md:py-1 rounded-xl relative shadow_class`}
                 key={orden.id}
@@ -197,7 +198,14 @@ export const ListaClasificados = (): JSX.Element => {
                     {(JSON.parse(orden.pagina_web)).configuracion.celular}
                   </span>
                 </div>
-
+                <div className="hidden md:block md:text-center">
+                  <span className="text-center block text-black w-full line-clamp-1">
+                    {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    orden.password}
+                  </span>
+                </div>
                 <div className="hidden md:block md:text-center">
                   <p className="line-clamp-2 text-black">
                     {new Date(orden.created_at).toLocaleDateString(undefined, {

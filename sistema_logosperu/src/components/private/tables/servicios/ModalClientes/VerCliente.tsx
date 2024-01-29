@@ -7,15 +7,15 @@ import { Loading } from '../../../../shared/Loading'
 import { TitleBriefs } from '../../../../shared/TitleBriefs'
 import { InputsBriefs } from '../../../../shared/InputsBriefs'
 import { Errors } from '../../../../shared/Errors'
+import { type arrayContacto } from '../../../../shared/schemas/Interfaces'
 
-export const VerCliente = ({ id }: { id: number }): JSX.Element => {
+export const VerCliente = ({ id, idcontacto }: { id: number, idcontacto: number }): JSX.Element => {
   const token = localStorage.getItem('token')
   const [loading, setLoading] = useState(true)
 
   const [opcionalempresa] = useState(false)
 
-  const savePreventa = async (): Promise<void> => {
-  }
+  const savePreventa = async (): Promise<void> => {}
 
   const {
     handleChange,
@@ -40,7 +40,8 @@ export const VerCliente = ({ id }: { id: number }): JSX.Element => {
       created_at: '',
       estado: '',
       antiguo: '',
-      empresa: ''
+      empresa: '',
+      contacto: ''
     },
     validationSchema: SchemeVentas,
     onSubmit: savePreventa
@@ -57,10 +58,19 @@ export const VerCliente = ({ id }: { id: number }): JSX.Element => {
         }
       }
     )
+    let nombrecontacto = null
+    if (idcontacto) {
+      JSON.parse(request.data.arraycontacto).filter((contacto: arrayContacto) => contacto.id == idcontacto).map((contacto: arrayContacto) => {
+        return (
+          nombrecontacto = contacto.nombres
+        )
+      })
+    }
     setValues({
       ...values,
       nombres: request.data.nombres,
       apellidos: request.data.apellidos,
+      contacto: nombrecontacto ?? '',
       email: request.data.email,
       celular: request.data.celular,
       edad: request.data.edad,
@@ -74,9 +84,7 @@ export const VerCliente = ({ id }: { id: number }): JSX.Element => {
   }
 
   useEffect(() => {
-    Promise.all([
-      getOneBrief()
-    ]).then(() => {
+    Promise.all([getOneBrief()]).then(() => {
       setLoading(false)
     })
   }, [id])
@@ -95,14 +103,12 @@ export const VerCliente = ({ id }: { id: number }): JSX.Element => {
     <>
       <div className="">
         {loading
-          ? <div className='w-[400px] h-[300px]'>
-              <Loading />
+          ? <div className="w-[400px] h-[300px]">
+            <Loading />
           </div>
           : (
           <div className="card">
-            <form
-              className="flex flex-col bg-white rounded-md relative min-w-[400px]"
-            >
+            <form className="flex flex-col bg-white rounded-md relative min-w-[400px]">
               <div className="flex w-full mt-5 md:mt-5 flex-col">
                 <div className="w-full flex flex-col text-white">
                   <div className="mb-3 md:mb-0 w-full bg-form rounded-md rounded-tl-none md:p-3 text-black flex flex-col items-end gap-2 lg:gap-5">
@@ -115,7 +121,7 @@ export const VerCliente = ({ id }: { id: number }): JSX.Element => {
                           value={values.nombres}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          disabled={false}
+                          disabled={true}
                         />
                         <Errors
                           errors={errors.nombres}
@@ -130,7 +136,7 @@ export const VerCliente = ({ id }: { id: number }): JSX.Element => {
                           value={values.apellidos}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          disabled={false}
+                          disabled={true}
                         />
                         <Errors
                           errors={errors.apellidos}
@@ -138,20 +144,37 @@ export const VerCliente = ({ id }: { id: number }): JSX.Element => {
                         />
                       </div>
                     </div>
+                    <div className="w-full flex flex-col gap-3">
+                      <div className="w-full md:w-full lg:relative">
+                        <TitleBriefs titulo=" Persona a cargar del proyecto" />
+                        <input
+                          className="border placeholder-gray-400 focus:outline-none
+                                                      focus:border-black w-full pr-4 h-16 pl-4  mr-0 mb-0 ml-0 text-base block bg-white
+                                                      border-gray-300 rounded-md transition-all text-black"
+                          type="text"
+                          value={values.contacto}
+                          disabled={true}
+                        />
+                      </div>
+                    </div>
                     <div className="w-full flex flex-col gap-3 md:flex-row">
                       <div className="w-full md:w-full relative h-fit">
                         <TitleBriefs titulo="Empresa" />
                         <input
-                        //    className="border placeholder-gray-400 focus:outline-none
-                        //    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
-                        //    border-gray-300 rounded-md transition-all"
+                          //    className="border placeholder-gray-400 focus:outline-none
+                          //    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                          //    border-gray-300 rounded-md transition-all"
                           className={`border placeholder-gray-400 focus:outline-none
-                                                      focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block ${opcionalempresa ? 'bg-red-400' : 'bg-white'}
+                                                      focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block ${
+                                                        opcionalempresa
+                                                          ? 'bg-red-400'
+                                                          : 'bg-white'
+                                                      }
                                                       border-gray-300 rounded-md transition-all `}
                           name="empresa"
                           type="text"
                           value={values.empresa}
-                          disabled={false}
+                          disabled={true}
                           onChange={(e) => {
                             handleChange(e)
                           }}
@@ -173,7 +196,7 @@ export const VerCliente = ({ id }: { id: number }): JSX.Element => {
                           name="dni_ruc"
                           type="text"
                           value={values.dni_ruc}
-                          disabled={false}
+                          disabled={true}
                           onChange={(e) => {
                             handleChange(e)
                           }}
@@ -196,7 +219,7 @@ export const VerCliente = ({ id }: { id: number }): JSX.Element => {
                           value={values.celular}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          disabled={false}
+                          disabled={true}
                         />
                         <Errors
                           errors={errors.celular}
@@ -211,13 +234,12 @@ export const VerCliente = ({ id }: { id: number }): JSX.Element => {
                           value={values.email}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          disabled={false}
+                          disabled={true}
                         />
                         <Errors errors={errors.email} touched={touched.email} />
                       </div>
                     </div>
                   </div>
-
                 </div>
               </div>
             </form>

@@ -30,7 +30,8 @@ export const Preclientes = (): JSX.Element => {
       created_at: '',
       dni_ruc: '',
       antiguo: '',
-      estado: ''
+      estado: '',
+      arraycontacto: ''
     }
   ])
   const [datos, setdatos] = useState<ValuesPreventaModificate>(
@@ -48,7 +49,8 @@ export const Preclientes = (): JSX.Element => {
       created_at: '',
       dni_ruc: '',
       antiguo: '',
-      estado: ''
+      estado: '',
+      arraycontacto: ''
     }
   )
   const [loading, setLoading] = useState(true)

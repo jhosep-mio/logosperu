@@ -8,6 +8,7 @@ import {
 } from 'react-icons/ri'
 import { Loading } from '../../../../shared/Loading'
 import {
+  type arrayContacto,
   type ValuesPlanes,
   type ValuesVenta
 } from '../../../../shared/schemas/Interfaces'
@@ -391,6 +392,20 @@ export const ListaVentasVencidos = (): JSX.Element => {
                     <h5 className="md:hidden text-black font-bold mb-0 text-sm">
                       Empresa
                     </h5>
+                    {orden.id_contacto
+                      ? <>
+                  {orden.arraycontacto && JSON.parse(orden.arraycontacto).length > 0 &&
+                    JSON.parse(orden.arraycontacto).filter((contacto: arrayContacto) => String(contacto.id ?? '') == orden.id_contacto).map((contacto: arrayContacto) => (
+                    <span key={contacto.id} className="text-left w-full text-black line-clamp-1">
+                        {contacto.nombres}
+                    </span>
+                    ))
+                    }
+                  </>
+                      : <span className="text-left w-full text-black line-clamp-1">
+                    {orden.nombres} {orden.apellidos}
+                </span>
+                }
                     <span className="text-left w-full text-black line-clamp-1">
                       {orden.nombre_empresa}
                     </span>
@@ -492,16 +507,26 @@ export const ListaVentasVencidos = (): JSX.Element => {
                 </>
               <div className="hidden md:block md:text-center col-span-2">
                 <div className='line-clamp-1'>
-                  <span className="text-left text-black w-full block lowercase first-letter:uppercase">
-                    {orden.nombre_empresa}
-                  </span>
+                {orden.id_contacto
+                  ? <>
+                  {orden.arraycontacto && JSON.parse(orden.arraycontacto).length > 0 &&
+                    JSON.parse(orden.arraycontacto).filter((contacto: arrayContacto) => String(contacto.id ?? '') == orden.id_contacto).map((contacto: arrayContacto) => (
+                    <span key={contacto.id} className="text-left text-black w-full block lowercase first-letter:uppercase">
+                        {contacto.nombres}
+                    </span>
+                    ))
+                    }
+                  </>
+                  : <span className="text-left text-black w-full block lowercase first-letter:uppercase">
+                    {orden.nombres} {orden.apellidos}
+                </span>
+                }
                 </div>
               </div>
               <div className="hidden md:block md:text-center  col-span-2">
                 <div className='line-clamp-1'>
                   <span className="text-left text-black w-full block lowercase first-letter:uppercase">
                   {orden.nombre_marca ? orden.nombre_marca : 'No registrado'}
-
                   </span>
                 </div>
               </div>

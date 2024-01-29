@@ -32,7 +32,7 @@ export const RegistroContacto = ({
     // Create a copy of the existing array
     const updatedArray = [...arrayContacto]
     // Add the new contact to the copy
-    const newContact = { id: uuidv4(), nombres: values.nombres, celular: values.celular, correo: values.correo }
+    const newContact = { id: uuidv4(), nombres: values.nombres, celular: values.celular, correo: values.correo, marca: values.marca, created_at: new Date().toISOString() }
     updatedArray.push(newContact)
     // Update the state with the new array
     setarrayConacto(updatedArray)
@@ -89,7 +89,8 @@ export const RegistroContacto = ({
     initialValues: {
       nombres: '',
       celular: '',
-      correo: ''
+      correo: '',
+      marca: ''
     },
     validationSchema: SchemaContactoClientes,
     onSubmit: savePreventa
@@ -117,19 +118,35 @@ export const RegistroContacto = ({
     >
       <DialogContent>
         <form className="mt-8" onSubmit={handleSubmit}>
-          <div className="max-w-lg mb-4 relative">
-            <input
-              type="text"
-              autoComplete="off"
-              className="w-full py-3 px-4 rounded-xl outline-none bg-transparent border border-gray-300 text-gray-500 group"
-              placeholder="Nombres / Empresa"
-              name="nombres"
-              value={values.nombres}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={false}
-            />
-            <Errors errors={errors.nombres} touched={touched.nombres} />
+        <div className="max-w-lg mb-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className='relative'>
+                <input
+                type="text"
+                autoComplete="off"
+                className="w-full py-3 px-4 rounded-xl outline-none bg-transparent border border-gray-300 text-gray-500 group"
+                placeholder="Nombres"
+                name="nombres"
+                value={values.nombres}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                disabled={false}
+                />
+                <Errors errors={errors.nombres} touched={touched.nombres} />
+            </div>
+            <div className='relative'>
+                <input
+                type="text"
+                autoComplete="off"
+                className="w-full py-3 px-4 rounded-xl outline-none bg-transparent border border-gray-300 text-gray-500 group"
+                placeholder="Marca"
+                name="marca"
+                value={values.marca}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                disabled={false}
+                />
+                <Errors errors={errors.marca} touched={touched.marca} />
+            </div>
           </div>
           <div className="max-w-lg mb-4 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="relative">

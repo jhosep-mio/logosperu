@@ -65,7 +65,8 @@ export const VerCliente = (): JSX.Element => {
       created_at: '',
       estado: '',
       antiguo: '',
-      empresa: ''
+      empresa: '',
+      arraycontacto: ''
     },
     validationSchema: SchemeVentas,
     onSubmit: savePreventa

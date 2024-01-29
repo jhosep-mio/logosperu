@@ -8,7 +8,8 @@ import {
   type arrayCorreos,
   type ValuesVenta,
   type errorValues,
-  type ValuesPlanes
+  type ValuesPlanes,
+  type arrayContacto
 } from '../../../shared/schemas/Interfaces'
 import { Paginacion } from '../../../shared/Paginacion'
 import { getDataToPlanes, getDataVentas } from '../../../shared/FetchingData'
@@ -53,7 +54,6 @@ export const ListaServicios = (): JSX.Element => {
   const [openChat, setOpenChat] = useState(false)
 
   const [openCliente, setOpenCliente] = useState(false)
-
   const [openMarca, setOpenMarca] = useState(false)
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
   const [resumen, setResumen] = useState<valuesResumen[]>([])
@@ -73,6 +73,7 @@ export const ListaServicios = (): JSX.Element => {
   const [dateInicio, setDateInicio] = useState<Value>(null)
   const [selectID, setSelectID] = useState(0)
   const [selectIDCLIENTE, setSelectIDCLIENTE] = useState(0)
+  const [idcontacto, setIdContacto] = useState(0)
   const [correos, setCorreos] = useState<arrayCorreos[]>([])
   const [datos, setDatos] = useState<valuesDatos | null>(null)
   const navigate = useNavigate()
@@ -400,9 +401,20 @@ export const ListaServicios = (): JSX.Element => {
                     <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
                       Cliente
                     </h5>
-                    <span className="text-right w-full text-black line-clamp-1">
-                      {orden.nombres} {orden.apellidos}
+                    {orden.id_contacto
+                      ? <>
+                  {orden.arraycontacto && JSON.parse(orden.arraycontacto).length > 0 &&
+                    JSON.parse(orden.arraycontacto).filter((contacto: arrayContacto) => String(contacto.id ?? '') == orden.id_contacto).map((contacto: arrayContacto) => (
+                    <span key={contacto.id} className="text-left w-full text-black line-clamp-1">
+                        {contacto.nombres}
                     </span>
+                    ))
+                    }
+                  </>
+                      : <span className="text-left w-full text-black line-clamp-1">
+                    {orden.nombres} {orden.apellidos}
+                </span>
+                }
                   </div>
                 </div>
                 <div className="md:hidden flex justify-between gap-3">
@@ -450,9 +462,20 @@ export const ListaServicios = (): JSX.Element => {
                 </span>
               </div>
               <div className="hidden md:block md:text-center col-span-1 relative h-full">
-                <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
+                {orden.id_contacto
+                  ? <>
+                  {orden.arraycontacto && JSON.parse(orden.arraycontacto).length > 0 &&
+                    JSON.parse(orden.arraycontacto).filter((contacto: arrayContacto) => String(contacto.id ?? '') == orden.id_contacto).map((contacto: arrayContacto) => (
+                    <span key={contacto.id} className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
+                        {contacto.nombres}
+                    </span>
+                    ))
+                    }
+                  </>
+                  : <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                     {orden.nombres} {orden.apellidos}
                 </span>
+                }
               </div>
               <div className="hidden md:block md:text-center md:col-span-2 lg:col-span-1">
                 <span className="text-left text-black line-clamp-1 w-full">
@@ -560,6 +583,8 @@ export const ListaServicios = (): JSX.Element => {
                           setOpenCliente(!openCliente)
                           // @ts-expect-error-error
                           setSelectIDCLIENTE(orden.id_cliente)
+                          // @ts-expect-error-error
+                          setIdContacto(orden.id_contacto)
                         }}
                         className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
                       >
@@ -746,7 +771,7 @@ export const ListaServicios = (): JSX.Element => {
         setTotalRegistros={setTotalRegistros}
       />
 
-      <ModalCliente open={openCliente} setOpen={setOpenCliente} id={selectIDCLIENTE}/>
+      <ModalCliente open={openCliente} setOpen={setOpenCliente} id={selectIDCLIENTE} idcontacto={idcontacto}/>
 
       <AnimatePresence>
         {showError != null && <AlertSucess showError={showError} />}

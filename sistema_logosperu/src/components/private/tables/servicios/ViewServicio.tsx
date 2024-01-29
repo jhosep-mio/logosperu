@@ -11,6 +11,7 @@ import { Errors } from '../../../shared/Errors'
 import { SchemaEditarVentas } from '../../../shared/schemas/Schemas'
 import { logo } from '../../../shared/Images'
 import { convertirFecha } from '../../../shared/functions/QuitarAcerntos'
+import { type arrayContacto } from '../../../shared/schemas/Interfaces'
 type ValuePiece = Date | null
 type Value = ValuePiece | [ValuePiece, ValuePiece]
 
@@ -24,7 +25,9 @@ export const ViewServicio = (): JSX.Element => {
   const [dateFin, setDateFin] = useState<Value>(null)
   const savePreventa = async (): Promise<void> => {
   }
-
+  const [datosContacto, setDatosContacto] = useState<arrayContacto | null>(
+    null
+  )
   const {
     handleSubmit,
     handleChange,
@@ -60,12 +63,32 @@ export const ViewServicio = (): JSX.Element => {
         }`
       }
     })
+
+    let personacontacto = null
+    if (request.data[0].id_contacto) {
+      JSON.parse(request.data[0].arraycontacto).forEach(
+        (element: arrayContacto) => {
+          if (element.id == request.data[0].id_contacto) {
+            personacontacto = element.marca
+            setDatosContacto(element)
+          }
+        }
+      )
+    }
+
     setValues({
       ...values,
       id_contrato: request.data[0].id_contrato,
       nombres: request.data[0].nombres,
       medio_ingreso: request.data[0].medio_ingreso,
-      nombre_empresa: request.data[0].nombre_empresa,
+      nombre_empresa:
+      personacontacto &&
+        request.data[0].empresa_cliente
+        ? request.data[0].empresa_cliente
+        : personacontacto
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          ? `${request.data[0].nombres} ${request.data[0].apellidos}`
+          : request.data[0].nombre_empresa,
       nombre_marca: request.data[0].nombre_marca,
       apellidos: request.data[0].apellidos,
       dni_ruc: request.data[0].dni_ruc,
@@ -257,6 +280,61 @@ export const ViewServicio = (): JSX.Element => {
                         />
                       </div>
                     </div>
+                    {datosContacto && (
+                        <>
+                        <h2 className="px-3 pt-4 text-gray-700 font-bold w-full text-left">
+                            PERSONA A CARGO DEL PROYECTO
+                        </h2>
+                        <div className="mb-3 md:mb-0 w-full bg-form rounded-md rounded-tl-none md:p-3 text-black flex flex-col items-end gap-2 lg:gap-5">
+                            <div className="w-full flex flex-col gap-3 md:flex-row">
+                                <div className="w-full md:w-1/4 lg:relative">
+                                <TitleBriefs titulo="Nombres" />
+                                <input
+                                    className="border placeholder-gray-400 focus:outline-none
+                                                                                    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                                                    border-gray-300 rounded-md transition-all text-black"
+                                    type='text'
+                                    disabled
+                                    value={datosContacto.nombres}
+                                />
+                                </div>
+                                <div className="w-full md:w-1/4 lg:relative">
+                                    <TitleBriefs titulo="Correo" />
+                                    <input
+                                        className="border placeholder-gray-400 focus:outline-none
+                                                                                        focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                                                        border-gray-300 rounded-md transition-all text-black"
+                                        type='text'
+                                        disabled
+                                        value={datosContacto.correo}
+                                    />
+                                </div>
+                                <div className="w-full md:w-1/4 lg:relative">
+                                <TitleBriefs titulo="Celular" />
+                                <input
+                                    className="border placeholder-gray-400 focus:outline-none
+                                                                                    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                                                    border-gray-300 rounded-md transition-all text-black"
+                                    type='text'
+                                    disabled
+                                    value={datosContacto.celular}
+                                />
+                                </div>
+                                <div className="w-full md:w-1/4 lg:relative">
+                                <TitleBriefs titulo="Marca" />
+                                <input
+                                    className="border placeholder-gray-400 focus:outline-none
+                                                                                    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                                                    border-gray-300 rounded-md transition-all text-black"
+                                    type='text'
+                                    disabled
+                                    value={datosContacto.marca}
+                                />
+                                </div>
+                            </div>
+                        </div>
+                        </>
+                    )}
                     <div className="w-full">
                       <div className="w-full relative">
                         <TitleBriefs titulo="Observaciones" />

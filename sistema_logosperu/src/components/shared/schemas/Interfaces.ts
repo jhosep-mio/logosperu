@@ -246,8 +246,10 @@ export interface arrayCategoriasToPortafolio {
 export interface arrayContacto {
   id: number | null
   nombres: string
+  marca: string
   celular: string
   correo: string
+  created_at: string
 }
 
 export interface arrayImagesClasificados {
@@ -409,6 +411,8 @@ export interface ValuesVenta {
   asignacion: string
   fecha_fin: string
   resumen: string
+  id_contacto: string
+  arraycontacto: string
   email: string
   celular: string
   edad: string
@@ -626,6 +630,7 @@ export interface contactoClientes {
   nombres: string
   celular: string
   correo: string
+  marca: string
 }
 
 export interface ListcontactoClientes {
@@ -633,6 +638,8 @@ export interface ListcontactoClientes {
   nombres: string
   celular: string
   correo: string
+  marca: string
+  created_at: string
 }
 
 export interface ValuesPreventaModificate {

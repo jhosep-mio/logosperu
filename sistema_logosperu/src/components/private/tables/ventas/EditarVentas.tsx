@@ -10,6 +10,7 @@ import axios from 'axios'
 import { Global } from '../../../../helper/Global'
 import { Errors } from '../../../shared/Errors'
 import {
+  type arrayContacto,
   type arrayAsignacion,
   type ValuesVentasEdit
 } from '../../../shared/schemas/Interfaces'
@@ -29,6 +30,9 @@ export const EditarVentas = (): JSX.Element => {
   const { setTitle } = useAuth()
   const { id } = useParams()
   const token = localStorage.getItem('token')
+  const [datosContacto, setDatosContacto] = useState<arrayContacto | null>(
+    null
+  )
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
   const [dateInicio, setDateInicio] = useState<Value>(null)
@@ -82,7 +86,9 @@ export const EditarVentas = (): JSX.Element => {
     }
   }
 
-  const handleInputChangeFechaAlta = (event: ChangeEvent<HTMLInputElement>): void => {
+  const handleInputChangeFechaAlta = (
+    event: ChangeEvent<HTMLInputElement>
+  ): void => {
     try {
       const dateValue = event.target.value // obtienes la fecha como una cadena YYYY-MM-DD
       if (dateValue) {
@@ -176,16 +182,38 @@ export const EditarVentas = (): JSX.Element => {
         }`
       }
     })
+    let personacontacto = null
+    if (request.data[0].id_contacto) {
+      JSON.parse(request.data[0].arraycontacto).forEach(
+        (element: arrayContacto) => {
+          if (element.id == request.data[0].id_contacto) {
+            personacontacto = element.marca
+            setDatosContacto(element)
+          }
+        }
+      )
+    }
+
     setValues({
       ...values,
       id_contrato: request.data[0].id_contrato,
       nombres: request.data[0].nombres,
       medio_ingreso: request.data[0].medio_ingreso,
-      nombre_empresa: request.data[0].nombre_empresa,
+      nombre_empresa:
+        personacontacto &&
+          request.data[0].empresa_cliente
+          ? request.data[0].empresa_cliente
+          : personacontacto
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            ? `${request.data[0].nombres} ${request.data[0].apellidos}`
+            : request.data[0].nombre_empresa,
       nombre_marca: request.data[0].nombre_marca,
       apellidos: request.data[0].apellidos,
       dni_ruc: request.data[0].dni_ruc != null ? request.data[0].dni_ruc : '',
-      observaciones: request.data[0].observaciones != null ? request.data[0].observaciones : ''
+      observaciones:
+        request.data[0].observaciones != null
+          ? request.data[0].observaciones
+          : ''
     })
     if (request.data[0].asignacion) {
       setarrayPesos(JSON.parse(request.data[0].asignacion))
@@ -299,7 +327,7 @@ export const EditarVentas = (): JSX.Element => {
                           touched={touched.nombre_empresa}
                         />
                       </div>
-                      <div className="w-full md:w-1/3 lg:relative">
+                      {/* <div className="w-full md:w-1/3 lg:relative">
                         <TitleBriefs titulo="Persona de contacto/cargo" />
                         <InputsBriefs
                           name="nombre_empresa"
@@ -313,7 +341,7 @@ export const EditarVentas = (): JSX.Element => {
                           errors={errors.nombre_empresa}
                           touched={touched.nombre_empresa}
                         />
-                      </div>
+                      </div> */}
                       <div className="w-full md:w-1/3  lg:relative mt-2">
                         <TitleBriefs titulo="Medio de ingreso" />
                         <select
@@ -357,7 +385,63 @@ export const EditarVentas = (): JSX.Element => {
                 </div>
               </div>
 
-              <div className='px-3 mb-4'>
+              {datosContacto && (
+                <>
+                  <h2 className="px-3 py-4 text-gray-700 font-bold">
+                    PERSONA A CARGO DEL PROYECTO
+                  </h2>
+                  <div className="mb-3 md:mb-0 w-full bg-form rounded-md rounded-tl-none md:p-3 text-black flex flex-col items-end gap-2 lg:gap-5">
+                            <div className="w-full flex flex-col gap-3 md:flex-row">
+                                <div className="w-full md:w-1/4 lg:relative">
+                                <TitleBriefs titulo="Nombres" />
+                                <input
+                                    className="border placeholder-gray-400 focus:outline-none
+                                                                                    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                                                    border-gray-300 rounded-md transition-all text-black"
+                                    type='text'
+                                    disabled
+                                    value={datosContacto.nombres}
+                                />
+                                </div>
+                                <div className="w-full md:w-1/4 lg:relative">
+                                    <TitleBriefs titulo="Correo" />
+                                    <input
+                                        className="border placeholder-gray-400 focus:outline-none
+                                                                                        focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                                                        border-gray-300 rounded-md transition-all text-black"
+                                        type='text'
+                                        disabled
+                                        value={datosContacto.correo}
+                                    />
+                                </div>
+                                <div className="w-full md:w-1/4 lg:relative">
+                                <TitleBriefs titulo="Celular" />
+                                <input
+                                    className="border placeholder-gray-400 focus:outline-none
+                                                                                    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                                                    border-gray-300 rounded-md transition-all text-black"
+                                    type='text'
+                                    disabled
+                                    value={datosContacto.celular}
+                                />
+                                </div>
+                                <div className="w-full md:w-1/4 lg:relative">
+                                <TitleBriefs titulo="Marca" />
+                                <input
+                                    className="border placeholder-gray-400 focus:outline-none
+                                                                                    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                                                    border-gray-300 rounded-md transition-all text-black"
+                                    type='text'
+                                    disabled
+                                    value={datosContacto.marca}
+                                />
+                                </div>
+                            </div>
+                        </div>
+                </>
+              )}
+
+              <div className="px-3 mb-4">
                 <div className="w-full relative">
                   <TitleBriefs titulo="Observaciones" />
                   <textarea
@@ -378,22 +462,24 @@ export const EditarVentas = (): JSX.Element => {
                   <TitleBriefs titulo="Fecha del Alta" />
                   <input
                     type="date"
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error
-                    value={fechaAlta ? fechaAlta.toISOString().substr(0, 10) : ''}
+                    value={
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                      fechaAlta ? fechaAlta.toISOString().substr(0, 10) : ''
+                    }
                     onChange={handleInputChangeFechaAlta}
                     className="border placeholder-gray-400 focus:outline-none
                     focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
                     border-gray-300 rounded-md transition-all text-black text-center cursor-pointer"
                   />
-                   {fechaAlta && (
+                  {fechaAlta && (
                     <IoCloseCircle
                       className="absolute right-5 top-5 bottom-0 text-red-500 text-2xl z-50 cursor-pointer"
                       onClick={() => {
                         setFechaAlta(null)
                       }}
                     />
-                   )}
+                  )}
                 </div>
               </div>
 

@@ -185,6 +185,16 @@ export const SchemePreventas = Yup.object().shape({
   medio_ingreso: Yup.string().nullable()
 })
 
+export const SchemaContactoClientes = Yup.object().shape({
+  nombres: Yup.string().required('Este campo es requerido').min(1),
+  correo: Yup.string()
+    .required('Este campo es requerido')
+    .email('Email invalido'),
+  celular: Yup.string()
+    .required('Este campo es requerido')
+    .min(7, 'El numero debe tener al menos 7 digitos')
+})
+
 export const SchemeVentas = Yup.object().shape({
   id: Yup.number().required('Este campo es requerido'),
   nombres: Yup.string().required('Este campo es requerido').min(1),

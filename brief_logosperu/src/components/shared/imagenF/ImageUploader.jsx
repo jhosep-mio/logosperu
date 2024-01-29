@@ -1,47 +1,48 @@
-import { FaTimes, FaImage } from 'react-icons/fa'
+import { FaTimes, FaImage } from "react-icons/fa";
 
-export const ImageUploader = ({ url, setUrl, boton, setBoton, setImagen, clase }) => {
-  const imagen1Function = (event)  => {
-    const files = event.target.files
-    if ((files != null) && files.length > 0) {
-      const url = URL.createObjectURL(files[0])
-      const imgPreview = document.getElementById(
-        `img-preview${clase}`
-      ) 
-      const iconImage = document.getElementById(`icon-image${clase}`)
-
-      if (imgPreview !== null && (iconImage != null)) {
-        imgPreview.src = url
-        imgPreview.classList.remove('d-none')
-        iconImage.classList.add('d-none')
+export const ImageUploader = ({
+  url,
+  setUrl,
+  boton,
+  setBoton,
+  setImagen,
+  clase,
+}) => {
+  const imagen1Function = (event) => {
+    console.log('entro');
+    const files = event.target.files;
+    if (files != null && files.length > 0) {
+      const url = URL.createObjectURL(files[0]);
+      const imgPreview = document.getElementById(`img-preview${clase}`);
+      const iconImage = document.getElementById(`icon-image${clase}`);
+      if (imgPreview !== null && iconImage != null) {
+        imgPreview.src = url;
+        imgPreview.classList.remove("d-none");
+        iconImage.classList.add("d-none");
       }
-
-      setUrl(files[0].name)
-      setBoton(true)
-
+      setUrl(files[0].name);
+      setBoton(true);
       setImagen({
         archivo: files[0],
-        archivoName: `${Date.now()}_${files[0].name}`
-      })
+        archivoName: `${Date.now()}_${files[0].name}`,
+      });
     }
-  }
+  };
 
   const deleteImg = (e) => {
-    e.preventDefault()
-    setBoton(false)
+    e.preventDefault();
+    setBoton(false);
 
-    const imgPreview = document.getElementById(
-      `img-preview${clase}`
-    ) 
-    const iconImage = document.getElementById(`icon-image${clase}`)
-    const imagen = document.getElementById(`imagen${clase}`) 
-
-    if (imgPreview !== null && (iconImage != null) && imagen !== null) {
-      iconImage.classList.remove('d-none')
-      imgPreview.classList.add('d-none')
-      imagen.value = ''
+    const imgPreview = document.getElementById(`img-preview${clase}`);
+    const iconImage = document.getElementById(`icon-image${clase}`);
+    const imagen = document.getElementById(`imagen${clase}`);
+    setImagen({ archivo: null, archivoName: "" });
+    if (imgPreview !== null && iconImage != null && imagen !== null) {
+      iconImage.classList.remove("d-none");
+      imgPreview.classList.add("d-none");
+      imagen.value = "";
     }
-  }
+  };
 
   return (
     <div className="w-full border p-4">
@@ -52,8 +53,7 @@ export const ImageUploader = ({ url, setUrl, boton, setBoton, setImagen, clase }
       >
         <FaImage className="icon-preimage" />
       </label>
-      {boton
-        ? (
+      {boton ? (
         <span
           id="icon-cerrar"
           className="flex justify-center items-center text-white rounded-md mb-5 gap-2"
@@ -64,12 +64,11 @@ export const ImageUploader = ({ url, setUrl, boton, setBoton, setImagen, clase }
           >
             <FaTimes className="w-full" />
           </button>
-          <p className="text-black">{'' + url}</p>
+          <p className="text-black line-clamp-2">{"" + url}</p>
         </span>
-          )
-        : (
-            ''
-          )}
+      ) : (
+        ""
+      )}
       <input
         accept="image/*"
         id={`imagen${clase}`}
@@ -78,7 +77,11 @@ export const ImageUploader = ({ url, setUrl, boton, setBoton, setImagen, clase }
         name={`imagen${clase}`}
         onChange={imagen1Function}
       />
-      <img className="img-thumbnail d-none" id={`img-preview${clase}`} alt="img" />
+      <img
+        className="img-thumbnail d-none"
+        id={`img-preview${clase}`}
+        alt="img"
+      />
     </div>
-  )
-}
+  );
+};

@@ -1,32 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Loading } from "../../shared/Loading";
 import { useFormik } from "formik";
-import { SchemaBriefComunity } from "../../shared/schemas/Schema";
+import { SchemaClasificados } from "../../shared/schemas/Schema";
 import { Errors2 } from "../../shared/Errors2";
-import { ModalCodigo } from "../../shared/modals/ModalCodigo";
-import { ModalComunity } from "../../shared/modals/ModalComunity";
 import { ImageUploader } from "../../shared/imagenF/ImageUploader.Jsx";
 import { AgregarProductos } from "../clasificados/AgregarProductos";
 import Swal from "sweetalert2";
+import { AgregarMarca } from "../clasificados/AgregarMarca";
+import { ModalDatos } from "../clasificados/ModalDatos";
 
 const Clasificados = () => {
   const [, setCaptureRef] = useState(null);
-  const [, setUbicacion] = useState(null);
-  const [map, setMap] = useState(null);
-  const [marker, setMarker] = useState(null);
-  const [latitud, setLatitud] = useState("");
-  const [longitud, setLongitud] = useState("");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [datos, setDatos] = useState([]);
   const handleOpen = () => setOpen(!open);
-  const [ubicacionvalidada, setUbicacionValidada] = useState(false);
-  const [validacionCorrecta, setValidacionCorrecta] = useState(false);
-  const [idCliente, setIdCliente] = useState(0);
-  const [id_Codigo, setIdCodigo] = useState(0);
-  const [id_Venta, setIdVenta] = useState(0);
   const [arrayPesos, setarrayPesos] = useState([]);
-
+  const [arrayMarcas, setarrayMarcas] = useState([]);
+  const [imagenmarca, setImagenmarca] = useState({
+    archivo: null,
+    archivoName: "",
+  });
   const [imagen1, setImagen1] = useState({ archivo: null, archivoName: "" });
   const [boton1, setBoton1] = useState(false);
   const [url1, setUrl1] = useState("");
@@ -48,82 +41,43 @@ const Clasificados = () => {
     archivoName: "",
   });
 
-  const [option1Checked, setOption1Checked] = useState(false);
+  const [option1Checked, setOption1Checked] = useState("");
 
   const validarCodigo = () => {
-    handleOpen();
-  };
-
-  useEffect(() => {
-    if (validacionCorrecta && open && !ubicacionvalidada) {
-      document.body.style.overflow = "hidden";
-      const cargarMapa = () => {
-        const mapa = new window.google.maps.Map(
-          document.getElementById("map"),
-          {
-            center: { lat: -12.046373, lng: -77.042754 }, // Coordenadas de Lima
-            zoom: 12,
+    if (imagen1.archivo && imagen2.archivo) {
+      if (imagen3.archivo || imagen4.archivo) {
+        if (option1Checked == "medio1" || option1Checked == "medio2") {
+          if (arrayPesos && arrayPesos.length > 1) {
+            handleOpen();
+          } else {
+            Swal.fire(
+              "7. Debe subir al menos dos producotos/servicios",
+              "",
+              "warning"
+            );
           }
-        );
-
-        const marcador = new window.google.maps.Marker({
-          map: mapa,
-          position: mapa.getCenter(),
-          draggable: true,
-        });
-
-        setMap(mapa);
-        setMarker(marcador);
-
-        // Manejar el evento de arrastrar y soltar el marcador
-        marcador.addListener("dragend", () => {
-          const lat = marcador.getPosition().lat();
-          const lng = marcador.getPosition().lng();
-          setUbicacion({ lat, lng });
-          setLatitud(lat);
-          setLongitud(lng);
-        });
-
-        // Agregar el buscador de ubicación
-        const input = document.getElementById("ubicacion-input");
-        const autocomplete = new window.google.maps.places.Autocomplete(input);
-
-        autocomplete.addListener("place_changed", () => {
-          const place = autocomplete.getPlace();
-
-          if (!place.geometry || !place.geometry.location) {
-            return;
-          }
-
-          const { lat, lng } = place.geometry.location;
-          mapa.setCenter({ lat, lng });
-          marcador.setPosition({ lat, lng });
-          setUbicacion({ lat, lng });
-          setLatitud(lat);
-          setLongitud(lng);
-        });
-      };
-
-      if (window.google && window.google.maps) {
-        cargarMapa();
+        } else {
+          Swal.fire(
+            "7. Debe seleccionar si va mostrar productos o servicios",
+            "",
+            "warning"
+          );
+        }
       } else {
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCQnmO2O0RPVFuzisXOA402_ZSbwLtSU5Q&libraries=places`;
-        script.onload = cargarMapa;
-        document.head.appendChild(script);
+        Swal.fire(
+          "6. Debe subir almenos 1 imagen para el banner de su web",
+          "",
+          "warning"
+        );
       }
-
-      return () => {
-        // No es necesario limpiar el script en este caso
-      };
     } else {
-      document.body.style.overflow = "auto";
+      Swal.fire(
+        "1. Debe subir las imagenes de su logo e icono de empresa.",
+        "",
+        "warning"
+      );
     }
-  }, [open]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  };
 
   const {
     handleSubmit,
@@ -135,24 +89,17 @@ const Clasificados = () => {
     isSubmitting,
   } = useFormik({
     initialValues: {
-      nombres: "",
       nombre_comercial: "",
       historia_empresa: "",
-      competidores: "",
-      propuesta_valor: "",
-      objetivos_especificos: "",
-      clientes_ideales: "",
-      propuesta_producto: "",
-      preferencia_canal: "",
-      presupuesto: "",
-      link_recursos: "",
-      fechas_importantes: "",
-      directrises_marca: "",
-      elementos_visuales: "",
-      restricciones_legales: "",
-      factores_consideracion: "",
+      info1: "",
+      info2: "",
+      info3: "",
+      info4: "",
+      facebook: "",
+      instragram: "",
+      tiktok: "",
     },
-    validationSchema: SchemaBriefComunity,
+    validationSchema: SchemaClasificados,
     onSubmit: validarCodigo,
   });
 
@@ -171,19 +118,20 @@ const Clasificados = () => {
     if (arrayPesos.length == 0) {
       setOption1Checked(texto);
     } else {
-        Swal.fire({
-            icon: "warning",
-            title: "Si realiza el cambio se borraran los productos/servicios agregados",
-            showDenyButton: true,
-            confirmButtonText: "Cambiar",
-            denyButtonText: `Cancelar`
-          }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-                setOption1Checked(texto);
-                setarrayPesos([])
-            } 
-          });
+      Swal.fire({
+        icon: "warning",
+        title:
+          "Si realiza el cambio se borraran los productos/servicios agregados",
+        showDenyButton: true,
+        confirmButtonText: "Cambiar",
+        denyButtonText: `Cancelar`,
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          setOption1Checked(texto);
+          setarrayPesos([]);
+        }
+      });
     }
   };
 
@@ -197,7 +145,7 @@ const Clasificados = () => {
           <div className="main__right__form">
             <form action="" className="" onSubmit={handleSubmit}>
               <div>
-                <ol>
+                <ol className="mb-10">
                   <li>
                     <h5>¿Cuál es el nombre comercial de la empresa / marca?</h5>
                     <div className="input">
@@ -220,9 +168,9 @@ const Clasificados = () => {
                     <p className="bg-[#f7f7f7] pt-0 pr-2 pb-0 lg:pl-2 -mt-3 mr-0 mb-0 ml-1 lg:ml-2 font-medium text-gray-700 bg-transparent">
                       Adjuntar logo e icono de su empresa/marca
                     </p>
-                    <div className="flex flex-col md:flex-row md:items-center gap-y-2 mb-8 border-[2px] border-[lightgrey] rounded-3xl ">
+                    <div className="flex flex-row md:items-center gap-y-2 mb-8 border-[2px] border-[lightgrey] rounded-3xl ">
                       <div className="flex-1 flex flex-col md:flex-row items-center md:gap-4 p-10">
-                        <div className="w-1/4">
+                        <div className="w-1/2">
                           <ImageUploader
                             url={url1}
                             setUrl={setUrl1}
@@ -232,7 +180,7 @@ const Clasificados = () => {
                             clase="1"
                           />
                         </div>
-                        <div className="w-1/4">
+                        <div className="w-1/2">
                           <ImageUploader
                             url={url2}
                             setUrl={setUrl2}
@@ -242,90 +190,9 @@ const Clasificados = () => {
                             clase="2"
                           />
                         </div>
-                        {/*<div className="w-1/4">
-                          <label
-                            htmlFor="imagen4"
-                            id="icon-image4"
-                            className="btn btn-primary col-md-12 btn-openImage cursor-pointer"
-                          >
-                            <FaImage className="icon-preimage text-[#9888dac5]" />
-                          </label>
-                          {boton4 === true ? (
-                            <span
-                              id="icon-cerrar"
-                              className="flex justify-center items-center  text-white rounded-md mb-5 gap-2"
-                            >
-                              <p className="w-full line-clamp-1 text-center text-black">
-                                {"" + url4}
-                              </p>
-                              <button
-                                className="btn btn-danger mb-0 flex items-center justify-center text-red-600"
-                                onClick={deleteImg4}
-                              >
-                                <FaTimes />
-                              </button>
-                            </span>
-                          ) : (
-                            ""
-                          )}
-                          <input
-                            accept="image/*"
-                            id="imagen4"
-                            className="d-none"
-                            type="file"
-                            name="imagen4"
-                            onChange={imagen4Function}
-                          />
-                          <img
-                            className="img-thumbnail d-none cursor-pointer"
-                            id="img-preview4"
-                            alt="img"
-                          />
-                        </div>
-                        <div className="w-1/4">
-                          <label
-                            htmlFor="imagen5"
-                            id="icon-image5"
-                            className="btn btn-primary col-md-12 btn-openImage cursor-pointer"
-                          >
-                            <FaImage className="icon-preimage text-[#9888dac5]" />
-                          </label>
-                          {boton5 === true ? (
-                            <span
-                              id="icon-cerrar"
-                              className="flex justify-center items-center  text-white rounded-md mb-5 gap-2"
-                            >
-                              <p className="w-full line-clamp-1 text-center text-black">
-                                {"" + url5}
-                              </p>
-                              <button
-                                className="btn btn-danger mb-0 flex items-center justify-center text-red-600"
-                                onClick={deleteImg5}
-                              >
-                                <FaTimes />
-                              </button>
-                            </span>
-                          ) : (
-                            ""
-                          )}
-                          <input
-                            accept="image/*"
-                            id="imagen5"
-                            className="d-none"
-                            type="file"
-                            name="imagen5"
-                            onChange={imagen5Function}
-                          />
-                          <img
-                            className="img-thumbnail d-none cursor-pointer"
-                            id="img-preview5"
-                            alt="img"
-                          />
-                        </div>  */}
                       </div>
                     </div>
                   </div>
-
                   <li>
                     <h5>
                       Redacte una breve descripción o mensaje de bienvenida para
@@ -348,45 +215,150 @@ const Clasificados = () => {
                       touched={touched.historia_empresa}
                     />
                   </li>
-
                   <li>
                     <h5>
                       Indíquenos hasta 4 datos importantes de su empresa/marca
+                      (Ej:Horario de atención, delivery, opción a devolución,
+                      garantías, etc.)
                     </h5>
-                    <div className="input">
-                      <input
-                        type="text"
-                        name="competidores"
-                        value={values.competidores}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder="Ej:Horario de atención, delivery, opción a devolución, garantías, etc."
-                      />
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+                      <div>
+                        <div className="input">
+                          <input
+                            type="text"
+                            name="info1"
+                            value={values.info1}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={false}
+                          />
+                        </div>
+                        <Errors2
+                          touched={touched.info1}
+                          errors={errors.info1}
+                        />
+                      </div>
+                      <div>
+                        <div className="input">
+                          <input
+                            type="text"
+                            name="info2"
+                            value={values.info2}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={false}
+                          />
+                        </div>
+                        <Errors2
+                          touched={touched.info2}
+                          errors={errors.info2}
+                        />
+                      </div>
+                      <div>
+                        <div className="input">
+                          <input
+                            type="text"
+                            name="info3"
+                            value={values.info3}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={false}
+                          />
+                        </div>
+                        <Errors2
+                          touched={touched.info3}
+                          errors={errors.info3}
+                        />
+                      </div>
+                      <div>
+                        <div className="input">
+                          <input
+                            type="text"
+                            name="info4"
+                            value={values.info4}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={false}
+                          />
+                        </div>
+                        <Errors2
+                          touched={touched.info4}
+                          errors={errors.info4}
+                        />
+                      </div>
                     </div>
-                    <Errors2
-                      errors={errors.competidores}
-                      touched={touched.competidores}
+                  </li>
+                  <li>
+                    <h5>
+                      Adjunte logos de sus clientes o marcas con las que trabaja
+                      ( Recomendacion:300px x 300px)
+                    </h5>
+                    <AgregarMarca
+                      arrayPesos={arrayMarcas}
+                      setarrayPesos={setarrayMarcas}
+                      imagenproducto={imagenmarca}
+                      setImagenproducto={setImagenmarca}
                     />
                   </li>
 
-                  <li>
+                  <li id="#social">
                     <h5>Indíquenos los enlaces de sus redes sociales</h5>
-                    <div className="input">
-                      <textarea
-                        id=""
-                        cols="4"
-                        rows="5"
-                        placeholder="Facebook, Instagram, Facebook"
-                        name="propuesta_valor"
-                        value={values.propuesta_valor}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      ></textarea>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-5 ">
+                      <div>
+                        <div className="input">
+                          <input
+                            type="text"
+                            placeholder="Facebook"
+                            name="facebook"
+                            value={values.facebook}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={false}
+                          />
+                        </div>
+                        <Errors2
+                          touched={touched.facebook}
+                          errors={errors.facebook}
+                        />
+                      </div>
+                      <div>
+                        <div className="input">
+                          <input
+                            type="text"
+                            placeholder="Instragram"
+                            name="instragram"
+                            value={values.instragram}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={false}
+                          />
+                        </div>
+                        <Errors2
+                          touched={touched.instragram}
+                          errors={errors.instragram}
+                        />
+                      </div>
+                      <div>
+                        <div className="input">
+                          <input
+                            type="text"
+                            placeholder="Tik Tok"
+                            name="tiktok"
+                            value={values.tiktok}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={false}
+                          />
+                        </div>
+                        <Errors2
+                          touched={touched.tiktok}
+                          errors={errors.tiktok}
+                        />
+                      </div>
                     </div>
-                    <Errors2
-                      touched={touched.propuesta_valor}
-                      errors={errors.propuesta_valor}
-                    />
+                    <p className="text-3xl p-0 m-0 mt-3 pl-2 text-[#41469b] font-bold ">
+                      {errors.red_social}
+                    </p>
                   </li>
 
                   <li>
@@ -396,7 +368,7 @@ const Clasificados = () => {
                     </h5>
                     <div className="flex mt-4 flex-col md:flex-row md:items-center gap-y-2 mb-8 border-[2px] border-[lightgrey] rounded-3xl ">
                       <div className="flex-1 flex flex-col md:flex-row items-center md:gap-4 p-10">
-                        <div className="w-1/4">
+                        <div className="w-1/2">
                           <ImageUploader
                             url={url3}
                             setUrl={setUrl3}
@@ -406,7 +378,7 @@ const Clasificados = () => {
                             clase="3"
                           />
                         </div>
-                        <div className="w-1/4">
+                        <div className="w-1/2">
                           <ImageUploader
                             url={url4}
                             setUrl={setUrl4}
@@ -465,6 +437,11 @@ const Clasificados = () => {
                     />
                   ) : null}
                 </ol>
+                <input
+                  type="submit"
+                  value="Enviar"
+                  className="btn_enviar cursor-pointer mt-10"
+                />
               </div>
             </form>
           </div>
@@ -476,41 +453,18 @@ const Clasificados = () => {
             <Loading />
           ) : (
             <>
-              {validacionCorrecta ? (
-                <ModalComunity
-                  setOpen={setOpen}
-                  validacionCorrecta={validacionCorrecta}
-                  datos={datos}
-                  ubicacionvalidada={ubicacionvalidada}
-                  setMap={setMap}
-                  setMarker={setMarker}
-                  setUbicacion={setUbicacion}
-                  setLatitud={setLatitud}
-                  setLongitud={setLongitud}
-                  map={map}
-                  latitud={latitud}
-                  longitud={longitud}
-                  marker={marker}
-                  id_Venta={id_Venta}
-                  formulario={values}
-                  imagen2={imagen2}
-                  idCliente={idCliente}
-                  id_Codigo={id_Codigo}
-                />
-              ) : (
-                <ModalCodigo
-                  setOpen={setOpen}
-                  setValidacionCorrecta={setValidacionCorrecta}
-                  setDatos={setDatos}
-                  setLatitud={setLatitud}
-                  setUbicacionValidada={setUbicacionValidada}
-                  setLongitud={setLongitud}
-                  setLoading={setLoading}
-                  setIdCliente={setIdCliente}
-                  setIdCodigo={setIdCodigo}
-                  setIdVenta={setIdVenta}
-                />
-              )}
+              <ModalDatos
+                open={open}
+                setOpen={setOpen}
+                datos={values}
+                imagen1={imagen1}
+                imagen2={imagen2}
+                imagen3={imagen3}
+                imagen4={imagen4}
+                option1Checked={option1Checked}
+                arrayPesos={arrayPesos}
+                arrayMarcas={arrayMarcas}
+              />
             </>
           )}
         </div>

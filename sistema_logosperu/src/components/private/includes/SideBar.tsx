@@ -259,7 +259,7 @@ const SideBar = (): JSX.Element => {
                             </ul>
                           </ul>
                         </li>
-                        <li key={23}>
+                        <li key={230}>
                           <Link
                             to="lista-preventa"
                             className={
@@ -420,7 +420,7 @@ const SideBar = (): JSX.Element => {
                           </ul>
                         </li>
 
-                        <li key={23}>
+                        <li key={232}>
                             <Link
                                 to="transacciones"
                                 className={
@@ -634,7 +634,7 @@ const SideBar = (): JSX.Element => {
             )}
 
             {auth.id == '9' &&
-            <li key={23}>
+            <li key={233}>
               <Link
                 to="clientes"
                 className={

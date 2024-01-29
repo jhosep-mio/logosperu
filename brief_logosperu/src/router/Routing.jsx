@@ -12,6 +12,7 @@ import Brochure from '../components/public/pages/Brochure';
 import Flyer from '../components/public/pages/Flyer';
 import Comunity from '../components/public/pages/Comunity';
 import Clasificados from '../components/public/pages/Clasificados';
+import { Send2 } from '../components/public/pages/Send2';
 
 
 export const Routing = () => {
@@ -33,6 +34,7 @@ export const Routing = () => {
                 <Route path='community' element={<Comunity/>}/>
                 <Route path='clasificados' element={<Clasificados/>}/>
                 <Route path='send-success/:id' element={<Send/>}/>
+                <Route path='class-success/:id' element={<Send2/>}/>
             </Route>
             
             <Route path='*' element={

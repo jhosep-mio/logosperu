@@ -243,6 +243,13 @@ export interface arrayCategoriasToPortafolio {
   imagen1: ImagenState
 }
 
+export interface arrayContacto {
+  id: number | null
+  nombres: string
+  celular: string
+  correo: string
+}
+
 export interface arrayImagesClasificados {
   id: number | null
   imagenproducto: ImagenState
@@ -615,6 +622,19 @@ export interface pendientesValues {
   user: userValues
 }
 
+export interface contactoClientes {
+  nombres: string
+  celular: string
+  correo: string
+}
+
+export interface ListcontactoClientes {
+  id: string
+  nombres: string
+  celular: string
+  correo: string
+}
+
 export interface ValuesPreventaModificate {
   id: number
   nombres: string
@@ -629,6 +649,7 @@ export interface ValuesPreventaModificate {
   estado: string
   id_contrato: string
   created_at: string
+  arraycontacto: string
   antiguo: string
 }
 

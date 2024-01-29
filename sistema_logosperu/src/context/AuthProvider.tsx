@@ -10,7 +10,7 @@ import { Global } from '../helper/Global'
 import axios from 'axios'
 import { type UserSchema } from './UserSchema'
 import { useNavigate } from 'react-router-dom'
-import { type notificacionesValues, type RolsValues } from '../components/shared/schemas/Interfaces'
+import { type errorValues, type notificacionesValues, type RolsValues } from '../components/shared/schemas/Interfaces'
 import io from 'socket.io-client'
 import { getVentas } from '../components/shared/FetchingData'
 
@@ -33,6 +33,8 @@ export interface AuthContextValue {
   loadingNotifi: boolean
   totalNotiClientes: number
   totalNotificaciones3: number
+  setShowError: Dispatch<SetStateAction<errorValues | null>>
+  showError: errorValues | null
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -57,6 +59,7 @@ export const AuthProvider = ({
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [title, setTitle] = useState('')
+  const [showError, setShowError] = useState<errorValues | null>(null)
   const [estado, setEstado] = useState(0)
   const [loadingComponents, setLoadingComponents] = useState(false)
   const token = localStorage.getItem('token')
@@ -333,7 +336,9 @@ export const AuthProvider = ({
         totalNotificaciones,
         loadingNotifi,
         totalNotiClientes,
-        totalNotificaciones3
+        totalNotificaciones3,
+        showError,
+        setShowError
       }}
     >
       {children}

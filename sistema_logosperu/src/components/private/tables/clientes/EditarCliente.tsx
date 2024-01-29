@@ -13,12 +13,15 @@ import {
   type ValuesPreventaModificate,
   type Ubicacion,
   type GeoData,
-  type ValuesVenta
+  type ValuesVenta,
+  type arrayContacto
 } from '../../../shared/schemas/Interfaces'
 import { SchemeVentas } from '../../../shared/schemas/Schemas'
 import { logo } from '../../../shared/Images'
 import MapaComponent from './MapaComponent'
-import { RiEyeLine, RiEyeOffLine } from 'react-icons/ri'
+import { RiDeleteBin6Line, RiEyeLine, RiEyeOffLine } from 'react-icons/ri'
+import { MdAdd } from 'react-icons/md'
+import { RegistroContacto } from './modals/RegistroContacto'
 
 export const EditarCliente = (): JSX.Element => {
   const { setTitle } = useAuth()
@@ -29,12 +32,14 @@ export const EditarCliente = (): JSX.Element => {
   const [latitud, setLatitud] = useState<number | null>(null)
   const [longitud, setLongitud] = useState<number | null>(null)
   const [ubicacion, setUbicacion] = useState<Ubicacion | null>(null)
+  const [arrayContacto, setarrayConacto] = useState<arrayContacto[]>([])
   const [metricas, setmetricas] = useState({
     country: '',
     department: ''
   })
 
   const [show, setShow] = useState<boolean>(false)
+  const [open, setOpen] = useState(false)
   const [sugerenciaUbi, setSugerenciaUbi] = useState(false)
   const [opcionalempresa, setOpcionalEmpresa] = useState(false)
   const getGeoData = async (lat: number, lng: number): Promise<GeoData> => {
@@ -78,6 +83,8 @@ export const EditarCliente = (): JSX.Element => {
     data.append('sexo', values.sexo)
     data.append('medio_ingreso', values.medio_ingreso)
     data.append('dni_ruc', values.dni_ruc)
+    data.append('dni_ruc', values.dni_ruc)
+    data.append('arraycontacto', JSON.stringify(arrayContacto))
     data.append('antiguo', values.antiguo)
     data.append('region', JSON.stringify({ longitud, latitud }))
     data.append('metricas', geoData != null ? JSON.stringify(geoData) : '')
@@ -164,21 +171,25 @@ export const EditarCliente = (): JSX.Element => {
       empresa: request.data.empresa
     })
 
-    const request2 = await axios.get(
-        `${Global.url}/getVentas`,
-        {
-          headers: {
-            Authorization: `Bearer ${
-              token !== null && token !== '' ? `Bearer ${token}` : ''
-            }`
-          }
-        }
-    )
+    if (request.data.arraycontacto) {
+      setarrayConacto(JSON.parse(request.data.arraycontacto))
+      console.log(JSON.parse(request.data.arraycontacto))
+    }
+
+    const request2 = await axios.get(`${Global.url}/getVentas`, {
+      headers: {
+        Authorization: `Bearer ${
+          token !== null && token !== '' ? `Bearer ${token}` : ''
+        }`
+      }
+    })
     const resultados = request2.data
     const filtrarPorCliente = (): ValuesVenta[] => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      return resultados.filter((resultado: ValuesVenta) => resultado.id_cliente == id ?? '')
+      return resultados.filter(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        (resultado: ValuesVenta) => resultado.id_cliente == id ?? ''
+      )
     }
     const resultadosFiltrados = filtrarPorCliente()
     const ultimoResultado = resultadosFiltrados.pop()
@@ -219,7 +230,8 @@ export const EditarCliente = (): JSX.Element => {
       }
       setLatitud(latit)
       setLongitud(longi)
-    } else { // CAMBIAR
+    } else {
+      // CAMBIAR
       setSugerenciaUbi(true)
       setLatitud(-12.0463731)
       setLongitud(-77.042754)
@@ -230,12 +242,15 @@ export const EditarCliente = (): JSX.Element => {
 
   useEffect(() => {
     setTitle('EDITAR CLIENTE')
-    Promise.all([
-      getOneBrief()
-    ]).then(() => {
+    Promise.all([getOneBrief()]).then(() => {
       setLoading(false)
     })
   }, [])
+
+  const eliminarArray = async (id: number | null): Promise<void> => {
+    const nuevoArray = arrayContacto.filter((peso) => peso.id !== id)
+    setarrayConacto(nuevoArray)
+  }
 
   useEffect(() => {
     if (errors && isSubmitting) {
@@ -320,11 +335,15 @@ export const EditarCliente = (): JSX.Element => {
                       <div className="w-full md:w-full relative h-fit">
                         <TitleBriefs titulo="Empresa" />
                         <input
-                        //    className="border placeholder-gray-400 focus:outline-none
-                        //    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
-                        //    border-gray-300 rounded-md transition-all"
+                          //    className="border placeholder-gray-400 focus:outline-none
+                          //    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                          //    border-gray-300 rounded-md transition-all"
                           className={`border placeholder-gray-400 focus:outline-none
-                                                      focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block ${opcionalempresa ? 'bg-red-400' : 'bg-white'}
+                                                      focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block ${
+                                                        opcionalempresa
+                                                          ? 'bg-red-400'
+                                                          : 'bg-white'
+                                                      }
                                                       border-gray-300 rounded-md transition-all `}
                           name="empresa"
                           type="text"
@@ -393,6 +412,71 @@ export const EditarCliente = (): JSX.Element => {
                         />
                         <Errors errors={errors.email} touched={touched.email} />
                       </div>
+                    </div>
+                  </div>
+                  <div className="mb-3 md:mb-0 w-full bg-form rounded-md rounded-tl-none md:p-3 text-black flex flex-col">
+                    <div className="flex justify-center w-full items-center">
+                      <h2 className="text-black font-bold uppercase w-full">
+                        Informacion de contactos
+                      </h2>
+                      <MdAdd
+                        onClick={() => {
+                          setOpen(!open)
+                        }}
+                        className="text-4xl text-main hover:bg-main hover:text-white rounded-full p-2 transition-colors cursor-pointer"
+                        title="Registrar nuevo contacto"
+                      />
+                      <RegistroContacto
+                        open={open}
+                        setOpen={setOpen}
+                        id={id}
+                        arrayContacto={arrayContacto}
+                        setarrayConacto={setarrayConacto}
+                        getOneBrief={getOneBrief}
+                      />
+                    </div>
+                    <div className="mt-3">
+                      {arrayContacto.length > 0
+                        ? <div className="rounded-xl grid grid-cols-2 gap-4">
+                          {arrayContacto.map((pro: arrayContacto) => (
+                            <div
+                              className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center bg-transparent border border-gray-300 p-2 rounded-xl text-black"
+                              key={pro.id}
+                            >
+                              <div className="md:text-center">
+                                <h5 className="md:hidden text-center text-black font-bold mb-2">
+                                  Contacto/Empresa
+                                </h5>
+                                <span>{pro.nombres}</span>
+                              </div>
+                              <div className="md:text-center">
+                                <h5 className="md:hidden text-center text-black font-bold mb-2">
+                                  Celular
+                                </h5>
+                                <span>{pro.celular}</span>
+                              </div>
+                              <div className="md:text-center">
+                                <h5 className="md:hidden text-center text-black font-bold mb-2">
+                                  Correo
+                                </h5>
+                                <span>{pro.correo}</span>
+                              </div>
+                              <div className="md:text-center flex flex-col items-center justify-center">
+                                <RiDeleteBin6Line
+                                  className="cursor-pointer text-center"
+                                    onClick={() => {
+                                      eliminarArray(pro.id)
+                                    }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        : (
+                        <p className="text-gray-400 w-full text-center">
+                          Sin datos de contacto
+                        </p>
+                          )}
                     </div>
                   </div>
                   {show && (
@@ -493,14 +577,20 @@ export const EditarCliente = (): JSX.Element => {
                       />
                       <div className="flex gap-5 text-black pl-4">
                         <p className="text-black ">
-                        UBICACION:
-                          <span className={`${sugerenciaUbi ? 'bg-red-400' : ''} pl-4`}>
+                          UBICACION:
+                          <span
+                            className={`${
+                              sugerenciaUbi ? 'bg-red-400' : ''
+                            } pl-4`}
+                          >
                             {latitud}
                             {longitud}
                           </span>
                         </p>
                         <span>/</span>
-                        <p >{metricas.country} - {metricas.department} </p>
+                        <p>
+                          {metricas.country} - {metricas.department}{' '}
+                        </p>
                       </div>
                     </>
                   )}

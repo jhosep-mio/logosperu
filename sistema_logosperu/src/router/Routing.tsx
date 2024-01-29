@@ -78,6 +78,7 @@ import { RegistrarClasificados } from '../components/private/tables/clasificados
 import { EditarClasificados } from '../components/private/tables/clasificados/EditarClasificados'
 import { ListaClientesColaboradores } from '../components/private/tables/clientes-colaboradores/ListaClientesColaboradores'
 import { ListaTransacciones } from '../components/private/tables/transacciones/ListaTransacciones'
+import { VerCliente } from '../components/private/tables/clientes/VerCliente'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -101,22 +102,10 @@ export const Routing = (): JSX.Element => {
             <Route path="colaboradores/reporte/:id" element={<ReportePorColaborador />} />
             {/* DISEÑO */}
             <Route path="lista-briefs-diseños" element={<ListaBriefDiseño />} />
-            <Route
-              path="lista-briefs-diseños/agregar"
-              element={<RegistrarBriefDiseño />}
-            />
-            <Route
-              path="lista-briefs-diseños/editar/:id"
-              element={<EditarBrief />}
-            />
-            <Route
-              path="lista-briefs-diseños/view/:id"
-              element={<ViewBriefDiseño />}
-            />
-            <Route
-              path="lista-briefs-diseños/asignar/:id"
-              element={<AsignacionDiseño />}
-            />
+            <Route path="lista-briefs-diseños/agregar" element={<RegistrarBriefDiseño />} />
+            <Route path="lista-briefs-diseños/editar/:id" element={<EditarBrief />} />
+            <Route path="lista-briefs-diseños/view/:id" element={<ViewBriefDiseño />} />
+            <Route path="lista-briefs-diseños/asignar/:id" element={<AsignacionDiseño />} />
 
             {/* CLIENTES */}
             <Route path="lista-clientes" element={<ListaClientes />} />
@@ -126,14 +115,9 @@ export const Routing = (): JSX.Element => {
 
             <Route path="lista-historial" element={<ListaHistorial />} />
             <Route path="llamadas-pendientes" element={<ListaPendientes/>} />
-            <Route
-              path="lista-clientes/agregar"
-              element={<RegistrarCliente />}
-            />
-            <Route
-              path="lista-clientes/editar/:id"
-              element={<EditarCliente />}
-            />
+            <Route path="lista-clientes/agregar" element={<RegistrarCliente />} />
+            <Route path="lista-clientes/editar/:id" element={<EditarCliente />} />
+            <Route path="lista-clientes/ver/:id" element={<VerCliente />} />
             <Route path="lista-clientes/resumen/:id" element={<ComentariosClientes />} />
 
             <Route path="lista-preventa" element={<ListaPreventa />} />
@@ -165,30 +149,12 @@ export const Routing = (): JSX.Element => {
             <Route path="transacciones" element={<ListaTransacciones />} />
 
             {/* DISEÑO NEW */}
-            <Route
-              path="lista-briefs-diseños-new"
-              element={<ListaBriefDiseñoNew />}
-            />
-            <Route
-              path="lista-briefs-diseños-new/agregar"
-              element={<RegistrarBriefDiseñoNew />}
-            />
-            <Route
-              path="lista-briefs-diseños-new/editar/:id"
-              element={<EditarBriefNew />}
-            />
-            <Route
-              path="lista-briefs-diseños-new/view/:id"
-              element={<ViewBriefDiseñoNew />}
-            />
-            <Route
-              path="lista-briefs-diseños-new/asignar/:id"
-              element={<AsignacionDiseñoNew />}
-            />
-            <Route
-              path="lista-briefs-diseños-new/propuestas/:id"
-              element={<Propuestas />}
-            />
+            <Route path="lista-briefs-diseños-new" element={<ListaBriefDiseñoNew />}/>
+            <Route path="lista-briefs-diseños-new/agregar" element={<RegistrarBriefDiseñoNew />}/>
+            <Route path="lista-briefs-diseños-new/editar/:id" element={<EditarBriefNew />}/>
+            <Route path="lista-briefs-diseños-new/view/:id" element={<ViewBriefDiseñoNew />}/>
+            <Route path="lista-briefs-diseños-new/asignar/:id" element={<AsignacionDiseñoNew />}/>
+            <Route path="lista-briefs-diseños-new/propuestas/:id" element={<Propuestas />}/>
             {/* CLASIFICADOS */}
             <Route path="lista-clasificados" element={<ListaClasificados />} />
             <Route path="lista-clasificados/registro" element={<RegistrarClasificados />} />

@@ -9,6 +9,7 @@ export default {
     extend: {
       colors: {
         main: '#D23741',
+        main_dark: '#ac4249',
         form: '#fff',
         secondary: {
           50: '#384045',

@@ -140,14 +140,14 @@ export const AgregarProductos = ({
               key={pro.id}
             >
               <div className="md:text-center">
-                <h5 className="md:hidden text-center text-black font-bold mb-2">
+                <h5 className="md:hidden text-left text-black font-bold mb-2">
                   Nombre
                 </h5>
                 <span>{pro.titulo}</span>
               </div>
               <div className="md:text-center">
-                <h5 className="md:hidden text-center text-black font-bold mb-2">
-                  Iamgen
+                <h5 className="md:hidden text-left text-black font-bold mb-2">
+                  Imagen
                 </h5>
                 {pro.imagenproducto.archivo != null &&
                 pro.imagenproducto.archivo.size > 0 ? (
@@ -171,7 +171,7 @@ export const AgregarProductos = ({
               </div>
               {option1Checked == 'medio2' &&
               <div className="md:text-center">
-                <h5 className="md:hidden text-center text-black font-bold mb-2">
+                <h5 className="md:hidden text-left text-black font-bold mb-2">
                   Descripcion
                 </h5>
                 <div

@@ -119,7 +119,6 @@ export const ModalActaEstado = ({
             data.append(`names1[${index1}]`, uniqueFilename)
           }
         })
-
         avance.archivos.forEach((image1, index1) => {
           if (image1.imagen1.archivo) {
             const originalFilename = image1.imagen1.archivo.name

@@ -18,7 +18,7 @@ import { Alerta } from '../shared/alerts/Alerta'
 import { AnimatePresence } from 'framer-motion'
 import { HeardModal } from './HeardModal'
 export const Header = () => {
-  const { showError, setShowError, cart } = useAuth()
+  const { showError, setShowError, cart, heard } = useAuth()
   const [open, setOpen] = useState(false)
   const [seleccion, setSeleccion] = useState(0)
   const [openoferta, setopenoferta] = useState(false)
@@ -98,7 +98,7 @@ export const Header = () => {
         </ul>
       </section>
 
-      <header className='header_top transition-all relative'>
+      <header className='header_top transition-all '>
         <HeardModal open={openHeard} setOpen={setOpenHeard} />
         <div className='header_content_top'>
           <div className='img_header_top'>
@@ -430,6 +430,7 @@ export const Header = () => {
                 >
                   <IoHeartSharp className='text-white text-4xl' />
                 </Link>
+                <span className='absolute -top-4 -right-3 bg-secondary span_cart text-white rounded-full w-10 h-10 flex items-center justify-center'>{heard.length}</span>
               </div>
               <div className='primero_box_header relative'>
                 <Link
@@ -462,7 +463,7 @@ export const Header = () => {
               open ? 'backroudactive' : ''
             }`}
           >
-            <IoCartSharp className='text-white text-5xl' />
+            <IoCartSharp className='text-white text-5xl' onClick={() => setOpenCart(!openCart)} />
           </div>
           <Link
             href='/'
@@ -564,6 +565,19 @@ export const Header = () => {
                     </li>
                     <li className='item-menu__mobil'>
                       <a href='https://www.logosperu.com/noticias/'>NOTICIAS</a>
+                    </li>
+                    <li
+                      className='item-menu__mobil flex gap-4 items-center'
+                      onClick={() => { setOpen(false); setOpenHeard(!openHeard) }}
+                    >
+                      <IoHeartSharp className='text-5xl' />
+                      <span
+                        className='link-menu'
+                        id='submenu4'
+
+                      >
+                        MIS FAVORITOS
+                      </span>
                     </li>
 
                     <Link href='https://clientes.logosperu.com.pe/login' target='_blank' className='button_intranet2 h-fit rounded-[1.8rem]'>

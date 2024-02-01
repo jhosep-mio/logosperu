@@ -156,7 +156,6 @@ export const AuthProvider = ({
           const notification = new Notification(nombre, options)
           // Manejar clics en la notificación
           notification.onclick = () => {
-            console.log('La notificación fue clicada')
             // Puedes agregar lógica para manejar el clic aquí
           }
         }

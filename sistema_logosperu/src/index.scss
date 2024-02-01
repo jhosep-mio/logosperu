@@ -293,7 +293,7 @@
 }
 
 .grid_cols_15 {
-    grid-template-columns: repeat(13, 1fr);
+  grid-template-columns: repeat(13, 1fr);
 }
 
 .content_acta_Acaptacion {
@@ -608,6 +608,13 @@ input[type="number"] {
 }
 
 @media (max-width: 576px) {
+  .moda_registro {
+    & .MuiPaper-root {
+      min-width: 100% !important;
+      padding: 0 !important;
+    }
+  }
+
   .grid_teplate_ventas {
     grid-template-columns: 1fr;
   }

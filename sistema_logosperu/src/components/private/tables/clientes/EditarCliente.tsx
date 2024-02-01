@@ -174,7 +174,6 @@ export const EditarCliente = (): JSX.Element => {
 
     if (request.data.arraycontacto) {
       setarrayConacto(JSON.parse(request.data.arraycontacto))
-      console.log(JSON.parse(request.data.arraycontacto))
     }
 
     const request2 = await axios.get(`${Global.url}/getVentas`, {

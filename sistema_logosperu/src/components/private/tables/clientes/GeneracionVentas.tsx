@@ -176,6 +176,7 @@ export const GeneracionVentas = ({
       ...values,
       id: datos.id,
       medio_ingreso: datos.medio_ingreso,
+      nombre_empresa: datos.nombre_empresa,
       plan: datos.plan,
       id_contrato: datos.id_contrato,
       dni_ruc: datos.dni_ruc,
@@ -300,10 +301,8 @@ export const GeneracionVentas = ({
                               (contacto: ListcontactoClientes) => contacto.nombres === e.target.value
                             )
                             setpersonContact(selectedContact ? selectedContact.id : null)
-                            handleChange(e) // Call your form-wide change handler if needed
-                          } else {
-                            handleChange(e) // Call your form-wide change handler if needed
                           }
+                          handleChange(e)
                         }}
                         onBlur={handleBlur}
                         disabled={false}

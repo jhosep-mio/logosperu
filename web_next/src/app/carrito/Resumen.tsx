@@ -17,7 +17,7 @@ declare global {
 }
 
 export const Resumen = () => {
-  const { cart } = useAuth()
+  const { cart, setShowError } = useAuth()
   const [culqiInstance, setCulqiInstance] = useState<any>(null)
   const [loading, setLoading] = useState(false)
 
@@ -31,27 +31,31 @@ export const Resumen = () => {
   }, [])
 
   const payment = (values: cuponValues) => {
-    if (culqiInstance) {
-      localStorage.setItem('Contacto', JSON.stringify(values))
-      culqiInstance.settings({
-        title: 'Logos Perú',
-        currency: 'PEN',
-        amount: calculateTotal2()
-      })
-      culqiInstance.options({
-        style: {
-          logo: 'https://logosperu.com.pe/logos/web.png',
-          bannerColor: '', // hexadecimal
-          buttonBackground: '', // hexadecimal
-          menuColor: '', // hexadecimal
-          linksColor: '', // hexadecimal
-          buttonText: '', // texto que tomará el botón
-          buttonTextColor: '', // hexadecimal
-          priceColor: '' // hexadecimal
-        }
-      })
-      culqiInstance.open()
-    }
+    setShowError({
+      estado: 'warning',
+      texto: 'Pago en online en matenimiento'
+    })
+    // if (culqiInstance) {
+    //   localStorage.setItem('Contacto', JSON.stringify(values))
+    //   culqiInstance.settings({
+    //     title: 'Logos Perú',
+    //     currency: 'PEN',
+    //     amount: calculateTotal2()
+    //   })
+    //   culqiInstance.options({
+    //     style: {
+    //       logo: 'https://logosperu.com.pe/logos/web.png',
+    //       bannerColor: '', // hexadecimal
+    //       buttonBackground: '', // hexadecimal
+    //       menuColor: '', // hexadecimal
+    //       linksColor: '', // hexadecimal
+    //       buttonText: '', // texto que tomará el botón
+    //       buttonTextColor: '', // hexadecimal
+    //       priceColor: '' // hexadecimal
+    //     }
+    //   })
+    //   culqiInstance.open()
+    // }
   }
 
   const {

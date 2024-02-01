@@ -4544,6 +4544,9 @@ body {
 }
 
 @media (max-width: 576px) {
+    .titulo_portafolio{
+        font-size: 30px;
+    }
   .modal_planes_logos {
     & .MuiPaper-root {
       padding: 5px !important;

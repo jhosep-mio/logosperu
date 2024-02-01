@@ -669,7 +669,7 @@ export const ListaServicios = (): JSX.Element => {
                       <button
                         onClick={() => {
                           setDatos(null)
-                          if (orden.email) {
+                          if (orden.email && orden.comentarios) {
                             setSelectID(orden.id)
                             setCorreos([
                               { id: Date.now(), correo: orden.email }
@@ -682,6 +682,8 @@ export const ListaServicios = (): JSX.Element => {
                               id_contrato: orden.id_contrato
                             })
                             setOpenFinal(true)
+                          } else if (!orden.comentarios) {
+                            Swal.fire('Debe colocar sus comentarios generales', '', 'warning')
                           } else {
                             Swal.fire({
                               title: 'EL cliente no tiene un email registrado',

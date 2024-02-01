@@ -78,7 +78,6 @@ export const ListaVentasVencidos = (): JSX.Element => {
 
   const filterDate = (): ValuesVenta[] => {
     let filteredProductos = productos
-    console.log(filters)
     if (filters.descargo == true) {
       filteredProductos = filteredProductos.filter(
         (pro) =>

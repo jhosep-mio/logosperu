@@ -11,31 +11,33 @@ export interface SimpleDialogProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const HeardModal = ({ open }: SimpleDialogProps) => {
+export const HeardModal = ({ open, setOpen }: SimpleDialogProps) => {
   const { heard } = useAuth()
 
   return (
     <>
       <CSSTransition in={open} timeout={300} classNames='heard' unmountOnExit>
-        <section className='absolute w-[400px] h-[400px] top-full right-[80px] overflow-hidden rounded-b-3xl'>
+        <section className='absolute w-full h-[70vh] right-0 lg:w-[400px] lg:h-[400px]  top-full lg:right-[80px] overflow-hidden rounded-b-3xl'>
           <div
             className='bg-[#1F1D2B] w-full lg:right-0 h-full transition-all z-50 '
           >
             {/* Orders */}
-            <div className='relative pt-16 lg:pt-8 text-gray-300 p-8 h-full'>
-              <IoCloseCircle className='lg:hidden absolute left-4 top-4 p-3 box-content text-gray-300 bg-[#262837] rounded-full text-xl' />
+            <div className='relative pt-16 lg:pt-8 text-gray-300 p-4 lg:p-8 h-full'>
+              <IoCloseCircle
+                className='absolute right-4 top-4 p-3 box-content text-gray-300 rounded-full text-5xl md:2xl hover:text-white cursor-pointer'
+                onClick={() => setOpen(false)}
+              />
               <h1 className='text-4xl my-4 gap-3 w-full text-center flex justify-center items-center'>
                 Mis favoritos <IoHeartSharp className='text-primary' />
               </h1>
-              <div className='mt-12'>
-                <div className='h-[400px] md:h-[700px] lg:h-[290px] overflow-y-scroll'>
+              <div className='mt-12 h-full'>
+                <div className='h-[80%] md:h-[700px] lg:h-[290px] overflow-y-scroll flex flex-col gap-4 pr-2'>
                   {/* Product */}
-
                   {heard.length > 0
                     ? (
                         heard.map((car) => (
                           <div
-                            className='bg-[#262837] p-4 rounded-xl mb-4'
+                            className='bg-[#262837] px-4 py-6 rounded-xl'
                             key={car.id}
                           >
                             <div className='grid grid-cols-6'>
@@ -43,13 +45,13 @@ export const HeardModal = ({ open }: SimpleDialogProps) => {
                                 <img
                                   alt=''
                                   src={`${Global.urlImages}/itemsportafolios/${car.imagen1}`}
-                                  className='w-10 h-10 object-cover'
+                                  className='w-14 h-14 object-cover'
                                 />
                                 <div>
-                                  <h5 className='text-2xl line-clamp-2 overflow-hidden'>
+                                  <h5 className='text-[1.5rem] line-clamp-2 overflow-hidden m-0'>
                                     {car.titulo}
                                   </h5>
-                                  <p className='text-lg text-gray-500'>
+                                  <p className='text-lg text-gray-500 m-0'>
                                     {capitalizeFirstLetter(car.categoria)}
                                   </p>
                                 </div>

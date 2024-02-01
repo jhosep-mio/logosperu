@@ -429,7 +429,7 @@ export default async function Portafolio () {
             ))}
           </ul>
         </div>
-        <Contenido items={items} />
+        <Contenido items={items} titulo={productos.titulo} ruta='diseno-de-paginas-web' />
       </section>
     </>
   )

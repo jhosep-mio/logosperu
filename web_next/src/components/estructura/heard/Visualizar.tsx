@@ -1,8 +1,7 @@
 import { Global } from '@/components/shared/Helper/global'
 import { carrito } from '@/components/shared/interfaces/interfaces'
 import React from 'react'
-import { IoEyeSharp } from 'react-icons/io5'
-import RViewerJS from 'viewerjs-react'
+import { FaRegShareFromSquare } from 'react-icons/fa6'
 
 interface ComponentProps {
   producto: carrito
@@ -11,22 +10,23 @@ interface ComponentProps {
 export const Visualizar: React.FC<ComponentProps> = ({
   producto
 }) => {
+  const RedirigirWsp = (): void => {
+    const numero = '+51987038024' // Reemplaza con el número de teléfono en formato internacional sin el signo + o 00.
+    let mensaje = '' // Tu mensaje.
+    mensaje = `Hola, estoy interesado(a) en el servicio de ${producto.categoria}, me gusta este logo: ${Global.urlImages}/itemsportafolios/${producto.imagen1}`
+    // Codificar el mensaje para URL
+    const mensajeCodificado = encodeURIComponent(mensaje)
+    // Construir la URL completa
+    const urlWhatsApp = `https://wa.me/${numero}?text=${mensajeCodificado}`
+    // Abrir la nueva pestaña con la URL
+    window.open(urlWhatsApp, '_blank')
+  }
+
   return (
     <p
       className='border border-red-500 p-2 rounded-lg h-fit cursor-pointer relative'
     >
-      <IoEyeSharp className='text-red-500' title='Ver' />
-      {producto.imagen1 && (
-      // @ts-expect-error: Type 'any' has no properties in common with type 'Autoplay'
-        <RViewerJS className='absolute w-full h-full inset-0 opacity-0'>
-          <img
-            alt=''
-            src={`${Global.urlImages}/itemsportafolios/${producto.imagen1}`}
-            className='w-10 h-10 object-cover'
-            title='Visualizar'
-          />
-        </RViewerJS>
-      )}
+      <FaRegShareFromSquare className='text-red-500' title='Ver' onClick={() => RedirigirWsp()} />
     </p>
   )
 }

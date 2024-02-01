@@ -13,6 +13,7 @@ import { type archivoavancesValues, type ValuesPlanes } from '../../../shared/sc
 import { motion, AnimatePresence } from 'framer-motion'
 import { SubirAvances } from './avancesArchivos/SubirAvances'
 import filarachive from '../../../../assets/plataformas/archivo.png'
+import useAuth from '../../../../hooks/useAuth'
 
 interface valuesPropuesta {
   propuestas: string
@@ -28,6 +29,7 @@ interface valuesData {
   fechaCreacion: Date | null
   limite: number
   plan: ValuesPlanes | null
+  validateBrief: boolean | null
 }
 
 export const ArchivosFinales = ({
@@ -37,9 +39,11 @@ export const ArchivosFinales = ({
   pdfName,
   setpdfName,
   fechaCreacion,
-  plan
+  plan,
+  validateBrief
 }: valuesData): JSX.Element => {
   const { id } = useParams()
+  const { setShowError } = useAuth()
   const token = localStorage.getItem('token')
   const [loadingDescarga, setLoadingDescarga] = useState(false)
   const [open, setOpen] = useState(false)
@@ -299,6 +303,13 @@ export const ArchivosFinales = ({
     return `${d} días ${h} horas ${m} min`
   }
 
+  const mostrarError = (): void => {
+    setShowError({
+      estado: 'warning',
+      texto: 'No hay un brief asociado a este proyecto.'
+    })
+  }
+
   return (
     <>
       <div className="flex flex-row gap-0 justify-between lg:gap-3 mb-2 ">
@@ -317,7 +328,11 @@ export const ArchivosFinales = ({
             type="button"
             className="w-40 px-4 h-fit bg-gray-500  rounded-xl font-normal text-white py-1"
             onClick={() => {
-              setSeleccion(!seleccion)
+              if (validateBrief == null || validateBrief) {
+                setSeleccion(!seleccion)
+              } else {
+                mostrarError()
+              }
             }}
           >
             Subir archivo

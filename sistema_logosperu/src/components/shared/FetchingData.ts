@@ -103,7 +103,6 @@ export const getDataVentas = async (ruta: string, setDatos: Dispatch<SetStateAct
     }
   })
   setDatos(request.data)
-  console.log(request.data)
   setTotalRegistros(request.data.length)
 }
 

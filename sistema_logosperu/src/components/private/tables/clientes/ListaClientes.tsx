@@ -106,31 +106,33 @@ export const ListaClientes = (): JSX.Element => {
         className="w-full flex flex-row items-center justify-between gap-y-4 gap-2 md:gap-0 mb-5"
         id="pdf-content"
       >
-        <div className="w-full md:w-fit flex gap-2 items-center h-fit">
-          <button className="bg-white hover:bg-gray-100 w-full md:w-fit flex items-center text-black gap-2 py-2 px-4 rounded-lg hover:text-main transition-colors">
-            <RiFilter2Fill />
-            <input
-              placeholder="Buscar ..."
-              className="bg-transparent outline-none"
-              value={search}
-              onChange={onSeachChange}
-              type="search"
-            />
-          </button>
-          <Link to="/admin/citas">
-            <IoCalendarOutline
-              className="text-4xl text-main"
-              title="Calendario de citas"
-            />
-          </Link>
-        </div>
-        <div className="w-full md:w-fit flex flex-col-reverse md:flex-row items-center md:gap-4">
-          <Link
-            to={'agregar'}
-            className="w-full md:w-fit inline-block rounded bg-main md:px-6 pb-2 pt-2.5 text-center text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-main-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-main-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-main-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-          >
-            REGISTRO
-          </Link>
+        <div className='w-full flex justify-between flex-col md:flex-row gap-3 items-center'>
+            <div className="w-full md:w-fit flex gap-2 items-center h-fit">
+            <button className="bg-white hover:bg-gray-100 w-full md:w-fit flex items-center text-black gap-2 py-2 px-4 rounded-lg hover:text-main transition-colors">
+                <RiFilter2Fill />
+                <input
+                placeholder="Buscar ..."
+                className="bg-transparent outline-none"
+                value={search}
+                onChange={onSeachChange}
+                type="search"
+                />
+            </button>
+            <Link to="/admin/citas">
+                <IoCalendarOutline
+                className="text-4xl text-main"
+                title="Calendario de citas"
+                />
+            </Link>
+            </div>
+            <div className="w-full md:w-fit flex flex-col-reverse md:flex-row items-center md:gap-4">
+            <Link
+                to={'agregar'}
+                className="w-full md:w-fit inline-block rounded bg-main md:px-6 pb-2 pt-2.5 text-center text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-main-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-main-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-main-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+            >
+                REGISTRO
+            </Link>
+            </div>
         </div>
       </div>
       {loading
@@ -166,6 +168,24 @@ export const ListaClientes = (): JSX.Element => {
                       <span className="flex md:justify-left items-center gap-3 font-bold text-black">
                         #{orden.id}
                       </span>
+                      {orden.arraycontacto &&
+                        JSON.parse(orden.arraycontacto).length > 0 && (
+                          <div className="flex w-fit ">
+                            <p
+                              onClick={() => {
+                                if (expandedContact == orden.id) {
+                                  setExpandedContact(null)
+                                } else {
+                                  setExpandedContact(orden.id)
+                                }
+                              }}
+                              className="text-sm text-blue-500 hover:underline cursor-pointer transition-all ml-4"
+                            >
+                              +{JSON.parse(orden.arraycontacto).length}{' '}
+                              contactos
+                            </p>
+                          </div>
+                      )}
                     </div>
                     <div className="md:hidden flex justify-between gap-3">
                       <div className="md:text-center ">
@@ -241,13 +261,15 @@ export const ListaClientes = (): JSX.Element => {
                     </span>
                   </div>
                   <div className="hidden md:block md:text-center col-span-2">
-                    <div className="line-clamp-1 relative">
-                      <span className="text-left block text-black w-full lowercase first-letter:uppercase">
-                        {orden.nombres} {orden.apellidos}
-                      </span>
+                    <div className="relative">
+                        <div className='line-clamp-1 '>
+                            <span className="text-left block text-black w-full lowercase first-letter:uppercase">
+                                {orden.nombres} {orden.apellidos}
+                            </span>
+                        </div>
                       {orden.arraycontacto &&
                         JSON.parse(orden.arraycontacto).length > 0 && (
-                          <div className="flex w-fit ">
+                          <div className="flex w-fit">
                             <p
                               onClick={() => {
                                 if (expandedContact == orden.id) {
@@ -393,6 +415,61 @@ export const ListaClientes = (): JSX.Element => {
                             }
                             key={contacto.id}
                           >
+                            <div className="flex flex-col gap-3 md:hidden bg-gray-100 p-4 rounded-xl relative before:w-[2px] before:h-3 before:bottom-full before:left-0 before:right-0 before:mx-auto before:bg-gray-600 before:absolute">
+                                <div className="md:hidden flex justify-between gap-3">
+                                <div className="md:text-center ">
+                                    <h5 className="md:hidden text-black font-bold mb-0 text-sm">
+                                    Cliente
+                                    </h5>
+                                    <span className="text-left w-full text-black line-clamp-1">
+                                    {contacto.nombres}
+                                    </span>
+                                </div>
+                                <div className="md:text-right ">
+                                    <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
+                                    Celular
+                                    </h5>
+                                    <span className="text-right w-full text-black line-clamp-1">
+                                    {contacto.celular}
+                                    </span>
+                                </div>
+                                </div>
+                                <div className="md:hidden flex justify-between gap-3">
+                                    <div className="md:text-center ">
+                                        <h5 className="md:hidden text-black font-bold mb-0 text-sm">
+                                            Empresa
+                                        </h5>
+                                        <span className="text-left w-full text-black line-clamp-1">
+                                            {contacto.marca}
+                                        </span>
+                                    </div>
+                                    <div className="md:text-right ">
+                                        <h5 className="md:hidden text-[#62be6d] font-bold mb-0 text-sm line-clamp-1">
+                                        Fecha de creación
+                                        </h5>
+                                        <span className="text-right block text-[#62be6d]">
+                                        {new Date(orden.created_at).toLocaleDateString(
+                                          undefined,
+                                          {
+                                            year: 'numeric',
+                                            month: '2-digit',
+                                            day: '2-digit'
+                                          }
+                                        )}{' '}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="md:hidden flex justify-between gap-3">
+                                    <div className="md:text-left ">
+                                        <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-left">
+                                            Correo
+                                        </h5>
+                                        <span className="text-left w-full text-black line-clamp-1">
+                                            {contacto.correo}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                             <div
                               className={`hidden md:block h-full md:text-center relative ${
                                 indexcol == 0
@@ -428,25 +505,9 @@ export const ListaClientes = (): JSX.Element => {
                               </span>
                             </div>
                             <div className="hidden md:block md:text-center">
-                              {/* <span className="text-left block text-black w-full line-clamp-1">
-                                    {orden.medio_ingreso == '0'
-                                      ? 'Facebook'
-                                      : orden.medio_ingreso == '1'
-                                        ? 'Google'
-                                        : orden.medio_ingreso == '5'
-                                          ? 'Instagram'
-                                          : orden.medio_ingreso == '2'
-                                            ? 'Ventas'
-                                            : orden.medio_ingreso == '3'
-                                              ? 'Post Venta'
-                                              : orden.medio_ingreso == '4'
-                                                ? 'Whatsapp'
-                                                : orden.medio_ingreso == '6'
-                                                  ? 'Recomendación'
-                                                  : orden.medio_ingreso == '7'
-                                                    ? 'Logos'
-                                                    : ''}
-                                </span> */}
+                              <span className="text-left block text-black w-full line-clamp-1">
+                                  Post venta
+                                </span>
                             </div>
                             <div className="hidden md:block md:text-center">
                               <p className="line-clamp-2 text-black">
@@ -461,64 +522,6 @@ export const ListaClientes = (): JSX.Element => {
                               </p>
                             </div>
                             <div className="md:text-center md:flex md:justify-center items-center absolute md:relative right-0 top-0">
-                              {/* <Menu
-                                    menuButton={
-                                    <MenuButton className="block p-2">
-                                        <RiSettings3Fill className="text-gray-500 text-lg" />
-                                    </MenuButton>
-                                    }
-                                    align="end"
-                                    arrow
-                                    transition
-                                    menuClassName="bg-secondary-100 p-4"
-                                >
-                                    <MenuItem className="p-0 hover:bg-transparent">
-                                    <Link
-                                        to={`ver/${orden.id}`}
-                                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
-                                    >
-                                        Ver
-                                    </Link>
-                                    </MenuItem>
-                                    <MenuItem className="p-0 hover:bg-transparent">
-                                    <Link
-                                        to={`editar/${orden.id}`}
-                                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
-                                    >
-                                        Editar
-                                    </Link>
-                                    </MenuItem>
-                                    <MenuItem className="p-0 hover:bg-transparent">
-                                    <Link
-                                        to={`resumen/${orden.id}`}
-                                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
-                                    >
-                                        Reporte
-                                    </Link>
-                                    </MenuItem>
-                                    <MenuItem className="p-0 hover:bg-transparent">
-                                    <Link
-                                        to=""
-                                        onClick={() => {
-                                          handleClickOpen()
-                                          setValues({
-                                            ...values,
-                                            id_cliente: String(orden.id),
-                                            medio_ingreso: orden.medio_ingreso,
-                                            nombre_empresa: orden.empresa
-                                              ? orden.empresa
-                                              : `${orden.nombres} ${orden.apellidos}`,
-                                            dni_ruc: `${
-                                            orden.dni_ruc != null ? orden.dni_ruc : ''
-                                            }`
-                                          })
-                                        }}
-                                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex justify-center items-center gap-x-4 p-2 flex-1"
-                                    >
-                                        Generar venta
-                                    </Link>
-                                    </MenuItem>
-                                </Menu> */}
                             </div>
                           </motion.div>
                         )

@@ -92,7 +92,8 @@ export const ModalCorreoFinal2 = ({
         hora,
         asunto,
         correos,
-        contexto
+        contexto,
+        firma: auth.firma
       }
       try {
         const respuesta = await axios.post(`${Global.url}/enviarFinal`, data, {

@@ -39,6 +39,7 @@ interface valuesDatos {
   marca: string
   celular: string
   id_contrato: string
+  comentarios: string
 }
 
 interface values {
@@ -112,7 +113,8 @@ export const Avances = (): JSX.Element => {
     correos: [],
     asunto: '',
     fecha: '',
-    hora: ''
+    hora: '',
+    firma: ''
   })
   const [fechaCreacion, setFechaCreacion] = useState<Date | null>(null)
   const [openAvance, setOpenAvance] = useState(false)
@@ -124,6 +126,7 @@ export const Avances = (): JSX.Element => {
   const [colaborador, setColaborador] = useState([])
   const [limite, setLimite] = useState(0)
   const [openMailFinal, setOpenMailFinal] = useState(false)
+  const [validateBrief, seValidateBrief] = useState<boolean | null>(null)
 
   const updatePropuestas = async (): Promise<void> => {
     setLoading(true)
@@ -144,7 +147,7 @@ export const Avances = (): JSX.Element => {
       )
       if (respuesta.data.status == 'success') {
         Swal.fire('Actualización exitosa', '', 'success')
-        getOneBrief()
+        getOneBrief2()
       } else {
         Swal.fire('Error al actualizar', '', 'error')
       }
@@ -191,9 +194,7 @@ export const Avances = (): JSX.Element => {
           }`
         }
       })
-      console.log(request.data[0].archivos_avances)
       const codContr: string = (request.data[0].id_contrato.split('_')[0])
-
       const requestPlan = await axios.get(`${Global.url}/onePlanToNombre/${codContr ?? ''}`, {
         headers: {
           Authorization: `Bearer ${
@@ -202,7 +203,48 @@ export const Avances = (): JSX.Element => {
         }
       })
       setplan(requestPlan.data[0])
-
+      if (requestPlan.data[0].tipo?.includes('Diseño Logotipo')) {
+        const respuesta = await axios.get(`${Global.url}/oneBriefDiseñoNewToSeguimiento/${id ?? ''}`, {
+          headers: {
+            Authorization: `Bearer ${
+                  token !== null && token !== '' ? `Bearer ${token}` : ''
+                }`
+          }
+        })
+        if (respuesta.data[0]) {
+          seValidateBrief(true)
+        } else {
+          seValidateBrief(false)
+        }
+      } else if (codContr == 'LPBRO') {
+        const respuesta = await axios.get(`${Global.url}/oneBriefBrochureToSeguimiento/${id ?? ''}`, {
+          headers: {
+            Authorization: `Bearer ${
+                  token !== null && token !== '' ? `Bearer ${token}` : ''
+                }`
+          }
+        })
+        if (respuesta.data[0]) {
+          seValidateBrief(true)
+        } else {
+          seValidateBrief(false)
+        }
+      } else if (codContr == 'LPFLYER') {
+        const respuesta = await axios.get(`${Global.url}/oneBriefFlyerToSeguimiento/${id ?? ''}`, {
+          headers: {
+            Authorization: `Bearer ${
+                  token !== null && token !== '' ? `Bearer ${token}` : ''
+                }`
+          }
+        })
+        if (respuesta.data[0]) {
+          seValidateBrief(true)
+        } else {
+          seValidateBrief(false)
+        }
+      } else {
+        seValidateBrief(null)
+      }
       //   setplanes(requestPlan.data[0])
       if (request.data[0].limitar_archivos) {
         setLimite(request.data[0].limitar_archivos)
@@ -222,7 +264,8 @@ export const Avances = (): JSX.Element => {
         celular: request.data[0].celular,
         email: request.data[0].email,
         marca: request.data[0].nombre_marca,
-        id_contrato: request.data[0].id_contrato
+        id_contrato: request.data[0].id_contrato,
+        comentarios: request.data[0].comentarios
       })
       setpdfName(request.data[0].propuestas)
       setColaborador(
@@ -251,7 +294,6 @@ export const Avances = (): JSX.Element => {
       if (request.data[0].fecha_fin) {
         setFechaCreacion(parseFecha(request.data[0].fecha_fin))
       }
-      setLoading(false)
       setTitle(
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         `${request.data[0].nombres} ${request.data[0].apellidos} - ${
@@ -293,7 +335,30 @@ export const Avances = (): JSX.Element => {
           { id: Date.now(), correo: request.data[0].email }
         ])
       }
+      setLoading(false)
     } catch (error) {}
+  }
+
+  const getOneBrief2 = async (): Promise<void> => {
+    setLoading(true)
+    try {
+      const request = await axios.get(`${Global.url}/getVenta/${id ?? ''}`, {
+        headers: {
+          Authorization: `Bearer ${
+            token !== null && token !== '' ? `Bearer ${token}` : ''
+          }`
+        }
+      })
+      setValues({
+        ...values,
+        comentarios: request.data[0].comentarios,
+        link_final: request.data[0].archivos_finales,
+        propuestas: request.data[0].propuestas,
+        fecha_fin: request.data[0].fecha_fin,
+        archivos_avances: request.data[0].archivos_avances
+      })
+    } catch (error) {}
+    setLoading(false)
   }
 
   const getColaboradores = async (): Promise<void> => {
@@ -307,7 +372,6 @@ export const Avances = (): JSX.Element => {
 
   useEffect(() => {
     getColaboradores()
-    getOneBrief()
   }, [])
 
   useEffect(() => {
@@ -347,10 +411,10 @@ export const Avances = (): JSX.Element => {
         : (
         <>
           <form className="mt-5" onSubmit={handleSubmit}>
-            <div className="bg-white p-8 rounded-xl mt-6">
-              <div className="flex justify-between">
-                <span className="text-left flex gap-6 text-black uppercase">
-                  <span className="font-bold">COLABORADOR(ES) A CARGO:</span>
+            <div className="bg-white p-4 rounded-xl mt-6">
+              <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 md:gap-0">
+                <span className="text-left flex flex-col md:flex-row gap-2 md:gap-6 text-black uppercase">
+                  <span className="text-sm md:text-base font-bold">COLABORADOR(ES) A CARGO:</span>
                   {colaborador?.map((asignacion: any, index: number) => {
                     const assignedCollaborators = colaboradores
                       .filter(
@@ -374,8 +438,10 @@ export const Avances = (): JSX.Element => {
                       <button
                         type="button"
                         onClick={() => {
-                          if (datos2?.email) {
+                          if (datos2?.email && datos2?.comentarios) {
                             setOpenCorreoFinal(true)
+                          } else if (!datos2?.comentarios) {
+                            Swal.fire('Debe colocar sus comentarios generales', '', 'warning')
                           } else {
                             Swal.fire({
                               title: 'EL cliente no tiene un email registrado',
@@ -389,7 +455,7 @@ export const Avances = (): JSX.Element => {
                             })
                           }
                         }}
-                        className="transition-colors text-white font-bold flex items-center justify-center gap-x-4 p-2 flex-1 rounded-xl"
+                        className="text-sm text-center w-full md:text-base transition-colors text-white font-bold flex items-center justify-center gap-x-4 p-2 flex-1 rounded-xl"
                       >
                         Finalizar servicio
                       </button>
@@ -408,6 +474,7 @@ export const Avances = (): JSX.Element => {
                 fechaCreacion={fechaCreacion}
                 limite={limite}
                 plan={plan}
+                validateBrief={validateBrief}
               />
             </div>
             <div className="bg-white p-8 rounded-xl mt-6">
@@ -549,6 +616,7 @@ export const Avances = (): JSX.Element => {
               open={openAvance}
               setOpen={setOpenAvance}
               avance={avance}
+              datos={datos}
             />
             <ViewFinal
               open={openFinal}

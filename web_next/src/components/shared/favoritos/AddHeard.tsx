@@ -1,8 +1,8 @@
 'use client'
 import React from 'react'
-import Swal from 'sweetalert2'
 import { IoHeartOutline } from 'react-icons/io5'
-import { carrito, productosValues } from '../interfaces/interfaces'
+import { productosValues } from '../interfaces/interfaces'
+import useAuth from '../hooks/useAuth'
 
 interface ComponentProps {
   producto: productosValues
@@ -13,15 +13,7 @@ export const AddHeard: React.FC<ComponentProps> = ({
   producto,
   contador
 }) => {
-  const [heard, setHeard] = React.useState<carrito[]>([])
-
-  React.useEffect(() => {
-    const storedHeard = localStorage.getItem('heard')
-    if (storedHeard) {
-      const parsedHeardt = JSON.parse(storedHeard)
-      setHeard(parsedHeardt)
-    }
-  }, [])
+  const { heard, setHeard, setShowError } = useAuth()
 
   function addProduct (product: productosValues, cantidad: number): void {
     const itemIndex = heard.findIndex(
@@ -41,7 +33,8 @@ export const AddHeard: React.FC<ComponentProps> = ({
           titulo: product.titulo,
           cantidad,
           imagen1: imagen,
-          categoria: product.categoria
+          categoria: product.categoria,
+          precio: product.precio
         }
       ])
       localStorage.setItem(
@@ -53,13 +46,20 @@ export const AddHeard: React.FC<ComponentProps> = ({
             titulo: product.titulo,
             cantidad,
             imagen1: imagen,
-            categoria: product.categoria
+            categoria: product.categoria,
+            precio: product.precio
           }
         ])
       )
-      Swal.fire('Agregado a favoritos', '', 'success')
+      setShowError({
+        estado: 'success',
+        texto: 'Agregado a favoritos'
+      })
     } else {
-      Swal.fire('Ya se encuentra en tu lista de favoritos', '', 'warning')
+      setShowError({
+        estado: 'warning',
+        texto: 'Ya se encuentra en tu lista de favoritos'
+      })
     }
   }
   return (

@@ -575,6 +575,7 @@ export interface FinalValues {
   asunto: string
   fecha: string
   hora: string
+  firma: string
 }
 
 export interface arrayAsignacion {

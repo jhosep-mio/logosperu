@@ -401,7 +401,7 @@ export default async function Portafolio () {
 
       <section className='max-w-[1200px] mx-auto mb-24'>
         <div className='mb-16' id='userefprimercontenido' />
-        <Contenido items={items} />
+        <Contenido items={items} titulo={productos.titulo} ruta='' />
       </section>
     </>
   )

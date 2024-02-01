@@ -124,7 +124,15 @@ export const ListaServicios = (): JSX.Element => {
   const filterDate = (): ValuesVenta[] => {
     let filteredProductos = productos
 
-    if (filters.activeFilter == 'fechaFin' && filters.fechaFin !== null) {
+    if (filters.activeFilter == 'enCola') {
+      filteredProductos = filteredProductos.filter(
+        (pro) =>
+          !pro.fecha_alta &&
+            !pro.fecha_inicio &&
+            !pro.fecha_fin &&
+            pro.estado != '1'
+      )
+    } else if (filters.activeFilter == 'fechaFin' && filters.fechaFin !== null) {
       filteredProductos = filteredProductos.filter(
         (pro) =>
           pro.fecha_fin !== null && pro.fecha_fin !== '' && pro.estado != '1'
@@ -169,30 +177,43 @@ export const ListaServicios = (): JSX.Element => {
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const toggleFilter = (
-    type: 'estado' | 'fechaFin' | 'sinFechaFinYNo1',
+    type: 'estado' | 'fechaFin' | 'sinFechaFinYNo1' | 'enCola',
     value: number | boolean
   ) => {
     setFilters((prev) => {
-      if (prev.activeFilter == type) {
+      if (prev.activeFilter === type) {
         if (type === 'fechaFin') {
-          // Si desactivas el filtro fechaFin, activa automáticamente el filtro sinFechaFinYNo1
+          // Si desactivas el filtro fechaFin, desactiva el filtro enCola y activa automáticamente el filtro sinFechaFinYNo1
           return {
             ...prev,
             fechaFin: null,
             sinFechaFinYNo1: true,
+            enCola: null,
+            activeFilter: 'sinFechaFinYNo1'
+          }
+        } else if (type === 'enCola') {
+          // Si desactivas el filtro enCola, activa automáticamente el filtro sinFechaFinYNo1
+          return {
+            ...prev,
+            fechaFin: null,
+            sinFechaFinYNo1: true,
+            enCola: null,
             activeFilter: 'sinFechaFinYNo1'
           }
         } else {
-          return { ...prev, [type]: null, activeFilter: null } // desactiva el filtro si ya estaba activo
+          // Desactiva el filtro si ya estaba activo
+          return { ...prev, [type]: null, activeFilter: null }
         }
       }
+      // Activa el filtro seleccionado y desactiva los demás
       return {
         estado: null,
         fechaFin: null,
+        enCola: null,
         sinFechaFinYNo1: null,
         [type]: value,
         activeFilter: type
-      } // activa el filtro seleccionado y desactiva los demás
+      }
     })
   }
 
@@ -280,18 +301,32 @@ export const ListaServicios = (): JSX.Element => {
             />
           </button>
           <div className="flex items-center justify-between gap-2 w-full">
-            <button
-              className={`bg-green-600 text-white px-2 lg:px-4 lg:py-2 rounded-xl font-bold ${
-                filters.activeFilter == 'fechaFin'
-                  ? 'border-2 border-yellow-500'
-                  : 'border-2 border-transparent'
-              }`}
-              onClick={() => {
-                toggleFilter('fechaFin', true)
-              }}
-            >
-              Finalizados
-            </button>
+            <div className='flex gap-4'>
+                <button
+                className={`bg-green-600 text-white px-2 lg:px-4 lg:py-2 rounded-xl font-bold ${
+                    filters.activeFilter == 'fechaFin'
+                    ? 'border-2 border-yellow-500'
+                    : 'border-2 border-transparent'
+                }`}
+                onClick={() => {
+                  toggleFilter('fechaFin', true)
+                }}
+                >
+                Finalizados
+                </button>
+                <button
+                className={`bg-yellow-500 text-white px-2 lg:px-4 lg:py-2 rounded-xl font-bold ${
+                    filters.activeFilter == 'enCola'
+                    ? 'border-2 border-yellow-600'
+                    : 'border-2 border-transparent'
+                }`}
+                onClick={() => {
+                  toggleFilter('enCola', true)
+                }}
+                >
+                    En cola
+                </button>
+            </div>
             <div className="w-fit lg:hidden flex-col-reverse md:flex-row items-center gap-4">
               <button
                 type="button"
@@ -505,16 +540,19 @@ export const ListaServicios = (): JSX.Element => {
               </div>
               <div
                 className={`hidden w-fit mx-auto md:flex gap-2 px-2 items-center justify-center md:text-center ${
-                  orden.estado == '1'
+                orden.estado == '1'
                     ? 'bg-red-600 text-white'
                     : orden.fecha_fin != null
                     ? 'bg-[#1A5515] text-white'
+                    : !orden.fecha_inicio && !orden.fecha_alta
+                    ? 'bg-yellow-500 text-white'
                     : 'bg-gray-300 text-gray-500'
                 }`}
               >
                 {orden.estado == '1'
                   ? (
                   <>
+                    {/* <BsCheckCircle className="hidden lg:block" /> */}
                     <span className="text-center bg-red-600 text-white font-bold w-fit line-clamp-1">
                       Abandono
                     </span>
@@ -523,18 +561,29 @@ export const ListaServicios = (): JSX.Element => {
                   : orden.fecha_fin != null
                     ? (
                   <>
+                    {/* <BsCheckCircle className="hidden lg:block" /> */}
                     <span className="text-center bg-[#1A5515] text-white font-bold w-fit line-clamp-1">
                       Finalizado
                     </span>
                   </>
                       )
-                    : (
+                    : !orden.fecha_inicio && !orden.fecha_alta
+                        ? (
                   <>
+                    {/* <BsGraphUp className="hidden lg:block" /> */}
+                    <span className="text-center gap-2 font-bold px-2 line-clamp-1 ">
+                      En cola
+                    </span>
+                  </>
+                          )
+                        : (
+                  <>
+                    {/* <BsGraphUp className="hidden lg:block" /> */}
                     <span className="text-center gap-2 font-bold w-fit line-clamp-1">
                       En proceso
                     </span>
                   </>
-                      )}
+                          )}
               </div>
               <div className="hidden md:block md:text-center">
                 <span className="text-cener block text-black">

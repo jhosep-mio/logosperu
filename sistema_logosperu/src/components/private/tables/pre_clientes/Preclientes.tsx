@@ -4,14 +4,13 @@ import useAuth from '../../../../hooks/useAuth'
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
 import { RiFilter2Fill, RiSettings3Fill } from 'react-icons/ri'
 import { Loading } from '../../../shared/Loading'
-import {
-  type ValuesPreventaModificate
-} from '../../../shared/schemas/Interfaces'
+import { type ValuesPreventaModificate } from '../../../shared/schemas/Interfaces'
 import { Paginacion } from '../../../shared/Paginacion'
 import { getData2 } from '../../../shared/FetchingData'
 import { quitarAcentos } from '../../../shared/functions/QuitarAcerntos'
 import { ModalRegitrarCliente } from './modal/ModalRegitrarCliente'
-
+import { ModalCargarArchivo } from './modal/ModalCargarArchivo'
+import { DeleteItemsNew } from '../../../shared/DeleteItemsNew'
 export const Preclientes = (): JSX.Element => {
   const { setTitle } = useAuth()
   const [open, setOpen] = useState(false)
@@ -34,26 +33,26 @@ export const Preclientes = (): JSX.Element => {
       arraycontacto: ''
     }
   ])
-  const [datos, setdatos] = useState<ValuesPreventaModificate>(
-    {
-      id: 0,
-      nombres: '',
-      apellidos: '',
-      email: '',
-      celular: '',
-      empresa: '',
-      edad: '',
-      sexo: '',
-      medio_ingreso: '',
-      id_contrato: '',
-      created_at: '',
-      dni_ruc: '',
-      antiguo: '',
-      estado: '',
-      arraycontacto: ''
-    }
-  )
+  const token = localStorage.getItem('token')
+  const [datos, setdatos] = useState<ValuesPreventaModificate>({
+    id: 0,
+    nombres: '',
+    apellidos: '',
+    email: '',
+    celular: '',
+    empresa: '',
+    edad: '',
+    sexo: '',
+    medio_ingreso: '',
+    id_contrato: '',
+    created_at: '',
+    dni_ruc: '',
+    antiguo: '',
+    estado: '',
+    arraycontacto: ''
+  })
   const [loading, setLoading] = useState(true)
+  const [openArchivo, setOpenArchivo] = useState(false)
   const [totalRegistros, setTotalRegistros] = useState(0)
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
@@ -104,6 +103,23 @@ export const Preclientes = (): JSX.Element => {
     setSearch(target.value)
   }
 
+  const preguntar = (id: number | null): void => {
+    DeleteItemsNew({
+      ruta: 'destroyPreCliente',
+      id,
+      token,
+      totalPosts,
+      cantidadRegistros,
+      paginaActual,
+      setpaginaActual,
+      rutaFetch: 'getPreClientes',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      setData: setProductos,
+      setTotalRegistros
+    })
+  }
+
   return (
     <>
       <div
@@ -123,6 +139,13 @@ export const Preclientes = (): JSX.Element => {
           </button>
         </div>
         <div className="w-full md:w-fit flex flex-col-reverse md:flex-row items-center md:gap-4">
+          <button
+            type="button"
+            onClick={() => { setOpenArchivo(!openArchivo) }}
+            className="w-full md:w-fit inline-block rounded bg-main md:px-6 pb-2 pt-2.5 text-center text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-main-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-main-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-main-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+          >
+            Importar datos
+          </button>
           <Link
             to={'agregar'}
             className="w-full md:w-fit inline-block rounded bg-main md:px-6 pb-2 pt-2.5 text-center text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-main-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-main-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-main-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
@@ -302,11 +325,25 @@ export const Preclientes = (): JSX.Element => {
                     </MenuItem>
                     <MenuItem className="p-0 hover:bg-transparent">
                       <button
-                       type='button'
-                       onClick={() => { setOpen(true); setdatos(orden) }}
+                        type="button"
+                        onClick={() => {
+                          setOpen(true)
+                          setdatos(orden)
+                        }}
                         className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
                       >
                         Mover a clientes
+                      </button>
+                    </MenuItem>
+                    <MenuItem className="p-0 hover:bg-transparent">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          preguntar(orden.id)
+                        }}
+                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                      >
+                        Eliminar
                       </button>
                     </MenuItem>
                   </Menu>
@@ -327,7 +364,8 @@ export const Preclientes = (): JSX.Element => {
           </div>
         </div>
           )}
-        <ModalRegitrarCliente open={open} setOpen={setOpen} datos={datos}/>
+      <ModalRegitrarCliente open={open} setOpen={setOpen} datos={datos} />
+      <ModalCargarArchivo open={openArchivo} setOpen={setOpenArchivo} setProductos={setProductos} setTotalRegistros={setTotalRegistros}/>
     </>
   )
 }

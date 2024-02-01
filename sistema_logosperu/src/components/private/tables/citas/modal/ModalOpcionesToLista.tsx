@@ -135,8 +135,12 @@ export const ModalOpcionesToLista = ({
             <div className="flex flex-col mt-2">
               <div className="flex flex-col gap-2">
                 <p className="flex gap-3">
-                  <span className="font-medium ">Celular:</span>{' '}
-                  {eventoSelected?.client?.celular}
+                    <a
+                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                    href={`tel:+51${eventoSelected?.client?.celular}`}>
+                        <span className="font-medium ">Celular:</span>{' '}
+                        {eventoSelected?.client?.celular}
+                    </a>
                 </p>
                 <p className="flex gap-3">
                   <span className="font-medium ">Correo:</span>{' '}

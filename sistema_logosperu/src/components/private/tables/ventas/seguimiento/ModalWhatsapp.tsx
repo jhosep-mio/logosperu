@@ -255,6 +255,7 @@ export const ModalWhatsapp = ({
           )
 
           if (respuesta.data.status == 'success') {
+            setIdEdicion(null)
             setTexto('')
             setShowError({
               estado: 'success',
@@ -326,12 +327,19 @@ export const ModalWhatsapp = ({
                 resumenOrdenado={resumenOrdenado}
                 id={id}
                 loading={loading}
+                textoEditado={textoEditado}
+                permitirEdicion={permitirEdicion}
+                setTextoEditado={setTextoEditado}
                 setRespuestaAdmin={setRespuestaAdmin}
                 respuestaAdmin={respuestaAdmin}
                 endOfMessagesRef={endOfMessagesRef}
+                handleUpdateEdit={handleUpdateEdit}
                 showError={showError}
                 setShowError={setShowError}
                 proyecto={proyecto}
+                handleUpdate={handleUpdate}
+                idEdicion2={idEdicion}
+                setIdEdicion2={setIdEdicion}
               />
                 )
               : (

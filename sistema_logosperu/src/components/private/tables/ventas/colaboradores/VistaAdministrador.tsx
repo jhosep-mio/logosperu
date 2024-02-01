@@ -34,20 +34,34 @@ export const VistaAdministrador = ({
   getOneBrief,
   endOfMessagesRef,
   setShowError,
-  proyecto
+  permitirEdicion,
+  setTextoEditado,
+  proyecto,
+  textoEditado,
+  handleUpdateEdit,
+  handleUpdate,
+  idEdicion2,
+  setIdEdicion2
 }: {
   resumen: valuesResumen[]
   setResumen: Dispatch<SetStateAction<valuesResumen[]>>
   resumenOrdenado: valuesResumen[]
   loading: boolean
   id: string | undefined
+  handleUpdate: (id: number, nuevoTexto: string) => void
   setRespuestaAdmin: Dispatch<SetStateAction<string>>
   respuestaAdmin: string
   getOneBrief: () => Promise<void>
+  handleUpdateEdit: (e: any) => void
   endOfMessagesRef: LegacyRef<HTMLDivElement> | undefined
   showError: errorValues | null
+  textoEditado: string
+  setTextoEditado: Dispatch<SetStateAction<string>>
+  permitirEdicion: (fechaResumen: string) => boolean
   setShowError: Dispatch<SetStateAction<errorValues | null>>
   proyecto: ValuesVenta | null
+  idEdicion2: number | null
+  setIdEdicion2: Dispatch<SetStateAction<number | null>>
 }): JSX.Element => {
   const handleTextAdmin = (e: any): void => {
     setRespuestaAdmin(e.target.value)
@@ -170,28 +184,60 @@ export const VistaAdministrador = ({
               {fechaElement}
               <div className={`relative bg-white w-full md:w-1/2 ${(resu.userId != '1') && (resu.userId != '99') && (resu.userId != '8') ? 'md:ml-[50%]' : ''} rounded-xl group`}>
                 {/* USUARIO */}
-                <BsReplyAllFill
-                  className="text-xl text-transparent group-hover:text-main transition-colors cursor-pointer absolute top-2 right-6 z-10"
-                  onClick={() => {
-                    setOpen(true)
-                    setIdAdd(resu.id)
-                  }}
-                />
+                {idEdicion2 == resu.id &&
+                  resu.userId == auth.id
+                  ? <FaSave
+                      className="text-xl hover:text-green-500 transition-colors cursor-pointer absolute top-2 right-6 z-10"
+                      onClick={() => {
+                        handleUpdate(resu.id, textoEditado)
+                      }}
+                    />
+                  : (
+                      permitirEdicion(resu.fecha) &&
+                    resu.userId == auth.id && (
+                      <BsPencilSquare
+                        className="text-xl hover:text-green-500 transition-colors cursor-pointer absolute top-2 right-6 z-10"
+                        onClick={() => {
+                          setIdEdicion2(resu.id)
+                          setTextoEditado(resu.texto)
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-expect-error
+                          inputRef.current.focus()
+                        }}
+                      />
+                      )
+                    )}
+                {auth.id != resu.userId &&
+                    <BsReplyAllFill
+                    className="text-xl text-transparent group-hover:text-main transition-colors cursor-pointer absolute top-2 right-6 z-10"
+                    onClick={() => {
+                      setOpen(true)
+                      setIdAdd(resu.id)
+                    }}
+                    />
+                }
                 <div
                   className="text-justify bg-white p-4 rounded-l-xl relative w-[93%] ml-3
                     lowercase first-letter:uppercase text-base"
                 >
-                  <span className="w-full text-lg lowercase first-letter:uppercase items-center gap-3 mb-3 font-bold text-black">
+                  <span className="w-full text-lg uppercase items-center gap-3 mb-3 font-bold text-black">
                   {(resu.user == 'Logos Perú')
                     ? 'ADMINISTRACIÓN'
                     : resu.user}
                   </span>
-                 { formatearTexto(resu.texto)}
-                  {/* <p
-                        className="text-black pt-4 lowercase break-words"
-                        style={{ whiteSpace: 'pre-line' }}
-                        dangerouslySetInnerHTML={{ __html: formatearTexto(resu.texto) }}
-                    /> */}
+                  {permitirEdicion(resu.fecha) && idEdicion2 == resu.id
+                    ? (
+                    <textarea
+                      className="w-full h-full pl-4 pr-14 outline-none py-4 resize-none overflow-hidden text-black"
+                      rows={1}
+                      onFocus={handleUpdateEdit}
+                      onChange={handleUpdateEdit}
+                      value={textoEditado}
+                    ></textarea>
+                      )
+                    : (
+                        formatearTexto(resu.texto)
+                      )}
                   <span className="w-full flex justify-end text-gray-400">
                     {resu.hora}
                   </span>
@@ -223,14 +269,14 @@ export const VistaAdministrador = ({
                 >
                   {idEdicion && idEdicion == respues.id && respues.userId == auth.id
                     ? <FaSave
-                      className="text-lg text-transparent group-hover:text-green-500 transition-colors cursor-pointer absolute top-2 right-10 z-10"
+                      className="text-lg text-transparent group-hover:text-green-500 transition-colors cursor-pointer absolute top-2 right-6 z-10"
                       onClick={() => {
                         editarResumen(resu.id, respues.id, respuestaAdmin)
                       }}
                     />
                     : respues.userId == auth.id && (
                     <BsPencilSquare
-                      className="text-lg text-transparent group-hover:text-green-500 transition-colors cursor-pointer absolute top-2 right-10 z-10"
+                      className="text-lg text-transparent group-hover:text-green-500 transition-colors cursor-pointer absolute top-2 right-6 z-10"
                       onClick={() => {
                         if (respues.texto != null) {
                           setRespuestaAdmin(respues.texto)
@@ -242,14 +288,6 @@ export const VistaAdministrador = ({
                       }}
                     />
                     )}
-                  {/* {respues.userId == auth.id && */}
-                    {/* <BsFillTrash2Fill
-                      className="text-lg text-transparent group-hover:text-red-500 transition-colors cursor-pointer absolute top-2 right-3 z-10"
-                      onClick={() => {
-                        eliminarResumen(resu.id, respues.id)
-                      }}
-                    /> */}
-                  {/* } */}
                   <span className="w-full flex justify-start uppercase items-center gap-3 mb-3 font-bold pl-4 text-black">
                     {(respues.user == 'Logos Perú')
                       ? 'ADMINISTRACIÓN'

@@ -43,8 +43,8 @@ export const VistaColaborador = ({
   resumenOrdenado: valuesResumen[]
   endOfMessagesRef: LegacyRef<HTMLDivElement> | undefined
   permitirEdicion: (fechaResumen: string) => boolean
-  idEdicion: number | null
   getOneBrief: () => Promise<void>
+  idEdicion: number | null
   setIdEdicion: Dispatch<SetStateAction<number | null>>
   textoEditado: string
   setResumen: Dispatch<SetStateAction<valuesResumen[]>>

@@ -239,7 +239,7 @@ export const TableStatus = (): JSX.Element => {
   }
   return (
     <>
-      <div className="flex gap-10">
+      <div className="flex gap-10 ">
         <ReactHTMLTableToExcel
           id="table-xls-button buttton1"
           className="bg-green-600 px-4 py-1 rounded-xl ml-4 w-fit"
@@ -316,9 +316,236 @@ export const TableStatus = (): JSX.Element => {
           </DialogContent>
         </Dialog>
       </div>
+      <div className="md:bg-[#fff] p-0 md:p-8 rounded-xl">
+          <div className="hidden md:grid grid_teplate_reporte gap-3 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300">
+            <h5 className="md:text-left line-clamp-1 w-[200px] ">COD_CONTRATO</h5>
+            <h5 className="md:text-left line-clamp-1 w-[200px] col-span-1">CLIENTE</h5>
+            <h5 className="md:text-left line-clamp-1 w-[200px] ">EMPRESA/NOMBRE</h5>
+            <h5 className="md:text-center line-clamp-1 w-[200px] ">TELEFONO</h5>
+            <h5 className="md:text-left line-clamp-1 w-[200px] ">CORREO</h5>
+            <h5 className="md:text-left line-clamp-1 w-[200px] ">TIPO SERVICIO</h5>
+            <h5 className="md:text-left line-clamp-1 w-[200px] ">PLAN</h5>
+            <h5 className="md:text-left line-clamp-1 w-[200px] ">DESCRIPCIÓN</h5>
+            <h5 className="md:text-left line-clamp-1 w-[200px] ">ENCARGADO</h5>
+            <h5 className="md:text-left line-clamp-1 w-[130px] ">FECHA ALTA</h5>
+            <h5 className="md:text-left line-clamp-1 w-[130px] "> FECHA INICIO </h5>
+            <h5 className="md:text-center line-clamp-1 w-[130px]">FECHA FINAL</h5>
+            <h5 className="md:text-center line-clamp-1 w-[200px]">ESTADO</h5>
+          </div>
+          {productos
+            .filter((producto) =>
+              tieneComentariosEnFechas(producto, generarFechas())
+            )
+            .map((orden, index) => {
+              return (
+                <div
+                  className={`grid grid_teplate_reporte relative gap-3 items-center  mb-3 md:mb-0 ${
+                    index % 2 == 0 ? 'bg-transparent' : 'bg-gray-200'
+                  } md:px-4 md:py-1 rounded-xl relative shadow_class`}
+                  key={orden.id}
+                >
+                  {/* <div className="flex flex-col gap-3 md:hidden bg-form p-4 rounded-xl">
+                    <div className="flex md:hidden items-center gap-2">
+                      <h5 className="md:hidden text-black font-bold mb-0 text-sm">
+                        ID:
+                      </h5>
+                      <span className="flex md:justify-left items-center gap-3 font-bold text-black">
+                        #{orden.id}
+                      </span>
+                    </div>
+                    <div className="md:hidden flex justify-between gap-3">
+                      <div className="md:text-center ">
+                        <h5 className="md:hidden text-black font-bold mb-0 text-sm">
+                          Cliente
+                        </h5>
+                        <span className="text-left w-full text-black line-clamp-1">
+                          {orden.nombres} {orden.apellidos}
+                        </span>
+                      </div>
+                      <div className="md:text-right ">
+                        <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
+                          Celular
+                        </h5>
+                        <span className="text-right w-full text-black line-clamp-1">
+                          {orden.celular}
+                        </span>
+                      </div>
+                    </div>
+                    {orden.empresa && (
+                      <div className="md:hidden flex justify-between gap-3">
+                        <div className="md:text-center ">
+                          <h5 className="md:hidden text-black font-bold mb-0 text-sm">
+                            Empresa
+                          </h5>
+                          <span className="text-left w-full text-black line-clamp-1">
+                            {orden.empresa}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    <div className="md:hidden flex justify-between gap-3">
+                      <div className="md:text-center ">
+                        <h5 className="md:hidden text-[#62be6d] font-bold mb-0 text-sm ">
+                          Fecha de creación
+                        </h5>
+                        <span className="text-left block text-[#62be6d]">
+                          {new Date(orden.created_at).toLocaleDateString(
+                            undefined,
+                            {
+                              year: 'numeric',
+                              month: '2-digit',
+                              day: '2-digit'
+                            }
+                          )}{' '}
+                        </span>
+                      </div>
+                      <div className="md:text-right ">
+                        <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
+                          DNI/RUC
+                        </h5>
+                        <span className="text-right w-full text-black line-clamp-1">
+                          {orden.dni_ruc}
+                        </span>
+                      </div>
+                    </div>
+                    {orden.email && (
+                      <div className="md:hidden flex justify-between gap-3">
+                        <div className="md:text-left w-full">
+                          <h5 className="md:hidden text-black text-left font-bold mb-0 text-sm ">
+                            Email
+                          </h5>
+                          <span className="text-left w-full text-black line-clamp-1">
+                            {orden.email}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div> */}
+                  <div className="text-left">
+                    <span className="text-left block text-black  line-clamp-1 w-[200px]">
+                      {orden.id_contrato}
+                    </span>
+                  </div>
+                  <div className="hidden md:block md:text-left w-[200px]">
+                    <div className="relative">
+                        <div className='line-clamp-1 '>
+                            <span className="text-left block text-black w-full lowercase first-letter:uppercase">
+                                {orden.nombres} {orden.apellidos}
+                            </span>
+                        </div>
+                    </div>
+                  </div>
+                  <div className="hidden md:block md:text-left w-[200px]">
+                    <div className="line-clamp-1">
+                      <span className="text-left block text-black w-full lowercase first-letter:uppercase">
+                        {orden.nombre_empresa}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="hidden md:block md:text-center w-[200px]">
+                    <span className="text-center block text-black w-full line-clamp-1">
+                        {orden.celular}
+                    </span>
+                  </div>
+                  <div className="hidden md:block md:text-left w-[200px]">
+                    <span className="text-left block text-black w-full line-clamp-1">
+                        {orden.email}
+                    </span>
+                  </div>
+                  <div className="hidden md:block md:text-left w-[200px]">
+                    <span className="text-left text-black w-full line-clamp-1">
+                    {planes.map((plan) =>
+                      orden.id_contrato.split('_')[0] == plan.codigo
+                        ? plan.tipo
+                        : ''
+                    )}
+                    </span>
+                  </div>
+                  <div className="hidden md:block md:text-left w-[200px]">
+                    <p className="text-black line-clamp-1">
+                    {planes.map((plan) =>
+                      orden.id_contrato.split('_')[0] == plan.codigo
+                        ? plan.nombre
+                        : ''
+                    )}
+                    </p>
+                  </div>
+                  <div className="hidden md:block md:text-left w-[200px]">
+                    <p className="text-black line-clamp-1">
+                    {
+                      orden.observaciones
+                        ? orden.observaciones
+                        : planes.map((plan) =>
+                          orden.id_contrato.split('_')[0] == plan.codigo
+                            ? plan.descripcion
+                            : ''
+                        )
+                      }
+                    </p>
+                  </div>
+                  <div className="hidden md:block md:text-left w-[200px]">
+                    <p className="text-black line-clamp-1">
+                    {JSON.parse(orden.asignacion) != null &&
+                      JSON.parse(orden.asignacion).length > 0
+                      ? JSON.parse(orden.asignacion).map(
+                        (asignacion: any) =>
+                          colaboradores
+                            .filter(
+                              (colaborador: { id: number, name: string }) =>
+                                // eslint-disable-next-line eqeqeq
+                                colaborador.id == asignacion.peso
+                            )
+                            .map(
+                              (colaborador: { name: string }) =>
+                                colaborador.name
+                            )
+                            .join(', ')
+                      )
+                      : 'Aun no se te asigna un diseñador'}
+                    </p>
+                  </div>
+                  <div className="hidden md:block md:text-left w-full">
+                    <p className="text-black line-clamp-1">
+                    {orden.fecha_alta}
+                    </p>
+                  </div>
+                  <div className="hidden md:block md:text-left w-full">
+                    <p className="text-black line-clamp-1">
+                    {orden.fecha_inicio}
+                    </p>
+                  </div>
+                  <div className="hidden md:block md:text-left w-full">
+                    <p className="text-black line-clamp-1">
+                    {orden.fecha_fin}
+                    </p>
+                  </div>
+                  <div className="hidden md:block md:text-center w-full">
+                    <p className="text-black text-center">
+                    {orden.estado == '1'
+                      ? 'Abandono'
+                      : orden.fecha_fin != null
+                        ? 'Finalizado'
+                        : 'En proceso'}
+                    </p>
+                  </div>
+                </div>
+              )
+            })}
+          {/* <div className="flex flex-col md:flex-row gap-5 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">
+            <p className="text-md ml-1 text-black">
+              {totalRegistros} Registros
+            </p>
+            <Paginacion
+              totalPosts={totalPosts}
+              cantidadRegistros={cantidadRegistros}
+              paginaActual={paginaActual}
+              setpaginaActual={setpaginaActual}
+            />
+          </div> */}
+        </div>
       <Table
         id="productos2"
-        className="table align-middle table-hover display w-full text-black"
+        className=" align-middle table-hover display w-full text-black hidden"
         style={{ marginTop: '30px', width: 'auto' }}
       >
         {/* <thead className="table-light">

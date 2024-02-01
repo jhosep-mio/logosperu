@@ -225,6 +225,11 @@
   }
 }
 
+.grid_teplate_reporte {
+    grid-template-columns: repeat(13, 1fr);
+  }
+  
+
 .grid_teplate_ventas {
   grid-template-columns: repeat(19, 1fr);
 }

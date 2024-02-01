@@ -195,6 +195,9 @@ export const ViewAvance = ({ open, setOpen, avance, datos }: values): JSX.Elemen
         avance.imagenes.forEach((image1, index1) => {
           data.append(`names1[${index1}]`, image1.imagen1.archivoName)
         })
+        avance.archivos.forEach((image1, index1) => {
+          data.append(`names2[${index1}]`, image1.imagen1.archivoName)
+        })
         try {
           const respuesta = await axios.post(
                 `${Global.url}/renviarAvances`,

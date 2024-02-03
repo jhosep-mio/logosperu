@@ -14,25 +14,7 @@ import { DeleteItemsNew } from '../../../shared/DeleteItemsNew'
 export const Preclientes = (): JSX.Element => {
   const { setTitle } = useAuth()
   const [open, setOpen] = useState(false)
-  const [productos, setProductos] = useState<ValuesPreventaModificate[]>([
-    {
-      id: 0,
-      nombres: '',
-      apellidos: '',
-      email: '',
-      celular: '',
-      empresa: '',
-      edad: '',
-      sexo: '',
-      medio_ingreso: '',
-      id_contrato: '',
-      created_at: '',
-      dni_ruc: '',
-      antiguo: '',
-      estado: '',
-      arraycontacto: ''
-    }
-  ])
+  const [productos, setProductos] = useState<ValuesPreventaModificate[]>([])
   const token = localStorage.getItem('token')
   const [datos, setdatos] = useState<ValuesPreventaModificate>({
     id: 0,

@@ -26,6 +26,7 @@ import {
 import { BsPersonVcardFill } from 'react-icons/bs'
 import { HiRectangleGroup } from 'react-icons/hi2'
 import { GrTransaction } from 'react-icons/gr'
+import { FaTasks } from 'react-icons/fa'
 
 const SideBar = (): JSX.Element => {
   const {
@@ -104,7 +105,7 @@ const SideBar = (): JSX.Element => {
       >
         <div>
           <h1 className="text-center text-2xl font-bold text-black mb-5">
-            <img src={logo} alt="" className="m-auto w-28" />
+            <img src={logo} alt="" className="m-auto w-[5.4rem]" />
           </h1>
           <hr className="mb-5" />
           <ul className="ml-0 p-0">
@@ -632,6 +633,22 @@ const SideBar = (): JSX.Element => {
                   </>
                 ))
             )}
+
+            <li key={243}>
+              <Link
+                to="gestor-tareas"
+                className={
+                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                }
+                onClick={() => {
+                  handleItemClick2(1)
+                  setShowMenu(false)
+                  setLoadingComponents(false)
+                }}
+              >
+              <FaTasks className="text-main/80 text-xl" />{' '} Gestor de tareas
+              </Link>
+            </li>
 
             {auth.id == '9' &&
             <li key={233}>

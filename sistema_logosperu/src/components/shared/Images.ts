@@ -34,7 +34,54 @@ import pdf from './../../assets/plataformas/pdf.png'
 import nodata from './../../assets/plataformas/notfound.svg'
 import chat from './../../assets/plataformas/chat.svg'
 
+import imagen1 from './../../assets/paisajes/imagen1.jpg'
+import imagen2 from './../../assets/paisajes/imagen2.jpg'
+import imagen3 from './../../assets/paisajes/imagen3.jpg'
+import imagen4 from './../../assets/paisajes/imagen4.jpg'
+import imagen5 from './../../assets/paisajes/imagen5.jpg'
+import imagen6 from './../../assets/paisajes/imagen6.jpg'
+import imagen7 from './../../assets/paisajes/imagen7.jpg'
+import imagen8 from './../../assets/paisajes/imagen8.jpg'
+import imagen9 from './../../assets/paisajes/imagen9.jpg'
+import imagen10 from './../../assets/paisajes/imagen10.jpg'
+import imagen11 from './../../assets/paisajes/imagen11.jpg'
+import imagen12 from './../../assets/paisajes/imagen12.jpg'
+import imagen13 from './../../assets/paisajes/imagen13.jpg'
+import imagen14 from './../../assets/paisajes/imagen14.jpg'
+import imagen15 from './../../assets/paisajes/imagen15.jpg'
+import imagen16 from './../../assets/paisajes/imagen16.jpg'
+import imagen17 from './../../assets/paisajes/imagen17.jpg'
+import imagen18 from './../../assets/paisajes/imagen18.jpg'
+import imagen19 from './../../assets/paisajes/imagen19.jpg'
+import imagen20 from './../../assets/paisajes/imagen20.jpg'
+import imagen21 from './../../assets/paisajes/imagen21.jpg'
+import imagen22 from './../../assets/paisajes/imagen22.jpg'
+import imagen23 from './../../assets/paisajes/imagen23.jpg'
+
 export {
+  imagen1,
+  imagen2,
+  imagen3,
+  imagen4,
+  imagen5,
+  imagen6,
+  imagen7,
+  imagen8,
+  imagen9,
+  imagen10,
+  imagen11,
+  imagen12,
+  imagen13,
+  imagen14,
+  imagen15,
+  imagen16,
+  imagen17,
+  imagen18,
+  imagen19,
+  imagen20,
+  imagen21,
+  imagen22,
+  imagen23,
   chat,
   nodata,
   zip,

@@ -79,6 +79,8 @@ import { EditarClasificados } from '../components/private/tables/clasificados/Ed
 import { ListaClientesColaboradores } from '../components/private/tables/clientes-colaboradores/ListaClientesColaboradores'
 import { ListaTransacciones } from '../components/private/tables/transacciones/ListaTransacciones'
 import { VerCliente } from '../components/private/tables/clientes/VerCliente'
+import { IndexGestor } from '../components/private/tables/gestor-tareas/IndexGestor'
+import { VistaTarea } from '../components/private/tables/gestor-tareas/VistaTarea'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -91,6 +93,9 @@ export const Routing = (): JSX.Element => {
 
           {/* PRIVADO */}
           <Route path="admin" element={<PrivateLayout />}>
+            {/* GESTOR DE TAREAS */}
+            <Route path="gestor-tareas" element={<IndexGestor />} />
+            <Route path="gestor-tareas/:idAuth/view/:id/image/:index" element={<VistaTarea />} />
 
             {/* PLANES */}
             <Route index element={<ListaBriefDiseñoNew />} />

@@ -497,6 +497,17 @@ export interface deleteValues {
   setTotalRegistros: React.Dispatch<React.SetStateAction<number>>
 }
 
+export interface contenidoInteface {
+  id: string
+  titulo: string
+}
+
+export interface tableroInterface {
+  id: string
+  titulo: string
+  contenido: null | contenidoInteface[]
+}
+
 export interface deleteValuesNew {
   ruta: string
   id: number | null

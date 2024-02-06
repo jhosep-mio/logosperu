@@ -2,11 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-
 ::-webkit-scrollbar {
   width: 0px;
 }
 // ELIMIANR
+.modal_citas_clientes2 {
+  & .MuiPaper-root {
+    width: 60vw !important;
+    max-width: 60vw !important;
+    min-height: 600px;
+    background-color: #F1F2F4;
+  }
+}
+
 .modal_citas_clientes {
   & .MuiPaper-root {
     width: 900px;
@@ -227,9 +235,8 @@
 }
 
 .grid_teplate_reporte {
-    grid-template-columns: repeat(13, 1fr);
-  }
-  
+  grid-template-columns: repeat(13, 1fr);
+}
 
 .grid_teplate_ventas {
   grid-template-columns: repeat(19, 1fr);
@@ -933,4 +940,50 @@ input[type="date"] {
 .react-calendar__tile--active:enabled:hover,
 .react-calendar__tile--active:enabled:focus {
   background: #d23741 !important;
+}
+
+.calendario_tareas .rbc-toolbar {
+  & :first-child {
+    display: none !important;
+  }
+}
+
+.rbc-btn-group > button:first-child:not(:last-child) {
+  display: inline-block !important;
+}
+
+.calendario_tareas .rbc-active {
+  background: #0e7490 !important;
+  color: white !important;
+}
+
+.calendario_tareas .rbc-header {
+  background: #0e7490 !important;
+  color: white !important;
+}
+
+.calendario_tareas .react-calendar__month-view__weekdays__weekday {
+  color: #0e7490 !important;
+  font-weight: bolder !important;
+}
+
+.calendario_tareas .rbc-event .rbc-event-label {
+  background: transparent !important;
+}
+
+.calendario_tareas .react-calendar__tile--active:enabled:hover,
+.calendario_tareas .react-calendar__tile--active:enabled:focus {
+  background: transparent !important;
+}
+
+.calendario_tareas .rbc-events-container .rbc-event {
+  height: fit-content !important;
+  background: #579eb2 !important;
+}
+
+.fondo_backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
 }

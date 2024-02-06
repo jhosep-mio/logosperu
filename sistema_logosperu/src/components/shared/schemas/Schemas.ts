@@ -173,6 +173,10 @@ export const SchemePreClientes = Yup.object().shape({
   apellidos: Yup.string().required('Este campo es requerido').min(1)
 })
 
+export const ShemaUsuarios = Yup.object().shape({
+  name: Yup.string().required('Este campo es requerido').min(1)
+})
+
 export const SchemePreventas = Yup.object().shape({
   nombres: Yup.string().required('Este campo es requerido').min(1),
   empresa: Yup.string().required('Este campo es requerido').min(1),

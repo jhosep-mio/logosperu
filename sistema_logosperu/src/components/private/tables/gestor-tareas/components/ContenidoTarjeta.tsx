@@ -1,11 +1,13 @@
 import { SlPencil } from 'react-icons/sl'
 import {
   type tableroInterface,
-  type contenidoInteface
+  type contenidoInteface,
+  type DuoContent
 } from '../../../../shared/schemas/Interfaces'
 import { useRef, type Dispatch, type SetStateAction, useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { IoClose } from 'react-icons/io5'
+import { useParams } from 'react-router-dom'
 
 export const ContenidoTarjeta = ({
   table,
@@ -15,7 +17,11 @@ export const ContenidoTarjeta = ({
   setTituloContenido,
   setSeccionAbierta,
   tituloContenidoEdicion,
-  settituloContenidoEdicion
+  settituloContenidoEdicion,
+  updateCita,
+  events,
+  setOpenModal,
+  setContenidoSeleccionado
 }: {
   table: tableroInterface
   seccionAbierta: string | null
@@ -25,26 +31,55 @@ export const ContenidoTarjeta = ({
   setSeccionAbierta: Dispatch<SetStateAction<string | null>>
   tituloContenidoEdicion: string | null
   settituloContenidoEdicion: Dispatch<SetStateAction<string | null>>
+  updateCita: (updatedEvents: Event[]) => Promise<void>
+  setOpenModal: Dispatch<SetStateAction<boolean>>
+  setContenidoSeleccionado: Dispatch<SetStateAction<DuoContent | null>>
+  events: Event[]
 }): JSX.Element => {
   const textareaRef = useRef(null)
+  const { idTablero } = useParams()
 
   const handleAgregarTarjeta = (tableId: string): void => {
     if (tituloContenido?.trim()) {
-      setTablero((prevTablero: any) =>
-        prevTablero.map((tarjeta: tableroInterface) =>
-          tarjeta.id === tableId
+      const filteredEvents = events.filter((event: any) => event.id === idTablero)
+      const contenidoFiltrado: any = filteredEvents[0]
+      const idUnico = uuidv4()
+      if (contenidoFiltrado) {
+        const updatedEvents = events.map((event: any) =>
+          event.id === idTablero
             ? {
-                ...tarjeta,
-                contenido: [
-                  ...(tarjeta.contenido ?? []), // Agregar elementos anteriores si existen
-                  { id: uuidv4(), titulo: tituloContenido }
-                ]
+                ...event,
+                contenido: event.contenido.map((innerContent: any) =>
+                  innerContent.id === tableId
+                    ? {
+                        ...innerContent,
+                        contenido: [
+                          ...(innerContent.contenido || []),
+                          { id: idUnico, titulo: tituloContenido, contexto: null }
+                        ]
+                      }
+                    : innerContent
+                )
               }
-            : tarjeta
+            : event
         )
-      )
-      setTituloContenido('')
-      setSeccionAbierta(null)
+        setTablero((prevTablero: any) =>
+          prevTablero.map((tarjeta: tableroInterface) =>
+            tarjeta.id === tableId
+              ? {
+                  ...tarjeta,
+                  contenido: [
+                    ...(tarjeta.contenido ?? []), // Agregar elementos anteriores si existen
+                    { id: idUnico, titulo: tituloContenido, contexto: null }
+                  ]
+                }
+              : tarjeta
+          )
+        )
+        updateCita(updatedEvents)
+        setTituloContenido('')
+        setSeccionAbierta(null)
+      }
     }
   }
 
@@ -65,22 +100,47 @@ export const ContenidoTarjeta = ({
     nuevoTitulo: string
   ): void => {
     // Aquí debes implementar la lógica para actualizar el título en tu estado/tablero
-    setTablero((prevTablero: any) =>
-      prevTablero.map((tarjeta: tableroInterface) =>
-        tarjeta.id === idTable
+
+    const filteredEvents = events.filter((event: any) => event.id === idTablero)
+    const contenidoFiltrado: any = filteredEvents[0]
+    if (contenidoFiltrado) {
+      const updatedEvents = events.map((event: any) =>
+        event.id === idTablero
           ? {
-              ...tarjeta,
-              contenido: tarjeta.contenido?.map((contenido) =>
-                contenido.id === idContenido
-                  ? { ...contenido, titulo: nuevoTitulo }
-                  : contenido
+              ...event,
+              contenido: event.contenido.map((innerContent: any) =>
+                innerContent.id === idTable
+                  ? {
+                      ...innerContent,
+                      contenido: innerContent.contenido?.map((contenido: any) =>
+                        contenido.id === idContenido
+                          ? { ...contenido, titulo: nuevoTitulo }
+                          : contenido
+                      )
+                    }
+                  : innerContent
               )
             }
-          : tarjeta
+          : event
       )
-    )
-    // Desactivar la edición del título
-    settituloContenidoEdicion(null)
+      updateCita(updatedEvents)
+      setTablero((prevTablero: any) =>
+        prevTablero.map((tarjeta: tableroInterface) =>
+          tarjeta.id === idTable
+            ? {
+                ...tarjeta,
+                contenido: tarjeta.contenido?.map((contenido) =>
+                  contenido.id === idContenido
+                    ? { ...contenido, titulo: nuevoTitulo }
+                    : contenido
+                )
+              }
+            : tarjeta
+        )
+      )
+
+      settituloContenidoEdicion(null)
+    }
   }
 
   const autoAdjustTextareaHeight = (textarea: HTMLTextAreaElement): void => {
@@ -154,12 +214,9 @@ export const ContenidoTarjeta = ({
                     ></textarea>
                     <button
                     onClick={(e: any) => {
-                      if (e.target.value.length > 0) {
-                        handleEditarTituloContenido(
-                          table.id,
-                          contenido.id,
-                          e.target.value
-                        )
+                      e.stopPropagation()
+                      if (tituloEdicion.length > 0) {
+                        handleEditarTituloContenido(table.id, contenido.id, tituloEdicion)
                       }
                     }}
                     className='absolute -bottom-10 z-30 flex gap-2 px-2 py-1 w-fit items-center bg-blue-500 hover:bg-blue-600 transition-colors cursor-pointer  rounded-md text-white'>Guardar</button>
@@ -168,7 +225,9 @@ export const ContenidoTarjeta = ({
                 )
               : (
                 <>
-                    <p className="bg-gray-300 p-2 w-full text-black rounded-md break-words resize-none">
+                    <p
+                    onClick={() => { setOpenModal(true); setContenidoSeleccionado({ contenido, contexto: table }) }}
+                    className="bg-gray-300 group-hover:border-cyan-700 group-hover:cursor-pointer transition-colors border border-transparent z-[2] p-2 w-full text-black rounded-md break-words resize-none">
                         {contenido.titulo ?? ''}
                     </p>
                     <span
@@ -177,7 +236,7 @@ export const ContenidoTarjeta = ({
                       setTituloEdicion(contenido.titulo)
                       e.stopPropagation()
                     }}
-                    className="hidden group-hover:block transition-all cursor-pointer absolute top-0 right-0 w-fit h-fit bg-gray-300 hover:bg-gray-400 p-2 rounded-full"
+                    className="hidden group-hover:block transition-all group-hover:cursor-pointer absolute top-[1px] z-[0] right-[1px] w-fit h-fit bg-gray-300 hover:bg-gray-400 p-2 rounded-full"
                     >
                     <SlPencil className="text-xs text-black" />
                     </span>

@@ -31,21 +31,16 @@ import { v4 as uuidv4 } from 'uuid'
 import { IoClose } from 'react-icons/io5'
 import { ContenidoTarjeta } from './components/ContenidoTarjeta'
 import { TItuloTarjeta } from './components/TItuloTarjeta'
-
-interface contenidoInteface {
-  id: string
-  titulo: string
-}
-
-interface tableroInterface {
-  id: string
-  titulo: string
-  contenido: null | contenidoInteface[]
-}
+import axios from 'axios'
+import { Global } from '../../../../helper/Global'
+import moment from 'moment'
+import { Backdrop, CircularProgress } from '@mui/material'
+import { ModalContenido } from './components/ModalContenido'
+import { type DuoContent, type tableroInterface } from '../../../shared/schemas/Interfaces'
 
 export const VistaTarea = (): JSX.Element => {
   const { auth } = useAuth()
-  const { index } = useParams()
+  const { index, idTablero } = useParams()
   const totalImages = 23
   const getImageUrl = (): string => {
     // Asegúrate de tener todas las imágenes importadas
@@ -84,16 +79,66 @@ export const VistaTarea = (): JSX.Element => {
   const [tarea, setTarea] = useState<string | null>(null)
   const [tituloContenido, setTituloContenido] = useState<string | null>(null)
   const [agregar, setAgregar] = useState(false)
-  const handleAgregarTarea = (): void => {
-    if (tarea) {
-      setTablero([
-        ...tablero,
-        { id: uuidv4(), titulo: tarea, contenido: null }
-      ])
-      setTarea(null)
-      setAgregar(false)
+  const [openModal, setOpenModal] = useState(false)
+  const token = localStorage.getItem('token')
+  const [events, setEvents] = useState<[]>([])
+  const [colaboradores, setColaboradores] = useState<never[]>([])
+  const [loadingComponent, setLoadingComponent] = useState(false)
+
+  const updateCita = async (updatedEvents: Event[]): Promise<void> => {
+    const data = new FormData()
+    data.append('gestor_tareas', JSON.stringify(updatedEvents))
+    data.append('_method', 'PUT')
+    try {
+      setLoadingComponent(true)
+      const respuesta = await axios.post(
+        `${Global.url}/updateGestorTareas/${auth.id}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+          }
+        }
+      )
+
+      if (respuesta.data.status == 'success') {
+        getTareas()
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoadingComponent(false)
     }
   }
+
+  const handleAgregarTarea = (): void => {
+    if (tarea) {
+      const filteredEvents = events.filter((event: any) => event.id === idTablero)
+      const contenidoFiltrado: any = filteredEvents[0]
+      const idUnico = uuidv4()
+      if (contenidoFiltrado) {
+        contenidoFiltrado.contenido = [
+          ...(contenidoFiltrado.contenido || []),
+          { id: idUnico, titulo: tarea, contenido: null }
+        ]
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        const updatedEvents = events.map((event) => event.id === idTablero ? contenidoFiltrado : event)
+        setTablero((prevTablero) => {
+          const newTarjeta = { id: idUnico, titulo: tarea, contenido: null }
+          return Array.isArray(prevTablero) ? [...prevTablero, newTarjeta] : [newTarjeta]
+        })
+        updateCita(updatedEvents)
+        setTarea('')
+        setAgregar(false)
+      }
+    }
+  }
+
+  const [loading, setLoading] = useState(true)
+  const [contenidoSeleccionado, setContenidoSeleccionado] = useState<DuoContent | null >(null)
   const [seccionAbierta, setSeccionAbierta] = useState<string | null>(null)
   const textareaRef = useRef(null)
   const tareaTareRef = useRef(null)
@@ -119,10 +164,73 @@ export const VistaTarea = (): JSX.Element => {
   }, [agregar])
   //   EDITAR TITULOSECCION
   const [tituloEdicion, settituloEdicion] = useState<string | null>(null)
-  const [tituloContenidoEdicion, settituloContenidoEdicion] = useState< string | null >(null)
+  const [tituloContenidoEdicion, settituloContenidoEdicion] = useState<
+  string | null
+  >(null)
+
+  const getColaboradores = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/getUsuarios`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+    setColaboradores(request.data)
+  }
+
+  const getTareas = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/getTareas/${auth.id}`, {
+      headers: {
+        Authorization: `Bearer ${
+          token !== null && token !== '' ? `Bearer ${token}` : ''
+        }`
+      }
+    })
+    if (request.data[0].gestor_tareas) {
+      const parsedEvents = JSON.parse(request.data[0].gestor_tareas).map(
+        (event: any) => ({
+          ...event,
+          start: moment(event.start).toDate(),
+          end: moment(event.end).toDate()
+        })
+      )
+      const filteredEvents = parsedEvents.filter(
+        (event: any) => event.id === idTablero
+      )
+      setTablero(filteredEvents[0].contenido)
+      setEvents(parsedEvents)
+    }
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    getColaboradores()
+    getTareas()
+  }, [])
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent): void => {
+      if (loadingComponent) {
+        // Mostrar alerta si se intenta cerrar la página mientras se está cargando
+        event.preventDefault()
+        event.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [loadingComponent])
 
   return (
     <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+        className='fondo_backdrop'
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
       <div className="flex gap-3 items-center border-b border-gray-300 h-[7vh] py-1 md:py-0 lg:h-[10vh] mx-1 md:px-8 fixed w-full z-20 ">
         <div className="w-12 md:w-14 h-full md:h-14 rounded-md bg-gradient-to-r from-cyan-500 to-blue-400 flex justify-center text-white text-base md:text-2xl items-center font-extrabold">
           {auth.name.trim() !== '' ? auth.name.charAt(0).toUpperCase() : ''}
@@ -149,15 +257,35 @@ export const VistaTarea = (): JSX.Element => {
         }}
       >
         <div className="w-full h-full relative flex gap-3 pt-[8vh]">
-          {tablero.length > 0 &&
+          {tablero?.length > 0 &&
             tablero.map((table) => (
               <div
                 key={table.id}
                 className="bg-[#ffffff] w-[300px] pt-1 pb-2 h-fit px-2 rounded-xl"
               >
-                <TItuloTarjeta setTablero={setTablero} settituloEdicion={settituloEdicion} table={table} tituloEdicion={tituloEdicion} />
+                <TItuloTarjeta
+                  setTablero={setTablero}
+                  settituloEdicion={settituloEdicion}
+                  table={table}
+                  tituloEdicion={tituloEdicion}
+                  updateCita={updateCita}
+                  events={events}
+                />
                 {/* CONTENIDO */}
-                <ContenidoTarjeta settituloContenidoEdicion={settituloContenidoEdicion} tituloContenidoEdicion={tituloContenidoEdicion} seccionAbierta={seccionAbierta} setSeccionAbierta={setSeccionAbierta} setTablero={setTablero} setTituloContenido={setTituloContenido} table={table} tituloContenido={tituloContenido} />
+                <ContenidoTarjeta
+                  settituloContenidoEdicion={settituloContenidoEdicion}
+                  tituloContenidoEdicion={tituloContenidoEdicion}
+                  seccionAbierta={seccionAbierta}
+                  setSeccionAbierta={setSeccionAbierta}
+                  setTablero={setTablero}
+                  setTituloContenido={setTituloContenido}
+                  setContenidoSeleccionado={setContenidoSeleccionado}
+                  table={table}
+                  tituloContenido={tituloContenido}
+                  updateCita={updateCita}
+                  events={events}
+                  setOpenModal={setOpenModal}
+                />
                 {/* AÑADIR TARJETA */}
                 {seccionAbierta != table.id && (
                   <div
@@ -174,8 +302,7 @@ export const VistaTarea = (): JSX.Element => {
               </div>
             ))}
           {!agregar
-            ? (
-            <div
+            ? <div
               className="bg-[#ffffff] w-[300px] h-fit rounded-xl z-10"
               onClick={(e) => {
                 setAgregar(true)
@@ -187,7 +314,6 @@ export const VistaTarea = (): JSX.Element => {
                 <p className="text-gray-600">Añadir una tarjeta</p>
               </div>
             </div>
-              )
             : (
             <div
               className="bg-[#ffffff] w-[300px] pb-2 h-fit px-2 rounded-xl z-10 "
@@ -236,6 +362,8 @@ export const VistaTarea = (): JSX.Element => {
               )}
         </div>
       </section>
+
+      <ModalContenido colaboradores={colaboradores} open={openModal} setOpen={setOpenModal} contenidoSeleccionado={contenidoSeleccionado} events={events} updateCita={updateCita}/>
     </>
   )
 }

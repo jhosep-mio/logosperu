@@ -3,20 +3,25 @@ import { useRef, useEffect, type Dispatch, type SetStateAction, useState } from 
 import { SlOptions } from 'react-icons/sl'
 import { IoClose } from 'react-icons/io5'
 import Swal from 'sweetalert2'
+import { useParams } from 'react-router-dom'
 
 export const TItuloTarjeta = ({
   tituloEdicion,
   table,
   setTablero,
-  settituloEdicion
+  settituloEdicion,
+  updateCita,
+  events
 }: {
   tituloEdicion: string | null
   table: tableroInterface
   setTablero: Dispatch<SetStateAction<tableroInterface[]>>
   settituloEdicion: Dispatch<SetStateAction<string | null>>
+  updateCita: (updatedEvents: Event[]) => Promise<void>
+  events: Event[]
 }): JSX.Element => {
   const tituloEdicionTareRef = useRef(null)
-
+  const { idTablero } = useParams()
   const autoAdjustTextareaHeight = (textarea: HTMLTextAreaElement): void => {
     textarea.style.height = 'auto'
     textarea.style.height = `${textarea.scrollHeight}px`
@@ -35,14 +40,25 @@ export const TItuloTarjeta = ({
   }, [tituloEdicion])
 
   const handleEditarTitulo = (id: string, nuevoTitulo: string): void => {
-    // Aquí debes implementar la lógica para actualizar el título en tu estado/tablero
-    setTablero((prevTablero) =>
-      prevTablero.map((tarjeta) =>
+    const filteredEvents = events.filter((event: any) => event.id === idTablero)
+    const contenidoFiltrado: any = filteredEvents[0]
+    if (contenidoFiltrado) {
+      contenidoFiltrado.contenido = contenidoFiltrado.contenido.map((tarjeta: any) =>
         tarjeta.id === id ? { ...tarjeta, titulo: nuevoTitulo } : tarjeta
       )
-    )
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      const updatedEvents = events.map((event) => event.id === id ? contenidoFiltrado : event)
+      // Aquí debes implementar la lógica para actualizar el título en tu estado/tablero
+      setTablero((prevTablero) =>
+        prevTablero.map((tarjeta) =>
+          tarjeta.id === id ? { ...tarjeta, titulo: nuevoTitulo } : tarjeta
+        )
+      )
+      updateCita(updatedEvents)
+      settituloEdicion(null)
+    }
     // Desactivar la edición del título
-    settituloEdicion(null)
   }
 
   const [tituloAeditar, setTituloAeditar] = useState('')
@@ -69,11 +85,24 @@ export const TItuloTarjeta = ({
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        setTablero((prevTablero) => prevTablero.filter((tarjeta) => tarjeta.id !== id))
-        setOptions(null)
+        const filteredEvents = events.filter((event: any) => event.id === idTablero)
+        const contenidoFiltrado: any = filteredEvents[0]
+
+        if (contenidoFiltrado) {
+          const updatedContenido = contenidoFiltrado.contenido.filter((tarjeta: any) => tarjeta.id !== id)
+          // Crear una copia del evento excluyendo el objeto con idTablero dentro de contenido
+          const updatedEvent = {
+            ...contenidoFiltrado,
+            contenido: updatedContenido
+          }
+          const updatedEvents = events.map((event: any) => (event.id === idTablero ? updatedEvent : event))
+          updateCita(updatedEvents)
+          setTablero((prevTablero) => prevTablero.filter((tarjeta) => tarjeta.id !== id))
+        }
       }
     })
   }
+
   return (
     <div className="py-0 flex">
       {tituloEdicion == table.id
@@ -86,7 +115,7 @@ export const TItuloTarjeta = ({
             onKeyDown={(e: any) => {
               if (e.key === 'Enter') {
                 e.preventDefault() // Previene el salto de línea predeterminado
-                if (tituloEdicion.length > 0) {
+                if (tituloAeditar.length > 0) {
                   handleEditarTitulo(table.id, e.target.value)
                 }
               }

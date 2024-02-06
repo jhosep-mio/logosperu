@@ -500,6 +500,18 @@ export interface deleteValues {
 export interface contenidoInteface {
   id: string
   titulo: string
+  contenido: null | ContextoInterface
+}
+
+export interface DuoContent {
+  contenido: contenidoInteface
+  contexto: tableroInterface
+}
+
+export interface ContextoInterface {
+  id: string
+  titulo: string
+  contexto: string
 }
 
 export interface tableroInterface {
@@ -608,6 +620,10 @@ export interface arrayPropuestas {
   id: number | null
   sustentacion: string
   imagen1: ImagenState
+}
+
+export interface valuesUsuario {
+  name: string
 }
 
 export interface ValuesPreventa {

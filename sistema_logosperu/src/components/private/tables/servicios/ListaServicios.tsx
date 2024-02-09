@@ -227,7 +227,7 @@ export const ListaServicios = (): JSX.Element => {
     const comentarios = productos.flatMap((producto) => {
       if (!producto.resumen) {
         // Verifica si resumen es null o undefined
-        return null
+        return []
       }
       return JSON.parse(producto.resumen)
         .filter((comentario: valuesResumen) => (comentario.fecha == fechaActual && comentario.userId == auth.id))
@@ -237,24 +237,21 @@ export const ListaServicios = (): JSX.Element => {
         }))
     })
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    let mensajeWsp = `RESUMEN ${comentarios[0]?.user?.toUpperCase() ?? auth.name} / ${fechaActual.replace(
+    let mensajeWsp = `RESUMEN ${auth.name} / ${fechaActual.replace(
       /\//g,
       '-'
     )}\n\n`
-    if (comentarios.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
-      comentarios.forEach((comentario: valuesResumen, index: number) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        mensajeWsp += `- ${comentario.cliente.toUpperCase()}: ${comentario.texto.toUpperCase()}`
-        if (index < comentarios.length - 1) {
-          mensajeWsp += '\n\n' // Añadir salto de línea doble si no es el último comentario
-        }
-      })
-    }
 
-    console.log(mensajeWsp)
+    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+    comentarios.forEach((comentario: valuesResumen, index: number) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      mensajeWsp += `- ${comentario.cliente.toUpperCase()}: ${comentario.texto.toUpperCase()}`
+      if (index < comentarios.length - 1) {
+        mensajeWsp += '\n\n' // Añadir salto de línea doble si no es el último comentario
+      }
+    })
 
     resumen
       .filter((comentario: valuesResumen) => (comentario.fecha == fechaActual && comentario.userId == auth.id))

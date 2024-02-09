@@ -35,9 +35,11 @@ import Swal from 'sweetalert2'
 import { Global } from '../../../../helper/Global'
 import axios from 'axios'
 import { Loading } from '../../../shared/Loading'
+import { RiFolderSharedLine } from 'react-icons/ri'
+import { GrNotification } from 'react-icons/gr'
 
 export const IndexGestor = (): JSX.Element => {
-  const { setTitle, auth } = useAuth()
+  const { setTitle, auth, setOpenModalShared } = useAuth()
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const totalImages = 23
@@ -183,11 +185,24 @@ export const IndexGestor = (): JSX.Element => {
                 <IoPersonOutline className="text-xl" /> Tus tableros
               </p>
               <Link
-                to="calendario"
+                to="/admin/gestor-tareas/calendario"
                 className="flex items-center gap-3 text-base md:text-lg font-semibold text-black hover:text-cyan-700 transition-colors cursor-pointer"
               >
                 <IoCalendarOutline className="text-xl" /> Calendario
               </Link>
+              <Link
+                to="/admin/gestor-tareas/compartidos"
+                className="flex items-center gap-3 text-base md:text-lg font-semibold text-black hover:text-cyan-700 transition-colors cursor-pointer"
+              >
+                <RiFolderSharedLine className="text-xl" /> Compartidos
+              </Link>
+              <button
+                type='button'
+                onClick={() => { setOpenModalShared(true) }}
+                className="flex items-center gap-3 text-base md:text-lg font-semibold text-black hover:text-cyan-700 transition-colors cursor-pointer"
+              >
+                <GrNotification className="text-xl" /> Notificaciones
+              </button>
             </div>
             <p className="text-mds first-letter:uppercase md:text-lg font-semibold text-gray-400 transition-colors cursor-pointer">
               {format(fechaActual, 'MMMM-yyyy', { locale: es })}

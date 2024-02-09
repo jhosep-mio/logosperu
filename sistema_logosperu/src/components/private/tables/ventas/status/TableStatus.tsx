@@ -83,6 +83,30 @@ export const TableStatus = (): JSX.Element => {
     return headers
   }
 
+  const renderDateHeadersNice = (): JSX.Element[] => {
+    const headers = []
+    const today = new Date()
+    let daysAdded: number = 0
+
+    // eslint-disable-next-line no-unmodified-loop-condition
+    for (let i = 1; daysAdded < 3; i++) {
+      const date = new Date(today)
+      date.setDate(date.getDate() - i)
+      if (date.getDay() !== 0) {
+        daysAdded++
+        headers.unshift(
+            <h5 className="md:text-center line-clamp-1 w-[200px]">{date.toLocaleDateString('es-ES', {
+              day: 'numeric',
+              month: 'numeric',
+              year: 'numeric'
+            })}</h5>
+        )
+      }
+    }
+
+    return headers
+  }
+
   const generarFechas = (): string[] => {
     if (fechaInicio && fechaFin) {
       const fechas = []
@@ -143,6 +167,23 @@ export const TableStatus = (): JSX.Element => {
     })
   }
 
+  const renderComentariosNice = (producto: any, fechas: any): JSX.Element => {
+    return fechas.map((fecha: any, index: number) => {
+      const comentarioEnFecha = producto.resumen
+        ? JSON.parse(producto.resumen).find(
+          (comentario: valuesResumen) => (comentario.fecha === fecha && comentario.userId != '8' && comentario.userId != '99')
+        )
+        : null
+      return (
+        <div className=" md:text-center line-clamp-2 w-full" key={index}>
+            <p className="text-black text-center">
+            {comentarioEnFecha ? comentarioEnFecha.texto.toUpperCase() : ''}
+            </p>
+        </div>
+      )
+    })
+  }
+
   const tieneComentariosEnFechas = (producto: any, fechas: any): boolean => {
     if (!producto.resumen) {
       return false
@@ -176,6 +217,31 @@ export const TableStatus = (): JSX.Element => {
                 year: 'numeric'
               })}
             </th>
+          )
+          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1))
+        }
+      }
+    }
+
+    return headers
+  }
+
+  const renderDateRangeHeadersNice = (): JSX.Element[] => {
+    const headers = []
+    // Verificar si la fecha de inicio está definida
+    if (fechaInicio && fechaFin) {
+      let currentDate = parseLocalDate(fechaInicio)
+      const endDate = parseLocalDate(fechaFin)
+      // Asegúrate también de que la fecha de fin esté definida y sea válida
+      if (fechaFin && currentDate <= endDate) {
+        while (currentDate <= endDate) {
+          headers.push(
+            <h5 className="md:text-center line-clamp-1 w-[200px]">{currentDate.toLocaleDateString('es-ES', {
+              day: 'numeric',
+              month: 'numeric',
+              year: 'numeric'
+            })}</h5>
+
           )
           currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1))
         }
@@ -237,6 +303,38 @@ export const TableStatus = (): JSX.Element => {
       </td>
     )
   }
+
+  const renderRespuestaNice = (producto: string): JSX.Element => {
+    let comentarioReciente = null
+    const resumenes = JSON.parse(producto)
+    // Si hay resúmenes disponibles, busca el más reciente
+    if (producto) {
+      const comentarioRecienteHoy = obtenerComentarioMasReciente(resumenes)
+      if (comentarioRecienteHoy?.respuestas) {
+        // Filtra las respuestas que no tienen idUser igual a 8
+        const respuestasFiltradas = comentarioRecienteHoy.respuestas.filter(
+          (respuesta: any) => (respuesta.userId == 1 || respuesta.userId == 25)
+        )
+        // Ordena las respuestas filtradas y selecciona la más reciente
+        if (respuestasFiltradas.length > 0) {
+          comentarioReciente = {
+            ...comentarioRecienteHoy,
+            respuestas: [respuestasFiltradas[0]]
+          }
+        }
+      }
+    }
+    // Verifica que comentarioReciente y comentarioReciente.respuesta existan
+    const textoRespuesta = comentarioReciente?.respuestas[0]?.texto
+    return (
+      <div className=" md:text-center line-clamp-2 w-full bg-[#FFFF00]">
+        <p className="text-black text-center">
+            {textoRespuesta ? textoRespuesta.toUpperCase() : ''}
+        </p>
+      </div>
+    )
+  }
+
   return (
     <>
       <div className="flex gap-10 ">
@@ -317,7 +415,9 @@ export const TableStatus = (): JSX.Element => {
         </Dialog>
       </div>
       <div className="md:bg-[#fff] p-0 md:p-8 rounded-xl">
-          <div className="hidden md:grid grid_teplate_reporte gap-3 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300">
+          <div className="hidden md:grid  gap-3 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300"
+            style={{ gridTemplateColumns: `repeat(${14 + renderDateHeadersNice().length}, 1fr)` }}
+          >
             <h5 className="md:text-left line-clamp-1 w-[200px] ">COD_CONTRATO</h5>
             <h5 className="md:text-left line-clamp-1 w-[200px] col-span-1">CLIENTE</h5>
             <h5 className="md:text-left line-clamp-1 w-[200px] ">EMPRESA/NOMBRE</h5>
@@ -331,96 +431,26 @@ export const TableStatus = (): JSX.Element => {
             <h5 className="md:text-left line-clamp-1 w-[130px] "> FECHA INICIO </h5>
             <h5 className="md:text-center line-clamp-1 w-[130px]">FECHA FINAL</h5>
             <h5 className="md:text-center line-clamp-1 w-[200px]">ESTADO</h5>
+            {
+            fechaInicio && fechaFin
+              ? renderDateRangeHeadersNice()
+              : renderDateHeadersNice()}
+            <h5 className="md:text-center line-clamp-1 w-[200px]">OBSERVACIÓNES</h5>
           </div>
           {productos
             .filter((producto) =>
               tieneComentariosEnFechas(producto, generarFechas())
             )
             .map((orden, index) => {
+              const fechas = generarFechas()
               return (
                 <div
-                  className={`grid grid_teplate_reporte relative gap-3 items-center  mb-3 md:mb-0 ${
+                  className={`grid  relative gap-3 items-center  mb-3 md:mb-0 ${
                     index % 2 == 0 ? 'bg-transparent' : 'bg-gray-200'
                   } md:px-4 md:py-1 rounded-xl relative shadow_class`}
                   key={orden.id}
+                  style={{ gridTemplateColumns: `repeat(${14 + renderDateHeadersNice().length}, 1fr)` }}
                 >
-                  {/* <div className="flex flex-col gap-3 md:hidden bg-form p-4 rounded-xl">
-                    <div className="flex md:hidden items-center gap-2">
-                      <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                        ID:
-                      </h5>
-                      <span className="flex md:justify-left items-center gap-3 font-bold text-black">
-                        #{orden.id}
-                      </span>
-                    </div>
-                    <div className="md:hidden flex justify-between gap-3">
-                      <div className="md:text-center ">
-                        <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                          Cliente
-                        </h5>
-                        <span className="text-left w-full text-black line-clamp-1">
-                          {orden.nombres} {orden.apellidos}
-                        </span>
-                      </div>
-                      <div className="md:text-right ">
-                        <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
-                          Celular
-                        </h5>
-                        <span className="text-right w-full text-black line-clamp-1">
-                          {orden.celular}
-                        </span>
-                      </div>
-                    </div>
-                    {orden.empresa && (
-                      <div className="md:hidden flex justify-between gap-3">
-                        <div className="md:text-center ">
-                          <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                            Empresa
-                          </h5>
-                          <span className="text-left w-full text-black line-clamp-1">
-                            {orden.empresa}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                    <div className="md:hidden flex justify-between gap-3">
-                      <div className="md:text-center ">
-                        <h5 className="md:hidden text-[#62be6d] font-bold mb-0 text-sm ">
-                          Fecha de creación
-                        </h5>
-                        <span className="text-left block text-[#62be6d]">
-                          {new Date(orden.created_at).toLocaleDateString(
-                            undefined,
-                            {
-                              year: 'numeric',
-                              month: '2-digit',
-                              day: '2-digit'
-                            }
-                          )}{' '}
-                        </span>
-                      </div>
-                      <div className="md:text-right ">
-                        <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
-                          DNI/RUC
-                        </h5>
-                        <span className="text-right w-full text-black line-clamp-1">
-                          {orden.dni_ruc}
-                        </span>
-                      </div>
-                    </div>
-                    {orden.email && (
-                      <div className="md:hidden flex justify-between gap-3">
-                        <div className="md:text-left w-full">
-                          <h5 className="md:hidden text-black text-left font-bold mb-0 text-sm ">
-                            Email
-                          </h5>
-                          <span className="text-left w-full text-black line-clamp-1">
-                            {orden.email}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div> */}
                   <div className="text-left">
                     <span className="text-left block text-black  line-clamp-1 w-[200px]">
                       {orden.id_contrato}
@@ -528,46 +558,17 @@ export const TableStatus = (): JSX.Element => {
                         : 'En proceso'}
                     </p>
                   </div>
+                  {renderComentariosNice(orden, fechas)}
+                  {renderRespuestaNice(orden.resumen)}
                 </div>
               )
             })}
-          {/* <div className="flex flex-col md:flex-row gap-5 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">
-            <p className="text-md ml-1 text-black">
-              {totalRegistros} Registros
-            </p>
-            <Paginacion
-              totalPosts={totalPosts}
-              cantidadRegistros={cantidadRegistros}
-              paginaActual={paginaActual}
-              setpaginaActual={setpaginaActual}
-            />
-          </div> */}
         </div>
       <Table
         id="productos2"
         className=" align-middle table-hover display w-full text-black hidden"
         style={{ marginTop: '30px', width: 'auto' }}
       >
-        {/* <thead className="table-light">
-          <tr>
-            <th
-              scope="col"
-              className="text-center"
-              colSpan={4}
-              style={{ background: '#375623', color: 'white' }}
-            >
-              DATOS DEL CLIENTE
-            </th>
-            <th
-              scope="col"
-              className="text-center"
-              colSpan={12}
-              style={{ background: '#203764', color: 'white' }}
-            >
-              DATOS DEL SERVICIO{' '}
-            </th>
-          </tr>
-        </thead> */}
         <thead className="table-light" style={{ background: '#2F75B5', color: 'white' }}>
           <tr>
             <th
@@ -700,7 +701,6 @@ export const TableStatus = (): JSX.Element => {
                         verticalAlign: 'middle',
                         display: 'flex',
                         alignItems: 'center',
-                        height: '190px',
                         width: '140px',
                         padding: '0 10px'
                       }}
@@ -787,7 +787,6 @@ export const TableStatus = (): JSX.Element => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        height: '190px',
                         width: '140px',
                         padding: '0 10px'
                       }}

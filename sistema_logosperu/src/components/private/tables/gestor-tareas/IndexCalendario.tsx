@@ -20,6 +20,8 @@ import { Link } from 'react-router-dom'
 import useAuth from '../../../../hooks/useAuth'
 import { ModalClientes } from '../citas/ModalClientes'
 import { IoCalendarOutline, IoPersonOutline } from 'react-icons/io5'
+import { GrNotification } from 'react-icons/gr'
+import { RiFolderSharedLine } from 'react-icons/ri'
 moment.locale('es')
 const localizer = momentLocalizer(moment) // Importa el locale español
 
@@ -35,7 +37,7 @@ export const IndexCalendario = (): JSX.Element => {
   const token = localStorage.getItem('token')
   const [, setplanes] = useState<ValuesPlanes[]>([])
   const [loading, setLoading] = useState(true)
-  const { auth } = useAuth()
+  const { auth, setOpenModalShared } = useAuth()
   const [clientes, setclientes] = useState<ValuesPreventaModificate[]>([])
   const [showError, setShowError] = useState<errorValues | null>(null)
   const [, setSelectedClient] = useState<ValuesPreventaModificate | null>(null)
@@ -232,6 +234,19 @@ export const IndexCalendario = (): JSX.Element => {
             >
               <IoCalendarOutline className="text-xl" /> Calendario
             </Link>
+            <Link
+                 to="/admin/gestor-tareas/compartidos"
+                className="flex items-center gap-3 text-base md:text-lg font-semibold text-black hover:text-cyan-700 transition-colors cursor-pointer"
+              >
+                <RiFolderSharedLine className="text-xl" />
+              </Link>
+              <button
+                type='button'
+                onClick={() => { setOpenModalShared(true) }}
+                className="flex items-center gap-3 text-base md:text-lg font-semibold text-black hover:text-cyan-700 transition-colors cursor-pointer"
+              >
+                <GrNotification className="text-xl" />
+              </button>
           </div>
         </div>
         {loading

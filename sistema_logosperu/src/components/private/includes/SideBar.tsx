@@ -16,6 +16,7 @@ import axios from 'axios'
 import { Global } from '../../../helper/Global'
 import logo from './../../../assets/logo/logo.png'
 import { type RolsValues } from '../../shared/schemas/Interfaces'
+import { SiGoogletagmanager } from 'react-icons/si'
 import {
   FaBriefcase,
   FaChartSimple,
@@ -171,6 +172,21 @@ const SideBar = (): JSX.Element => {
                                 }}
                               >
                                 Clientes
+                              </Link>
+                              <Link
+                                to="lista-preventa/sinproyectos"
+                                className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                  activeItem == 499
+                                    ? 'before:bg-main'
+                                    : 'before:bg-gray-500'
+                                } hover:text-main transition-colors`}
+                                onClick={() => {
+                                  handleItemClick(499)
+                                  setShowMenu(false)
+                                  setLoadingComponents(false)
+                                }}
+                              >
+                                Sin proyectos
                               </Link>
                               <Link
                                 to="lista-pre-clientes"
@@ -420,7 +436,6 @@ const SideBar = (): JSX.Element => {
                             </ul>
                           </ul>
                         </li>
-
                         <li key={232}>
                             <Link
                                 to="transacciones"
@@ -436,7 +451,6 @@ const SideBar = (): JSX.Element => {
                             <GrTransaction className="text-main/80 text-xl" />{' '} Transacciones
                             </Link>
                         </li>
-
                         <li key={25}>
                           <Link
                             to="lista-planes"
@@ -666,6 +680,24 @@ const SideBar = (): JSX.Element => {
               <FaUserGroup className="text-main/80 text-xl" />{' '} Clientes
               </Link>
             </li>}
+
+            {auth.id_rol == 99 || auth.id == '2'
+              ? <li key={234}>
+              <Link
+                to="listadocm"
+                className={
+                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                }
+                onClick={() => {
+                  handleItemClick2(1)
+                  setShowMenu(false)
+                  setLoadingComponents(false)
+                }}
+              >
+              <SiGoogletagmanager className="text-main/80 text-xl" />{' '} CM
+              </Link>
+            </li>
+              : null}
 
             <li>
               <button

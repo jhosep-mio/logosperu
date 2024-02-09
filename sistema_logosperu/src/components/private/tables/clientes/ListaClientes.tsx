@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import useAuth from '../../../../hooks/useAuth'
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
-import { RiFilter2Fill, RiSettings3Fill } from 'react-icons/ri'
+import { RiFilter2Fill, RiSettings3Fill, RiFileExcel2Fill } from 'react-icons/ri'
 import { Loading } from '../../../shared/Loading'
 import {
   type ListcontactoClientes,
@@ -28,7 +28,7 @@ export const ListaClientes = (): JSX.Element => {
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(14)
   const [expandedContact, setExpandedContact] = useState<number | null>(null)
-
+  const [filters, setFilters] = useState({ filtro: '' })
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
 
   const handleClickOpen = (): void => {
@@ -68,36 +68,52 @@ export const ListaClientes = (): JSX.Element => {
   let totalPosts = productos.length
 
   const filterDate = (): ValuesPreventaModificate[] => {
-    if (search.length === 0) {
-      const producto = productos.slice(indexOfFirstPost, indexOfLastPost)
-      return producto
+    let filteredProductos = productos
+
+    // Aplicar filtro según el tipo seleccionado
+    if (filters.filtro === 'antiguo') {
+      filteredProductos = filteredProductos.filter(pro => pro.antiguo == '1')
+    } else if (filters.filtro === 'nuevo') {
+      filteredProductos = filteredProductos.filter(pro => pro.antiguo == '0')
     }
+    // Realizar búsqueda
     const searchTerm = quitarAcentos(search.toLowerCase())
-
-    const filter = productos.filter((pro) => {
-      const fullName = `${pro.nombres} ${pro.apellidos}`.toLowerCase()
-      const empresa = `${pro.empresa}`.toLowerCase()
-      return (
-        quitarAcentos(fullName).includes(searchTerm) ||
-        quitarAcentos(empresa).includes(searchTerm) ||
-        String(pro.id).includes(searchTerm) ||
-        String(pro.celular).includes(searchTerm)
-      )
-    })
-
-    totalPosts = filter.length
-    return filter.slice(indexOfFirstPost, indexOfLastPost)
+    if (search.length > 0) {
+      filteredProductos = filteredProductos.filter(pro => {
+        const fullName = `${pro.nombres} ${pro.apellidos}`.toLowerCase()
+        const empresa = `${pro.empresa}`.toLowerCase()
+        return (
+          quitarAcentos(fullName).includes(searchTerm) ||
+          quitarAcentos(empresa).includes(searchTerm) ||
+          String(pro.id).includes(searchTerm) ||
+          String(pro.celular).includes(searchTerm) ||
+          String(pro.dni_ruc).includes(searchTerm)
+        )
+      })
+    }
+    totalPosts = filteredProductos.length
+    return filteredProductos.slice(indexOfFirstPost, indexOfLastPost)
   }
 
   useEffect(() => {
     setTotalRegistros(totalPosts)
-  }, [search])
+  }, [search, filters])
 
   const onSeachChange = ({
     target
   }: React.ChangeEvent<HTMLInputElement>): void => {
     setpaginaActual(1)
     setSearch(target.value)
+  }
+
+  const toggleFilter = (type: string): void => {
+    setFilters({ filtro: type })
+  }
+
+  const exportExcel = (): void => {
+    localStorage.setItem('TableCliente', JSON.stringify(productos))
+    localStorage.setItem('filtro', filters.filtro)
+    window.open('/admin/lista-clientes/status', '_blank')
   }
 
   return (
@@ -126,12 +142,18 @@ export const ListaClientes = (): JSX.Element => {
             </Link>
             </div>
             <div className="w-full md:w-fit flex flex-col-reverse md:flex-row items-center md:gap-4">
-            <Link
-                to={'agregar'}
-                className="w-full md:w-fit inline-block rounded bg-main md:px-6 pb-2 pt-2.5 text-center text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-main-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-main-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-main-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-            >
-                REGISTRO
-            </Link>
+                <RiFileExcel2Fill className='text-3xl text-green-700 cursor-pointer' onClick={() => { exportExcel() }}/>
+                <select name="" id="" value={filters.filtro} onChange={(e) => { toggleFilter(e.target.value) }} className='px-4 text-black py-2 shadow-md rounded-md select-none'>
+                    <option value="" className='select-none'>Todos</option>
+                    <option value="nuevo" className='select-none'>Nuevos</option>
+                    <option value="antiguo" className='select-none'>Antiguos</option>
+                </select>
+                <Link
+                    to={'agregar'}
+                    className="w-full md:w-fit inline-block rounded bg-main md:px-6 pb-2 pt-2.5 text-center text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-main-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-main-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-main-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                >
+                    REGISTRO
+                </Link>
             </div>
         </div>
       </div>

@@ -82,6 +82,14 @@ import { VerCliente } from '../components/private/tables/clientes/VerCliente'
 import { IndexGestor } from '../components/private/tables/gestor-tareas/IndexGestor'
 import { VistaTarea } from '../components/private/tables/gestor-tareas/VistaTarea'
 import { IndexCalendario } from '../components/private/tables/gestor-tareas/IndexCalendario'
+import { IndexCompartidos } from '../components/private/tables/gestor-tareas/IndexCompartidos'
+import { ExportExcelClientes } from '../components/private/tables/clientes/excelexport/ExportExcelClientes'
+import { ListadoClientesSInProyectos } from '../components/private/tables/clientes/sinproyectos/ListadoClientesSInProyectos'
+import { ExportExcelClientesSinproyectos } from '../components/private/tables/clientes/excelexport/ExportExcelClientesSinproyectos'
+import { ExportExcelPreVentas } from '../components/private/tables/preventa/excel/ExportExcelPreVentas'
+import { ViewCm } from '../components/private/tables/calendario_CM/ViewCm'
+import { Listadocm } from '../components/private/tables/calendario_CM/Listadocm'
+import { CalendarioView } from '../components/private/tables/calendario_CM/CalendarioView'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -97,6 +105,7 @@ export const Routing = (): JSX.Element => {
             {/* GESTOR DE TAREAS */}
             <Route path="gestor-tareas" element={<IndexGestor />} />
             <Route path="gestor-tareas/calendario" element={<IndexCalendario />} />
+            <Route path="gestor-tareas/compartidos" element={<IndexCompartidos />} />
             <Route path="gestor-tareas/:idAuth/view/:idTablero/image/:index" element={<VistaTarea />} />
 
             {/* PLANES */}
@@ -131,6 +140,7 @@ export const Routing = (): JSX.Element => {
             <Route path="lista-preventa" element={<ListaPreventa />} />
             <Route path="lista-preventa/view/:id" element={<ViewPreventa />} />
             <Route path="lista-preventa/editar/:id" element={<EditarPreventa />} />
+            <Route path="lista-preventa/sinproyectos" element={<ListadoClientesSInProyectos />} />
 
             {/* VENTAS */}
             <Route path="lista-ventas" element={<ListaVentas />} />
@@ -199,12 +209,22 @@ export const Routing = (): JSX.Element => {
             <Route path="items-portafolio" element={<ListaItemsPortafolio />} />
             <Route path="items-portafolio/agregar" element={<RegistraItemToPortafolio />} />
             <Route path="items-portafolio/editar/:id" element={<EditarItemsToPortafolio />} />
+
+            {/* LISTADO CM */}
+            <Route path="listadocm" element={<Listadocm />} />
+            <Route path="listadocm/view/:id" element={<ViewCm />} />
+            <Route path="listadocm/view/:id/calendario/:idContenido" element={<CalendarioView />} />
+
           </Route>
           <Route path="admin/lista-ventas/metricas" element={<Metricas />} />
           <Route path="admin/lista-ventas-vencidos/metricas" element={<MetricasVencidos />} />
           <Route path="admin/lista-ventas/status" element={<Status />} />
           <Route path="admin/citas" element={<GestordeCitas />} />
           <Route path="admin/historialllamadas" element={<HistorialLlamadas />} />
+          <Route path="admin/lista-clientes/status" element={<ExportExcelClientes />} />
+          <Route path="admin/lista-preventa/sinproyectos/status" element={<ExportExcelClientesSinproyectos />} />
+          <Route path="admin/lista-preventa/status" element={<ExportExcelPreVentas />} />
+
           {/* PUBLICO */}
           <Route
             path="*"

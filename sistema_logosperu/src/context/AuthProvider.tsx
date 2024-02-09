@@ -35,6 +35,11 @@ export interface AuthContextValue {
   totalNotificaciones3: number
   setShowError: Dispatch<SetStateAction<errorValues | null>>
   showError: errorValues | null
+  openModalShared: boolean
+  setOpenModalShared: Dispatch<SetStateAction<boolean>>
+  tasks: never[]
+  allTareas: never[]
+  getShared: (id: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -62,6 +67,7 @@ export const AuthProvider = ({
   const [showError, setShowError] = useState<errorValues | null>(null)
   const [estado, setEstado] = useState(0)
   const [loadingComponents, setLoadingComponents] = useState(false)
+  const [openModalShared, setOpenModalShared] = useState(false)
   const token = localStorage.getItem('token')
   const user = localStorage.getItem('user')
   const [loadingNotifi, setLoadingNotifi] = useState(true)
@@ -72,73 +78,8 @@ export const AuthProvider = ({
   const [notificaciones, setNotificaciones] = useState<notificacionesValues[]>(
     []
   )
-  useEffect(() => {
-    Promise.all([authUser()]).then(() => {
-      Promise.all([getRoles()]).then(() => {
-        setLoading(false)
-      })
-    })
-  }, [])
-
-  useEffect(() => {
-    if (!token || !user) {
-      return
-    }
-    const socket = io('https://prueba.logosperu.com.pe', {
-      transports: ['websocket']
-    })
-    socket.on('connect', () => {
-      console.log('Conexión WebSocket establecida con éxito')
-    })
-    if (!loading) {
-      // PROYECTOS DE AGENCIA
-      socket.on('mensaje', (data) => {
-        const filteredNotifications = JSON.parse(data.asignacion).filter((item: any) => item.peso == auth.id)
-        if (data.id_usuario != auth.id) {
-          if (auth.id_rol == 99) {
-            showNotification(data.nombre, data.contenido)
-          } else if ((filteredNotifications.length > 0) || data.id_venta == auth.id) {
-            showNotification(data.nombre, data.contenido)
-          }
-        }
-        if (estado == 0) {
-          Promise.all([
-            getVentas(`getNotificaciones/${auth.id}/${auth.id_rol}`, setNotificaciones, setTotalRegistros2)
-          ]).then(() => {
-            setLoading(false)
-          })
-        } else {
-          Promise.all([
-            getVentas(`getNotificacionesAll/${auth.id}/${auth.id_rol}`, setNotificaciones, setTotalRegistros)
-          ]).then(() => {
-            setLoading(false)
-          })
-        }
-      })
-      //   DESCARGA DE ARCHIVOS
-      socket.on('mensaje2', (data) => {
-        if (auth.id == '8') {
-          showNotification(data.nombre, data.contenido)
-        }
-        if (estado == 2) {
-          Promise.all([
-            getVentas('getNotificacionesToClientes', setNotificaciones, setTotalNotiClientes)
-          ]).then(() => {
-            setLoadingNotifi(false)
-          })
-        }
-      })
-    }
-    socket.on('disconnect', (reason) => {
-      console.log('Conexión WebSocket cerrada:', reason)
-    })
-    socket.on('error', (error) => {
-      console.error('Error en la conexión WebSocket:', error)
-    })
-    return () => {
-      socket.disconnect()
-    }
-  }, [loading])
+  const [allTareas, setAllTares] = useState([])
+  const [tasks, setTasks] = useState([])
 
   const showNotification = (nombre: string, contenido: string): void => {
     // Verificar si las notificaciones son compatibles con el navegador
@@ -169,7 +110,6 @@ export const AuthProvider = ({
       setLoading(false)
       return false
     }
-
     try {
       const respuesta = await axios.get(`${Global.url}/user-profile`, {
         headers: {
@@ -180,7 +120,6 @@ export const AuthProvider = ({
     } catch (error) {
       console.log(error)
     }
-
     // SETEAR LOS DATOS
   }
 
@@ -194,7 +133,6 @@ export const AuthProvider = ({
         }
       })
       setRoles(request.data)
-      setLoading(false)
     } catch (error: any) {
       if (
         typeof error.request?.response == 'string' &&
@@ -202,7 +140,6 @@ export const AuthProvider = ({
       ) {
         localStorage.clear()
         setAuth({ id: '', name: '', email: '', email_alter: '', pass_email: '', firma: '', id_rol: 0 })
-        setLoading(false)
         navigate('/login')
       }
     }
@@ -239,9 +176,104 @@ export const AuthProvider = ({
     setTotalRegistros3(request.data.length)
   }
 
+  const getShared = async (id: string): Promise<void> => {
+    const request = await axios.get(
+        `${Global.url}/indexSharedTasksToNotificate/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? `Bearer ${token}` : ''
+            }`
+          }
+        }
+    )
+    setTasks(request.data)
+  }
+
+  const getTareas = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/indexToGestor`, {
+      headers: {
+        Authorization: `Bearer ${
+              token !== null && token !== '' ? `Bearer ${token}` : ''
+            }`
+      }
+    })
+    setAllTares(request.data)
+  }
+
+  useEffect(() => {
+    Promise.all([authUser()]).then(() => {
+      Promise.all([getRoles()]).then(() => {
+        setLoading(false)
+      })
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!token || !user) {
+      return
+    }
+    const socket = io('https://prueba.logosperu.com.pe', {
+      transports: ['websocket']
+    })
+    socket.on('connect', () => {
+      console.log('Conexión WebSocket establecida con éxito')
+    })
+    if (!loading) {
+      // PROYECTOS DE AGENCIA
+      socket.on('mensaje', (data) => {
+        const filteredNotifications = JSON.parse(data.asignacion).filter((item: any) => item.peso == auth.id)
+        if (data.id_usuario != auth.id) {
+          if (auth.id_rol == 99) {
+            showNotification(data.nombre, data.contenido)
+          } else if ((filteredNotifications.length > 0) || data.id_venta == auth.id) {
+            showNotification(data.nombre, data.contenido)
+          }
+        }
+        if (estado == 0) {
+          Promise.all([
+            getVentas(`getNotificaciones/${auth.id}/${auth.id_rol}`, setNotificaciones, setTotalRegistros2)
+          ]).then(() => {
+            // setLoading(false)
+          })
+        } else {
+          Promise.all([
+            getVentas(`getNotificacionesAll/${auth.id}/${auth.id_rol}`, setNotificaciones, setTotalRegistros)
+          ]).then(() => {
+            // setLoading(false)
+          })
+        }
+      })
+      //   DESCARGA DE ARCHIVOS
+      socket.on('mensaje2', (data) => {
+        if (auth.id == '8') {
+          showNotification(data.nombre, data.contenido)
+        }
+        if (estado == 2) {
+          Promise.all([
+            getVentas('getNotificacionesToClientes', setNotificaciones, setTotalNotiClientes)
+          ]).then(() => {
+            setLoadingNotifi(false)
+          })
+        }
+      })
+    }
+    socket.on('disconnect', (reason) => {
+      console.log('Conexión WebSocket cerrada:', reason)
+    })
+    socket.on('error', (error) => {
+      console.error('Error en la conexión WebSocket:', error)
+    })
+    return () => {
+      socket.disconnect()
+    }
+  }, [loading])
+
   useEffect(() => {
     setLoadingNotifi(true)
     if (!loading) {
+      getShared(auth.id)
+      getTareas()
       if (estado == 0) {
         Promise.all([
 
@@ -337,7 +369,12 @@ export const AuthProvider = ({
         totalNotiClientes,
         totalNotificaciones3,
         showError,
-        setShowError
+        setShowError,
+        openModalShared,
+        setOpenModalShared,
+        tasks,
+        allTareas,
+        getShared
       }}
     >
       {children}

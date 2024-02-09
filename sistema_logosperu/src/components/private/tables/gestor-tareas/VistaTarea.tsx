@@ -39,7 +39,7 @@ import { ModalContenido } from './components/ModalContenido'
 import { type DuoContent, type tableroInterface } from '../../../shared/schemas/Interfaces'
 
 export const VistaTarea = (): JSX.Element => {
-  const { auth } = useAuth()
+  const { auth, getShared } = useAuth()
   const { index, idTablero } = useParams()
   const totalImages = 23
   const getImageUrl = (): string => {
@@ -169,7 +169,7 @@ export const VistaTarea = (): JSX.Element => {
   >(null)
 
   const getColaboradores = async (): Promise<void> => {
-    const request = await axios.get(`${Global.url}/getUsuarios`, {
+    const request = await axios.get(`${Global.url}/indexAllToGestor`, {
       headers: {
         Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
       }
@@ -178,6 +178,7 @@ export const VistaTarea = (): JSX.Element => {
   }
 
   const getTareas = async (): Promise<void> => {
+    getShared(auth.id)
     const request = await axios.get(`${Global.url}/getTareas/${auth.id}`, {
       headers: {
         Authorization: `Bearer ${
@@ -199,6 +200,7 @@ export const VistaTarea = (): JSX.Element => {
       setTablero(filteredEvents[0].contenido)
       setEvents(parsedEvents)
     }
+
     setLoading(false)
   }
 

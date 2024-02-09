@@ -11,6 +11,7 @@ import { Global } from '../../../helper/Global'
 import { ModalNotificaciones } from '../tables/notificaciones/ModalNotificaciones'
 import { AnimatePresence } from 'framer-motion'
 import { AlertSucess } from '../../shared/alerts/AlertSucess'
+import { ModalNoti } from '../tables/gestor-tareas/components/notificaciones/ModalNoti'
 
 const Header = (): JSX.Element => {
   const { auth, setAuth, title, showError, setShowError } = useAuth()
@@ -65,6 +66,8 @@ const Header = (): JSX.Element => {
 
   return (
     <>
+            <ModalNoti />
+
       {!currentPath.includes('admin/gestor-tareas') &&
         (
         <>

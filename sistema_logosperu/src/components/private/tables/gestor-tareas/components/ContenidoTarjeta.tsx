@@ -197,7 +197,7 @@ export const ContenidoTarjeta = ({
                         ref={tituloContenidoEdicionTareRef}
                         name="tareaedicion"
                         rows={1}
-                        className="bg-white p-2 h-auto w-full text-black outline-none rounded-md break-words resize-none"
+                        className={' bg-white p-2 h-auto w-full text-black outline-none rounded-md break-words resize-none'}
                         onKeyDown={(e: any) => {
                           if (e.key === 'Enter') {
                             e.preventDefault() // Previene el salto de línea predeterminado
@@ -221,13 +221,15 @@ export const ContenidoTarjeta = ({
                     }}
                     className='absolute -bottom-10 z-30 flex gap-2 px-2 py-1 w-fit items-center bg-blue-500 hover:bg-blue-600 transition-colors cursor-pointer  rounded-md text-white'>Guardar</button>
                 </>
-
                 )
               : (
                 <>
                     <p
                     onClick={() => { setOpenModal(true); setContenidoSeleccionado({ contenido, contexto: table }) }}
-                    className="bg-gray-300 group-hover:border-cyan-700 group-hover:cursor-pointer transition-colors border border-transparent z-[2] p-2 w-full text-black rounded-md break-words resize-none">
+                    className={
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                        `${contenido?.contexto?.etiqueta == 3 ? 'bg-green-500' : contenido?.contexto?.etiqueta == 2 ? 'bg-yellow-300' : contenido?.contexto?.etiqueta == 1 ? 'bg-red-400' : 'bg-white '} group-hover:border-cyan-700 group-hover:cursor-pointer transition-colors border border-transparent z-[2] p-2 w-full text-black rounded-md break-words resize-none`}>
                         {contenido.titulo ?? ''}
                     </p>
                     <span

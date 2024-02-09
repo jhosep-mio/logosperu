@@ -15,6 +15,55 @@
   }
 }
 
+.jodecct_sss{
+    & .jodit-react-container{
+        height: 100% !important;
+    }
+    & .jodecct_sss{
+        height: 100% !important;
+        max-height: 100% !important;
+    }
+    & .jodit-workplace{
+        height: 100% !important;
+        max-height: 100% !important;
+    }
+}
+
+.datapciker_modal {
+    &__input {
+        display: none !important;
+    }
+    & .react-datepicker__time-list-item--disabled {
+            display: none;
+    }
+
+    & .react-datepicker-wrapper{
+        width: 100% !important;
+    }
+
+    & .react-datepicker__input-container{
+        width: 100% !important;
+    }
+    & .react-datepicker__time-container {
+        width: 100% !important;
+    }
+    & .react-datepicker__month-container{
+        width: 100% !important;
+    }
+    & .react-datepicker__time-box{
+        width: 100% !important;
+    }
+    & .react-datepicker__time-list{
+        width: 100% !important;
+    }
+
+    & .react-datepicker__navigation--next--with-time:not(.react-datepicker__navigation--next--with-today-button) {
+        right: 0 !important;
+    }
+}
+
+
+
 .modal_citas_clientes {
   & .MuiPaper-root {
     width: 900px;

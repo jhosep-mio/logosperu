@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useAuth from '../../../../hooks/useAuth'
-import { RiFilter2Fill, RiSettings3Fill } from 'react-icons/ri'
+import { RiFileExcel2Fill, RiFilter2Fill, RiSettings3Fill } from 'react-icons/ri'
 import { Loading } from '../../../shared/Loading'
 import { type ValuesVenta } from '../../../shared/schemas/Interfaces'
 import { Paginacion } from '../../../shared/Paginacion'
@@ -102,6 +102,11 @@ export const ListaVentasPre = (): JSX.Element => {
     }
   }
 
+  const exportExcel = (): void => {
+    localStorage.setItem('TableCliente', JSON.stringify(productos))
+    window.open('/admin/lista-preventa/status', '_blank')
+  }
+
   return (
     <>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-y-4 mb-5">
@@ -116,7 +121,10 @@ export const ListaVentasPre = (): JSX.Element => {
               type="search"
             />
           </button>
-          <h2 className='text-black font-bold'>VENTAS NO CONCLUIDAS</h2>
+           <div className='flex gap-3 items-center'>
+                <RiFileExcel2Fill className='text-3xl text-green-700 cursor-pointer' onClick={() => { exportExcel() }}/>
+                <h2 className='text-black font-bold'>VENTAS NO CONCLUIDAS</h2>
+           </div>
         </div>
       </div>
       {loading
@@ -253,7 +261,6 @@ export const ListaVentasPre = (): JSX.Element => {
               </div>
             </div>
           ))}
-
           <div className="flex flex-col md:flex-row gap-5 md:gap-0 justify-center md:justify-between content_buttons pt-3">
             <p className="text-md ml-1 text-black">
               {totalRegistros} Registros

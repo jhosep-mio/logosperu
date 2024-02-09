@@ -56,7 +56,6 @@ const optionsEdad = {
       borderWidth: 2 // Ajusta el ancho de los puntos aquí
     }
   }
-
 }
 
 // const optionsEdad = {

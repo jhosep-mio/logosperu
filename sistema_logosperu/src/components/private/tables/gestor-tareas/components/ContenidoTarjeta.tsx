@@ -229,7 +229,7 @@ export const ContenidoTarjeta = ({
                     className={
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-expect-error
-                        `${contenido?.contexto?.etiqueta == 3 ? 'bg-green-500' : contenido?.contexto?.etiqueta == 2 ? 'bg-yellow-300' : contenido?.contexto?.etiqueta == 1 ? 'bg-red-400' : 'bg-white '} group-hover:border-cyan-700 group-hover:cursor-pointer transition-colors border border-transparent z-[2] p-2 w-full text-black rounded-md break-words resize-none`}>
+                        `${contenido?.contexto?.etiqueta == 3 ? 'bg-green-500' : contenido?.contexto?.etiqueta == 2 ? 'bg-yellow-300' : contenido?.contexto?.etiqueta == 1 ? 'bg-red-400' : 'bg-gray-300 '} group-hover:border-cyan-700 group-hover:cursor-pointer transition-colors border border-transparent z-[2] p-2 w-full text-black rounded-md break-words resize-none`}>
                         {contenido.titulo ?? ''}
                     </p>
                     <span

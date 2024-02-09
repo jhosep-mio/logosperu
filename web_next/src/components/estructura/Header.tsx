@@ -104,7 +104,7 @@ export const Header = () => {
           <div className='img_header_top'>
             <Link href='/'>
               <img
-                src='/vid/logo.gif'
+                src='/vid/lg.gif'
                 alt='Diseño de Logos - Agencia de diseño Gráfico - logotipos'
                 className='object-contain'
               />

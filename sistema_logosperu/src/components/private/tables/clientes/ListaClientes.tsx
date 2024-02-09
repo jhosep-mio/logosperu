@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import useAuth from '../../../../hooks/useAuth'
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
-import { RiFilter2Fill, RiSettings3Fill, RiFileExcel2Fill } from 'react-icons/ri'
+import { RiFilter2Fill, RiSettings3Fill, RiFileExcel2Fill, RiBarChartFill } from 'react-icons/ri'
 import { Loading } from '../../../shared/Loading'
 import {
   type ListcontactoClientes,
@@ -142,6 +142,9 @@ export const ListaClientes = (): JSX.Element => {
             </Link>
             </div>
             <div className="w-full md:w-fit flex flex-col-reverse md:flex-row items-center md:gap-4">
+                <Link to='metricas'>
+                    <RiBarChartFill className='text-3xl text-red-700 cursor-pointer' />
+                </Link>
                 <RiFileExcel2Fill className='text-3xl text-green-700 cursor-pointer' onClick={() => { exportExcel() }}/>
                 <select name="" id="" value={filters.filtro} onChange={(e) => { toggleFilter(e.target.value) }} className='px-4 text-black py-2 shadow-md rounded-md select-none'>
                     <option value="" className='select-none'>Todos</option>

@@ -90,6 +90,8 @@ import { ExportExcelPreVentas } from '../components/private/tables/preventa/exce
 import { ViewCm } from '../components/private/tables/calendario_CM/ViewCm'
 import { Listadocm } from '../components/private/tables/calendario_CM/Listadocm'
 import { CalendarioView } from '../components/private/tables/calendario_CM/CalendarioView'
+import { MetricasClientes } from '../components/private/tables/dashboard/clientes/MetricasClientes'
+import { LayoutDashboard } from '../components/private/tables/dashboard/LayoutDashboard'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -224,6 +226,13 @@ export const Routing = (): JSX.Element => {
           <Route path="admin/lista-clientes/status" element={<ExportExcelClientes />} />
           <Route path="admin/lista-preventa/sinproyectos/status" element={<ExportExcelClientesSinproyectos />} />
           <Route path="admin/lista-preventa/status" element={<ExportExcelPreVentas />} />
+
+          {/* METRICAS CLIENTES */}
+
+          <Route path="admin/dashboard" element={<LayoutDashboard />}>
+            <Route index element={<MetricasClientes />} />
+            <Route path="clientes" element={<MetricasClientes />} />
+          </Route>
 
           {/* PUBLICO */}
           <Route

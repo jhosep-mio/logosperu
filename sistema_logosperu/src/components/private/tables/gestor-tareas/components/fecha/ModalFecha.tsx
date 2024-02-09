@@ -36,7 +36,6 @@ export const ModalFecha = ({ startDate, setStartDate, addNotifiacte, Updateshare
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       datePickerRef.current.setOpen(true)
-      console.log(datePickerRef.current)
       setIsCalendarOpen(true)
     }
   }

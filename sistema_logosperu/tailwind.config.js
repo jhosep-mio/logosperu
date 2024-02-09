@@ -11,6 +11,7 @@ export default {
         main: '#D23741',
         main_dark: '#ac4249',
         form: '#fff',
+        secundario: '#4E54C8',
         secondary: {
           50: '#384045',
           150: '#906B9F',

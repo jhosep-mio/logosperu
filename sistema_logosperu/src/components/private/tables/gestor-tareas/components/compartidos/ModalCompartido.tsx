@@ -14,10 +14,13 @@ import {
 } from 'react-icons/ri'
 import axios from 'axios'
 import { GrSecure } from 'react-icons/gr'
+import { FaRegCalendarCheck } from 'react-icons/fa6'
+import { TbClockHour5 } from 'react-icons/tb'
 import { type DuoContent } from '../../../../../shared/schemas/Interfaces'
 import useAuth from '../../../../../../hooks/useAuth'
 import { Global } from '../../../../../../helper/Global'
 import { LoadingSmall } from '../../../../../shared/LoadingSmall'
+import { ModalFecha } from '../fecha/ModalFecha'
 import Editor from '../Editor'
 
 interface arrayListado {
@@ -72,11 +75,17 @@ export const ModalCompartido = ({
   const [colaboradoresSeleccionados, setColaboradoresSeleccionados] = useState([])
   const [openDeleteShared, setOpenDeleteShared] = useState(false)
   const [loadignDelete, setloadignDelete] = useState(false)
+  const [openfecha, setOpenFecha] = useState(false)
+  const [startDate, setStartDate] = useState<Date | null>(null)
 
   const guardarContenido = (): void => {
     const detalleContexto = {
       etiqueta,
-      descripcion: contexto
+      descripcion: contexto,
+      checklist: arrayList,
+      shared: idShared,
+      miembros: colaboradoresSeleccionados,
+      fecha: startDate
     }
     // Aquí debes implementar la lógica para actualizar el título en tu estado/tablero
     const filteredEvents = events.filter(
@@ -110,14 +119,17 @@ export const ModalCompartido = ({
   const guardarEtiqueta = (idEt: number): void => {
     const detalleContexto = {
       etiqueta: idEt,
-      descripcion: contexto
+      descripcion: contexto,
+      checklist: arrayList,
+      shared: idShared,
+      miembros: colaboradoresSeleccionados,
+      fecha: startDate
     }
     // Aquí debes implementar la lógica para actualizar el título en tu estado/tablero
     const filteredEvents = events.filter(
       (event: any) => event.id === idTablero
     )
     const contenidoFiltrado: any = filteredEvents[0]
-    console.log(contenidoFiltrado)
     if (contenidoFiltrado) {
       const updatedEvents = events.map((event: any) =>
         event.id === idTablero
@@ -146,8 +158,12 @@ export const ModalCompartido = ({
     const detalleContexto = {
       etiqueta,
       descripcion: contexto,
-      checklist: arrayList
+      checklist: arrayList,
+      shared: idShared,
+      miembros: colaboradoresSeleccionados,
+      fecha: startDate
     }
+
     // Aquí debes implementar la lógica para actualizar el título en tu estado/tablero
     const filteredEvents = events.filter(
       (event: any) => event.id === idTablero
@@ -232,6 +248,15 @@ export const ModalCompartido = ({
         setColaboradoresSeleccionados(contenidoSeleccionado?.contenido?.contexto?.miembros)
       } else {
         setColaboradoresSeleccionados([])
+      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      if (contenidoSeleccionado?.contenido?.contexto?.fecha) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+        setStartDate(new Date(contenidoSeleccionado?.contenido?.contexto?.fecha))
+      } else {
+        setStartDate(null)
       }
     }
   }, [contenidoSeleccionado])
@@ -338,8 +363,11 @@ export const ModalCompartido = ({
       etiqueta,
       descripcion: contexto,
       checklist: arrayList,
-      shared: idTaskDb
+      shared: idTaskDb,
+      miembros: colaboradoresSeleccionados,
+      fecha: startDate
     }
+
     // Aquí debes implementar la lógica para actualizar el título en tu estado/tablero
     const filteredEvents = events.filter(
       (event: any) => event.id === idTablero
@@ -482,7 +510,8 @@ export const ModalCompartido = ({
       descripcion: contexto,
       checklist: arrayList,
       shared: idShared,
-      miembros
+      miembros,
+      fecha: startDate
     }
     const filteredEvents = events.filter(
       (event: any) => event.id === idTablero
@@ -530,7 +559,8 @@ export const ModalCompartido = ({
       descripcion: contexto,
       checklist: arrayList,
       shared: null,
-      miembros: null
+      miembros: null,
+      fecha: null
     }
     // Aquí debes implementar la lógica para actualizar el título en tu estado/tablero
     const filteredEvents = events.filter(
@@ -587,6 +617,71 @@ export const ModalCompartido = ({
     setloadignDelete(false)
   }
 
+  const UpdatesharedTasksFecha = async (date: Date | null): Promise<void> => {
+    setLoadingShared(true)
+    const data = new FormData()
+    data.append('users', JSON.stringify(colaboradoresSeleccionados))
+    data.append('fecha', JSON.stringify(date ?? ''))
+    data.append('_method', 'PUT')
+    try {
+      await axios.post(
+        `${Global.url}/sharedTasksUpdate/${idShared ?? ''}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+          }
+        }
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const addNotifiacte = (date: Date | null): void => {
+    const detalleContexto = {
+      etiqueta,
+      descripcion: contexto,
+      checklist: arrayList,
+      shared: idShared,
+      miembros: colaboradoresSeleccionados,
+      fecha: date
+    }
+    const filteredEvents = events.filter(
+      (event: any) => event.id === idTablero
+    )
+    const contenidoFiltrado: any = filteredEvents[0]
+    if (contenidoFiltrado) {
+      const updatedEvents = events.map((event: any) =>
+        event.id === idTablero
+          ? {
+              ...event,
+              contenido: event.contenido.map((innerContent: any) =>
+                innerContent.id === contenidoSeleccionado?.contexto?.id
+                  ? {
+                      ...innerContent,
+                      contenido: innerContent.contenido?.map((contenido: any) =>
+                        contenido.id === contenidoSeleccionado?.contenido.id
+                          ? { ...contenido, contexto: detalleContexto }
+                          : contenido
+                      )
+                    }
+                  : innerContent
+              )
+            }
+          : event
+      )
+      updateCita(updatedEvents)
+    }
+  }
+
+  const handleDateChangeDalete = (): void => {
+    setStartDate(null)
+    addNotifiacte(null)
+  }
+
   return (
     <Dialog
       open={open}
@@ -623,7 +718,7 @@ export const ModalCompartido = ({
         <motion.div
           animate={openOptions ? 'open' : 'closed'}
           variants={variants}
-          className="absolute right-0 top-0 bottom-0 bg-white shadow-md w-[300px] rounded-l-lg z-20"
+          className="absolute right-0 top-0 bottom-0 bg-white shadow-md w-[300px] rounded-l-lg z-20 overflow-y-auto"
         >
           <div className="w-full p-4">
             <IoClose
@@ -679,7 +774,7 @@ export const ModalCompartido = ({
                             />
                             {showSuggestions && suggestions.length > 0 && (
                             <div className="suggestions absolute top-full right-0 left-0 z-20 bg-white rounded-b-lg shadow-sm shadow-black ">
-                                {suggestions.map((suggestion: any) => {
+                                {suggestions.filter((suggestions: any) => suggestions.id != auth.id).map((suggestion: any) => {
                                   const colb = {
                                     id: suggestion.id,
                                     name: suggestion.name
@@ -710,7 +805,7 @@ export const ModalCompartido = ({
                                       }
                                       return (
                                         <div key={col.id} className='flex bg-gray-300 px-4 py-2 rounded-md line-clamp-1'>
-                                            <p className='w-full' >{colb.name}</p>
+                                            <p className='w-full' >{colb.name} </p>
                                             <span className='w-fit hover:text-red-500 transition-colors' onClick={() => { handleClientSelectionDelete(colb) }}>x</span>
                                         </div>
                                       )
@@ -783,7 +878,7 @@ export const ModalCompartido = ({
               >
                 <BiLabel className="text-gray-700 text-xl" /> Etiquetas
                 {openEtiquetaOption && (
-                  <div className="absolute top-full left-0 right-0 bg-[#F1F2F4] rounded-lg w-full h-auto shadow-lg mt-3 p-2 ease-in select-none">
+                  <div className="absolute z-20 top-full left-0 right-0 bg-[#F1F2F4] rounded-lg w-full h-auto shadow-lg mt-3 p-2 ease-in select-none">
                     <IoClose
                       className="absolute top-0 -right-0 text-xs transition-colors hover:bg-gray-300/50 p-2 w-8 h-8 rounded-full cursor-pointer"
                       onClick={() => {
@@ -850,14 +945,29 @@ export const ModalCompartido = ({
 
               <span
                 className={
-                  'w-full text-left px-3 bg-gray-200 py-1 text-gray-700 rounded-md cursor-pointer transition-colors duration-300 flex gap-3 items-center'
+                  'w-full relative text-left px-3 bg-gray-200 py-1 text-gray-700 rounded-md cursor-pointer transition-colors duration-300 flex gap-3 items-center'
                 }
                 onClick={() => {
-                  setEtiqueta(1)
-                  setOpenEtiqueta(false)
+                  setOpenFecha(!openfecha)
                 }}
               >
                 <RiTimeLine className="text-gray-700 text-xl" /> Fechas
+                {openfecha && (
+                    <div onClick={(e) => { e.stopPropagation() }} className=" absolute top-full left-0 right-0 bg-[#F1F2F4] rounded-lg w-full h-auto shadow-lg mt-3 p-2 ease-in select-none">
+                        <IoClose
+                        className="absolute top-0 -right-0 text-xs transition-colors hover:bg-gray-300/50 p-2 w-8 h-8 rounded-full cursor-pointer"
+                        onClick={() => {
+                          setOpenFecha(!openfecha)
+                        }}
+                        />
+                        <h2 className="w-full text-center text-gray-700">
+                        Programar fecha de entrega
+                        </h2>
+                        <div className="flex flex-col w-full gap-3 mt-4">
+                        <ModalFecha setStartDate={setStartDate} startDate={startDate} addNotifiacte={addNotifiacte} UpdatesharedTasksFecha={UpdatesharedTasksFecha} idShared={idShared}/>
+                        </div>
+                    </div>
+                )}
               </span>
 
               <span
@@ -902,88 +1012,123 @@ export const ModalCompartido = ({
             />
           </div>
         </div>
-        {etiqueta != 0 && (
-          <div className="flex flex-grow w-full pl-8 pt-6 gap-4">
-            <div className="flex flex-col gap-2 relative">
-              <h2 className="text-gray-700 text-sm">Etiqueta</h2>
-              <div className="flex gap-2 group">
-                <span
-                  className={`w-14 h-8 ${
-                    etiqueta == 1
-                      ? 'bg-red-600'
-                      : etiqueta == 2
-                      ? 'bg-yellow-500'
-                      : etiqueta == 3
-                      ? 'bg-green-700 '
-                      : ''
-                  } cursor-pointer block rounded-md`}
-                  onClick={() => {
-                    setOpenEtiqueta(!openEtiqueta)
-                  }}
-                ></span>
-                <span
-                  className="group-hover:block hidden hover:text-red-500 cursor-pointer text-xl transition-all"
-                  onClick={() => {
-                    handleEtiqueta(0)
-                  }}
-                >
-                  x
-                </span>
-              </div>
-              {openEtiqueta && (
-                <div className="absolute top-full left-full bg-white rounded-lg w-[200px] h-auto shadow-lg mt-3 p-2 ease-in select-none">
-                  <IoClose
-                    className="absolute top-0 -right-0 text-xs transition-colors hover:bg-gray-300/50 p-2 w-8 h-8 rounded-full cursor-pointer"
-                    onClick={() => {
-                      setOpenEtiqueta(false)
-                    }}
-                  />
-                  <h2 className="w-full text-center text-gray-700">
-                    Etiquetas
-                  </h2>
-                  <div className="flex flex-col w-full gap-3 mt-4">
+        {etiqueta != 0 || startDate != null
+          ? <div className="flex flex-grow w-full pl-8 pt-6 gap-4">
+            {etiqueta != 0 &&
+                <div className="flex flex-col gap-2 relative">
+                <h2 className="text-gray-700 text-sm">Etiqueta</h2>
+                <div className="flex gap-2 group">
                     <span
-                      className={`block w-full text-center  ${
+                    className={`w-14 h-8 ${
                         etiqueta == 1
-                          ? 'bg-red-600 text-white'
-                          : 'bg-gray-300 text-gray-500'
-                      } py-1 rounded-md cursor-pointer transition-colors duration-300`}
-                      onClick={() => {
-                        handleEtiqueta(1)
-                      }}
-                    >
-                      Alta
-                    </span>
+                        ? 'bg-red-600'
+                        : etiqueta == 2
+                        ? 'bg-yellow-500'
+                        : etiqueta == 3
+                        ? 'bg-green-700 '
+                        : ''
+                    } cursor-pointer block rounded-md`}
+                    onClick={() => {
+                      setOpenEtiqueta(!openEtiqueta)
+                    }}
+                    ></span>
                     <span
-                      className={`block w-full text-center  ${
-                        etiqueta == 2
-                          ? 'bg-yellow-500  text-white'
-                          : 'bg-gray-300 text-gray-500'
-                      } py-1 rounded-md cursor-pointer transition-colors duration-300`}
-                      onClick={() => {
-                        handleEtiqueta(2)
-                      }}
+                    className="group-hover:block hidden hover:text-red-500 cursor-pointer text-xl transition-all"
+                    onClick={() => {
+                      handleEtiqueta(0)
+                    }}
                     >
-                      Media
+                    x
                     </span>
-                    <span
-                      className={`block w-full text-center  ${
-                        etiqueta == 3
-                          ? 'bg-green-700  text-white'
-                          : 'bg-gray-300 text-gray-500'
-                      } py-1 rounded-md cursor-pointer transition-colors duration-300`}
-                      onClick={() => {
-                        handleEtiqueta(3)
-                      }}
-                    >
-                      Baja
-                    </span>
-                  </div>
                 </div>
-              )}
-            </div>
+                {openEtiqueta && (
+                    <div className="absolute top-full left-full bg-white rounded-lg w-[200px] h-auto shadow-lg mt-3 p-2 ease-in select-none">
+                    <IoClose
+                        className="absolute top-0 -right-0 text-xs transition-colors hover:bg-gray-300/50 p-2 w-8 h-8 rounded-full cursor-pointer"
+                        onClick={() => {
+                          setOpenEtiqueta(false)
+                        }}
+                    />
+                    <h2 className="w-full text-center text-gray-700">
+                        Etiquetas
+                    </h2>
+                    <div className="flex flex-col w-full gap-3 mt-4">
+                        <span
+                        className={`block w-full text-center  ${
+                            etiqueta == 1
+                            ? 'bg-red-600 text-white'
+                            : 'bg-gray-300 text-gray-500'
+                        } py-1 rounded-md cursor-pointer transition-colors duration-300`}
+                        onClick={() => {
+                          handleEtiqueta(1)
+                        }}
+                        >
+                        Alta
+                        </span>
+                        <span
+                        className={`block w-full text-center  ${
+                            etiqueta == 2
+                            ? 'bg-yellow-500  text-white'
+                            : 'bg-gray-300 text-gray-500'
+                        } py-1 rounded-md cursor-pointer transition-colors duration-300`}
+                        onClick={() => {
+                          handleEtiqueta(2)
+                        }}
+                        >
+                        Media
+                        </span>
+                        <span
+                        className={`block w-full text-center  ${
+                            etiqueta == 3
+                            ? 'bg-green-700  text-white'
+                            : 'bg-gray-300 text-gray-500'
+                        } py-1 rounded-md cursor-pointer transition-colors duration-300`}
+                        onClick={() => {
+                          handleEtiqueta(3)
+                        }}
+                        >
+                        Baja
+                        </span>
+                    </div>
+                    </div>
+                )}
+                </div>
+            }
+            {startDate != null &&
+                <div className="flex flex-col gap-2 ">
+                    <h2 className="text-gray-700 text-sm">Vencimiento</h2>
+                    <div className='group flex items-center gap-2'>
+                        <div className='flex gap-0 w-fit bg-gray-300 h-8 rounded-md'>
+                            <div className="w-1/2 flex justify-center gap-0 items-center">
+                                <FaRegCalendarCheck className="w-10" />
+                                <span className="flex-1 w-fit bg-transparent outline-none p-0">
+                                {startDate?.toLocaleDateString()}
+                                </span>
+                            </div>
+                            <div className="w-1/2 flex justify-center gap-0 items-center">
+                                <TbClockHour5 className="w-10" />
+                                <span className="flex-1 w-fit bg-transparent text-left outline-none p-0">
+                                {startDate?.toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                                </span>
+                            </div>
+                        </div>
+                        <span
+                        className="group-hover:block hidden hover:text-red-500 cursor-pointer text-xl transition-all"
+                        onClick={() => {
+                          handleDateChangeDalete()
+                        }}
+                        >
+                            x
+                        </span>
+                    </div>
+                </div>
+            }
           </div>
-        )}
+          : null}
+
         <div className="flex justify-between mt-6 items-center">
           <div className="flex gap-3 items-start w-[95%]">
             <CgDetailsMore className="text-2xl mt-1 text-gray-600 w-auto" />

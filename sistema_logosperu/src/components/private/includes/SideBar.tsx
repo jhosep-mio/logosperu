@@ -11,7 +11,7 @@ import {
   RiStackFill,
   RiCodeBoxFill
 } from 'react-icons/ri'
-import { MdNotificationsActive } from 'react-icons/md'
+import { MdNotificationsActive, MdDashboard } from 'react-icons/md'
 import axios from 'axios'
 import { Global } from '../../../helper/Global'
 import logo from './../../../assets/logo/logo.png'
@@ -809,6 +809,22 @@ const SideBar = (): JSX.Element => {
                     )
                 )}
               </ul>
+            </li>
+
+            <li key={236}>
+              <Link
+                to="dashboard"
+                className={
+                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                }
+                onClick={() => {
+                  handleItemClick2(1)
+                  setShowMenu(false)
+                  setLoadingComponents(false)
+                }}
+              >
+              <MdDashboard className="text-main/80 text-xl" />{' '} Metricas
+              </Link>
             </li>
 
             {/* <li>

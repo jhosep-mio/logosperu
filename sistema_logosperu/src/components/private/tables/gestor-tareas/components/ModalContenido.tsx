@@ -621,7 +621,7 @@ export const ModalContenido = ({
   const UpdatesharedTasksFecha = async (date: Date | null): Promise<void> => {
     setLoadingShared(true)
     const data = new FormData()
-    data.append('users', JSON.stringify(suggestions))
+    data.append('users', JSON.stringify(colaboradoresSeleccionados))
     data.append('fecha', JSON.stringify(date ?? ''))
     data.append('_method', 'PUT')
     try {
@@ -647,7 +647,7 @@ export const ModalContenido = ({
       descripcion: contexto,
       checklist: arrayList,
       shared: idShared,
-      miembros: suggestions,
+      miembros: colaboradoresSeleccionados,
       fecha: date
     }
     const filteredEvents = events.filter(

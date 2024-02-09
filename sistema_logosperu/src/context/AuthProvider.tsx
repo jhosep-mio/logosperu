@@ -40,6 +40,7 @@ export interface AuthContextValue {
   tasks: never[]
   allTareas: never[]
   getShared: (id: string) => Promise<void>
+  getTareasAll: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -187,10 +188,11 @@ export const AuthProvider = ({
           }
         }
     )
+    console.log(request.data)
     setTasks(request.data)
   }
 
-  const getTareas = async (): Promise<void> => {
+  const getTareasAll = async (): Promise<void> => {
     const request = await axios.get(`${Global.url}/indexToGestor`, {
       headers: {
         Authorization: `Bearer ${
@@ -273,7 +275,7 @@ export const AuthProvider = ({
     setLoadingNotifi(true)
     if (!loading) {
       getShared(auth.id)
-      getTareas()
+      getTareasAll()
       if (estado == 0) {
         Promise.all([
 
@@ -374,7 +376,8 @@ export const AuthProvider = ({
         setOpenModalShared,
         tasks,
         allTareas,
-        getShared
+        getShared,
+        getTareasAll
       }}
     >
       {children}

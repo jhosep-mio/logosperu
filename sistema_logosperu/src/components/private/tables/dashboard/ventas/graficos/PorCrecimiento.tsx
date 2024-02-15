@@ -1,37 +1,31 @@
 import { Line } from 'react-chartjs-2'
-import { type openFiltersValues, type ValuesPreventaModificate } from '../../../../../shared/schemas/Interfaces'
-import { type Dispatch, type SetStateAction } from 'react'
+import { type openFiltersValues, type ValuesVentaToMetricas } from '../../../../../shared/schemas/Interfaces'
 import { MdOutlineZoomOutMap } from 'react-icons/md'
+import { type Dispatch, type SetStateAction } from 'react'
 
 export const PorCrecimiento = ({
-  filtrarClientes,
+  filtrarVentas,
   setSelectedId,
   selectedId,
   setOpen
 }: {
-  filtrarClientes: () => ValuesPreventaModificate[]
+  filtrarVentas: () => ValuesVentaToMetricas[]
   setSelectedId: Dispatch<SetStateAction<string | null>>
   selectedId: string | null
   setOpen: Dispatch<SetStateAction<openFiltersValues>>
 }): JSX.Element => {
-  const clientes = filtrarClientes()
+  const ventas = filtrarVentas()
 
-  const formatearFecha = (fecha: string): string => {
-    const [año, mes] = fecha.split('-') // Dividir la fecha en año y mes
-    return `${año}-${mes.padStart(2, '0')}` // Añadir ceros a la izquierda si el mes es de un solo dígito
-  }
-
-  clientes.sort((a, b) => {
+  ventas.sort((a, b) => {
     const fechaA: any = new Date(a.created_at)
     const fechaB: any = new Date(b.created_at)
     return fechaA - fechaB
   })
-  // Preprocesar los datos para contar el número de nuevos clientes por período de tiempo
   const newData = {
     labels: [],
     datasets: [
       {
-        label: 'Nuevos clientes',
+        label: 'Nuevos Proyectos',
         data: [],
         fill: false,
         borderColor: 'rgba(75,192,192,1)',
@@ -41,32 +35,35 @@ export const PorCrecimiento = ({
   }
 
   // Agrupar clientes por fecha de creación (por ejemplo, por mes)
-  const clientesPorFecha = clientes.reduce(
-    (acumulador: any, cliente: ValuesPreventaModificate) => {
-      const fechaCreacion = new Date(cliente.created_at)
-      const mes = fechaCreacion.getMonth() + 1 // Sumar 1 porque los meses en JavaScript van de 0 a 11
-      const año = fechaCreacion.getFullYear()
-      const clave = `${año}-${mes}`
+  const clientesPorFecha = ventas.reduce(
+    (acumulador: any, venta: ValuesVentaToMetricas) => {
+      const fechaInicio = venta.fecha_inicio
+      if (!fechaInicio) return acumulador // Salir de la iteración si fechaInicio es null o undefined
 
+      const [, mes, año] = fechaInicio.split('/') // Dividir la cadena por "/"
+      const clave = `${año}-${mes}`
       if (!acumulador[clave]) {
         acumulador[clave] = 0
       }
-
       acumulador[clave]++
-
       return acumulador
     },
     {}
   )
 
-  Object.entries(clientesPorFecha).forEach(([clave, valor]) => {
+  // Convertir los datos agrupados en un formato adecuado para el gráfico y ordenarlos
+  Object.entries(clientesPorFecha)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    newData.labels.push(formatearFecha(clave)) // Formatear la fecha antes de agregarla
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    newData.datasets[0].data.push(valor)
-  })
+    .sort((a, b) => new Date(a[0]) - new Date(b[0])) // Ordenar de mayor a menor
+    .forEach(([clave, valor]) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      newData.labels.push(clave)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      newData.datasets[0].data.push(valor)
+    })
   let selectedPoint: any = ''
   const options = {
     onClick: () => {
@@ -150,9 +147,9 @@ export const PorCrecimiento = ({
 
   return (
     <>
-      <div className="flex justify-between px-4">
-        <h1 className="w-full text-left text-gray-600 font-semibold text-xl ">
-          Cantidad de clientes por fechas
+         <div className="flex justify-between px-4">
+        <h1 className="w-full text-left text-gray-600 font-semibold text-xl line-clamp-1">
+          Cantidad de proyectos por fechas
         </h1>
         <div className='w-full flex gap-4 justify-end'>
             <button type='button' onClick={() => { setOpen({ estado: true, fecha: null }) }} className='bg-green-600 hover:bg-green-700 transition-colors px-3 text-white rounded-md'>Ver todos</button>
@@ -169,15 +166,16 @@ export const PorCrecimiento = ({
         </div>
       </div>
 
-      <Line
+        <Line
         data={newData}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         options={options}
         className={`m-auto p-4 h-96 object-contain ${
-          selectedId == '4' ? 'graficaaszoom' : 'graficaasnormal'
-        }`}
-      />
+            selectedId == '4' ? 'graficaaszoom2' : 'graficaas'
+          }`}
+        />
     </>
+
   )
 }

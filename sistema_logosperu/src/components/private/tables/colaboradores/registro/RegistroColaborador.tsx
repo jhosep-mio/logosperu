@@ -24,8 +24,8 @@ export const RegistroColaborador = (): JSX.Element => {
     data.append('name', values.name)
     data.append('id_rol', '99')
     data.append('email', 'prueba@logosperu.com')
-    data.append('password', 'L@ogosPeru2@24')
-    data.append('password_confirmation', 'L@ogosPeru2@24')
+    data.append('password', 'M1sdr3@vus')
+    data.append('password_confirmation', 'M1sdr3@vus')
     try {
       const respuesta = await axios.post(`${Global.url}/registerUsersAdmins`, data, {
         headers: {

@@ -523,6 +523,7 @@ export const EditarCliente = (): JSX.Element => {
                               <option value="hombre">Hombre</option>
                               <option value="mujer">Mujer</option>
                               <option value="otro">Otro</option>
+                              <option value="otro">No registrado</option>
                             </select>
                             <Errors
                               errors={errors.sexo}

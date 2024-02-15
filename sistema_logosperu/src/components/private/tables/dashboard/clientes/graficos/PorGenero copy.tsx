@@ -1,6 +1,6 @@
 import { Pie } from 'react-chartjs-2'
 import { type filtrosValues, type ValuesPreventaModificate } from '../../../../../shared/schemas/Interfaces'
-import { type Dispatch, type SetStateAction } from 'react'
+import { useState, type Dispatch, type SetStateAction } from 'react'
 import { MdOutlineZoomOutMap } from 'react-icons/md'
 
 const options = {
@@ -54,22 +54,21 @@ const options = {
 export const PorGenero = ({
   filtrarClientes,
   setSelectedId,
-  selectedId,
-  filtroSeleccionado,
-  setFiltroSeleccionado
+  zoom,
+  selectedId
 }: {
   filtrarClientes: () => ValuesPreventaModificate[]
   setSelectedId: Dispatch<SetStateAction<string | null>>
+  zoom: boolean
   selectedId: string | null
   filtroSeleccionado: filtrosValues | null
-  setFiltroSeleccionado: Dispatch<SetStateAction<filtrosValues | null>>
 }): JSX.Element => {
   const clientes = filtrarClientes()
 
   const countByGender: Record<string, number> = {
-    hombre: 0,
-    mujer: 0,
-    otro: 0,
+    Hombres: 0,
+    Mujeres: 0,
+    Otros: 0,
     NoRegistrado: 0
   }
 
@@ -77,11 +76,11 @@ export const PorGenero = ({
     const sexo = cliente.sexo
     // Aquí debes implementar la lógica para contar la cantidad de personas por género
     if (sexo == 'hombre') {
-      countByGender.hombre++
+      countByGender.Hombres++
     } else if (sexo == 'mujer') {
-      countByGender.mujer++
+      countByGender.Mujeres++
     } else if (sexo == 'otro') {
-      countByGender.otro++
+      countByGender.Otros++
     } else {
       countByGender.NoRegistrado++
     }
@@ -95,21 +94,13 @@ export const PorGenero = ({
   const percentages = sortedData.map((value) =>
     ((value / total) * 100).toFixed(2)
   )
+  const [selectedGenders, setSelectedGenders] = useState<string[]>([])
 
   const handleLegendClick = (legend: string): void => {
-    if (filtroSeleccionado?.genero?.includes(legend)) {
-      setFiltroSeleccionado((prev: any) => ({
-        ...prev,
-        genero: prev.genero.filter((gender: any) => gender !== legend)
-      }))
+    if (selectedGenders.includes(legend)) {
+      setSelectedGenders(selectedGenders.filter((gender) => gender !== legend))
     } else {
-      setFiltroSeleccionado((prev: any) => {
-        const updatedGeneros = prev?.genero === null ? [legend] : [...(prev?.genero || []), legend]
-        return {
-          ...prev,
-          genero: updatedGeneros
-        }
-      })
+      setSelectedGenders([...selectedGenders, legend])
     }
   }
 
@@ -117,16 +108,14 @@ export const PorGenero = ({
     labels: sortedKeys.map(
       (key, index) =>
           `${key} (${
-            filtroSeleccionado?.genero?.includes(key) ? percentages[index] : '0.00'
+            selectedGenders.includes(key) ? percentages[index] : '0.00'
           }%)`
     ),
     datasets: [
       {
         label: 'Todo',
         data: sortedData.map((value, index) =>
-          !filtroSeleccionado?.genero || filtroSeleccionado.genero.length === 0
-            ? value
-            : filtroSeleccionado.genero.includes(sortedKeys[index]) ? value : 0
+          selectedGenders.length === 0 || selectedGenders.includes(sortedKeys[index]) ? value : 0
         ),
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
@@ -143,7 +132,6 @@ export const PorGenero = ({
           'rgba(75, 192, 192, 1)',
           'rgba(153, 102, 255, 1)',
           'rgba(255, 159, 64, 1)'
-
         ],
         borderWidth: 2
       }
@@ -167,27 +155,27 @@ export const PorGenero = ({
           }}
         />
       </div>
-      <div className="flex flex-wrap w-full justify-center gap-4 text-black mt-3">
+      <div className="flex w-full justify-center gap-4 text-black mt-3">
         {sortedKeys.map((key, index) => (
           <span
             className={'px-1 cursor-pointer rounded-md bg-gray-200'}
             key={index}
             style={{
-              backgroundColor: filtroSeleccionado?.genero?.length && filtroSeleccionado?.genero?.length > 0 && !filtroSeleccionado?.genero?.includes(key) ? 'rgb(229 231 235)' : chartData.datasets[0].backgroundColor[index],
-              border: filtroSeleccionado?.genero?.length && filtroSeleccionado?.genero?.length > 0 && !filtroSeleccionado?.genero?.includes(key) ? '1px solid rgb(229 231 235)' : `1px solid ${chartData.datasets[0].borderColor[index]}` // Agrega un borde con el mismo color que el borde del gráfico
+              backgroundColor: selectedGenders.length > 0 && !selectedGenders.includes(key) ? 'rgb(229 231 235)' : chartData.datasets[0].backgroundColor[index],
+              border: selectedGenders.length > 0 && !selectedGenders.includes(key) ? '1px solid rgb(229 231 235)' : `1px solid ${chartData.datasets[0].borderColor[index]}` // Agrega un borde con el mismo color que el borde del gráfico
             }}
             onClick={() => {
               handleLegendClick(key)
             }}
           >
-            {key == 'hombre' ? 'Hombres' : key == 'mujer' ? 'Mujeres' : key == 'otro' ? 'Otros' : key} ({percentages[index]}%)
+            {key} ({percentages[index]}%)
           </span>
         ))}
       </div>
       <Pie
         data={chartData}
         options={options}
-        className={`m-auto p-4 h-96 object-contain ${selectedId == '2' ? 'graficaaszoom' : 'graficaas'}`}
+        className={`m-auto p-4 h-96 object-contain ${zoom ? 'graficaaszoom' : 'graficaas'}`}
       />
     </>
   )

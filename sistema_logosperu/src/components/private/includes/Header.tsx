@@ -66,10 +66,9 @@ const Header = (): JSX.Element => {
 
   return (
     <>
-            <ModalNoti />
-
-      {!currentPath.includes('admin/gestor-tareas') &&
-        (
+       <ModalNoti />
+      {!currentPath.includes('admin/gestor-tareas') && !currentPath.includes('admin/listadocm') &&
+      (
         <>
           <header className="h-[7vh] lg:h-[10vh] border-b border-gray-100 shadow-sm p-8 flex items-center justify-between bg-white z-10">
             <div className="flex gap-3 md:gap-5">
@@ -135,7 +134,7 @@ const Header = (): JSX.Element => {
             {showError != null && <AlertSucess showError={showError} />}
           </AnimatePresence>
         </>
-        )
+      )
         }
     </>
   )

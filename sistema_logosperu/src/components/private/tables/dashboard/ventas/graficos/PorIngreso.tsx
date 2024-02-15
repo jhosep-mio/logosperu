@@ -1,8 +1,5 @@
-import { Bar } from 'react-chartjs-2'
-import {
-  type filtrosValues,
-  type ValuesPreventaModificate
-} from '../../../../../shared/schemas/Interfaces'
+import { Pie } from 'react-chartjs-2'
+import { type filtrosValuesVentas, type ValuesVentaToMetricas } from '../../../../../shared/schemas/Interfaces'
 import { type Dispatch, type SetStateAction } from 'react'
 import { MdOutlineZoomOutMap } from 'react-icons/md'
 
@@ -36,7 +33,7 @@ const options = {
     },
     tooltip: {
       mode: 'index',
-      intersect: false,
+      intersect: true,
       position: 'nearest',
       caretSize: 10,
       borderWidth: 1,
@@ -48,9 +45,7 @@ const options = {
       bodyFont: {
         size: 14
       }
-
     }
-
   },
   elements: {
     bar: {
@@ -63,20 +58,20 @@ const options = {
   }
 }
 
-export const PorMedioDeIngreso = ({
-  filtrarClientes,
+export const PorIngreso = ({
+  filtrarVentas,
   setSelectedId,
   selectedId,
   filtroSeleccionado,
   setFiltroSeleccionado
 }: {
-  filtrarClientes: () => ValuesPreventaModificate[]
+  filtrarVentas: () => ValuesVentaToMetricas[]
   setSelectedId: Dispatch<SetStateAction<string | null>>
   selectedId: string | null
-  filtroSeleccionado: filtrosValues | null
-  setFiltroSeleccionado: Dispatch<SetStateAction<filtrosValues | null>>
+  filtroSeleccionado: filtrosValuesVentas | null
+  setFiltroSeleccionado: Dispatch<SetStateAction<filtrosValuesVentas | null>>
 }): JSX.Element => {
-  const clientes = filtrarClientes()
+  const ventas = filtrarVentas()
 
   const countByMedio: Record<string, number> = {
     Facebook: 0,
@@ -88,33 +83,31 @@ export const PorMedioDeIngreso = ({
     Recomendación: 0
   }
 
-  clientes.forEach((cliente: ValuesPreventaModificate) => {
+  ventas.forEach((venta: ValuesVentaToMetricas) => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const medio_ingreso = String(cliente.medio_ingreso)
-    // Mapear el valor de medio_ingreso a la cadena correspondiente
+    const medio_ingreso = String(venta.medio_ingreso)
     const medio =
-      medio_ingreso == '0'
-        ? 'Facebook'
-        : medio_ingreso == '1'
-          ? 'Google'
-          : medio_ingreso == '2'
-            ? 'Ventas'
-            : medio_ingreso == '3'
-              ? 'Post Venta'
-              : medio_ingreso == '4'
-                ? 'Whatsapp'
-                : medio_ingreso == '5'
-                  ? 'Instagram'
-                  : medio_ingreso == '6'
-                    ? 'Recomendación'
-                    : ''
+       medio_ingreso == '0'
+         ? 'Facebook'
+         : medio_ingreso == '1'
+           ? 'Google'
+           : medio_ingreso == '2'
+             ? 'Ventas'
+             : medio_ingreso == '3'
+               ? 'Post Venta'
+               : medio_ingreso == '4'
+                 ? 'Whatsapp'
+                 : medio_ingreso == '5'
+                   ? 'Instagram'
+                   : medio_ingreso == '6'
+                     ? 'Recomendación'
+                     : ''
 
     // Incrementar el contador para el medio de ingreso correspondiente
     if (medio in countByMedio) {
       countByMedio[medio]++
     }
   })
-
   const total = Object.values(countByMedio).reduce(
     (acc, value) => acc + value,
     0
@@ -145,20 +138,16 @@ export const PorMedioDeIngreso = ({
 
   const chartData = {
     labels: sortedKeys.map(
-      (key, index) =>
-        `${key} (${
-          filtroSeleccionado?.ingreso?.includes(key) ? percentages[index] : '0.00'
-        }%)`
+      (key) =>
+          `${key}`
     ),
     datasets: [
       {
-        label: 'Medio de ingreso',
+        label: 'Todo',
         data: sortedData.map((value, index) =>
           !filtroSeleccionado?.ingreso || filtroSeleccionado.ingreso.length === 0
             ? value
-            : filtroSeleccionado.ingreso.includes(sortedKeys[index])
-              ? value
-              : 0
+            : filtroSeleccionado.ingreso.includes(sortedKeys[index]) ? value : 0
         ),
         backgroundColor: [
           'rgba(203, 109, 81, 0.2)',
@@ -187,22 +176,22 @@ export const PorMedioDeIngreso = ({
     <>
       <div className="flex justify-between px-4">
         <h1 className="w-full text-left text-gray-600 font-semibold text-xl ">
-          Por Medio de ingreso
+          Por Ingreso
         </h1>
         <MdOutlineZoomOutMap
           className="text-2xl text-gray-600 cursor-pointer hover:text-gray-700 hover:scale-105"
           onClick={() => {
-            if (selectedId == '3') {
+            if (selectedId == '2') {
               setSelectedId(null)
             } else {
-              setSelectedId('3')
+              setSelectedId('2')
             }
           }}
         />
       </div>
       <div className="flex flex-wrap w-full justify-center gap-4 text-black mt-3">
         {sortedKeys.map((key, index) => (
-          <span
+            <span
             className={'px-1 cursor-pointer rounded-md bg-gray-200'}
             key={index}
             style={{
@@ -222,19 +211,19 @@ export const PorMedioDeIngreso = ({
             onClick={() => {
               handleLegendClick(key)
             }}
-          >
+            >
             {key} ({percentages[index]}%)
-          </span>
+            </span>
         ))}
       </div>
-      <Bar
+      <Pie
         data={chartData}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         options={options}
         className={`m-auto p-4 h-96 object-contain ${
-            selectedId == '3' ? 'graficaaszoom' : 'graficaas'
-        }`}
+            selectedId == '2' ? 'graficaaszoom2' : 'graficaas22'
+          }`}
       />
     </>
   )

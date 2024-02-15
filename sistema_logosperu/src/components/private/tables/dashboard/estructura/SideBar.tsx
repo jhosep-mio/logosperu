@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { RiLogoutCircleRLine } from 'react-icons/ri'
 import axios from 'axios'
-import { FaUserGroup } from 'react-icons/fa6'
+import { FaChartSimple, FaUserGroup } from 'react-icons/fa6'
 import useAuth from '../../../../../hooks/useAuth'
 import { Global } from '../../../../../helper/Global'
 import { HiComputerDesktop } from 'react-icons/hi2'
@@ -10,9 +9,8 @@ import { FaAngleLeft } from 'react-icons/fa'
 import logo from './../../../../../assets/logo/logo_morado.jpg'
 
 const SideBar = (): JSX.Element => {
-  const { setAuth, setLoadingComponents } = useAuth()
+  const { setAuth, setLoadingComponents, openSidebar, setOpenSidebar } = useAuth()
   const token = localStorage.getItem('token')
-  const [open, setOpen] = useState(false)
 
   const navigate = useNavigate()
 
@@ -41,11 +39,11 @@ const SideBar = (): JSX.Element => {
     <>
       <div
         className={
-          `manejar_Scroll xl:h-[100vh] md:overflow-y-scroll relative  ${open ? 'w-[5%]' : 'w-[80%] md:w-[40%] lg:w-[15%]'}  h-full top-0 bg-white shadow-xl p-4 flex flex-col justify-between z-50 transition-all`
+          `manejar_Scroll xl:h-[100vh] md:overflow-y-scroll relative  ${openSidebar ? 'w-[5%]' : 'w-[80%] md:w-[40%] lg:w-[15%]'}  h-full top-0 bg-white shadow-xl p-4 flex flex-col justify-between z-50 transition-all`
         }
       >
 
-        <span onClick={() => { setOpen(!open) }} className='absolute top-0 right-0 w-7 h-7 hover:bg-gray-200 cursor-pointer transition-colors bg-white shadow-md rounded-full text-black flex items-center justify-center
+        <span onClick={() => { setOpenSidebar(!openSidebar) }} className='absolute top-0 right-0 w-7 h-7 hover:bg-gray-200 cursor-pointer transition-colors bg-white shadow-md rounded-full text-black flex items-center justify-center
         '><FaAngleLeft/></span>
         <div>
           <ul className="ml-0 py-0">
@@ -57,13 +55,26 @@ const SideBar = (): JSX.Element => {
               <Link
                 to="clientes"
                 className={
-                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-white hover:text-gray-600 transition-colors w-full'
+                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-gray-100 hover:text-gray-600 transition-colors w-full'
                 }
                 onClick={() => {
                   setLoadingComponents(false)
                 }}
               >
-                <FaUserGroup className="text-secundario text-xl" /> {!open && 'Clientes'}
+                <FaUserGroup className="text-secundario text-xl" /> {!openSidebar && 'Clientes'}
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="ventas"
+                className={
+                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-gray-100 hover:text-gray-600 transition-colors w-full'
+                }
+                onClick={() => {
+                  setLoadingComponents(false)
+                }}
+              >
+                <FaChartSimple className="text-secundario text-xl" /> {!openSidebar && 'Proyectos'}
               </Link>
             </li>
             <li>
@@ -76,7 +87,7 @@ const SideBar = (): JSX.Element => {
                   setLoadingComponents(false)
                 }}
               >
-                <HiComputerDesktop className="text-secundario text-xl" /> {!open && 'Sistema'}
+                <HiComputerDesktop className="text-secundario text-xl" /> {!openSidebar && 'Sistema'}
               </Link>
             </li>
           </ul>
@@ -90,7 +101,7 @@ const SideBar = (): JSX.Element => {
             className= 'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-white hover:text-gray-600 transition-colors w-full'
 
           >
-            <RiLogoutCircleRLine className="text-secundario " /> {!open && 'Cerrar sesión'}
+            <RiLogoutCircleRLine className="text-secundario " /> {!openSidebar && 'Cerrar sesión'}
           </Link>
         </nav>
       </div>

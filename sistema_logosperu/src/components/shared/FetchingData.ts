@@ -1,9 +1,19 @@
 import axios from 'axios'
 import { type Dispatch, type SetStateAction } from 'react'
 import { Global } from '../../helper/Global'
-import { type interfaceListaDiseñoNew, type ValuesPreventaModificate, type interfaceListaDiseño, type ValuesVenta, type VluesToExcel, type ValuesCategoriasPortafolio, type ValuesSubCategoriasPortafolio, type ValuesItemsPortafolio, type ValuesPlanes, type notificacionesValues, type usurioValues, type clasificadosValues, type valuesTransaccion } from './schemas/Interfaces'
+import { type interfaceListaDiseñoNew, type ValuesPreventaModificate, type interfaceListaDiseño, type ValuesVenta, type VluesToExcel, type ValuesCategoriasPortafolio, type ValuesSubCategoriasPortafolio, type ValuesItemsPortafolio, type ValuesPlanes, type notificacionesValues, type usurioValues, type clasificadosValues, type valuesTransaccion, type ValuesVentaToMetricas } from './schemas/Interfaces'
 
 const token = localStorage.getItem('token')
+
+export const getDataVentasToMetricas = async (ruta: string, setDatos: Dispatch<SetStateAction<ValuesVentaToMetricas[]>>, setTotalRegistros: Dispatch<SetStateAction<number>>): Promise<void> => {
+  const request = await axios.get(`${Global.url}/${ruta}`, {
+    headers: {
+      Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+    }
+  })
+  setDatos(request.data)
+  setTotalRegistros(request.data.length)
+}
 
 // CLASIFICADOS
 
@@ -83,6 +93,71 @@ export const getData2 = async (ruta: string, setDatos: Dispatch<SetStateAction<V
     }
   })
   setDatos(request.data)
+  setTotalRegistros(request.data.length)
+}
+
+export const getDataClientesMetricas = async (ruta: string, setDatos: Dispatch<SetStateAction<ValuesPreventaModificate[]>>, setDepartamentos: Dispatch<SetStateAction<Record<string, Record<string, number>>>>, setDistritos: Dispatch<SetStateAction<Record<string, Record<string, Record<string, number>>>>>, setPaises: Dispatch<SetStateAction<Record<string, number>>>
+  , setTotalRegistros: Dispatch<SetStateAction<number>>): Promise<void> => {
+  const request = await axios.get(`${Global.url}/${ruta}`, {
+    headers: {
+      Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+    }
+  })
+  setDatos(request.data)
+  const countByCountry: Record<string, number> = {}
+  const countByCountryAndDepartment: Record<string, Record<string, number>> = {}
+  const countByCountryDepartmentAndDistrict: Record<string, Record<string, Record<string, number>>> = {}
+
+  request.data.forEach((cliente: { metricas: string }) => {
+    const clienteObj = JSON.parse(cliente.metricas)
+    if (!clienteObj) {
+      return
+    }
+    const country = clienteObj.country
+    const department = clienteObj.department
+    const district = clienteObj.district
+
+    // Incrementa el contador de países
+    if (country) {
+      if (countByCountry[country]) {
+        countByCountry[country]++
+      } else {
+        countByCountry[country] = 1
+      }
+    }
+
+    // Incrementa el contador de departamentos
+    if (country && department) {
+      if (!countByCountryAndDepartment[country]) {
+        countByCountryAndDepartment[country] = {}
+      }
+      if (countByCountryAndDepartment[country][department]) {
+        countByCountryAndDepartment[country][department]++
+      } else {
+        countByCountryAndDepartment[country][department] = 1
+      }
+    }
+
+    // Incrementa el contador de distritos
+    if (country && department && district) {
+      if (!countByCountryDepartmentAndDistrict[country]) {
+        countByCountryDepartmentAndDistrict[country] = {}
+      }
+      if (!countByCountryDepartmentAndDistrict[country][department]) {
+        countByCountryDepartmentAndDistrict[country][department] = {}
+      }
+      if (countByCountryDepartmentAndDistrict[country][department][district]) {
+        countByCountryDepartmentAndDistrict[country][department][district]++
+      } else {
+        countByCountryDepartmentAndDistrict[country][department][district] = 1
+      }
+    }
+  })
+
+  // Actualiza los estados con los datos recopilados
+  setPaises(countByCountry)
+  setDepartamentos(countByCountryAndDepartment)
+  setDistritos(countByCountryDepartmentAndDistrict)
   setTotalRegistros(request.data.length)
 }
 

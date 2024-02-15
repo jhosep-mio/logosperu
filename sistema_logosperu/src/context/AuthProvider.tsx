@@ -41,6 +41,8 @@ export interface AuthContextValue {
   allTareas: never[]
   getShared: (id: string) => Promise<void>
   getTareasAll: () => Promise<void>
+  openSidebar: boolean
+  setOpenSidebar: Dispatch<SetStateAction<boolean>>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -65,6 +67,7 @@ export const AuthProvider = ({
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [title, setTitle] = useState('')
+  const [openSidebar, setOpenSidebar] = useState(false)
   const [showError, setShowError] = useState<errorValues | null>(null)
   const [estado, setEstado] = useState(0)
   const [loadingComponents, setLoadingComponents] = useState(false)
@@ -188,7 +191,6 @@ export const AuthProvider = ({
           }
         }
     )
-    console.log(request.data)
     setTasks(request.data)
   }
 
@@ -377,7 +379,9 @@ export const AuthProvider = ({
         tasks,
         allTareas,
         getShared,
-        getTareasAll
+        getTareasAll,
+        openSidebar,
+        setOpenSidebar
       }}
     >
       {children}

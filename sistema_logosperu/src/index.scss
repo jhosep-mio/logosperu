@@ -5,64 +5,83 @@
 ::-webkit-scrollbar {
   width: 0px;
 }
+
+.modal_options_metricas {
+  & .MuiPaper-root {
+    width: 60vw;
+    max-width: 60vw;
+  }
+}
+.modal_citas_clientes3 {
+  z-index: 998 !important;
+  & .MuiPaper-root {
+    min-width: 60vw !important;
+    max-width: 100vw !important;
+    min-height: 600px;
+    width: 60vh !important;
+    resize: both;
+    max-height: calc(100% - 24px);
+  }
+}
 // ELIMIANR
 .modal_citas_clientes2 {
   & .MuiPaper-root {
     width: 60vw !important;
     max-width: 60vw !important;
     min-height: 600px;
-    background-color: #F1F2F4;
+    background-color: #f1f2f4;
   }
 }
 
-.jodecct_sss{
-    & .jodit-react-container{
-        height: 100% !important;
-    }
-    & .jodecct_sss{
-        height: 100% !important;
-        max-height: 100% !important;
-    }
-    & .jodit-workplace{
-        height: 100% !important;
-        max-height: 100% !important;
-    }
+.jodecct_sss {
+  & .jodit-react-container {
+    height: 100% !important;
+  }
+  & .jodecct_sss {
+    height: 100% !important;
+    max-height: 100% !important;
+  }
+  & .jodit-workplace {
+    height: 100% !important;
+    max-height: 100% !important;
+  }
 }
 
 .datapciker_modal {
-    &__input {
-        display: none !important;
-    }
-    & .react-datepicker__time-list-item--disabled {
-            display: none;
-    }
+  &__input {
+    display: none !important;
+  }
+  & .react-datepicker__time-list-item--disabled {
+    display: none;
+  }
 
-    & .react-datepicker-wrapper{
-        width: 100% !important;
-    }
+  & .react-datepicker-wrapper {
+    width: 100% !important;
+  }
 
-    & .react-datepicker__input-container{
-        width: 100% !important;
-    }
-    & .react-datepicker__time-container {
-        width: 100% !important;
-    }
-    & .react-datepicker__month-container{
-        width: 100% !important;
-    }
-    & .react-datepicker__time-box{
-        width: 100% !important;
-    }
-    & .react-datepicker__time-list{
-        width: 100% !important;
-    }
+  & .react-datepicker__input-container {
+    width: 100% !important;
+  }
+  & .react-datepicker__time-container {
+    width: 100% !important;
+  }
+  & .react-datepicker__month-container {
+    width: 100% !important;
+  }
+  & .react-datepicker__time-box {
+    width: 100% !important;
+  }
+  & .react-datepicker__time-list {
+    width: 100% !important;
+  }
 
-    & .react-datepicker__navigation--next--with-time:not(.react-datepicker__navigation--next--with-today-button) {
-        right: 0 !important;
-    }
+  &
+    .react-datepicker__navigation--next--with-time:not(
+      .react-datepicker__navigation--next--with-today-button
+    ) {
+    right: 0 !important;
+  }
 }
-
-
 
 .modal_citas_clientes {
   & .MuiPaper-root {
@@ -299,6 +318,10 @@
   grid-template-columns: repeat(17, 1fr);
 }
 
+.grid_teplate_ventas_pendientes2 {
+  grid-template-columns: repeat(16, 1fr);
+}
+
 .dialog_fecha_inicio {
   z-index: 500 !important;
 
@@ -448,9 +471,47 @@
   width: calc(100% - 100px);
 }
 
+.h_screen_metricas_ventas::-webkit-scrollbar {
+  width: 5px;
+  background: white !important;
+}
+
+.h_screen_metricas_ventas {
+  max-height: calc(100vh - 83px);
+}
+
+.h_screen_metricas_ventas2 {
+  max-height: calc(100vh - 36px);
+}
+
+.graficaasnormal {
+  width: 100% !important;
+  height: 490px !important;
+}
+
+.graficaaszoom {
+  width: 100% !important;
+  height: 580px !important;
+}
+
+.graficaaszoom2 {
+  width: 100% !important;
+  height: 533px !important;
+}
+
+.graficaas_top10 {
+  height: auto !important;
+  width: 100% inherit;
+}
+
+.graficaas22 {
+  width: 100% !important;
+  height: 300px !important;
+}
+
 .graficaas {
   width: 100% !important;
-  height: 100% !important;
+  height: 400px !important;
 }
 
 .visually-hidden {
@@ -991,6 +1052,53 @@ input[type="date"] {
   background: #d23741 !important;
 }
 
+// CALENDARIO CM LOGOS PERU
+
+.calendario_cm .rbc-toolbar {
+    & :first-child {
+      display: none !important;
+    }
+  }
+
+.calendario_cm .rbc-toolbar-label {
+    // background: #129990 !important;
+    color: #129990 !important;
+    font-size: 42px !important;
+    text-transform: uppercase !important;
+    font-weight: 900 !important;
+    text-align: left !important;
+  }
+
+.calendario_cm .rbc-active {
+  background: #129990 !important;
+  color: white !important;
+}
+
+.calendario_cm .rbc-header {
+  background: #129990 !important;
+  color: white !important;
+}
+
+.calendario_cm .react-calendar__month-view__weekdays__weekday {
+  color: #129990 !important;
+  font-weight: bolder !important;
+}
+
+.calendario_cm .rbc-event .rbc-event-label {
+  background: transparent !important;
+}
+
+.calendario_cm .react-calendar__tile--active:enabled:hover,
+.calendario_cm .react-calendar__tile--active:enabled:focus {
+  background: transparent !important;
+}
+
+.calendario_cm .rbc-events-container .rbc-event {
+  height: fit-content !important;
+  background: #579eb2 !important;
+}
+
+//CALENDARIO GESTIOR DE TAREAS
 .calendario_tareas .rbc-toolbar {
   & :first-child {
     display: none !important;

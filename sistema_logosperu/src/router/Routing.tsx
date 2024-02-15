@@ -88,10 +88,12 @@ import { ListadoClientesSInProyectos } from '../components/private/tables/client
 import { ExportExcelClientesSinproyectos } from '../components/private/tables/clientes/excelexport/ExportExcelClientesSinproyectos'
 import { ExportExcelPreVentas } from '../components/private/tables/preventa/excel/ExportExcelPreVentas'
 import { ViewCm } from '../components/private/tables/calendario_CM/ViewCm'
-import { Listadocm } from '../components/private/tables/calendario_CM/Listadocm'
 import { CalendarioView } from '../components/private/tables/calendario_CM/CalendarioView'
 import { MetricasClientes } from '../components/private/tables/dashboard/clientes/MetricasClientes'
 import { LayoutDashboard } from '../components/private/tables/dashboard/LayoutDashboard'
+import { RegistroColaborador } from '../components/private/tables/colaboradores/registro/RegistroColaborador'
+import { MetricasVentas } from '../components/private/tables/dashboard/ventas/MetricasVentas'
+import { IndexCalendarioCm } from '../components/private/tables/calendario_CM/IndexCalendarioCm'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -117,7 +119,7 @@ export const Routing = (): JSX.Element => {
             <Route path="lista-planes/editar/:id" element={<EditarPlan />} />
             {/* COLABORADORES */}
             <Route path="colaboradores" element={<ListaColaboradores />} />
-            {/* <Route path="colaboradores/agregar" element={<RegistroColaborador />} /> */}
+            <Route path="colaboradores/agregar" element={<RegistroColaborador />} />
             <Route path="colaboradores/reporte/:id" element={<ReportePorColaborador />} />
             {/* DISEÑO */}
             <Route path="lista-briefs-diseños" element={<ListaBriefDiseño />} />
@@ -213,7 +215,7 @@ export const Routing = (): JSX.Element => {
             <Route path="items-portafolio/editar/:id" element={<EditarItemsToPortafolio />} />
 
             {/* LISTADO CM */}
-            <Route path="listadocm" element={<Listadocm />} />
+            <Route path="listadocm" element={<IndexCalendarioCm />} />
             <Route path="listadocm/view/:id" element={<ViewCm />} />
             <Route path="listadocm/view/:id/calendario/:idContenido" element={<CalendarioView />} />
 
@@ -232,6 +234,7 @@ export const Routing = (): JSX.Element => {
           <Route path="admin/dashboard" element={<LayoutDashboard />}>
             <Route index element={<MetricasClientes />} />
             <Route path="clientes" element={<MetricasClientes />} />
+            <Route path="ventas" element={<MetricasVentas />} />
           </Route>
 
           {/* PUBLICO */}

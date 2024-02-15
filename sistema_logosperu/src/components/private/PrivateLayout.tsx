@@ -27,7 +27,7 @@ export const PrivateLayout = (): JSX.Element => {
         <SideBar />
         <div className="xl:col-span-6">
           <Header />
-          <div className={`${currentPath.includes('admin/gestor-tareas') ? 'h-[100vh]' : 'h-[90vh] py-2 px-4 lg:px-8 '} overflow-y-auto relative`}>
+          <div className={`${currentPath.includes('admin/gestor-tareas') || currentPath.includes('admin/listadocm') ? 'h-[100vh]' : 'h-[90vh] py-2 px-4 lg:px-8 '} overflow-y-auto relative`}>
           {
               auth.id != ''
                 ? <Outlet />

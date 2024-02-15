@@ -2,6 +2,33 @@ import { type Dispatch, type SetStateAction } from 'react'
 
 // AVANCES DE archivo
 
+export interface openFiltersValues {
+  estado: boolean
+  fecha: string | null
+}
+
+export interface openFiltersValuesToId {
+  estado: boolean
+  id: string | null
+  nombre: string | null
+  cantidad: string | null
+}
+
+export interface filtrosValuesVentas {
+  estado: string[]
+  ingreso: string[]
+}
+
+export interface filtrosValues {
+  estado: string
+  pais: string
+  departamento: string
+  distrito: string
+  edad: string[]
+  genero: string[]
+  ingreso: string[]
+}
+
 export interface archivoavancesValues {
   id: string
   nombre: string
@@ -398,6 +425,32 @@ export interface valuesTransaccion {
   celular: string
   id_transaccion: string
   tipo: string
+  created_at: string
+}
+
+export interface ValuesVentaToMetricas {
+  id: number
+  id_cliente: string
+  nombre_empresa: string
+  fecha_inicio: string
+  observaciones: string
+  comentarios: string
+  fecha_alta: string
+  asignacion: string
+  fecha_fin: string
+  resumen: string
+  id_contacto: string
+  arraycontacto: string
+  email: string
+  celular: string
+  edad: string
+  sexo: string
+  nombre_marca: string
+  medio_ingreso: string
+  estado: string
+  nombres: string
+  apellidos: string
+  id_contrato: string
   created_at: string
 }
 

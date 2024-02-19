@@ -94,6 +94,7 @@ import { LayoutDashboard } from '../components/private/tables/dashboard/LayoutDa
 import { RegistroColaborador } from '../components/private/tables/colaboradores/registro/RegistroColaborador'
 import { MetricasVentas } from '../components/private/tables/dashboard/ventas/MetricasVentas'
 import { IndexCalendarioCm } from '../components/private/tables/calendario_CM/IndexCalendarioCm'
+import { MetricasCm } from '../components/private/tables/calendario_CM/MetricasCm'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -218,6 +219,7 @@ export const Routing = (): JSX.Element => {
             <Route path="listadocm" element={<IndexCalendarioCm />} />
             <Route path="listadocm/view/:id" element={<ViewCm />} />
             <Route path="listadocm/view/:id/calendario/:idContenido" element={<CalendarioView />} />
+            <Route path="listadocm/metricas" element={<MetricasCm/>} />
 
           </Route>
           <Route path="admin/lista-ventas/metricas" element={<Metricas />} />

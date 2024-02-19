@@ -52,6 +52,7 @@ export const ViewCm = (): JSX.Element => {
         }`
       }
     })
+    console.log(request)
     if (request.data[0].community) {
       const parsedEvents = JSON.parse(request.data[0].community).map(
         (event: any) => ({

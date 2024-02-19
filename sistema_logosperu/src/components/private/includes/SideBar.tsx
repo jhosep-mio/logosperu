@@ -40,7 +40,7 @@ const SideBar = (): JSX.Element => {
   } = useAuth()
   const token = localStorage.getItem('token')
   const [showMenu, setShowMenu] = useState(false)
-  //   const [showSubmenu, setShowSubmenu] = useState(false)
+  const [showSubmenu, setShowSubmenu] = useState(false)
   //   const [showSubmenu2, setShowSubmenu2] = useState(false)
   const [showSubmenu3, setShowSubmenu3] = useState(false)
   const [showSubmenu4, setShowSubmenu4] = useState(false)
@@ -614,6 +614,21 @@ const SideBar = (): JSX.Element => {
                             Clasificados
                           </Link>
                         </li>
+                        <li key={236}>
+                            <Link
+                                to="dashboard"
+                                className={
+                                'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                                }
+                                onClick={() => {
+                                  handleItemClick2(1)
+                                  setShowMenu(false)
+                                  setLoadingComponents(false)
+                                }}
+                            >
+                            <MdDashboard className="text-main/80 text-xl" />{' '} Metricas
+                            </Link>
+                        </li>
                       </>
                         )
                       : (
@@ -683,20 +698,77 @@ const SideBar = (): JSX.Element => {
 
             {auth.id_rol == 99 || auth.id == '2'
               ? <li key={234}>
-              <Link
-                to="listadocm"
-                className={
-                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
-                }
+                <button
                 onClick={() => {
-                  handleItemClick2(1)
-                  setShowMenu(false)
-                  setLoadingComponents(false)
+                  setShowSubmenu(!showSubmenu)
                 }}
-              >
-              <SiGoogletagmanager className="text-main/80 text-xl" />{' '} CM
-              </Link>
+                className="flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full"
+                >
+                <span className="flex items-center gap-4 w-full">
+                    <SiGoogletagmanager className="text-main/80 text-xl" />{' '}
+                    CM
+                </span>
+                <RiArrowRightSLine
+                    className={`mt-1 ${
+                    showSubmenu ? 'rotate-90' : ''
+                    } transition-all`}
+                />
+                </button>
+                <ul
+                className={` ml-0 ${
+                    showSubmenu ? '' : 'h-0'
+                } overflow-hidden transition-all`}
+                >
+                <li>
+                    <Link
+                    to="listadocm"
+                    className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                        activeItem == 899
+                        ? 'before:bg-main'
+                        : 'before:bg-gray-500'
+                    } hover:text-main transition-colors`}
+                    onClick={() => {
+                      handleItemClick(899)
+                      setShowMenu(false)
+                      setLoadingComponents(false)
+                    }}
+                    >
+                    Calendario
+                    </Link>
+                    <Link
+                    to="listadocm/metricas"
+                    className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                        activeItem == 898
+                        ? 'before:bg-main'
+                        : 'before:bg-gray-500'
+                    } hover:text-main transition-colors`}
+                    onClick={() => {
+                      handleItemClick(898)
+                      setShowMenu(false)
+                      setLoadingComponents(false)
+                    }}
+                    >
+                    Metricas
+                    </Link>
+                </li>
+                </ul>
             </li>
+
+            //   <li key={234}>
+            //   <Link
+            //     to="listadocm"
+            //     className={
+            //       'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+            //     }
+            //     onClick={() => {
+            //       handleItemClick2(1)
+            //       setShowMenu(false)
+            //       setLoadingComponents(false)
+            //     }}
+            //   >
+            //   <SiGoogletagmanager className="text-main/80 text-xl" />{' '} CM
+            //   </Link>
+            // </li>
               : null}
 
             <li>
@@ -809,22 +881,6 @@ const SideBar = (): JSX.Element => {
                     )
                 )}
               </ul>
-            </li>
-
-            <li key={236}>
-              <Link
-                to="dashboard"
-                className={
-                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
-                }
-                onClick={() => {
-                  handleItemClick2(1)
-                  setShowMenu(false)
-                  setLoadingComponents(false)
-                }}
-              >
-              <MdDashboard className="text-main/80 text-xl" />{' '} Metricas
-              </Link>
             </li>
 
             {/* <li>

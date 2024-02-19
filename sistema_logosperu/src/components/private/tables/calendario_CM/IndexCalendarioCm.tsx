@@ -6,19 +6,17 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import {
   type usurioValues,
   type errorValues,
-  type ValuesPreventaModificate,
-  type ValuesPlanes
+  type ValuesPreventaModificate
 } from '../../../shared/schemas/Interfaces'
-import { getClientes, getDataToPlanes } from '../../../shared/FetchingData'
 import { Loading } from '../../../shared/Loading'
 import axios from 'axios'
 import { Global } from '../../../../helper/Global'
 import Swal from 'sweetalert2'
 import { AnimatePresence } from 'framer-motion'
 import { AlertSucess } from '../../../shared/alerts/AlertSucess'
-import { Link } from 'react-router-dom'
-import useAuth from '../../../../hooks/useAuth'
-import { ModalClientes } from '../citas/ModalClientes'
+import { ModalDescripcion } from './modals/ModalDescripcion'
+import { v4 as uuidv4 } from 'uuid'
+
 moment.locale('es')
 const localizer = momentLocalizer(moment) // Importa el locale español
 
@@ -32,19 +30,13 @@ interface values {
 
 export const IndexCalendarioCm = (): JSX.Element => {
   const token = localStorage.getItem('token')
-  const [, setplanes] = useState<ValuesPlanes[]>([])
   const [loading, setLoading] = useState(true)
-  const { auth } = useAuth()
-  const [clientes, setclientes] = useState<ValuesPreventaModificate[]>([])
-  const [showError, setShowError] = useState<errorValues | null>(null)
-  const [, setSelectedClient] = useState<ValuesPreventaModificate | null>(null)
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<{
-    start: Date
-    end: Date
-  } | null>(null)
+  const [loadingUpdate, setLoadingUpdate] = useState(false)
   const [open, setOpen] = useState(false)
-  const [, setTotalRegistros2] = useState(0)
+  const [showError, setShowError] = useState<errorValues | null>(null)
   const [events, setEvents] = useState<Event[]>([])
+  const [eventSelected, setEventSelected] = useState<any | null>(null)
+  const [colaboradores, setColaboradores] = useState([])
   const messages = {
     allDay: 'Todo el día',
     previous: 'Anterior',
@@ -67,53 +59,29 @@ export const IndexCalendarioCm = (): JSX.Element => {
   const workDayEnd = new Date() // Fecha de fin para el día de trabajo
   workDayEnd.setHours(19, 0, 0, 0)
 
+  const getColaboradores = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/getUsuarios`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+    setColaboradores(request.data)
+  }
   // Función para formatear la fecha con el año seleccionado
   const formatDate = (): any => {
     return selectedDate ? moment(selectedDate).format('YYYY-MM') : ''
   }
 
-  const handleClientSelection = (
-    selectedClient: ValuesPreventaModificate
-  ): void => {
-    setSelectedClient(selectedClient)
-    let title = window.prompt(
-      `${selectedClient.nombres} ${selectedClient.apellidos}:`
-    )
-    // Si el usuario no ingresó un título, asigna un texto por defecto
-    title = `${title ?? ''} - ${selectedClient.nombres} ${
-      selectedClient.apellidos
-    }`.toUpperCase() // Puedes cambiar esto por el texto que desees
-    if (title && selectedTimeSlot) {
-      setEvents((prevEvents) => {
-        const updatedEvents = [
-          ...prevEvents,
-          {
-            title,
-            start: selectedTimeSlot.start,
-            end: selectedTimeSlot.end,
-            client: selectedClient,
-            user: auth
-          } as unknown as Event
-        ]
-        updateCita(updatedEvents)
-        return updatedEvents
-      })
-    }
-    setSelectedClient(null)
-    setSelectedTimeSlot(null)
-    setOpen(false)
-  }
-
   const getCitas = async (): Promise<void> => {
-    const request = await axios.get(`${Global.url}/getTareas/${auth.id}`, {
+    const request = await axios.get(`${Global.url}/getGestorComunnity/1`, {
       headers: {
         Authorization: `Bearer ${
           token !== null && token !== '' ? `Bearer ${token}` : ''
         }`
       }
     })
-    if (request.data[0].gestor_tareas) {
-      const parsedEvents = JSON.parse(request.data[0].gestor_tareas).map(
+    if (request.data[0].community) {
+      const parsedEvents = JSON.parse(request.data[0].community).map(
         (event: any) => ({
           ...event,
           start: moment(event.start).toDate(),
@@ -127,28 +95,28 @@ export const IndexCalendarioCm = (): JSX.Element => {
   const components = {
     event: (props: values) => {
       return (
-        <Link
-          to="/admin/gestor-tareas/1/view/33/image/0"
-          target="_blank"
+        <div
           className="cursor-pointer h-full hover:text-black/40 w-full transition-colors outline-none duration-300 break-words flex "
           rel="noreferrer"
+          onClick={() => { setOpen(true); setEventSelected(props) }}
         >
           <div className="div_cita px-1 h-full text-white bg-[#129990]  transition-colors rounded-t-md">
             <span className="block lowercase first-letter:uppercase">
               {props.title}
             </span>
           </div>
-        </Link>
+        </div>
       )
     }
   }
 
   const updateCita = async (updatedEvents: Event[]): Promise<void> => {
+    setLoadingUpdate(true)
     const data = new FormData()
-    data.append('contenido', JSON.stringify(updatedEvents))
+    data.append('community', JSON.stringify(updatedEvents))
     data.append('_method', 'PUT')
     try {
-      const respuesta = await axios.post(`${Global.url}/updateCitas/1`, data, {
+      const respuesta = await axios.post(`${Global.url}/updateGestorComunnity/1`, data, {
         headers: {
           Authorization: `Bearer ${
             token !== null && token !== '' ? token : ''
@@ -166,14 +134,48 @@ export const IndexCalendarioCm = (): JSX.Element => {
       }
     } catch (error) {
       Swal.fire('Error', '', 'error')
+    } finally {
+      setLoadingUpdate(false)
+      setOpen(false)
     }
+  }
+
+  const handleSelectSlot = ({ start }: { start: any }): void => {
+    setSelectedDate(start)
+    Swal.fire({
+      title: 'TITULO DEL EVENTO',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      allowOutsideClick: false,
+      inputValidator: (value) => {
+        if (!value) {
+          return '¡Debe ingresar un título!'
+        }
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const newEvent = {
+          id: uuidv4(),
+          title: result.value,
+          start,
+          end: start,
+          descripcion: null
+        }
+        // Agregar el nuevo evento al array de eventos
+        const updatedEvents: any = [...events, newEvent]
+        setEvents(updatedEvents)
+        // Actualizar la base de datos con el array de eventos actualizado
+        await updateCita(updatedEvents)
+      }
+    })
   }
 
   useEffect(() => {
     Promise.all([
-      getClientes('getClientes', setclientes),
       getCitas(),
-      getDataToPlanes('getPlanes', setplanes, setTotalRegistros2)
+      getColaboradores()
     ]).then(() => {
       setLoading(false)
     })
@@ -252,7 +254,7 @@ export const IndexCalendarioCm = (): JSX.Element => {
                 events={events}
                 startAccessor="start"
                 endAccessor="end"
-                selectable={false}
+                selectable
                 messages={messages}
                 views={['day', 'week', 'month']}
                 defaultView="month"
@@ -260,17 +262,12 @@ export const IndexCalendarioCm = (): JSX.Element => {
                 max={workDayEnd}
                 date={selectedDate}
                 components={components} // Use the custom event renderer
+                onSelectSlot={handleSelectSlot}
               />
             </div>
           </>
             )}
-        <ModalClientes
-          clientes={clientes}
-          open={open}
-          setOpen={setOpen}
-          handleClientSelection={handleClientSelection}
-        />
-
+        <ModalDescripcion loadingUpdate={loadingUpdate} setEvents={setEvents} events={events} open={open} setOpen={setOpen} eventSelected={eventSelected} colaboradores={colaboradores} setLoadingUpdate={setLoadingUpdate}/>
         <AnimatePresence>
           {showError != null && <AlertSucess showError={showError} />}
         </AnimatePresence>

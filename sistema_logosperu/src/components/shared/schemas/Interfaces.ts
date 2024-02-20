@@ -14,6 +14,12 @@ export interface openFiltersValuesToId {
   cantidad: string | null
 }
 
+export interface documentosArchivesValues {
+  id: string
+  type: string
+  name: string
+}
+
 export interface filtrosValuesVentas {
   estado: string[]
   ingreso: string[]

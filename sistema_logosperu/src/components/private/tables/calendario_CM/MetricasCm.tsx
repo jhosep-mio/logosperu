@@ -31,9 +31,9 @@ export const MetricasCm = (): JSX.Element => {
       // Iteramos sobre cada evento
       parsedEvents.forEach((evento: any) => {
         // Iteramos sobre cada arrayArchivo dentro del evento
-        evento.descripcion.arrayArchivos.forEach((arrayArchivo: any) => {
+        evento?.descripcion?.arrayArchivos?.forEach((arrayArchivo: any) => {
           // Iteramos sobre cada colaborador dentro del arrayArchivo
-          arrayArchivo.arrayColaboradores.forEach((colaborador: any) => {
+          arrayArchivo?.arrayColaboradores?.forEach((colaborador: any) => {
             // Sumamos la cantidadVistas si es un número válido
             if (colaborador.cantidadVistas) {
               console.log(colaborador.cantidadVistas)

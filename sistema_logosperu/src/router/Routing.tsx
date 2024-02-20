@@ -95,6 +95,7 @@ import { RegistroColaborador } from '../components/private/tables/colaboradores/
 import { MetricasVentas } from '../components/private/tables/dashboard/ventas/MetricasVentas'
 import { IndexCalendarioCm } from '../components/private/tables/calendario_CM/IndexCalendarioCm'
 import { MetricasCm } from '../components/private/tables/calendario_CM/MetricasCm'
+import { IndexDocumentos } from '../components/private/tables/documentos/IndexDocumentos'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -219,7 +220,9 @@ export const Routing = (): JSX.Element => {
             <Route path="listadocm" element={<IndexCalendarioCm />} />
             <Route path="listadocm/view/:id" element={<ViewCm />} />
             <Route path="listadocm/view/:id/calendario/:idContenido" element={<CalendarioView />} />
-            <Route path="listadocm/metricas" element={<MetricasCm/>} />
+
+            {/* DOCUMENTOS */}
+            <Route path="documentos" element={<IndexDocumentos />} />
 
           </Route>
           <Route path="admin/lista-ventas/metricas" element={<Metricas />} />
@@ -237,6 +240,7 @@ export const Routing = (): JSX.Element => {
             <Route index element={<MetricasClientes />} />
             <Route path="clientes" element={<MetricasClientes />} />
             <Route path="ventas" element={<MetricasVentas />} />
+            <Route path="community" element={<MetricasCm />} />
           </Route>
 
           {/* PUBLICO */}

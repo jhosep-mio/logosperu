@@ -24,7 +24,7 @@ const DemoTienda = () => {
         </h3>
         <h5 className='text-gray-500 mb-8'>DEMO</h5>
         <button
-          onClick={() => router.push('https://demo2.logosperu.com/')}
+          onClick={() => router.push('https://demo2.logosperu.com.pe/')}
           type='button'
           className='cursor-pointer py-3 mt-5 w-full bg-secondary font-bold rounded-xl hover:bg-primary  text-white transition-colors duration-300'
         >

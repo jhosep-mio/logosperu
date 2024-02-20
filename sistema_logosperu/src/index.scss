@@ -6,6 +6,18 @@
   width: 0px;
 }
 
+.fondo_documentos{
+    & .MuiList-root{
+        padding: 4px !important;
+    }
+    & .MuiPaper-root{
+        box-shadow: none !important;
+        box-shadow: 1px 3px 5px -1px rgba(0,0,0,0.34) !important; 
+    -webkit-box-shadow: 1px 3px 5px -1px rgba(0,0,0,0.34) !important;
+    -moz-box-shadow: 1px 3px 5px -1px rgba(0,0,0,0.34) !important;
+    }
+}
+
 .modal_options_metricas {
   & .MuiPaper-root {
     width: 60vw;

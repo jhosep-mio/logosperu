@@ -67,7 +67,7 @@ const Header = (): JSX.Element => {
   return (
     <>
        <ModalNoti />
-      {!currentPath.includes('admin/gestor-tareas') && !currentPath.includes('admin/listadocm') &&
+      {!currentPath.includes('admin/gestor-tareas') && !currentPath.includes('admin/listadocm') && !currentPath.includes('admin/documentos') &&
       (
         <>
           <header className="h-[7vh] lg:h-[10vh] border-b border-gray-100 shadow-sm p-8 flex items-center justify-between bg-white z-10">

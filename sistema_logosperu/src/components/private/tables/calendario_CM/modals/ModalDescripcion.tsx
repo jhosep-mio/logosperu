@@ -14,6 +14,8 @@ import axios from 'axios'
 import useAuth from '../../../../../hooks/useAuth'
 import Swal from 'sweetalert2'
 import { v4 as uuidv4 } from 'uuid'
+import { FaCheckDouble } from 'react-icons/fa'
+import { FaEyeLowVision } from 'react-icons/fa6'
 
 export const ModalDescripcion = ({
   open,
@@ -216,6 +218,20 @@ export const ModalDescripcion = ({
     })
   }
 
+  const updateEstadoById = (): void => {
+    const updatedEvents = events.map((event: any) => {
+      if (event.id == eventSelected?.event.id) {
+        return {
+          ...event,
+          publicado: !event.publicado
+        }
+      }
+      return event
+    })
+    updateCita(updatedEvents)
+    setEvents(updatedEvents)
+  }
+
   return (
     <>
       <Dialog
@@ -232,6 +248,10 @@ export const ModalDescripcion = ({
                 <h1 className="w-full uppercase text-center font-bold text-2xl">
                     {eventSelected?.title}
                 </h1>
+                {eventSelected?.event?.publicado
+                  ? <FaCheckDouble className='absolute left-0 text-2xl text-green-500 top-0 bottom-0 cursor-pointer my-auto' onClick={updateEstadoById}/>
+                  : <FaEyeLowVision className='absolute left-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto ' onClick={updateEstadoById}/>
+                }
                 <RiDeleteBin6Line className='absolute right-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto' onClick={handleDeleteClick}/>
             </div>
           <Editor editorHtml={contexto} setEditorHtml={setContexto} />

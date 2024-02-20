@@ -73,7 +73,7 @@ export const Header = () => {
         <ul>
           <li className='iconomorado'>
             <a
-              href='https://logosperu.com/noticias/'
+              href='https://noticias.logosperu.com.pe'
               title='Portafolio'
               className=''
             >
@@ -397,13 +397,13 @@ export const Header = () => {
                           <CgWebsite className='w-14 h-14 p-2 bg-[#F6F9FC] text-primary/80' />Portafolios
                         </Link>
                         <a
-                          href='https://demo.logosperu.com/'
+                          href='https://demo.logosperu.com.pe/'
                           className='flex gap-1 text-[18px] items-center justify-left m-0 hover:underline text-black/80 font_baloo'
                         >
                           <MdLaptopChromebook className='w-14 h-14 p-2 bg-[#F6F9FC] text-primary/80' /> Demo web administrable
                         </a>
                         <a
-                          href='https://demo2.logosperu.com/'
+                          href='https://demo2.logosperu.com.pe/'
                           className='flex gap-1 text-[18px] items-center justify-left m-0 hover:underline text-black/80 font_baloo'
                         >
                           <MdScreenSearchDesktop className='w-14 h-14 p-2 bg-[#F6F9FC] text-primary/80' />Demo tienda virtual
@@ -564,7 +564,7 @@ export const Header = () => {
                       </span>
                     </li>
                     <li className='item-menu__mobil'>
-                      <a href='https://www.logosperu.com/noticias/'>NOTICIAS</a>
+                      <a href='https://noticias.logosperu.com.pe'>NOTICIAS</a>
                     </li>
                     <li
                       className='item-menu__mobil flex gap-4 items-center'

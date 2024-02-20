@@ -1,5 +1,5 @@
 import { useState, Fragment, useEffect } from 'react'
-
+import { IoDocumentAttach } from 'react-icons/io5'
 import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../../../hooks/useAuth'
 // Icons
@@ -676,6 +676,22 @@ const SideBar = (): JSX.Element => {
                 }}
               >
               <FaTasks className="text-main/80 text-xl" />{' '} Gestor de tareas
+              </Link>
+            </li>
+
+            <li key={243}>
+              <Link
+                to="documentos"
+                className={
+                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
+                }
+                onClick={() => {
+                  handleItemClick2(1)
+                  setShowMenu(false)
+                  setLoadingComponents(false)
+                }}
+              >
+              <IoDocumentAttach className="text-main/80 text-xl" />{' '} Documentos
               </Link>
             </li>
 

@@ -7,6 +7,7 @@ import { Global } from '../../../../../helper/Global'
 import { HiComputerDesktop } from 'react-icons/hi2'
 import { FaAngleLeft } from 'react-icons/fa'
 import logo from './../../../../../assets/logo/logo_morado.jpg'
+import { SiGoogletagmanager } from 'react-icons/si'
 
 const SideBar = (): JSX.Element => {
   const { setAuth, setLoadingComponents, openSidebar, setOpenSidebar } = useAuth()
@@ -53,6 +54,19 @@ const SideBar = (): JSX.Element => {
           <hr className="mb-5" />
             <li>
               <Link
+                to="/admin"
+                className={
+                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-white hover:text-gray-600 transition-colors w-full'
+                }
+                onClick={() => {
+                  setLoadingComponents(false)
+                }}
+              >
+                <HiComputerDesktop className="text-secundario text-xl" /> {!openSidebar && 'Sistema'}
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="clientes"
                 className={
                   'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-gray-100 hover:text-gray-600 transition-colors w-full'
@@ -79,15 +93,15 @@ const SideBar = (): JSX.Element => {
             </li>
             <li>
               <Link
-                to="/admin"
+                to="community"
                 className={
-                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-white hover:text-gray-600 transition-colors w-full'
+                  'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-gray-100 hover:text-gray-600 transition-colors w-full'
                 }
                 onClick={() => {
                   setLoadingComponents(false)
                 }}
               >
-                <HiComputerDesktop className="text-secundario text-xl" /> {!openSidebar && 'Sistema'}
+                <SiGoogletagmanager className="text-secundario text-xl" /> {!openSidebar && 'Community'}
               </Link>
             </li>
           </ul>

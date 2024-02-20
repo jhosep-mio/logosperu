@@ -30,8 +30,8 @@ export const Oferta = ({ open, setOpen }: valuesPromocion) => {
     >
       <DialogContent className='relative'>
         <IoCloseCircleSharp className='absolute text-5xl m-4 cursor-pointer top-0 left-0 text-white' onClick={handleClose} />
-        {/* <img src='https://logosperu.com/public/logoperu/flayer_logo.jpeg' className='object-contain' alt='Logos Perú' /> */}
-        <iframe src='https://www.youtube.com/embed/OLxcRPpoZVo?si=qxZpC3N97Mj0gpcI' className='min-h-[450px] w-[800px] object-cover' />
+        <img src='/anuncios/anuncio.jpg' className='object-contain' alt='Logos Perú' />
+        {/* <iframe src='https://www.youtube.com/embed/OLxcRPpoZVo?si=qxZpC3N97Mj0gpcI' className='min-h-[450px] w-[800px] object-cover' /> */}
       </DialogContent>
     </Dialog>
   )

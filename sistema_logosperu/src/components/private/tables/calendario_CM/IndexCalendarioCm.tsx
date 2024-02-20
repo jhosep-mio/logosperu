@@ -49,7 +49,7 @@ export const IndexCalendarioCm = (): JSX.Element => {
     date: 'Fecha',
     time: 'Hora',
     event: 'Evento',
-    noEventsInRange: 'No tiene citas agendadas para este día.', // Nuevo mensaje
+    noEventsInRange: 'No tiene eventos.', // Nuevo mensaje
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     showMore: (total: any) => `+ Ver más (${total})`
   }
@@ -100,7 +100,12 @@ export const IndexCalendarioCm = (): JSX.Element => {
           rel="noreferrer"
           onClick={() => { setOpen(true); setEventSelected(props) }}
         >
-          <div className="div_cita px-1 h-full text-white bg-[#129990]  transition-colors rounded-t-md">
+          <div className={`div_cita px-1 h-full text-white 
+          ${
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            // eslint-disable-next-line react/prop-types
+            props.event?.publicado ? 'bg-[#129990]' : 'bg-red-600'}   transition-colors rounded-t-md`}>
             <span className="block lowercase first-letter:uppercase">
               {props.title}
             </span>
@@ -159,6 +164,7 @@ export const IndexCalendarioCm = (): JSX.Element => {
         const newEvent = {
           id: uuidv4(),
           title: result.value,
+          publicado: false,
           start,
           end: start,
           descripcion: null
@@ -256,7 +262,7 @@ export const IndexCalendarioCm = (): JSX.Element => {
                 endAccessor="end"
                 selectable
                 messages={messages}
-                views={['day', 'week', 'month']}
+                views={['agenda', 'month']}
                 defaultView="month"
                 min={workDayStart} // Establecer la hora de inicio del día
                 max={workDayEnd}

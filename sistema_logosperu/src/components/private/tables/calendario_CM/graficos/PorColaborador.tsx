@@ -68,9 +68,9 @@ export const PorColaborador = ({
     const sumaVistasPorColaborador: any = {}
     const totalColaboradores: any = {}
 
-    eventos.forEach((evento: any) => {
-      evento.descripcion.arrayArchivos.forEach((arrayArchivo: any) => {
-        arrayArchivo.arrayColaboradores.forEach((colaborador: any) => {
+    eventos?.forEach((evento: any) => {
+      evento?.descripcion?.arrayArchivos?.forEach((arrayArchivo: any) => {
+        arrayArchivo?.arrayColaboradores?.forEach((colaborador: any) => {
           if (colaborador.cantidadVistas) {
             // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
             sumaVistasPorColaborador[colaborador.usuario.name] = (sumaVistasPorColaborador[colaborador.usuario.name] || 0) +

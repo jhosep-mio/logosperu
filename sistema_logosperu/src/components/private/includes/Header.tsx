@@ -12,7 +12,7 @@ import { ModalNotificaciones } from '../tables/notificaciones/ModalNotificacione
 import { AnimatePresence } from 'framer-motion'
 import { AlertSucess } from '../../shared/alerts/AlertSucess'
 import { ModalNoti } from '../tables/gestor-tareas/components/notificaciones/ModalNoti'
-
+import { Toaster } from 'sonner'
 const Header = (): JSX.Element => {
   const { auth, setAuth, title, showError, setShowError } = useAuth()
   const navigate = useNavigate()
@@ -67,7 +67,9 @@ const Header = (): JSX.Element => {
   return (
     <>
        <ModalNoti />
-      {!currentPath.includes('admin/gestor-tareas') && !currentPath.includes('admin/listadocm') && !currentPath.includes('admin/documentos') &&
+       <Toaster position="top-center" richColors />
+
+      {!currentPath.includes('admin/gestor-tareas') && !currentPath.includes('admin/colaboradores/gestor_tareas') && !currentPath.includes('admin/listadocm') && !currentPath.includes('admin/documentos') &&
       (
         <>
           <header className="h-[7vh] lg:h-[10vh] border-b border-gray-100 shadow-sm p-8 flex items-center justify-between bg-white z-10">

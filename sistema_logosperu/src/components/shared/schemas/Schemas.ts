@@ -2,6 +2,11 @@ import * as Yup from 'yup'
 
 // CLASIFICADOS
 
+export const SchemaCotizacion = Yup.object().shape({
+  precio: Yup.string().required('Este campo es requerido'),
+  descuento: Yup.string().nullable()
+})
+
 export const SchemaClasificado = Yup.object().shape({
   nombre: Yup.string().required('Este campo es requerido'),
   celular: Yup.string().required('Este campo es requerido'),

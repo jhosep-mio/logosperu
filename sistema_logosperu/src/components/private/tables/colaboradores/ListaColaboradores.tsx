@@ -257,6 +257,14 @@ export const ListaColaboradores = (): JSX.Element => {
                         Reporte
                       </Link>
                     </MenuItem>
+                    <MenuItem className="p-0 hover:bg-transparent">
+                      <Link
+                        to={`gestor_tareas/${orden.id}/${orden.name}`}
+                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                      >
+                        Gestor de Tareas
+                      </Link>
+                    </MenuItem>
                   </Menu>
                 </div>
               </div>

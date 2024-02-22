@@ -17,6 +17,7 @@ import { quitarAcentos } from '../../../shared/functions/QuitarAcerntos'
 import { GeneracionVentas } from './GeneracionVentas'
 import { IoCalendarOutline } from 'react-icons/io5'
 import { motion, AnimatePresence } from 'framer-motion'
+import { ModalCotizacion } from './cotizacion/ModalCotizacion'
 
 export const ListaClientes = (): JSX.Element => {
   const { setTitle } = useAuth()
@@ -30,11 +31,13 @@ export const ListaClientes = (): JSX.Element => {
   const [expandedContact, setExpandedContact] = useState<number | null>(null)
   const [filters, setFilters] = useState({ filtro: '' })
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
+  const [openCotizacion, setOpenCotizacion] = useState(false)
 
   const handleClickOpen = (): void => {
     setOpen(true)
   }
   const [open, setOpen] = useState(false)
+
   useEffect(() => {
     setTitle('Listado de clientes')
     Promise.all([
@@ -57,7 +60,9 @@ export const ListaClientes = (): JSX.Element => {
       dni_ruc: '',
       nombre_cliente: '',
       arraycontacto: '',
-      id_cliente: ''
+      id_cliente: '',
+      email: '',
+      celular: ''
     },
     validationSchema: SchemaValidarVentas,
     onSubmit: generarVenta
@@ -142,15 +147,19 @@ export const ListaClientes = (): JSX.Element => {
             </Link>
             </div>
             <div className="w-full md:w-fit flex flex-col-reverse md:flex-row items-center md:gap-4">
-                <Link to='metricas'>
-                    <RiBarChartFill className='text-3xl text-red-700 cursor-pointer' />
-                </Link>
-                <RiFileExcel2Fill className='text-3xl text-green-700 cursor-pointer' onClick={() => { exportExcel() }}/>
-                <select name="" id="" value={filters.filtro} onChange={(e) => { toggleFilter(e.target.value) }} className='px-4 text-black py-2 shadow-md rounded-md select-none'>
-                    <option value="" className='select-none'>Todos</option>
-                    <option value="nuevo" className='select-none'>Nuevos</option>
-                    <option value="antiguo" className='select-none'>Antiguos</option>
-                </select>
+                <div className='flex gap-3 flex-row-reverse md:flex-row w-full'>
+                    <div className='flex gap-5 mt-2 items-center'>
+                        <Link to='metricas'>
+                            <RiBarChartFill className='text-3xl text-red-700 cursor-pointer' />
+                        </Link>
+                        <RiFileExcel2Fill className='text-3xl text-green-700 cursor-pointer' onClick={() => { exportExcel() }}/>
+                    </div>
+                    <select name="" id="" value={filters.filtro} onChange={(e) => { toggleFilter(e.target.value) }} className='px-4 text-black w-full md:w-fit mt-2 md:mt-0 py-2 shadow-md rounded-md select-none'>
+                        <option value="" className='select-none'>Todos</option>
+                        <option value="nuevo" className='select-none'>Nuevos</option>
+                        <option value="antiguo" className='select-none'>Antiguos</option>
+                    </select>
+                </div>
                 <Link
                     to={'agregar'}
                     className="w-full md:w-fit inline-block rounded bg-main md:px-6 pb-2 pt-2.5 text-center text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-main-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-main-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-main-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
@@ -421,6 +430,30 @@ export const ListaClientes = (): JSX.Element => {
                           Generar venta
                         </Link>
                       </MenuItem>
+                      <MenuItem className="p-0 hover:bg-transparent">
+                        <Link
+                          to=""
+                          onClick={() => {
+                            setOpenCotizacion(true)
+                            setValues({
+                              ...values,
+                              id_cliente: String(orden.id),
+                              medio_ingreso: orden.medio_ingreso,
+                              email: orden.email,
+                              nombre_empresa: orden.empresa ?? '',
+                              nombre_cliente: `${orden.nombres} ${orden.apellidos}`,
+                              arraycontacto: orden.arraycontacto,
+                              celular: orden.celular,
+                              dni_ruc: `${
+                                orden.dni_ruc != null ? orden.dni_ruc : ''
+                              }`
+                            })
+                          }}
+                          className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex justify-center items-center gap-x-4 p-2 flex-1"
+                        >
+                          Crear cotización
+                        </Link>
+                      </MenuItem>
                     </Menu>
                   </div>
                 </div>
@@ -563,6 +596,7 @@ export const ListaClientes = (): JSX.Element => {
             datos={values}
             planes={planes}
           />
+          <ModalCotizacion open={openCotizacion} setOpen={setOpenCotizacion} datos={values}/>
 
           <div className="flex flex-col md:flex-row gap-5 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">
             <p className="text-md ml-1 text-black">

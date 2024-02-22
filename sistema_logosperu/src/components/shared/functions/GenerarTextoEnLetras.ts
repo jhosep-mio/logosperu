@@ -106,7 +106,7 @@ export function convertirNumeroALetras (numero: number): string {
     const cientos = Math.floor(num / divisor)
     const resto = num - cientos * divisor
 
-    const strMiles = Seccion(num, divisor, 'UN MIL', 'MIL')
+    const strMiles = Seccion(num, divisor, 'MIL', 'MIL')
     const strCentenas = Centenas(resto)
 
     if (strMiles === '') {

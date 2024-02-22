@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { type Dispatch, type SetStateAction } from 'react'
 import { Global } from '../../helper/Global'
-import { type interfaceListaDiseñoNew, type ValuesPreventaModificate, type interfaceListaDiseño, type ValuesVenta, type VluesToExcel, type ValuesCategoriasPortafolio, type ValuesSubCategoriasPortafolio, type ValuesItemsPortafolio, type ValuesPlanes, type notificacionesValues, type usurioValues, type clasificadosValues, type valuesTransaccion, type ValuesVentaToMetricas } from './schemas/Interfaces'
+import { type interfaceListaDiseñoNew, type ValuesPreventaModificate, type interfaceListaDiseño, type ValuesVenta, type VluesToExcel, type ValuesCategoriasPortafolio, type ValuesSubCategoriasPortafolio, type ValuesItemsPortafolio, type ValuesPlanes, type notificacionesValues, type usurioValues, type clasificadosValues, type valuesTransaccion, type ValuesVentaToMetricas, type ListcotizacionValues } from './schemas/Interfaces'
 
 const token = localStorage.getItem('token')
 
@@ -172,6 +172,16 @@ export const getDataTransacciones = async (ruta: string, setDatos: Dispatch<SetS
 }
 
 export const getDataVentas = async (ruta: string, setDatos: Dispatch<SetStateAction<ValuesVenta[]>>, setTotalRegistros: Dispatch<SetStateAction<number>>): Promise<void> => {
+  const request = await axios.get(`${Global.url}/${ruta}`, {
+    headers: {
+      Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+    }
+  })
+  setDatos(request.data)
+  setTotalRegistros(request.data.length)
+}
+
+export const getCotizaciones = async (ruta: string, setDatos: Dispatch<SetStateAction<ListcotizacionValues[]>>, setTotalRegistros: Dispatch<SetStateAction<number>>): Promise<void> => {
   const request = await axios.get(`${Global.url}/${ruta}`, {
     headers: {
       Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`

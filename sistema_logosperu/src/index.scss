@@ -45,19 +45,19 @@
   }
 }
 
-.jodecct_sss {
-  & .jodit-react-container {
-    height: 100% !important;
-  }
-  & .jodecct_sss {
-    height: 100% !important;
-    max-height: 100% !important;
-  }
-  & .jodit-workplace {
-    height: 100% !important;
-    max-height: 100% !important;
-  }
-}
+// .jodecct_sss {
+//   & .jodit-react-container {
+//     height: 100% !important;
+//   }
+//   & .jodecct_sss {
+//     height: 100% !important;
+//     max-height: 100% !important;
+//   }
+//   & .jodit-workplace {
+//     height: 100% !important;
+//     max-height: 100% !important;
+//   }
+// }
 
 .datapciker_modal {
   &__input {
@@ -1012,6 +1012,14 @@ input[type="number"] {
 /* Ocultar el icono de calendario para Firefox */
 input[type="date"]::-moz-calendar-picker-indicator {
   display: none;
+}
+
+.jodect_editor_cotizacion {
+   & .jodit-react-container{
+        border: 0.5px solid rgb(156 163 175 / 1);
+        border-radius: 10px !important;
+        overflow: hidden !important;
+    }
 }
 
 /* Estilo general para el input, puedes ajustarlo como necesites */

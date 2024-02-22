@@ -151,7 +151,7 @@ export const ModalDescripcion = ({
       }
       setarchivosAEliminar([])
     }
-  }, [eventSelected])
+  }, [eventSelected, open])
 
   const updateCita = async (updatedEvents: Event[]): Promise<void> => {
     setLoadingUpdate(true)
@@ -254,7 +254,7 @@ export const ModalDescripcion = ({
                 }
                 <RiDeleteBin6Line className='absolute right-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto' onClick={handleDeleteClick}/>
             </div>
-          <Editor editorHtml={contexto} setEditorHtml={setContexto} />
+          <Editor content={contexto} setContent={setContexto} />
 
           <div className="w-fit mt-4">
             <div className="relative">

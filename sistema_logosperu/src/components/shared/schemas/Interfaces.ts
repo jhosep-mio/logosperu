@@ -2,6 +2,22 @@ import { type Dispatch, type SetStateAction } from 'react'
 
 // AVANCES DE archivo
 
+export interface ListcotizacionValues {
+  id: string
+  correlativo: string
+  nombres: string
+  apellidos: string
+  created_at: string
+  precio: string
+  empresa: string
+  descuento: string
+}
+
+export interface cotizacionValues {
+  precio: string
+  descuento: string
+}
+
 export interface openFiltersValues {
   estado: boolean
   fecha: string | null

@@ -88,7 +88,6 @@ import { ListadoClientesSInProyectos } from '../components/private/tables/client
 import { ExportExcelClientesSinproyectos } from '../components/private/tables/clientes/excelexport/ExportExcelClientesSinproyectos'
 import { ExportExcelPreVentas } from '../components/private/tables/preventa/excel/ExportExcelPreVentas'
 import { ViewCm } from '../components/private/tables/calendario_CM/ViewCm'
-import { CalendarioView } from '../components/private/tables/calendario_CM/CalendarioView'
 import { MetricasClientes } from '../components/private/tables/dashboard/clientes/MetricasClientes'
 import { LayoutDashboard } from '../components/private/tables/dashboard/LayoutDashboard'
 import { RegistroColaborador } from '../components/private/tables/colaboradores/registro/RegistroColaborador'
@@ -96,6 +95,12 @@ import { MetricasVentas } from '../components/private/tables/dashboard/ventas/Me
 import { IndexCalendarioCm } from '../components/private/tables/calendario_CM/IndexCalendarioCm'
 import { MetricasCm } from '../components/private/tables/calendario_CM/MetricasCm'
 import { IndexDocumentos } from '../components/private/tables/documentos/IndexDocumentos'
+import { IndexGestorColaborador } from '../components/private/tables/gestor-colaborador/IndexGestorColaborador'
+import { IndexCalendarioColaborador } from '../components/private/tables/gestor-colaborador/IndexCalendarioColaborador'
+import { VistaTareaColaborador } from '../components/private/tables/gestor-colaborador/VistaTareaColaborador'
+import { ListaCotizaciones } from '../components/private/tables/cotizaciones/ListaCotizaciones'
+import { EditarCotizacion } from '../components/private/tables/cotizaciones/EditarCotizacion'
+import { ViewCotizacion } from '../components/private/tables/cotizaciones/ViewCotizacion'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -108,6 +113,11 @@ export const Routing = (): JSX.Element => {
 
           {/* PRIVADO */}
           <Route path="admin" element={<PrivateLayout />}>
+
+            {/* COTIZACIONES */}
+            <Route path="lista-cotizaciones" element={<ListaCotizaciones />} />
+            <Route path="lista-cotizaciones/editar/:id" element={<EditarCotizacion />} />
+            <Route path="lista-cotizaciones/view/:id" element={<ViewCotizacion />} />
             {/* GESTOR DE TAREAS */}
             <Route path="gestor-tareas" element={<IndexGestor />} />
             <Route path="gestor-tareas/calendario" element={<IndexCalendario />} />
@@ -123,6 +133,10 @@ export const Routing = (): JSX.Element => {
             <Route path="colaboradores" element={<ListaColaboradores />} />
             <Route path="colaboradores/agregar" element={<RegistroColaborador />} />
             <Route path="colaboradores/reporte/:id" element={<ReportePorColaborador />} />
+            <Route path="colaboradores/gestor_tareas/:idCol/:nameCol" element={<IndexGestorColaborador />} />
+            <Route path="colaboradores/gestor_tareas/:idCol/:nameCol/calendario" element={<IndexCalendarioColaborador />} />
+            <Route path="colaboradores/gestor_tareas/:idCol/:nameCol/:idAuth/view/:idTablero/image/:index" element={<VistaTareaColaborador />} />
+
             {/* DISEÑO */}
             <Route path="lista-briefs-diseños" element={<ListaBriefDiseño />} />
             <Route path="lista-briefs-diseños/agregar" element={<RegistrarBriefDiseño />} />
@@ -219,7 +233,7 @@ export const Routing = (): JSX.Element => {
             {/* LISTADO CM */}
             <Route path="listadocm" element={<IndexCalendarioCm />} />
             <Route path="listadocm/view/:id" element={<ViewCm />} />
-            <Route path="listadocm/view/:id/calendario/:idContenido" element={<CalendarioView />} />
+            {/* <Route path="listadocm/view/:id/calendario/:idContenido" element={<CalendarioView />} /> */}
 
             {/* DOCUMENTOS */}
             <Route path="documentos" element={<IndexDocumentos />} />

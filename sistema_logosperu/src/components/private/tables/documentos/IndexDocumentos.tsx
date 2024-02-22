@@ -5,23 +5,32 @@ import { FiUpload } from 'react-icons/fi'
 import { GoFileDirectory } from 'react-icons/go'
 import { v4 as uuidv4 } from 'uuid'
 import { ArrayArchivos } from './componets/ArrayArchivos'
-import { type documentosArchivesValues } from '@/src/components/shared/schemas/Interfaces'
+import axios from 'axios'
+import Swal from 'sweetalert2'
+import { type documentosArchivesValues } from '../../../shared/schemas/Interfaces'
+import { Global } from '../../../../helper/Global'
+import { BreadCrumps } from './componets/BreadCrumps'
+
+interface Folder {
+  id: string
+  name: string
+}
 
 export const IndexDocumentos = (): JSX.Element => {
-  const { setTitle } = useAuth()
+  const { setTitle, setShowError } = useAuth()
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number
     mouseY: number
   } | null>(null)
-
+  const token = localStorage.getItem('token')
   const [contextMenu2, setContextMenu2] = useState<{
     mouseX: number
     mouseY: number
   } | null>(null)
-
   const [arrayDocumentos, setArrayDocumentos] = useState<string[]>([])
-  const [archivoSelected, setArchivoSelected] =
-    useState<documentosArchivesValues | null>(null)
+  const [arrayImages, setArrayImages] = useState<string[]>([])
+  const [archivoSelected, setArchivoSelected] = useState<documentosArchivesValues | null>(null)
+  const [currentPath, setCurrentPath] = useState<Folder[] | null>(null)
 
   const handleContextMenu = (event: MouseEvent): void => {
     event.preventDefault()
@@ -41,8 +50,19 @@ export const IndexDocumentos = (): JSX.Element => {
     setContextMenu(null)
   }
 
+  const getColaboradores = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/indexGestorArchivo`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+    // setContextMenu(request.data)
+    setArrayDocumentos(JSON.parse(request.data[0].gestor_archivos))
+  }
+
   useEffect(() => {
     setTitle('Documentos')
+    getColaboradores()
   }, [])
 
   const createFolder = (event: React.MouseEvent): void => {
@@ -51,12 +71,16 @@ export const IndexDocumentos = (): JSX.Element => {
     if (folderName) {
       const newFolder = {
         id: uuidv4(),
+        folder: currentPath ? currentPath[currentPath.length - 1]?.id : null,
         name: folderName,
+        archives: null,
         creationDate: new Date(),
         type: 'carpeta',
         size: 0 // El tamaño de la carpeta se puede establecer en 0 o en cualquier otro valor predeterminado
       }
-      setArrayDocumentos((prevState: any) => [...prevState, newFolder])
+      const documentosToAdd: any = Array.isArray(arrayDocumentos) ? [...arrayDocumentos, newFolder] : [newFolder]
+      setArrayDocumentos(documentosToAdd)
+      updateCita(documentosToAdd, [])
     }
     setContextMenu(null)
   }
@@ -66,17 +90,70 @@ export const IndexDocumentos = (): JSX.Element => {
   ): any => {
     const uploadedFiles = event.target.files // Obtiene los archivos subidos
     if (uploadedFiles) {
-      const filesArray = Array.from(uploadedFiles) // Convierte la colección de archivos a un array
+      const filesArray = Array.from(uploadedFiles)
+      const uniqueFileName = uuidv4()
       const newFiles = filesArray.map((file) => ({
         id: uuidv4(),
-        name: file.name,
+        folder: currentPath ? currentPath[currentPath.length - 1]?.id : null,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        name: `${uniqueFileName}_${file.name}`,
         creationDate: new Date(), // Fecha de creación actual
         type: file.type,
         size: file.size,
-        tipo: 'archivo'
+        tipo: 'archivo',
+        imagen1: {
+          archivo: file,
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          archivoName: `${uniqueFileName}_${file.name}`
+        }
       }))
-      setArrayDocumentos((prevState: any) => [...prevState, ...newFiles])
+      const documentosToAdd: any = Array.isArray(arrayDocumentos) ? [...arrayDocumentos, ...newFiles] : [...newFiles]
+      const ImagesToAdd: any = Array.isArray(arrayImages) ? [...arrayImages, ...newFiles] : [...newFiles]
+
+      setArrayImages((prevState: any) => [...prevState, ...newFiles])
+      setArrayDocumentos(documentosToAdd)
+      updateCita(documentosToAdd, ImagesToAdd)
       setContextMenu(null)
+    }
+  }
+
+  const updateCita = async (updatedEvents: string[], ImagesToAdd: string[]): Promise<void> => {
+    const data = new FormData()
+    ImagesToAdd.forEach((image1, index1) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      if (image1.imagen1.archivo) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+        data.append(`images1[${index1}]`, image1.imagen1.archivo)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        data.append(`names1[${index1}]`, image1.imagen1.archivoName)
+      }
+    })
+    data.append('gestor_archivos', JSON.stringify(updatedEvents))
+    data.append('_method', 'PUT')
+    try {
+      const respuesta = await axios.post(`${Global.url}/updateGestorArchivos/1`, data, {
+        headers: {
+          Authorization: `Bearer ${
+            token !== null && token !== '' ? token : ''
+          }`
+        }
+      })
+
+      if (respuesta.data.status == 'success') {
+        setShowError({
+          estado: 'success',
+          texto: 'Evento actualizado'
+        })
+        console.log('success')
+      } else {
+        Swal.fire('Error al actualizar', '', 'error')
+      }
+    } catch (error) {
+      console.log(error)
+      Swal.fire('Error', '', 'error')
     }
   }
 
@@ -92,6 +169,35 @@ export const IndexDocumentos = (): JSX.Element => {
           }
         : null
     )
+  }
+
+  const deleteDocumento = (id: string | undefined): void => {
+    const updatedDocumentos = arrayDocumentos.filter((documento: any) => documento.id !== id)
+    setArrayDocumentos(updatedDocumentos)
+    updateCita(updatedDocumentos, [])
+    setContextMenu(null)
+    setContextMenu2(null)
+  }
+
+  const deleteArchivo = async (id: string | undefined, name: string | undefined): Promise<void> => {
+    const updatedDocumentos = arrayDocumentos.filter((documento: any) => documento.id !== id)
+    setArrayDocumentos(updatedDocumentos)
+    updateCita(updatedDocumentos, [])
+    setContextMenu(null)
+    setContextMenu2(null)
+    try {
+      const respuesta = await axios.get(`${Global.url}/deleteArchivoGestor/${name ?? ''}`, {
+        headers: {
+          Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+        }
+      })
+      console.log(respuesta)
+    } catch (error) {
+      console.log(error)
+      Swal.fire('Error', '', 'error')
+    }
   }
 
   return (
@@ -114,7 +220,11 @@ export const IndexDocumentos = (): JSX.Element => {
         </div>
       </div>
 
-      <div className="mt-6 hidden md:grid grid-cols-1 md:grid-cols-5 gap-4 mb-2 md:px-4 md:py-2 text-gray-600 border border-gray-300 w-full rounded-md">
+      <div className='mt-3'>
+        <BreadCrumps currentPath={currentPath} setCurrentPath={setCurrentPath}/>
+      </div>
+
+      <div className="mt-4 hidden md:grid grid-cols-1 md:grid-cols-5 gap-4 mb-2 md:px-4 md:py-2 text-gray-600 border border-gray-300 w-full rounded-md">
         <h5 className="md:text-left col-span-2">Archivo </h5>
         <h5 className="md:text-left">Fecha de creación</h5>
         <h5 className="md:text-left">Tipo</h5>
@@ -128,6 +238,12 @@ export const IndexDocumentos = (): JSX.Element => {
         archivoSelected={archivoSelected}
         setArchivoSelected={setArchivoSelected}
         setArrayDocumentos={setArrayDocumentos}
+        deleteDocumento={deleteDocumento}
+        updateCita={updateCita}
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        deleteArchivo={deleteArchivo}
+        currentPath={currentPath}
+        setCurrentPath={setCurrentPath}
       />
       <Menu
         open={contextMenu !== null}

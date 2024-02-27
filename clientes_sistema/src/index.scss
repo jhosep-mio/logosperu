@@ -11,6 +11,9 @@ html {
 
 // CALENDARIO CM LOGOS PERU
 
+.rbc-event{
+    background-color: transparent !important;
+}
 .calendario_cm .rbc-toolbar {
     & :first-child {
       display: none !important;

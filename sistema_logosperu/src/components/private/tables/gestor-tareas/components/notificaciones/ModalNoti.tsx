@@ -31,7 +31,7 @@ export const ModalNoti = (): JSX.Element => {
             gestorTareas.forEach((tarea: any) => {
               if (tarea.id === idTask) {
                 tarea.contenido.forEach((contenido: any) => {
-                  contenido.contenido.forEach((contenidoFinal: any) => {
+                  contenido?.contenido?.forEach((contenidoFinal: any) => {
                     if (contenidoFinal.id == idContenido) {
                       tareasFiltradas = contenidoFinal
                     }
@@ -96,7 +96,7 @@ export const ModalNoti = (): JSX.Element => {
               gestorTareas.forEach((tarea: any) => {
                 if (tarea.id === idTask) {
                   tarea.contenido.forEach((contenido: any) => {
-                    contenido.contenido.forEach((contenidoFinal: any) => {
+                    contenido?.contenido?.forEach((contenidoFinal: any) => {
                       if (contenidoFinal.id == idContenido) {
                         tareasFiltradas = contenidoFinal
                       }
@@ -208,7 +208,7 @@ export const ModalNoti = (): JSX.Element => {
                     gestorTareas.forEach((tarea: any) => {
                       if (tarea.id === idTask) {
                         tarea.contenido.forEach((contenido: any) => {
-                          contenido.contenido.forEach((contenidoFinal: any) => {
+                          contenido?.contenido?.forEach((contenidoFinal: any) => {
                             if (contenidoFinal.id == idContenido) {
                               tareasFiltradas = contenidoFinal
                             }

@@ -95,8 +95,8 @@ export const ModalNoti = (): JSX.Element => {
               gestorTareas = JSON.parse(objeto.gestor_tareas)
               gestorTareas.forEach((tarea: any) => {
                 if (tarea.id === idTask) {
-                  tarea.contenido.forEach((contenido: any) => {
-                    contenido.contenido.forEach((contenidoFinal: any) => {
+                  tarea?.contenido?.forEach((contenido: any) => {
+                    contenido?.contenido?.forEach((contenidoFinal: any) => {
                       if (contenidoFinal.id == idContenido) {
                         tareasFiltradas = contenidoFinal
                       }
@@ -205,17 +205,19 @@ export const ModalNoti = (): JSX.Element => {
                 allTareas.forEach((objeto: any) => {
                   if (objeto) {
                     gestorTareas = JSON.parse(objeto.gestor_tareas)
-                    gestorTareas.forEach((tarea: any) => {
-                      if (tarea.id === idTask) {
-                        tarea.contenido.forEach((contenido: any) => {
-                          contenido.contenido.forEach((contenidoFinal: any) => {
-                            if (contenidoFinal.id == idContenido) {
-                              tareasFiltradas = contenidoFinal
-                            }
+                    if (gestorTareas) {
+                      gestorTareas.forEach((tarea: any) => {
+                        if (tarea.id === idTask) {
+                          tarea?.contenido?.forEach((contenido: any) => {
+                            contenido?.contenido?.forEach((contenidoFinal: any) => {
+                              if (contenidoFinal.id == idContenido) {
+                                tareasFiltradas = contenidoFinal
+                              }
+                            })
                           })
-                        })
-                      }
-                    })
+                        }
+                      })
+                    }
                   }
                 })
                 if (!tareasFiltradas?.contexto?.fecha) {

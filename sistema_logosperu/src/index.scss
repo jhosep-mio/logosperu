@@ -31,13 +31,13 @@
   }
 }
 
-.jodit-status-bar{
-    display: none !important;
+.jodit-status-bar {
+  display: none !important;
 }
 
 .modal_community_clientes {
   z-index: 998 !important;
-  .quitaR_padding{
+  .quitaR_padding {
     padding: 0 20px !important;
   }
   & .MuiPaper-root {
@@ -416,6 +416,14 @@
 
 .grid_cols_15 {
   grid-template-columns: repeat(13, 1fr);
+}
+
+.content_editor2 {
+  & .ql-container {
+    min-height: 70px;
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .content_acta_Acaptacion {

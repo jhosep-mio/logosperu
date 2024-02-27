@@ -35,7 +35,7 @@ export const CrearComentario = ({
       setOpen(false)
     }
   }
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('tokenUser')
 
   const handleTextChange = (e: any): void => {
     setTexto(e.target.value)
@@ -57,6 +57,26 @@ export const CrearComentario = ({
       .padStart(2, '0')}`
   }
 
+  const enviarCorreo = async (): Promise<void> => {
+    try {
+      const data = new FormData()
+      data.append('nombres', auth.name)
+
+      const respuesta = await axios.post(`${Global.url}/enviarCorreoComentarioCommunity/${id ?? ''}`, data,
+        {
+          headers: {
+            Authorization: `Bearer ${
+            token !== null && token !== '' ? token : ''
+          }`
+          }
+        }
+      )
+      console.log(respuesta)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const updateCita = async (updatedEvents: Event[]): Promise<void> => {
     const data = new FormData()
     data.append('community', JSON.stringify(updatedEvents))
@@ -76,6 +96,7 @@ export const CrearComentario = ({
       )
       if (respuesta.data.status == 'success') {
         toast.success('Comentario enviado')
+        enviarCorreo()
         getOneBrief()
       } else {
         toast.error('Error')

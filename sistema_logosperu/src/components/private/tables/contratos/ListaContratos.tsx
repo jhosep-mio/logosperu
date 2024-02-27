@@ -8,35 +8,34 @@ import {
 import { Loading } from '../../../shared/Loading'
 import {
   type ValuesPlanes,
-  type ListcotizacionValues
+  type ListaContratosValues
 } from '../../../shared/schemas/Interfaces'
 import { Paginacion } from '../../../shared/Paginacion'
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
 import {
-  limpiarCadena,
   quitarAcentos
 } from '../../../shared/functions/QuitarAcerntos'
 import { Global } from '../../../../helper/Global'
 import axios from 'axios'
-import { GeneracionCorrelativo } from './contratos/GeneracionCorrelativo'
 import { getDataToPlanes } from '../../../shared/FetchingData'
+import { BsFileEarmarkPdfFill } from 'react-icons/bs'
 
-export const ListaCotizaciones = (): JSX.Element => {
+export const ListaContratos = (): JSX.Element => {
   const { setTitle } = useAuth()
-  const [productos, setProductos] = useState<ListcotizacionValues[]>([])
-  const [selectedItem, setSelectedItem] = useState<ListcotizacionValues | null>(null)
+  const [productos, setProductos] = useState<ListaContratosValues[]>([])
+  const [, setSelectedItem] = useState<ListaContratosValues | null>(null)
   const token = localStorage.getItem('token')
   const [loading, setLoading] = useState(true)
   const [totalRegistros, setTotalRegistros] = useState(0)
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(12)
-  const [planes, setplanes] = useState<ValuesPlanes[]>([])
+  const [, setplanes] = useState<ValuesPlanes[]>([])
   const [, setTotalRegistros2] = useState(0)
-  const [openGenerarCorrelativo, setOpenGenerarCorrelativo] = useState(false)
+  const [, setOpenGenerarCorrelativo] = useState(false)
 
   const getCotizaciones = async (): Promise<void> => {
-    const request = await axios.get(`${Global.url}/getCotizaciones`, {
+    const request = await axios.get(`${Global.url}/getAllContratos`, {
       headers: {
         Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
       }
@@ -46,7 +45,7 @@ export const ListaCotizaciones = (): JSX.Element => {
   }
 
   useEffect(() => {
-    setTitle('Listado de cotizaciones')
+    setTitle('Listado de contratos')
     Promise.all([
       getCotizaciones(),
       getDataToPlanes('getPlanes', setplanes, setTotalRegistros2)
@@ -59,7 +58,7 @@ export const ListaCotizaciones = (): JSX.Element => {
   const indexOfFirstPost = indexOfLastPost - cantidadRegistros
   let totalPosts = productos.length
 
-  const filterDate = (): ListcotizacionValues[] => {
+  const filterDate = (): ListaContratosValues[] => {
     let filteredProductos = productos
     const searchTerm = quitarAcentos(search)
     // ... puedes agregar otras condiciones de filtro aquí
@@ -89,22 +88,6 @@ export const ListaCotizaciones = (): JSX.Element => {
   }: React.ChangeEvent<HTMLInputElement>): void => {
     setpaginaActual(1)
     setSearch(target.value)
-  }
-
-  const calcularTotal = (precio: string, descuento: string): string | number => {
-    const precioNumerico = parseFloat(precio)
-    const descuentoPorcentaje = parseFloat(descuento)
-    // Verificar que ambos valores sean números válidos
-    if (!isNaN(precioNumerico) && !isNaN(descuentoPorcentaje)) {
-      // Convertir el porcentaje a un decimal
-      const descuentoDecimal = descuentoPorcentaje / 100
-      // Calcular el descuento
-      const descuentoCalculado = precioNumerico * descuentoDecimal
-      // Restar el descuento al precio original para obtener el total
-      return precioNumerico - descuentoCalculado
-    }
-    // En caso de que no se puedan calcular los valores
-    return '---'
   }
 
   const formatearFecha = (fechaStr: string): string => {
@@ -137,30 +120,31 @@ export const ListaCotizaciones = (): JSX.Element => {
         : (
         <div className="md:bg-[#fff] md:px-8 md:py-6 rounded-xl">
           <div
-            className={'hidden md:grid pr-10 lg:pr-4 items-center grid-cols-9 gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300'}
+            className={'hidden md:grid pr-10 lg:pr-4 items-center grid-cols-10 gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300'}
           >
-            <h5 className="md:text-left line-clamp-1 col-span-1">COD</h5>
+            <h5 className="md:text-left line-clamp-1 col-span-1">CONTRATO</h5>
             <h5 className="md:text-left col-span-1">Precio</h5>
             <h5 className="md:text-left line-clamp-1 col-span-2 ">Cliente</h5>
             <h5 className="md:text-left col-span-2">Empresa</h5>
-            <h5 className="md:text-center col-span-1">Descuento</h5>
+            <h5 className="md:text-center col-span-1">Tiempo</h5>
+            <h5 className="md:text-center col-span-1">PDF</h5>
             <h5 className="md:text-center col-span-2">Fecha de creacion</h5>
           </div>
-          {filterDate().map((orden: ListcotizacionValues, index: number) => (
+          {filterDate().map((orden: ListaContratosValues, index: number) => (
             <div
-              className={`grid grid-cols-9 md:pr-10 lg:pr-4 relative gap-3 items-center mb-3 md:mb-0 ${
+              className={`grid grid-cols-10 md:pr-10 lg:pr-4 relative gap-3 items-center mb-3 md:mb-0 ${
                 index % 2 == 0 ? 'bg-transparent' : 'bg-gray-200'
               } md:px-4 md:py-3 rounded-xl relative shadow_class`}
               key={orden.id}
             >
               <div className="hidden md:block md:text-center col-span-1">
                 <span className="text-left block text-black w-full line-clamp-1">
-                  {limpiarCadena(orden.correlativo)}
+                  {(orden.correlativo)}
                 </span>
               </div>
               <div className="hidden md:block md:text-left col-span-1">
                 <span className="text-left block text-black">
-                  S./ {calcularTotal(orden.precio, orden.descuento)}
+                  S./ {orden.precio}
                 </span>
               </div>
               <div className="hidden md:block md:text-center col-span-2 relative h-full">
@@ -176,8 +160,13 @@ export const ListaCotizaciones = (): JSX.Element => {
               </div>
               <div className="hidden md:block md:text-center col-span-1">
                 <span className="text-center block text-black">
-                   {orden.descuento} %
+                   {orden.tiempo}
                 </span>
+              </div>
+              <div className="hidden md:block md:text-center col-span-1">
+                <Link target='_blank' to={`${Global.urlImages}/contratos/${orden.pdf ?? ''}`} className="text-center block text-black">
+                   <BsFileEarmarkPdfFill className='mx-auto text-3xl text-main hover:text-main_dark transition-colors cursor-pointer'/>
+                </Link>
               </div>
 
               <div className="hidden md:block md:text-center col-span-2">
@@ -232,14 +221,14 @@ export const ListaCotizaciones = (): JSX.Element => {
               </div>
             </div>
           ))}
-          <GeneracionCorrelativo selectedItem={selectedItem}
+          {/* <GeneracionCorrelativo selectedItem={selectedItem}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
           datos={selectedItem}
           setSelectedItem={setSelectedItem}
           getClientes={getCotizaciones} open={openGenerarCorrelativo} setOpen={setOpenGenerarCorrelativo} planes={planes}
           getCotizaciones={getCotizaciones}
-          />
+          /> */}
           <div className="flex flex-col md:flex-row gap-6 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">
             <p className="text-md ml-1 text-black">
               {totalRegistros} Registros

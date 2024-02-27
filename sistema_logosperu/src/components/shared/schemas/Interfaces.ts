@@ -23,6 +23,18 @@ export interface ListcotizacionValues {
   descuento: string
 }
 
+export interface ListaContratosValues {
+  id: string
+  correlativo: string
+  nombres: string
+  apellidos: string
+  created_at: string
+  precio: string
+  empresa: string
+  tiempo: string
+  pdf: string
+}
+
 export interface cotizacionValues {
   precio: string
   descuento: string

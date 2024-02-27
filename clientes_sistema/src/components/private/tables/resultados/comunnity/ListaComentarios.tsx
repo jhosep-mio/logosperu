@@ -39,7 +39,7 @@ export const ListaComentarios = ({
     null
   )
   const [modoEdicion, setModoEdicion] = useState(false)
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('tokenUser')
 
   const updateCita = async (updatedEvents: Event[]): Promise<void> => {
     const data = new FormData()

@@ -190,6 +190,23 @@ const SideBar = (): JSX.Element => {
                                     Cotizaciones
                                 </Link>
                                 </li>
+                                <li>
+                                <Link
+                                    to="lista-contratos"
+                                    className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                    activeItem == 1005
+                                        ? 'before:bg-main'
+                                        : 'before:bg-gray-500'
+                                    } hover:text-main transition-colors`}
+                                    onClick={() => {
+                                      handleItemClick(1005)
+                                      setShowMenu(false)
+                                      setLoadingComponents(false)
+                                    }}
+                                >
+                                    Contratos
+                                </Link>
+                                </li>
                                 <ul
                                 className={` ${
                                     showSubmenu10 ? '' : 'h-0'

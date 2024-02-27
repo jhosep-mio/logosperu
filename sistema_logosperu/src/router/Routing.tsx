@@ -101,6 +101,7 @@ import { VistaTareaColaborador } from '../components/private/tables/gestor-colab
 import { ListaCotizaciones } from '../components/private/tables/cotizaciones/ListaCotizaciones'
 import { EditarCotizacion } from '../components/private/tables/cotizaciones/EditarCotizacion'
 import { ViewCotizacion } from '../components/private/tables/cotizaciones/ViewCotizacion'
+import { ListaContratos } from '../components/private/tables/contratos/ListaContratos'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -113,6 +114,9 @@ export const Routing = (): JSX.Element => {
 
           {/* PRIVADO */}
           <Route path="admin" element={<PrivateLayout />}>
+
+            {/* CONTRATOS */}
+            <Route path="lista-contratos" element={<ListaContratos />} />
 
             {/* COTIZACIONES */}
             <Route path="lista-cotizaciones" element={<ListaCotizaciones />} />

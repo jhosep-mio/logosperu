@@ -27,7 +27,10 @@ import vendedor from './../../assets/plataformas/vendedor.png'
 import zip from './../../assets/plataformas/carpeta-zip.png'
 import pdf from './../../assets/plataformas/pdf.png'
 
+import defaultPerfil from './../../assets/logo/default.jpg'
+
 export {
+  defaultPerfil,
   pdf,
   zip,
   disenologo,

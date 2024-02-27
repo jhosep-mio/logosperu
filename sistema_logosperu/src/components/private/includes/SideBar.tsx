@@ -34,7 +34,9 @@ const SideBar = (): JSX.Element => {
     roles,
     setLoadingComponents,
     loadingComponents,
-    totalNotificaciones
+    totalNotificaciones,
+    downloadProgress
+
   } = useAuth()
   const token = localStorage.getItem('token')
   const [showMenu, setShowMenu] = useState(false)
@@ -1249,6 +1251,28 @@ const SideBar = (): JSX.Element => {
           </Link>
         </nav>
       </div>
+      {downloadProgress != 0 && (
+        <div className="w-full md:w-96 absolute right-0 md:right-3 bottom-0 z-[60] bg-white  py-3 px-4 rounded-t-lg shadow-black shadow-md">
+          <h2 className='text-center w-full text-black font-medium mb-4 text-lg'>Descarga de archivos</h2>
+          <div className="relative flex items-center justify-center">
+            <p className="text-black font-bold absolute inset-0 text-center">
+              Preparando descarga {(downloadProgress).toFixed(2)} %
+            </p>
+            <div
+              className="rounded-lg bg-gray-400 w-full"
+            >
+              <div
+                className="rounded-lg bg-green-700"
+                style={{
+                  width: `${downloadProgress}%`,
+                  height: '25px',
+                  transition: 'width 0.3s ease'
+                }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      )}
       <button
         onClick={() => {
           setShowMenu(!showMenu)

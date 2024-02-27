@@ -43,6 +43,8 @@ export interface AuthContextValue {
   getTareasAll: () => Promise<void>
   openSidebar: boolean
   setOpenSidebar: Dispatch<SetStateAction<boolean>>
+  downloadProgress: number
+  setDownloadProgress: Dispatch<SetStateAction<number>>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -82,6 +84,7 @@ export const AuthProvider = ({
   const [notificaciones, setNotificaciones] = useState<notificacionesValues[]>(
     []
   )
+  const [downloadProgress, setDownloadProgress] = useState(0)
   const [allTareas, setAllTares] = useState([])
   const [tasks, setTasks] = useState([])
 
@@ -381,7 +384,9 @@ export const AuthProvider = ({
         getShared,
         getTareasAll,
         openSidebar,
-        setOpenSidebar
+        setOpenSidebar,
+        downloadProgress,
+        setDownloadProgress
       }}
     >
       {children}

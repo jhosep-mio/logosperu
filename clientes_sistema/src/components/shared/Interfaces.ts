@@ -99,6 +99,52 @@ export interface avanceValues {
   hora: string
 }
 
+export interface editorValues {
+  content: string
+  setContent: React.Dispatch<React.SetStateAction<string>>
+}
+
+export interface arrayCategoriasToPortafolio {
+  id: number | null
+  imagen1: ImagenState
+}
+
+export interface comentariosValues {
+  id: number
+  texto: string
+  fecha: string
+  hora: string
+  idUser: string
+  user: string
+  respuestas: any
+}
+export interface ValuesPreventaModificate {
+  id: number
+  nombres: string
+  empresa: string
+  dni_ruc: string
+  apellidos: string
+  email: string
+  celular: string
+  edad: string
+  sexo: string
+  medio_ingreso: string
+  estado: string
+  id_contrato: string
+  created_at: string
+  arraycontacto: string
+  antiguo: string
+}
+
+export interface usurioValues {
+  id: number
+  name: string
+  email: string
+  firma: string
+  estado: number
+  resumen: string
+}
+
 // BANNERS
 export interface bannersValues {
   id: number
@@ -115,6 +161,8 @@ export interface bannersValues {
   asignacion: string
   created_at: string
   updated_at: string | null
+  community: string
+  nombre_marca: string
 }
 
 // PRODUCTOS

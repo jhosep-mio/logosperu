@@ -433,6 +433,7 @@ export const EditarCliente = (): JSX.Element => {
                         arrayContacto={arrayContacto}
                         setarrayConacto={setarrayConacto}
                         getOneBrief={getOneBrief}
+                        datos={values}
                       />
                     </div>
                     <div className="mt-3">

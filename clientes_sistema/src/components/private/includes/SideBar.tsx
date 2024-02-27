@@ -13,6 +13,7 @@ import { MdHelpCenter } from 'react-icons/md'
 import icono from './../../../assets/images/logos/icone.png'
 import { IoNotifications } from 'react-icons/io5'
 import Swal from 'sweetalert2'
+import { Toaster } from 'sonner'
 
 const SideBar = (): JSX.Element => {
   const { auth, setGuia } = useAuth()
@@ -24,6 +25,7 @@ const SideBar = (): JSX.Element => {
 
   return (
     <>
+       <Toaster position="top-center" richColors />
       <div
         className={`xl:h-[96vh] fixed xl:static w-[70%] md:w-[40%] lg:w-[30%] xl:w-auto h-full lg:ml-4 top-0 my-auto lg:rounded-2xl bg-[#F0F3F4] shadow-xl px-4 pb-4 pt-2 flex flex-col justify-between z-50 ${
           showMenu ? 'left-0' : '-left-full'

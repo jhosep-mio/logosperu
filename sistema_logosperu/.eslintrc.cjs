@@ -33,6 +33,6 @@ module.exports = {
     eqeqeq: 'off',
     // '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
-    '@typescript-eslint/strict-boolean-expressions': 'off',
+    '@typescript-eslint/strict-boolean-expressions': 'off'
   }
 }

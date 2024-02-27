@@ -1,9 +1,10 @@
+/* eslint-disable multiline-ternary */
 import { Dialog, DialogContent } from '@mui/material'
 import { type Dispatch, type SetStateAction, useState, useEffect } from 'react'
-import Editor from '../Editor'
 import {
   type usurioValues,
-  type arrayCategoriasToPortafolio
+  type arrayCategoriasToPortafolio,
+  type comentariosValues
 } from '../../../../shared/schemas/Interfaces'
 import { RViewer, RViewerTrigger } from 'react-viewerjs'
 import { Global } from '../../../../../helper/Global'
@@ -16,37 +17,51 @@ import Swal from 'sweetalert2'
 import { v4 as uuidv4 } from 'uuid'
 import { FaCheckDouble } from 'react-icons/fa'
 import { FaEyeLowVision } from 'react-icons/fa6'
+import { useParams } from 'react-router-dom'
+import { ListaComentarios } from './ListaComentarios'
+import { CrearComentario } from './CrearComentario'
+import { ResponderComentario } from './ResponderComentario'
+import Editor from '../../clientes/cotizacion/Editor'
 
 export const ModalDescripcion = ({
   open,
   setOpen,
   eventSelected,
-  colaboradores,
   events,
   setEvents,
   loadingUpdate,
-  setLoadingUpdate
+  setLoadingUpdate,
+  getOneBrief
 }: {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
   eventSelected: any | null
-  colaboradores: never[]
   events: Event[]
   setEvents: Dispatch<SetStateAction<Event[]>>
   loadingUpdate: boolean
   setLoadingUpdate: Dispatch<SetStateAction<boolean>>
+  getOneBrief: () => Promise<void>
 }): JSX.Element => {
+  const { id } = useParams()
   const [contexto, setContexto] = useState('')
   const [arrayArchivos, setArrayArchivos] = useState<
   arrayCategoriasToPortafolio[]
   >([])
+  const [comentarios, setComentarios] = useState<comentariosValues[]>([])
   const { setShowError } = useAuth()
   const token = localStorage.getItem('token')
-  const [selectedUser, setSelectedUser] = useState<usurioValues | null>(null)
+  const [selectedUser] = useState<usurioValues | null>(null)
   const [cantidadVistas, setCantidadVistas] = useState<string>('')
   const [openRegistro, setOpenRegistro] = useState(false)
-  const [selectedArchivo, setselectedArchivo] = useState<string>('')
-  const [archivosAEliminar, setarchivosAEliminar] = useState<arrayCategoriasToPortafolio[] | undefined>([])
+
+  const [selectedArchivo] = useState<string>('')
+  const [archivosAEliminar, setarchivosAEliminar] = useState<
+  arrayCategoriasToPortafolio[] | undefined
+  >([])
+
+  const [openResponder, setOpenResponder] = useState(false)
+  const [idComentario, setIdComentario] = useState<string | null>('')
+  const [texto, setTexto] = useState<string | null>('')
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault()
@@ -61,16 +76,7 @@ export const ModalDescripcion = ({
           imagen1: {
             archivo: file,
             archivoName: uniqueFileName
-          },
-          arrayColaboradores: colaboradores
-            .filter((cola: any) => cola.id_rol != '99')
-            .map((cola: any) => ({
-              usuario: {
-                id: cola.id,
-                name: cola.name
-              },
-              cantidadVistas: null
-            }))
+          }
         }
       ])
     }
@@ -86,16 +92,21 @@ export const ModalDescripcion = ({
   }
 
   const eliminarArray = (id: number | null): void => {
-    const imagenEliminada = arrayArchivos.find(imagen => imagen.id === id)
+    const imagenEliminada = arrayArchivos.find((imagen) => imagen.id === id)
     if (imagenEliminada) {
-      setarchivosAEliminar((prevArchivosAEliminar: any) => [...prevArchivosAEliminar, imagenEliminada.imagen1.archivoName])
+      setarchivosAEliminar((prevArchivosAEliminar) => [
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        ...prevArchivosAEliminar,
+        imagenEliminada.imagen1.archivoName
+      ])
     }
     const nuevoArray = arrayArchivos.filter((peso) => peso.id !== id)
     setArrayArchivos(nuevoArray)
   }
   const updateCantidadVistas = (): void => {
     if (selectedUser && selectedArchivo) {
-      setArrayArchivos(prevState => {
+      setArrayArchivos((prevState) => {
         return prevState.map((archivo: any) => {
           if (archivo.id == selectedArchivo) {
             return {
@@ -136,9 +147,10 @@ export const ModalDescripcion = ({
   }
 
   useEffect(() => {
+    console.log(eventSelected)
     if (eventSelected?.event) {
       if (eventSelected?.event?.descripcion?.contexto) {
-        setContexto(eventSelected?.event?.descripcion?.contexto)
+        setContexto((eventSelected?.event?.descripcion?.contexto))
       } else {
         setContexto('')
       }
@@ -147,6 +159,13 @@ export const ModalDescripcion = ({
       } else {
         setArrayArchivos([])
       }
+
+      if (eventSelected?.event?.comentarios) {
+        setComentarios(eventSelected?.event?.comentarios)
+      } else {
+        setComentarios([])
+      }
+
       setarchivosAEliminar([])
     }
   }, [eventSelected, open])
@@ -164,13 +183,17 @@ export const ModalDescripcion = ({
     data.append('archivosAEliminar', JSON.stringify(archivosAEliminar))
     data.append('_method', 'PUT')
     try {
-      const respuesta = await axios.post(`${Global.url}/updateGestorComunnity/1`, data, {
-        headers: {
-          Authorization: `Bearer ${
-            token !== null && token !== '' ? token : ''
-          }`
+      const respuesta = await axios.post(
+        `${Global.url}/updateCalendarioComunnityVentas/${id ?? ''}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+          }
         }
-      })
+      )
 
       if (respuesta.data.status == 'success') {
         setShowError({
@@ -190,7 +213,9 @@ export const ModalDescripcion = ({
 
   const eliminarRegistro = (): void => {
     if (arrayArchivos.length == 0) {
-      const updatedEvents = events.filter((event: any) => event.id != eventSelected?.event.id)
+      const updatedEvents = events.filter(
+        (event: any) => event.id != eventSelected?.event.id
+      )
       setEvents(updatedEvents)
       updateCita(updatedEvents)
     } else {
@@ -239,90 +264,107 @@ export const ModalDescripcion = ({
         }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        className="modal_citas_clientes3"
+        className="modal_community_clientes"
       >
-        <DialogContent className="w-full ">
-            <div className='w-full relative'>
+        <DialogContent className="w-full h-[550px] grid grid-cols-2 gap-10 bg-transparent quitaR_padding">
+          <section className="w-full h-[550px] bg-white p-4 rounded-md flex flex-col justify-between overflow-y-auto">
+            <div className='w-full '>
+                <div className="w-full relative">
                 <h1 className="w-full uppercase text-center font-bold text-2xl">
                     {eventSelected?.title}
                 </h1>
-                {eventSelected?.event?.publicado
-                  ? <FaCheckDouble className='absolute left-0 text-2xl text-green-500 top-0 bottom-0 cursor-pointer my-auto' onClick={updateEstadoById}/>
-                  : <FaEyeLowVision className='absolute left-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto ' onClick={updateEstadoById}/>
-                }
-                <RiDeleteBin6Line className='absolute right-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto' onClick={handleDeleteClick}/>
-            </div>
-          <Editor content={contexto} setContent={setContexto} />
-
-          <div className="w-fit mt-4">
-            <div className="relative">
-              <button
-                type="button"
-                className="bg-red-500 text-white px-4 text-lg rounded-lg flex gap-3 items-center"
-              >
-                <IoImageOutline className="text-xl" />
-                Adjuntar archivo
-              </button>
-              <input
-                className="absolute inset-0 file:hidden opacity-0 cursor-pointer"
-                type="file"
-                accept="image/*, video/*" // Aquí se aceptan tanto imágenes como videos
-                onChange={handleImageChange}
-              />
-            </div>
-          </div>
-
-          <div className="w-full flex flex-col mt-6 gap-6 justify-center flex-grow ">
-            {arrayArchivos?.map((pro: any) => (
-                <div className="flex gap-4" key={pro.id}>
-                    <div className="group relative" key={pro.id}>
-                        {pro.imagen1.archivo != null && pro.imagen1.archivo.size > 0
-                          ? (
-                              pro.imagen1.archivo.type.includes('image')
-                                ? (
+                {eventSelected?.event?.publicado ? (
+                    <FaCheckDouble
+                    className="absolute left-0 text-2xl text-green-500 top-0 bottom-0 cursor-pointer my-auto"
+                    onClick={updateEstadoById}
+                    />
+                ) : (
+                    <FaEyeLowVision
+                    className="absolute left-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto "
+                    onClick={updateEstadoById}
+                    />
+                )}
+                <RiDeleteBin6Line
+                    className="absolute right-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto"
+                    onClick={handleDeleteClick}
+                />
+                </div>
+                <div className="mt-6">
+                <Editor content={contexto} setContent={setContexto} />
+                </div>
+                <div className="w-full mt-4 flex items-center justify-between gap-3">
+                <div className="relative w-fit">
+                    <button
+                    type="button"
+                    className="bg-red-500 text-white px-4 text-lg rounded-lg flex gap-3 items-center"
+                    >
+                    <IoImageOutline className="text-xl" />
+                    Adjuntar archivo
+                    </button>
+                    <input
+                    className="absolute inset-0 file:hidden opacity-0 cursor-pointer"
+                    type="file"
+                    accept="image/*, video/*" // Aquí se aceptan tanto imágenes como videos
+                    onChange={handleImageChange}
+                    />
+                </div>
+                <p className="uppercase text-gray-600">
+                    Creado por:{' '}
+                    <span className="font-bold">
+                    {eventSelected?.event?.user?.name}
+                    </span>
+                </p>
+                </div>
+                <div className="w-full grid grid-cols-2 mt-6 gap-6 justify-center flex-grow ">
+                {arrayArchivos?.map((pro: any) => (
+                    <div className="flex gap-4 justify-center" key={pro.id}>
+                    <div className="group relative">
+                        {pro.imagen1.archivo != null &&
+                        pro.imagen1.archivo.size > 0 ? (
+                              pro.imagen1.archivo.type.includes('image') ? (
                             <RViewer
-                            imageUrls={`${URL.createObjectURL(pro.imagen1.archivo)}`}
+                            imageUrls={`${URL.createObjectURL(
+                                pro.imagen1.archivo
+                            )}`}
                             >
                             <RViewerTrigger>
                                 <img
-                                src={`${URL.createObjectURL(pro.imagen1.archivo)}`}
-                                className="w-[200px] h-[200px] object-contain cursor-pointer bg-gray-100 shadow-md"
+                                src={`${URL.createObjectURL(
+                                    pro.imagen1.archivo
+                                )}`}
+                                className="w-[120px] h-[120px] object-contain cursor-pointer bg-gray-100 shadow-md"
                                 />
                             </RViewerTrigger>
                             </RViewer>
-                                  )
-                                : (
+                              ) : (
                             <video
                             src={`${URL.createObjectURL(pro.imagen1.archivo)}`}
                             muted
                             autoPlay
                             loop
-                            className="w-[200px] h-[200px] object-contain bg-gray-100 shadow-md"
+                            className="w-[120px] h-[120px] object-contain bg-gray-100 shadow-md"
                             />
-                                  )
-                            )
-                          : (
+                              )
+                            ) : (
                               pro.imagen1.archivo && (
                             <div className="w-full">
-                            {isVideo(pro.imagen1.archivoName)
-                              ? (
+                            {isVideo(pro.imagen1.archivoName) ? (
                                 <video
                                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                                 src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
                                 muted
                                 autoPlay
                                 loop
-                                className="w-[200px] h-[200px] object-contain bg-gray-100 shadow-md"
+                                className="w-[120px] h-[120px] object-contain bg-gray-100 shadow-md"
                                 />
-                                )
-                              : (
+                            ) : (
                                 <img
                                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                                 src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
                                 alt=""
-                                className="w-[200px] h-[200px]  object-contain bg-gray-100 shadow-md"
+                                className="w-[120px] h-[120px]  object-contain bg-gray-100 shadow-md"
                                 />
-                                )}
+                            )}
                             </div>
                               )
                             )}
@@ -333,33 +375,35 @@ export const ModalDescripcion = ({
                         }}
                         />
                     </div>
-                    <div className="w-full">
-                        <div className=" p-2 rounded-xl">
-                        <div className="hidden  bg-gray-200 rounded-xl mb-3 md:grid grid-cols-1 md:grid-cols-2 items-center justify-center gap-4  text-black">
-                            <h5 className="md:text-center">Usuario</h5>
-                            <h5 className="md:text-center">Vistas</h5>
-                        </div>
-                        {pro.arrayColaboradores.map((col: any, index: number) => (
-                            <div
-                            key={index}
-                            className="hidden md:grid grid-cols-1 md:grid-cols-2 items-center justify-center gap-4  text-black"
-                            >
-                                <p
-                                  onClick={() => {
-                                    setOpenRegistro(true)
-                                    setSelectedUser(col.usuario)
-                                    setCantidadVistas(col.cantidadVistas || '')
-                                    setselectedArchivo(pro.id || '')
-                                  }}
-                                className={`w-full text-center cursor-pointer ${!col.cantidadVistas ? 'text-main' : 'text-black'}`}>{col.usuario.name}</p>
-                                <p className="w-full text-center">{col.cantidadVistas}</p>
-                            </div>
-                        ))}
-                        </div>
                     </div>
+                ))}
                 </div>
-            ))}
-          </div>
+            </div>
+            <div className="w-full flex justify-center mb-3">
+              {loadingUpdate ? (
+                <button
+                  disabled
+                  className="w-fit mx-auto px-5 py-2 rounded-md bg-green-700 transition-colors text-white"
+                >
+                  Validando...
+                </button>
+              ) : (
+                <button
+                  className="w-fit mx-auto px-5 py-2 rounded-md bg-green-600 hover:bg-green-700 transition-colors text-white"
+                  onClick={() => {
+                    updateEventDescriptionById()
+                  }}
+                >
+                  Grabar
+                </button>
+              )}
+            </div>
+          </section>
+          <section className="w-full ">
+            <CrearComentario setComentarios={setComentarios} getOneBrief={getOneBrief} events={events} setEvents={setEvents} eventSelected={eventSelected}/>
+            <ListaComentarios setIdComentario={setIdComentario} setOpen={setOpenResponder} setTexto={setTexto} comentarios={comentarios} setComentarios={setComentarios} getOneBrief={getOneBrief} events={events} setEvents={setEvents} eventSelected={eventSelected}/>
+            <ResponderComentario comentarios={comentarios} getComentarios={getOneBrief} idComentario={idComentario} open={openResponder} setComentarios={setComentarios} setIdComentario={setIdComentario} setOpen={setOpenResponder} textoComentario={texto} eventSelected={eventSelected} events={events} setEvents={setEvents}/>
+          </section>
         </DialogContent>
         <AnimatePresence>
           {openRegistro && (
@@ -381,28 +425,14 @@ export const ModalDescripcion = ({
                 <h2 className="text-xl uppercase mb-4 text-black w-full text-center font-bold">
                   Editar visitas
                 </h2>
-                <select
-                  name=""
-                  id=""
-                  disabled
-                  value={selectedUser?.id}
-                  className="mb-4 w-full border border-gray-300 rounded-md px-4 py-2"
-                >
-                  <option value="">Seleccionar</option>
-                  {colaboradores
-                    .filter((cola: any) => cola.id_rol != 99)
-                    .map((cola: usurioValues) => (
-                    <option value={cola.id} key={cola.id}>
-                      {cola.name}
-                    </option>
-                    ))}
-                </select>
                 <input
                   id="cantidadVistas"
                   className="swal2-input w-full border border-gray-300 rounded-md px-4 py-2"
                   placeholder="Cantidad de vistas"
                   value={cantidadVistas}
-                  onChange={(e) => { setCantidadVistas(e.target.value) }}
+                  onChange={(e) => {
+                    setCantidadVistas(e.target.value)
+                  }}
                 />
                 <div className="w-full flex">
                   <button
@@ -417,15 +447,6 @@ export const ModalDescripcion = ({
             </motion.div>
           )}
         </AnimatePresence>
-        <div className='w-full flex justify-center mb-3'>
-            {loadingUpdate
-              ? <button
-              disabled
-            className='w-fit mx-auto px-5 py-2 rounded-md bg-green-700 transition-colors text-white'>Validando...</button>
-              : <button
-            className='w-fit mx-auto px-5 py-2 rounded-md bg-green-600 hover:bg-green-700 transition-colors text-white' onClick={() => { updateEventDescriptionById() }}>Grabar</button>
-            }
-        </div>
       </Dialog>
     </>
   )

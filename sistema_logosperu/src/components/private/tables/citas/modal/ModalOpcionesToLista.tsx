@@ -11,8 +11,8 @@ import {
 } from 'react-icons/go'
 import { Link } from 'react-router-dom'
 import { SchemaValidarVentas } from '../../../../shared/schemas/Schemas'
-import { GeneracionVentas } from '../../clientes/GeneracionVentas'
 import { type ValuesPlanes } from '../../../../shared/schemas/Interfaces'
+import { GeneracionVentas2 } from '../../clientes/GeneracionVentas2'
 
 export const ModalOpcionesToLista = ({
   eventoSelected,
@@ -178,7 +178,7 @@ export const ModalOpcionesToLista = ({
                 className='w-fit mx-auto px-4 py-2 rounded-xl bg-main hover:bg-main/80 transition-colors text-white'>Generar venta</button>
           </div>
         </div>
-        <GeneracionVentas
+        <GeneracionVentas2
             open={open3}
             setOpen={setOpen3}
             datos={values}

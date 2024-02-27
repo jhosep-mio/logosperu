@@ -6,16 +6,22 @@
   width: 0px;
 }
 
-.fondo_documentos{
-    & .MuiList-root{
-        padding: 4px !important;
-    }
-    & .MuiPaper-root{
-        box-shadow: none !important;
-        box-shadow: 1px 3px 5px -1px rgba(0,0,0,0.34) !important; 
-    -webkit-box-shadow: 1px 3px 5px -1px rgba(0,0,0,0.34) !important;
-    -moz-box-shadow: 1px 3px 5px -1px rgba(0,0,0,0.34) !important;
-    }
+.fondo_documentos {
+  & .MuiList-root {
+    padding: 4px !important;
+  }
+  & .MuiPaper-root {
+    box-shadow: none !important;
+    box-shadow: 1px 3px 5px -1px rgba(0, 0, 0, 0.34) !important;
+    -webkit-box-shadow: 1px 3px 5px -1px rgba(0, 0, 0, 0.34) !important;
+    -moz-box-shadow: 1px 3px 5px -1px rgba(0, 0, 0, 0.34) !important;
+  }
+}
+
+.dialog_modal_contrato {
+  .MuiDialogContent-root {
+    padding: 0 !important;
+  }
 }
 
 .modal_options_metricas {
@@ -24,13 +30,32 @@
     max-width: 60vw;
   }
 }
+
+.jodit-status-bar{
+    display: none !important;
+}
+
+.modal_community_clientes {
+  z-index: 998 !important;
+  .quitaR_padding{
+    padding: 0 20px !important;
+  }
+  & .MuiPaper-root {
+    width: 1400px !important;
+    max-width: 1400px !important;
+    padding: 0 !important;
+    background: transparent;
+    box-shadow: none !important;
+    resize: both;
+    height: 60vh;
+  }
+}
+
 .modal_citas_clientes3 {
   z-index: 998 !important;
   & .MuiPaper-root {
-    min-width: 60vw !important;
-    max-width: 100vw !important;
-    min-height: 600px;
     width: 60vh !important;
+    max-width: 60vh !important;
     resize: both;
     max-height: calc(100% - 24px);
   }
@@ -1015,11 +1040,11 @@ input[type="date"]::-moz-calendar-picker-indicator {
 }
 
 .jodect_editor_cotizacion {
-   & .jodit-react-container{
-        border: 0.5px solid rgb(156 163 175 / 1);
-        border-radius: 10px !important;
-        overflow: hidden !important;
-    }
+  & .jodit-react-container {
+    border: 0.5px solid rgb(156 163 175 / 1);
+    border-radius: 10px !important;
+    overflow: hidden !important;
+  }
 }
 
 /* Estilo general para el input, puedes ajustarlo como necesites */
@@ -1075,19 +1100,25 @@ input[type="date"] {
 // CALENDARIO CM LOGOS PERU
 
 .calendario_cm .rbc-toolbar {
-    & :first-child {
-      display: none !important;
-    }
+  & :first-child {
+    display: none !important;
   }
+}
+
+.quitar_padding_bottom {
+  & .swiper-wrapper {
+    padding-bottom: 0 !important;
+  }
+}
 
 .calendario_cm .rbc-toolbar-label {
-    // background: #129990 !important;
-    color: #129990 !important;
-    font-size: 42px !important;
-    text-transform: uppercase !important;
-    font-weight: 900 !important;
-    text-align: left !important;
-  }
+  // background: #129990 !important;
+  color: #129990 !important;
+  font-size: 42px !important;
+  text-transform: uppercase !important;
+  font-weight: 900 !important;
+  text-align: left !important;
+}
 
 .calendario_cm .rbc-active {
   background: #129990 !important;

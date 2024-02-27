@@ -10,7 +10,7 @@ import {
   type ValuesPreventaModificate
 } from '../../../shared/schemas/Interfaces'
 import { Paginacion } from '../../../shared/Paginacion'
-import { getData2, getDataToPlanes } from '../../../shared/FetchingData'
+import { getDataToPlanes } from '../../../shared/FetchingData'
 import { useFormik } from 'formik'
 import { SchemaValidarVentas } from '../../../shared/schemas/Schemas'
 import { quitarAcentos } from '../../../shared/functions/QuitarAcerntos'
@@ -18,6 +18,8 @@ import { GeneracionVentas } from './GeneracionVentas'
 import { IoCalendarOutline } from 'react-icons/io5'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ModalCotizacion } from './cotizacion/ModalCotizacion'
+import axios from 'axios'
+import { Global } from '../../../../helper/Global'
 
 export const ListaClientes = (): JSX.Element => {
   const { setTitle } = useAuth()
@@ -32,16 +34,26 @@ export const ListaClientes = (): JSX.Element => {
   const [filters, setFilters] = useState({ filtro: '' })
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
   const [openCotizacion, setOpenCotizacion] = useState(false)
-
+  const token = localStorage.getItem('token')
   const handleClickOpen = (): void => {
     setOpen(true)
   }
   const [open, setOpen] = useState(false)
 
+  const getClientes = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/getClientes`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+    setProductos(request.data)
+    setTotalRegistros(request.data.length)
+  }
+
   useEffect(() => {
     setTitle('Listado de clientes')
     Promise.all([
-      getData2('getClientes', setProductos, setTotalRegistros),
+      getClientes(),
       getDataToPlanes('getPlanes', setplanes, setTotalRegistros2)
     ]).then(() => {
       setLoading(false)
@@ -420,6 +432,8 @@ export const ListaClientes = (): JSX.Element => {
                               nombre_empresa: orden.empresa ?? '',
                               nombre_cliente: `${orden.nombres} ${orden.apellidos}`,
                               arraycontacto: orden.arraycontacto,
+                              celular: orden.celular,
+                              email: orden.email,
                               dni_ruc: `${
                                 orden.dni_ruc != null ? orden.dni_ruc : ''
                               }`
@@ -595,6 +609,7 @@ export const ListaClientes = (): JSX.Element => {
             setOpen={setOpen}
             datos={values}
             planes={planes}
+            getClientes={getClientes}
           />
           <ModalCotizacion open={openCotizacion} setOpen={setOpenCotizacion} datos={values}/>
 

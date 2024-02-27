@@ -10,7 +10,7 @@ import { Errors } from '../../../../shared/Errors'
 import { v4 as uuidv4 } from 'uuid'
 import { TitleBriefs } from '../../../../shared/TitleBriefs'
 
-export const RegistroContacto = ({
+export const RegistroContacto2 = ({
   open,
   setOpen,
   id,
@@ -42,7 +42,8 @@ export const RegistroContacto = ({
     const data = new FormData()
     data.append('arraycontacto', JSON.stringify(updatedArray))
     data.append('_method', 'PUT')
-
+    console.log(newContact)
+    console.log(id)
     try {
       const respuesta = await axios.post(
         `${Global.url}/updateContacto/${id ?? ''}`,
@@ -113,12 +114,12 @@ export const RegistroContacto = ({
   useEffect(() => {
     setValues({
       ...values,
-      nombres: datos.nombres,
+      nombres: datos.nombre_cliente,
       celular: datos.celular,
-      correo: datos.correo,
+      correo: datos.email,
       marca: ''
     })
-  }, [])
+  }, [open])
 
   return (
     <Dialog
@@ -198,7 +199,7 @@ export const RegistroContacto = ({
           </div>
           <div className="max-w-lg mt-10">
             {!loading
-              ? <button type='submit' className="bg-main text-white w-full py-3 px-4 rounded-full hover:bg-main_dark transition-colors">
+              ? <button onClick={(e) => { e.stopPropagation() }} type='submit' className="bg-main text-white w-full py-3 px-4 rounded-full hover:bg-main_dark transition-colors">
                 Registrar contacto
                 </button>
               : <button type='button' className="bg-main_dark text-white w-full py-3 px-4 rounded-full hover:bg-main_dark transition-colors">

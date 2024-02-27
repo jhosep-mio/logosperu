@@ -12,7 +12,6 @@ import {
 import { getDataToPlanes } from '../../../shared/FetchingData'
 import { quitarAcentos } from '../../../shared/functions/QuitarAcerntos'
 import { RiFilter2Fill, RiSettings3Fill } from 'react-icons/ri'
-import { GeneracionVentas } from '../clientes/GeneracionVentas'
 import axios from 'axios'
 import { Global } from '../../../../helper/Global'
 import Swal from 'sweetalert2'
@@ -21,6 +20,7 @@ import { AlertSucess } from '../../../shared/alerts/AlertSucess'
 import { ModalOpcionesToLista } from './modal/ModalOpcionesToLista'
 import { MenuButton } from '@szhsin/react-menu'
 import { IoCalendarOutline } from 'react-icons/io5'
+import { GeneracionVentas2 } from '../clientes/GeneracionVentas2'
 
 interface valuesVentasTO {
   id: number
@@ -299,7 +299,7 @@ export const ListaPendientes = (): JSX.Element => {
           </div>
         </>
           )}
-      <GeneracionVentas
+      <GeneracionVentas2
         open={open}
         setOpen={setOpen}
         datos={dato}

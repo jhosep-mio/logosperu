@@ -27,7 +27,6 @@ import {
   type arrayContacto
 } from '../../../shared/schemas/Interfaces'
 import { ListaUsuarios } from './ListaUsuarios'
-import { RegistroContacto2 } from './modals/RegistroContacto2'
 
 const Transition = React.forwardRef(function Transition (
   props: TransitionProps & {
@@ -55,15 +54,13 @@ interface valuesInterface {
   datos: valuesVentasTO
   planes: ValuesPlanes[]
   setOpen: Dispatch<SetStateAction<boolean>>
-  getClientes: () => Promise<void>
 }
 
-export const GeneracionVentas = ({
+export const GeneracionVentas2 = ({
   open,
   datos,
   planes,
-  setOpen,
-  getClientes
+  setOpen
 }: valuesInterface): JSX.Element => {
   const handleClose = (): void => {
     setOpen(false)
@@ -75,7 +72,6 @@ export const GeneracionVentas = ({
   const [personContact, setpersonContact] = useState<string | null>(null)
   const [duplicateCode, setDuplicateCode] = useState<boolean>(false)
   const [usuarios, setUsuarios] = useState<never[]>([])
-  const [openContacto, setopenContacto] = useState<boolean>(false)
   const [arrayPesos, setarrayPesos] = useState<arrayAsignacion[]>([
     { id: null, peso: '' }
   ])
@@ -309,14 +305,6 @@ export const GeneracionVentas = ({
                         />
                         </div> */}
                       <div className="w-full  lg:relative pt-5">
-                        <button
-                          onClick={() => {
-                            setopenContacto(true)
-                          }}
-                          className="w-fit top-0 right-0 hover:bg-green-700 transition-colors cursor-pointer z-100 px-2 rounded-md text-white text-sm bg-green-600 absolute"
-                        >
-                          Nuevo contacto
-                        </button>
                         <TitleBriefs titulo=" Nombres/Empresa" />
                         <select
                           className="border placeholder-gray-400 max-w-full focus:outline-none overflow-hidden
@@ -470,15 +458,6 @@ export const GeneracionVentas = ({
         </DialogContent>
       </Dialog>
       <div>
-        <RegistroContacto2
-          open={openContacto}
-          setOpen={setopenContacto}
-          id={datos.id_cliente}
-          arrayContacto={arrayContacto}
-          setarrayConacto={setarrayConacto}
-          getOneBrief={getClientes}
-          datos={datos}
-        />
       </div>
     </>
   )

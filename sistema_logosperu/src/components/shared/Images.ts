@@ -57,8 +57,10 @@ import imagen20 from './../../assets/paisajes/imagen20.jpg'
 import imagen21 from './../../assets/paisajes/imagen21.jpg'
 import imagen22 from './../../assets/paisajes/imagen22.jpg'
 import imagen23 from './../../assets/paisajes/imagen23.jpg'
+import defaultPerfil from './../../assets/logo/default.jpg'
 
 export {
+  defaultPerfil,
   imagen1,
   imagen2,
   imagen3,

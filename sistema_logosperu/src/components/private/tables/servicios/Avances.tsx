@@ -31,6 +31,7 @@ import { ModalCorreoFinal2 } from './ModalCorreoFinal2'
 import { RegistroEmail2 } from './RegistroEmail2'
 import { ModalaAvisonNotificacion } from './avisoNotificacion/ModalaAvisonNotificacion'
 import { ModalActaAceptacion } from './actaAceptacion/ModalActaAceptacion'
+import { IndexComunity } from './community/IndexComunity'
 
 interface valuesDatos {
   idCliente: string
@@ -55,6 +56,7 @@ interface values {
   fecha_fin: string
   fecha_inicio: string
   observaciones: string
+  comunnity: string
 }
 
 export const Avances = (): JSX.Element => {
@@ -82,7 +84,8 @@ export const Avances = (): JSX.Element => {
     id_contrato: '',
     fecha_fin: '',
     fecha_inicio: '',
-    observaciones: ''
+    observaciones: '',
+    comunnity: ''
   })
   //   const [openChat, setOpenChat] = useState(false)
   const [openMail, setOpenMail] = useState(false)
@@ -164,6 +167,13 @@ export const Avances = (): JSX.Element => {
     return new Date(ano, mes - 1, dia)
   }
 
+  const cards = [
+    {
+      id: 1,
+      title: 'Calendario comunnity'
+    }
+  ]
+
   const {
     handleSubmit,
     handleChange,
@@ -194,49 +204,61 @@ export const Avances = (): JSX.Element => {
           }`
         }
       })
-      const codContr: string = (request.data[0].id_contrato.split('_')[0])
-      const requestPlan = await axios.get(`${Global.url}/onePlanToNombre/${codContr ?? ''}`, {
-        headers: {
-          Authorization: `Bearer ${
-              token !== null && token !== '' ? `Bearer ${token}` : ''
-            }`
-        }
-      })
-      setplan(requestPlan.data[0])
-      if (requestPlan.data[0].tipo?.includes('Diseño Logotipo')) {
-        const respuesta = await axios.get(`${Global.url}/oneBriefDiseñoNewToSeguimiento/${id ?? ''}`, {
+      const codContr: string = request.data[0].id_contrato.split('_')[0]
+      const requestPlan = await axios.get(
+        `${Global.url}/onePlanToNombre/${codContr ?? ''}`,
+        {
           headers: {
             Authorization: `Bearer ${
-                  token !== null && token !== '' ? `Bearer ${token}` : ''
-                }`
+              token !== null && token !== '' ? `Bearer ${token}` : ''
+            }`
           }
-        })
+        }
+      )
+      setplan(requestPlan.data[0])
+      if (requestPlan.data[0].tipo?.includes('Diseño Logotipo')) {
+        const respuesta = await axios.get(
+          `${Global.url}/oneBriefDiseñoNewToSeguimiento/${id ?? ''}`,
+          {
+            headers: {
+              Authorization: `Bearer ${
+                token !== null && token !== '' ? `Bearer ${token}` : ''
+              }`
+            }
+          }
+        )
         if (respuesta.data[0]) {
           seValidateBrief(true)
         } else {
           seValidateBrief(false)
         }
       } else if (codContr == 'LPBRO') {
-        const respuesta = await axios.get(`${Global.url}/oneBriefBrochureToSeguimiento/${id ?? ''}`, {
-          headers: {
-            Authorization: `Bearer ${
-                  token !== null && token !== '' ? `Bearer ${token}` : ''
-                }`
+        const respuesta = await axios.get(
+          `${Global.url}/oneBriefBrochureToSeguimiento/${id ?? ''}`,
+          {
+            headers: {
+              Authorization: `Bearer ${
+                token !== null && token !== '' ? `Bearer ${token}` : ''
+              }`
+            }
           }
-        })
+        )
         if (respuesta.data[0]) {
           seValidateBrief(true)
         } else {
           seValidateBrief(false)
         }
       } else if (codContr == 'LPFLYER') {
-        const respuesta = await axios.get(`${Global.url}/oneBriefFlyerToSeguimiento/${id ?? ''}`, {
-          headers: {
-            Authorization: `Bearer ${
-                  token !== null && token !== '' ? `Bearer ${token}` : ''
-                }`
+        const respuesta = await axios.get(
+          `${Global.url}/oneBriefFlyerToSeguimiento/${id ?? ''}`,
+          {
+            headers: {
+              Authorization: `Bearer ${
+                token !== null && token !== '' ? `Bearer ${token}` : ''
+              }`
+            }
           }
-        })
+        )
         if (respuesta.data[0]) {
           seValidateBrief(true)
         } else {
@@ -327,8 +349,10 @@ export const Avances = (): JSX.Element => {
         id_contrato: request.data[0].id_contrato,
         fecha_fin: request.data[0].fecha_fin,
         fecha_inicio: request.data[0].fecha_inicio,
-        observaciones: request.data[0].observaciones
+        observaciones: request.data[0].observaciones,
+        comunnity: request.data[0].community ? JSON.parse(request.data[0].community) : []
       }))
+
       if (request.data[0].email && request.data[0].email != null) {
         setCorreos([
           ...correos,
@@ -414,7 +438,9 @@ export const Avances = (): JSX.Element => {
             <div className="bg-white p-4 rounded-xl mt-6">
               <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 md:gap-0">
                 <span className="text-left flex flex-col md:flex-row gap-2 md:gap-6 text-black uppercase">
-                  <span className="text-sm md:text-base font-bold">COLABORADOR(ES) A CARGO:</span>
+                  <span className="text-sm md:text-base font-bold">
+                    COLABORADOR(ES) A CARGO:
+                  </span>
                   {colaborador?.map((asignacion: any, index: number) => {
                     const assignedCollaborators = colaboradores
                       .filter(
@@ -427,7 +453,7 @@ export const Avances = (): JSX.Element => {
                         {assignedCollaborators && (
                           <span>{assignedCollaborators}</span>
                         )}
-                        {index < colaborador.length - 1 }
+                        {index < colaborador.length - 1}
                       </Fragment>
                     )
                   })}
@@ -441,7 +467,11 @@ export const Avances = (): JSX.Element => {
                           if (datos2?.email && datos2?.comentarios) {
                             setOpenCorreoFinal(true)
                           } else if (!datos2?.comentarios) {
-                            Swal.fire('Debe colocar sus comentarios generales', '', 'warning')
+                            Swal.fire(
+                              'Debe colocar sus comentarios generales',
+                              '',
+                              'warning'
+                            )
                           } else {
                             Swal.fire({
                               title: 'EL cliente no tiene un email registrado',
@@ -465,7 +495,7 @@ export const Avances = (): JSX.Element => {
               </div>
             </div>
 
-            <div className="bg-white p-8 rounded-xl mt-6">
+            <div className="bg-white p-4 rounded-xl mt-6">
               <ArchivosFinales
                 getOneBrief={getOneBrief}
                 values={values}
@@ -477,9 +507,16 @@ export const Avances = (): JSX.Element => {
                 validateBrief={validateBrief}
               />
             </div>
-            <div className="bg-white p-8 rounded-xl mt-6">
+
+            {(datos?.id_contrato.split('_')[0]).includes('LPCM') &&
+                <div className="w-full h-fit min-h-[85px] bg-white p-4 rounded-xl mt-6">
+                    <IndexComunity cards={cards} datos={datos} getOneBrief={getOneBrief}/>
+                </div>
+            }
+
+            <div className="bg-white p-4 rounded-xl mt-6">
               <div className="w-full flex flex-col justify-start md:items-start gap-y-2 relative">
-                <div className="flex flex-col gap-3 mb-6 ">
+                <div className="flex flex-col gap-2 mb-3 ">
                   <h2 className="text-xl lg:text-2xl font-bold text-black">
                     Seguimiento del proyecto
                   </h2>
@@ -514,7 +551,7 @@ export const Avances = (): JSX.Element => {
                 >
                   Agregar avance
                 </span>
-                <section className="w-full">
+                <section className="w-full quitar_padding_bottom">
                   <SwiperAvances
                     arrayAvances={arrayAvances}
                     setAvance={setAvance}
@@ -529,11 +566,18 @@ export const Avances = (): JSX.Element => {
                 </section>
               </div>
             </div>
-            <div className="bg-white p-8 rounded-xl mt-6">
-              <div className="flex flex-col gap-3 mb-6 ">
-                <h2 className="text-xl lg:text-2xl font-bold text-black">
+            <div className="bg-white p-4 rounded-xl mt-6">
+              <div className="flex justify-between gap-2 mb-4">
+                <h2 className="text-xl w-full lg:text-2xl font-bold text-black">
                   Comentario general
                 </h2>
+                <div className="flex gap-2 w-full justify-end">
+                  <input
+                    type="submit"
+                    className="bg-main_2-200 text-white hover:bg-primary flex items-center gap-2 py-2 px-4 rounded-lg transition-colors cursor-pointer"
+                    value="Grabar comentario"
+                  />
+                </div>
               </div>
               <div className="w-full flex justify-center items-center flex-col md:flex-row gap-2 lg:gap-5">
                 <div className="w-full">
@@ -554,13 +598,6 @@ export const Avances = (): JSX.Element => {
                     touched={touched.comentarios}
                   />
                 </div>
-              </div>
-              <div className="flex gap-2 w-full justify-end mt-6">
-                <input
-                  type="submit"
-                  className="bg-main_2-200 text-white hover:bg-primary flex items-center gap-2 py-2 px-4 rounded-lg transition-colors cursor-pointer"
-                  value="Grabar comentario"
-                />
               </div>
             </div>
 
@@ -659,6 +696,7 @@ export const Avances = (): JSX.Element => {
           </button>
         </>
           )}
+
       <RegistroMarca
         open={openMarca}
         setOpen={setOpenMarca}

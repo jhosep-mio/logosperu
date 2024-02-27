@@ -2,6 +2,16 @@ import { type Dispatch, type SetStateAction } from 'react'
 
 // AVANCES DE archivo
 
+export interface comentariosValues {
+  id: number
+  texto: string
+  fecha: string
+  hora: string
+  idUser: string
+  user: string
+  respuestas: any
+}
+
 export interface ListcotizacionValues {
   id: string
   correlativo: string

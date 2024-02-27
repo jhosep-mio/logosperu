@@ -15,10 +15,10 @@ import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
 import { RiFilter2Fill, RiSettings3Fill } from 'react-icons/ri'
 import { LuPhoneCall } from 'react-icons/lu'
 import { MdCallMade } from 'react-icons/md'
-import { GeneracionVentas } from '../clientes/GeneracionVentas'
 import { AgregarLlamada } from './modal/AgregarLlamada'
 import { DeleteItems } from '../../../shared/DeleteItems'
 import { EditarLlamada } from './modal/EditarLlamada'
+import { GeneracionVentas2 } from '../clientes/GeneracionVentas2'
 
 interface valuesVentasTO {
   id: number
@@ -425,7 +425,7 @@ export const HistorialLlamadas = (): JSX.Element => {
           </div>
         </>
           )}
-      <GeneracionVentas
+      <GeneracionVentas2
         open={open}
         setOpen={setOpen}
         datos={dato}

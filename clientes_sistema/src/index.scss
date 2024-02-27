@@ -8,6 +8,83 @@ html {
   font-family: "Hanken Grotesk", sans-serif;
 }
 
+
+// CALENDARIO CM LOGOS PERU
+
+.calendario_cm .rbc-toolbar {
+    & :first-child {
+      display: none !important;
+    }
+  }
+  
+  .quitar_padding_bottom {
+    & .swiper-wrapper {
+      padding-bottom: 0 !important;
+    }
+  }
+  
+  .calendario_cm .rbc-toolbar-label {
+    // background: #129990 !important;
+    color: #129990 !important;
+    font-size: 42px !important;
+    text-transform: uppercase !important;
+    font-weight: 900 !important;
+    text-align: left !important;
+  }
+  
+  .calendario_cm .rbc-active {
+    background: #129990 !important;
+    color: white !important;
+  }
+
+  .ql-container.ql-snow {
+    border-top: 1px solid #ccc !important;
+  }
+  .ql-toolbar {
+    display: none;
+  }
+
+  .modal_community_clientes {
+    z-index: 998 !important;
+    .quitaR_padding{
+      padding: 0 20px !important;
+    }
+    & .MuiPaper-root {
+      width: 1400px !important;
+      max-width: 1400px !important;
+      padding: 0 !important;
+      background: transparent;
+      box-shadow: none !important;
+      resize: both;
+      height: 60vh;
+    }
+  }
+  
+  .calendario_cm .rbc-header {
+    background: #129990 !important;
+    color: white !important;
+  }
+  
+  .calendario_cm .react-calendar__month-view__weekdays__weekday {
+    color: #129990 !important;
+    font-weight: bolder !important;
+  }
+  
+  .calendario_cm .rbc-event .rbc-event-label {
+    background: transparent !important;
+  }
+  
+  .calendario_cm .react-calendar__tile--active:enabled:hover,
+  .calendario_cm .react-calendar__tile--active:enabled:focus {
+    background: transparent !important;
+  }
+  
+  .calendario_cm .rbc-events-container .rbc-event {
+    height: fit-content !important;
+    background: #129990 !important;
+  }
+  
+
 ::-webkit-scrollbar {
   width: 0px !important;
 }
@@ -151,43 +228,15 @@ input[type="number"] {
   @apply hidden;
 }
 
-.jodit-status-bar__item {
-  display: none;
-}
-
-.jodit-toolbar__box {
-  background: #1e1f25 !important;
-}
-
-.jodit-toolbar-button__trigger {
-  svg {
-    fill: white;
-  }
-}
-
-.jodit-toolbar-button {
-  button {
-    color: white !important;
-    fill: aliceblue;
-    span {
-      svg {
-        fill: white;
-      }
-    }
-  }
-}
-.jodit-status-bar {
-  background: #1e1f25 !important;
-  display: none !important;
-}
-.jodit-ui-group_size_middle {
-  // display: none !important;
-}
-.jodit-workplace {
-  background: #1e1f25 !important;
+.jodit-toolbar__box{
+    display: none !important;
 }
 .lactme {
   width: 50px !important;
+}
+
+.jodit-status-bar{
+    display: none !important;
 }
 
 .dot-spinner2 {

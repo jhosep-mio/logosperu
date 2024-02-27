@@ -204,194 +204,212 @@ export const ListadoResultados = (): JSX.Element => {
                 <h5 className="md:text-left">Fecha inicio</h5>
                 <h5 className="md:text-left">Fecha fin</h5>
               </div>
-              {filterDate()
-                .filter(
-                  (pro: bannersValues) =>
-                    // eslint-disable-next-line eqeqeq
-                    pro.fecha_fin != null && pro.fecha_fin != ''
-                )
-                .map((pro: bannersValues, index: number) => (
-                  <div
-                    className="grid grid-cols-1 md:grid-cols-6 gap-3 items-center mb-3 md:mb-0 bg-transparent p-4 rounded-xl relative shadow_class"
-                    key={pro.id}
+              {filterDate().map((pro: bannersValues, index: number) => (
+                <div
+                  className="grid grid-cols-1 md:grid-cols-6 gap-3 items-center mb-3 md:mb-0 bg-transparent p-4 rounded-xl relative shadow_class"
+                  key={pro.id}
+                >
+                  {/* MOVIL */}
+                  <Link
+                    to={`view-servicio/${pro.id}`}
+                    className="flex flex-col gap-3 md:hidden"
                   >
-                    {/* MOVIL */}
-                    <Link
-                      to={`view-servicio/${pro.id}`}
-                      className="flex flex-col gap-3 md:hidden"
-                    >
-                      <div className="flex md:hidden gap-4">
-                        <span className="flex items-center justify-center bg-[#b3dba1] w-8 h-8 rounded-full">
-                          T
-                        </span>
-                        <span className="flex md:justify-left items-center gap-3 font-bold">
-                          {pro.id_contrato}
-                        </span>
-                      </div>
-                      <div className="md:hidden flex justify-between gap-3">
-                        <div className="text-left w-full">
-                          <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                            A cargo
-                          </h5>
-                          <span className="text-left block">
-                            {JSON.parse(pro.asignacion) != null &&
-                            JSON.parse(pro.asignacion).length > 0
-                              ? JSON.parse(pro.asignacion).map(
-                                (asignacion: any) =>
-                                  colaboradores
-                                    .filter(
-                                      (colaborador: {
-                                        id: number
-                                        name: string
-                                      }) =>
-                                      // eslint-disable-next-line eqeqeq
-                                        colaborador.id == asignacion.peso
-                                    )
-                                    .map(
-                                      (colaborador: { name: string }) =>
-                                        colaborador.name
-                                    )
-                                    .join(', ')
-                              )
-                              : 'Aun no se te asigna un diseñador'}
-                          </span>
-                        </div>
-                        <div className="text-right w-full">
-                          <h5 className="md:hidden text-black font-bold mb-0 text-sm bg">
-                            Empresa/Negocio
-                          </h5>
-                          <span className="text-right line-clamp-1">
-                            {pro.nombre_empresa}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="md:hidden flex justify-between gap-3">
-                        <div className="md:text-center ">
-                          <h5 className="md:hidden text-[#62be6d] font-bold mb-0 text-sm ">
-                            Fecha de Inicio
-                          </h5>
-                          <span className="text-left block text-[#62be6d]">
-                            {pro.fecha_inicio}
-                          </span>
-                        </div>
-                        <div className="md:text-right ">
-                          <h5 className="md:hidden text-red-500 text-right font-bold mb-0 text-sm">
-                            Fecha de cierre
-                          </h5>
-                          <span className="text-right block text-red-500">
-                            {pro.fecha_fin}
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                    {/* PC */}
-                    <div className="hidden md:block md:text-left ">
-                      <h5 className="md:hidden text-white font-bold mb-2">
-                        Nº Contrato
-                      </h5>
-                      {pro.pdf_contrato
-                        ? <Tooltip title="Descargar contrato">
-                          <span
-                            className="flex md:justify-left items-center gap-3 cursor-pointer"
-                            // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-expressions
-                            onClick={() => {
-                              preguntar(
-                                pro.id_ventas,
-                                `${pro.id_contrato}_${auth.name}.pdf`,
-                                pro.limitar_descarga,
-                                pro.id_contrato
-                              )
-                            }}
-                          >
-                            <IoCodeDownload className="text-red-600 text-3xl cursor-pointer" />{' '}
-                            {pro.id_contrato}
-                          </span>
-                        </Tooltip>
-                        : (
-                        <span className="flex md:justify-left items-center gap-3 ">
-                          {pro.id_contrato}
-                        </span>
-                          )}
+                    <div className="flex md:hidden gap-4">
+                      <span className="flex items-center justify-center bg-[#b3dba1] w-8 h-8 rounded-full">
+                        T
+                      </span>
+                      <span className="flex md:justify-left items-center gap-3 font-bold">
+                        {pro.id_contrato}
+                      </span>
                     </div>
-                    <div className="hidden md:block md:text-center ">
-                      <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                        A cargo
-                      </h5>
-                      <span className="text-left block">
-                        {JSON.parse(pro.asignacion) != null &&
-                        JSON.parse(pro.asignacion).length > 0
-                          ? JSON.parse(pro.asignacion).map((asignacion: any) =>
-                            colaboradores
+                    <div className="md:hidden flex justify-between gap-3">
+                      <div className="text-left w-full">
+                        <h5 className="md:hidden text-black font-bold mb-0 text-sm">
+                          A cargo
+                        </h5>
+                        <span className="text-left block">
+                          {JSON.parse(pro.asignacion) != null &&
+                          JSON.parse(pro.asignacion).length > 0
+                            ? JSON.parse(pro.asignacion).map(
+                              (asignacion: any) =>
+                                colaboradores
+                                  .filter(
+                                    (colaborador: {
+                                      id: number
+                                      name: string
+                                    }) =>
+                                    // eslint-disable-next-line eqeqeq
+                                      colaborador.id == asignacion.peso
+                                  )
+                                  .map(
+                                    (colaborador: { name: string }) =>
+                                      colaborador.name
+                                  )
+                                  .join(' , ')
+                            )
+                            : 'Aun no se te asigna un diseñador'}
+                        </span>
+                      </div>
+                      <div className="text-right w-full">
+                        <h5 className="md:hidden text-black font-bold mb-0 text-sm bg">
+                          Empresa/Negocio
+                        </h5>
+                        <span className="text-right line-clamp-1">
+                          {pro.nombre_empresa}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="md:hidden flex justify-between gap-3">
+                      <div className="md:text-center ">
+                        <h5 className="md:hidden text-[#62be6d] font-bold mb-0 text-sm ">
+                          Fecha de Inicio
+                        </h5>
+                        <span className="text-left block text-[#62be6d]">
+                          {pro.fecha_inicio}
+                        </span>
+                      </div>
+                      <div className="md:text-right ">
+                        <h5 className="md:hidden text-red-500 text-right font-bold mb-0 text-sm">
+                          Fecha de cierre
+                        </h5>
+                        <span className="text-right block text-red-500">
+                          {pro.fecha_fin}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                  {/* PC */}
+                  <div className="hidden md:block md:text-left ">
+                    <h5 className="md:hidden text-white font-bold mb-2">
+                      Nº Contrato
+                    </h5>
+                    {pro.pdf_contrato
+                      ? <Tooltip title="Descargar contrato">
+                        <span
+                          className="flex md:justify-left items-center gap-3 cursor-pointer"
+                          // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/no-unused-expressions
+                          onClick={() => {
+                            preguntar(
+                              pro.id_ventas,
+                              `${pro.id_contrato}_${auth.name}.pdf`,
+                              pro.limitar_descarga,
+                              pro.id_contrato
+                            )
+                          }}
+                        >
+                          <IoCodeDownload className="text-red-600 text-3xl cursor-pointer" />{' '}
+                          {pro.id_contrato}
+                        </span>
+                      </Tooltip>
+                      : (
+                      <span className="flex md:justify-left items-center gap-3 ">
+                        {pro.id_contrato}
+                      </span>
+                        )}
+                  </div>
+                  <div className="hidden md:block md:text-center ">
+                    <h5 className="md:hidden text-black font-bold mb-0 text-sm">
+                      A cargo
+                    </h5>
+                    <span className="text-left block">
+                      {JSON.parse(pro.asignacion) != null &&
+                      JSON.parse(pro.asignacion).length > 0
+                        ? JSON.parse(pro.asignacion).map(
+                          (asignacion: any, index: number) => {
+                            const colaboradoresAsignados = colaboradores
                               .filter(
                                 (colaborador: { id: number, name: string }) =>
-                                // eslint-disable-next-line eqeqeq
                                   colaborador.id == asignacion.peso
                               )
                               .map(
                                 (colaborador: { name: string }) =>
                                   colaborador.name
                               )
-                              .join(', ')
-                          )
-                          : 'Aun no se te asigna un diseñador'}
-                      </span>
+                            return (
+                                <span key={index}>
+                                  {colaboradoresAsignados.join(', ')}
+                                  {index ===
+                                  JSON.parse(pro.asignacion).length - 1
+                                    ? ''
+                                    : index ===
+                                      JSON.parse(pro.asignacion).length - 2
+                                      ? '  '
+                                      : ' '}
+                                </span>
+                            )
+                          }
+                        )
+                        : 'Aun no se te asigna un diseñador'}
+                    </span>
+                  </div>
+                  <div className="hidden md:block md:text-center">
+                    <h5 className="md:hidden text-white font-bold mb-2">
+                      Nombre de empresa
+                    </h5>
+                    <div className="marquee-container">
+                      <span className="marquee-text">{pro.nombre_empresa}</span>
                     </div>
-                    <div className="hidden md:block md:text-center">
-                      <h5 className="md:hidden text-white font-bold mb-2">
-                        Nombre de empresa
-                      </h5>
-                      <div className="marquee-container">
-                        <span className="marquee-text">
-                          {pro.nombre_empresa}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="hidden md:block md:text-center">
-                      <h5 className="md:hidden text-white font-bold mb-2">
-                        Estado
-                      </h5>
-                      <span className="text-left flex gap-2 bg-[#EDF9E7] text-[#1A5515] font-bold items-center w-fit px-2">
-                        <BsCheckCircle />
-                        Terminado
-                      </span>
-                    </div>
-                    <div className="hidden md:block md:text-center">
-                      <h5 className="md:hidden text-white font-bold mb-2 bg-gray-300">
-                        Fecha Inicio
-                      </h5>
-                      <span className="text-left block">
-                        {pro.fecha_inicio}
-                      </span>
-                    </div>
-                    <div className="hidden md:block md:text-center">
-                      <h5 className="md:hidden text-white font-bold mb-2">
-                        Fecha Fin
-                      </h5>
-                      <span className="text-left block">{pro.fecha_fin}</span>
-                    </div>
-                    <div className="hidden md:flex md:justify-center items-center absolute right-10 top-0 bottom-0">
-                      {index == 0
-                        ? (<>
-                        <Tour steps={steps} isOpen={guia} onRequestClose={handleClose} getCurrentStep={(curr: number) => { if (curr == 1) { navigate(`view-servicio/${pro.id}`) } }}/>
+                  </div>
+                  <div className="hidden md:block md:text-center">
+                    <h5 className="md:hidden text-white font-bold mb-2">
+                      Estado
+                    </h5>
+                    {pro.fecha_fin != null
+                      ? <span className="text-left flex gap-2 bg-[#EDF9E7] text-[#1A5515] font-bold items-center w-fit px-2">
+                    <BsCheckCircle />
+                    Terminado
+                  </span>
+                      : <span className="text-left flex gap-2 bg-gray-300 text-gray-500 font-bold items-center w-fit px-2">
+                      <BsCheckCircle />
+                      En proceso
+                    </span>
+                    }
+                  </div>
+                  <div className="hidden md:block md:text-center">
+                    <h5 className="md:hidden text-white font-bold mb-2 bg-gray-300">
+                      Fecha Inicio
+                    </h5>
+                    <span className="text-left block">{pro.fecha_inicio}</span>
+                  </div>
+                  <div className="hidden md:block md:text-center">
+                    <h5 className="md:hidden text-white font-bold mb-2">
+                      Fecha Fin
+                    </h5>
+                    <span className="text-left block">{pro.fecha_fin}</span>
+                  </div>
+                  <div className="hidden md:flex md:justify-center items-center absolute right-10 top-0 bottom-0">
+                    {index == 0
+                      ? (
+                      <>
+                        <Tour
+                          steps={steps}
+                          isOpen={guia}
+                          onRequestClose={handleClose}
+                          getCurrentStep={(curr: number) => {
+                            if (curr == 1) {
+                              navigate(`view-servicio/${pro.id}`)
+                            }
+                          }}
+                        />
                         <Link
                           to={`view-servicio/${pro.id}`}
                           className="rounded-lg transition-colors text-gray-300  flex items-center justify-center gap-x-4 p-2 flex-1 first-step"
                         >
                           <TbDirectionSignFilled className="text-[#202020] text-2xl" />
                         </Link>
-                        </>
-                          )
-                        : (
-                        <Link
-                          to={`view-servicio/${pro.id}`}
-                          className="rounded-lg transition-colors text-gray-300  flex items-center justify-center gap-x-4 p-2 flex-1"
-                        >
-                          <TbDirectionSignFilled className="text-[#202020] text-2xl" />
-                        </Link>
-                          )}
-                    </div>
+                      </>
+                        )
+                      : (
+                      <Link
+                        to={`view-servicio/${pro.id}`}
+                        className="rounded-lg transition-colors text-gray-300  flex items-center justify-center gap-x-4 p-2 flex-1"
+                      >
+                        <TbDirectionSignFilled className="text-[#202020] text-2xl" />
+                      </Link>
+                        )}
                   </div>
-                ))}
+                </div>
+              ))}
 
               {productos.length > 4 && (
                 <div className="flex flex-col md:flex-row gap-5 md:gap-0 justify-end content_buttons items-center mt-2">

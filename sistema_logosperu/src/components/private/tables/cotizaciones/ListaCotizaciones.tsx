@@ -10,27 +10,42 @@ import {
   type ListcotizacionValues
 } from '../../../shared/schemas/Interfaces'
 import { Paginacion } from '../../../shared/Paginacion'
-import { getCotizaciones } from '../../../shared/FetchingData'
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
 import {
   limpiarCadena,
   quitarAcentos
 } from '../../../shared/functions/QuitarAcerntos'
+import { ModalContratos } from './contratos/ModalContratos'
+import { Global } from '../../../../helper/Global'
+import axios from 'axios'
 
 export const ListaCotizaciones = (): JSX.Element => {
   const { setTitle } = useAuth()
   const [productos, setProductos] = useState<ListcotizacionValues[]>([])
+  const [selectedItem, setSelectedItem] = useState<ListcotizacionValues | null>(null)
+  const token = localStorage.getItem('token')
   const [loading, setLoading] = useState(true)
   const [totalRegistros, setTotalRegistros] = useState(0)
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(12)
   //   const [selectedCotizacion, setSelectedCotizacion] = useState<ListcotizacionValues | null>(null)
+  const [openContrato, setOpenContrato] = useState(false)
+
+  const getCotizaciones = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/getCotizaciones`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+    setProductos(request.data)
+    setTotalRegistros(request.data.length)
+  }
 
   useEffect(() => {
     setTitle('Listado de cotizaciones')
     Promise.all([
-      getCotizaciones('getCotizaciones', setProductos, setTotalRegistros)
+      getCotizaciones()
     ]).then(() => {
       setLoading(false)
     })
@@ -137,84 +152,6 @@ export const ListaCotizaciones = (): JSX.Element => {
               } md:px-4 md:py-3 rounded-xl relative shadow_class`}
               key={orden.id}
             >
-              {/* <div
-                // to={`view-servicio/${orden.id}`}
-                className="flex flex-col gap-3 md:hidden bg-form p-4 rounded-xl"
-              >
-                <div className="flex justify-between">
-                  <div className="flex md:hidden gap-4 items-center">
-                    {orden.estado == '1'
-                      ? (
-                      <span className="flex items-center justify-center bg-red-400 text-red-600  w-8 h-8 rounded-full">
-                        A
-                      </span>
-                        )
-                      : orden.fecha_fin != null
-                        ? (
-                      <span className="flex items-center justify-center bg-[#b3dba1] text-green-700 w-8 h-8 rounded-full">
-                        T
-                      </span>
-                          )
-                        : !orden.fecha_inicio && !orden.fecha_alta
-                            ? (
-                      <span className="flex items-center justify-center bg-yellow-300 text-yellow-600 w-8 h-8 rounded-full">
-                        C
-                      </span>
-                              )
-                            : (
-                      <span className="flex items-center justify-center bg-gray-300 text-gray-500 w-8 h-8 rounded-full">
-                        P
-                      </span>
-                              )}
-                    <span className="flex md:justify-left items-center gap-3 font-bold text-black">
-                      {limpiarCadena(orden.correlativo)}
-                    </span>
-                  </div>
-                </div>
-                <div className="md:hidden flex justify-between gap-3">
-                  <div className="md:text-center ">
-                    <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                      Cliente
-                    </h5>
-                    {orden.id_contacto
-                      ? <>
-                  {orden.arraycontacto && JSON.parse(orden.arraycontacto).length > 0 &&
-                    JSON.parse(orden.arraycontacto).filter((contacto: arrayContacto) => String(contacto.id ?? '') == orden.id_contacto).map((contacto: arrayContacto) => (
-                    <span key={contacto.id} className="text-left w-full text-black line-clamp-1">
-                        {contacto.nombres}
-                    </span>
-                    ))
-                    }
-                  </>
-                      : <span className="text-left w-full text-black line-clamp-1">
-                    {orden.nombres} {orden.apellidos}
-                </span>
-                }
-                  </div>
-                  <div className="md:text-right ">
-                    <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
-                      Marca
-                    </h5>
-                    <span className="text-right w-full text-black line-clamp-1">
-                      {orden.nombre_marca
-                        ? orden.nombre_marca
-                        : 'No registrado'}
-                    </span>
-                  </div>
-                </div>
-                <div className="md:hidden flex justify-between gap-3">
-                  <div className="md:text-center ">
-                    <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                      Plan
-                    </h5>
-                    <span className="text-left w-full text-black line-clamp-1">
-
-                    </span>
-                  </div>
-                </div>
-
-              </div> */}
-              {/* PC */}
               <div className="hidden md:block md:text-center col-span-1">
                 <span className="text-left block text-black w-full line-clamp-1">
                   {limpiarCadena(orden.correlativo)}
@@ -280,10 +217,21 @@ export const ListaCotizaciones = (): JSX.Element => {
                       </Link>
                     )}
                   </MenuItem>
+                  <MenuItem className="p-0 hover:bg-transparent">
+                    {orden.id != null && (
+                      <button
+                        onClick={() => { setOpenContrato(true); setSelectedItem(orden) }}
+                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                      >
+                        Generar Contrato
+                      </button>
+                    )}
+                  </MenuItem>
                 </Menu>
               </div>
             </div>
           ))}
+          <ModalContratos open={openContrato} setOpen={setOpenContrato} selectedItem={selectedItem} getCotizaciones={getCotizaciones}/>
           <div className="flex flex-col md:flex-row gap-6 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">
             <p className="text-md ml-1 text-black">
               {totalRegistros} Registros

@@ -9,7 +9,10 @@ import { SubirArchivosPDF } from '../../../shared/modals/SubirArchivosPDF'
 import { nodata, pdf, zip } from '../../../shared/Images'
 import Skeleton from '@mui/material/Skeleton'
 import { IoEyeSharp } from 'react-icons/io5'
-import { type archivoavancesValues, type ValuesPlanes } from '../../../shared/schemas/Interfaces'
+import {
+  type archivoavancesValues,
+  type ValuesPlanes
+} from '../../../shared/schemas/Interfaces'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SubirAvances } from './avancesArchivos/SubirAvances'
 import filarachive from '../../../../assets/plataformas/archivo.png'
@@ -43,14 +46,13 @@ export const ArchivosFinales = ({
   validateBrief
 }: valuesData): JSX.Element => {
   const { id } = useParams()
-  const { setShowError } = useAuth()
+  const { setShowError, setDownloadProgress } = useAuth()
   const token = localStorage.getItem('token')
   const [loadingDescarga, setLoadingDescarga] = useState(false)
   const [open, setOpen] = useState(false)
   const [seleccion, setSeleccion] = useState(false)
   const [openPDF, setOpenPDF] = useState(false)
   const [openAvance, setOpenAvance] = useState(false)
-
   //   NUEVO
   const plazo = 30 * 24 * 60 * 60 * 1000 // 30 días en milisegundos
   const [tiempoRestante, setTiempoRestante] = useState<number | null>(null)
@@ -69,6 +71,13 @@ export const ArchivosFinales = ({
           Authorization: `Bearer ${
             token !== null && token !== '' ? `Bearer ${token}` : ''
           }`
+        },
+        onDownloadProgress: (e) => {
+          const loaded = (e.loaded)
+          const total = e.total
+          if (total) {
+            setDownloadProgress(((loaded) / total) * 100)
+          }
         }
       })
       const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -95,6 +104,13 @@ export const ArchivosFinales = ({
           Authorization: `Bearer ${
             token !== null && token !== '' ? `Bearer ${token}` : ''
           }`
+        },
+        onDownloadProgress: (e) => {
+          const loaded = (e.loaded)
+          const total = e.total
+          if (total) {
+            setDownloadProgress(((loaded) / total) * 100)
+          }
         }
       })
       const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -177,19 +193,20 @@ export const ArchivosFinales = ({
   }
 
   const eliminarImagen = async (nombre: string): Promise<void> => {
-    await axios.delete(
-        `${Global.url}/eliminarArchivoAvance/${nombre ?? ''}`, {
-          headers: {
-            Authorization: `Bearer ${
-              token !== null && token !== '' ? token : ''
-            }`
-          }
-        }
-    )
+    await axios.delete(`${Global.url}/eliminarArchivoAvance/${nombre ?? ''}`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
   }
 
-  const eliminarArchivoAvance = async (idarchivo: string, nombre: string): Promise<void> => {
-    const nuevoArray = JSON.parse(values.archivos_avances).filter((avance: archivoavancesValues) => avance.id !== idarchivo)
+  const eliminarArchivoAvance = async (
+    idarchivo: string,
+    nombre: string
+  ): Promise<void> => {
+    const nuevoArray = JSON.parse(values.archivos_avances).filter(
+      (avance: archivoavancesValues) => avance.id !== idarchivo
+    )
     const data = new FormData()
     data.append('archivos_avances', JSON.stringify(nuevoArray))
     data.append('_method', 'PUT')
@@ -227,6 +244,14 @@ export const ArchivosFinales = ({
           Authorization: `Bearer ${
             token !== null && token !== '' ? `Bearer ${token}` : ''
           }`
+
+        },
+        onDownloadProgress: (e) => {
+          const loaded = (e.loaded)
+          const total = e.total
+          if (total) {
+            setDownloadProgress((loaded / total) * 100)
+          }
         }
       })
       const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -238,6 +263,8 @@ export const ArchivosFinales = ({
       a.remove()
     } catch (error) {
       console.error(error)
+    } finally {
+      setDownloadProgress(0)
     }
     setLoadingDescarga(false)
   }
@@ -312,10 +339,10 @@ export const ArchivosFinales = ({
 
   return (
     <>
-      <div className="flex flex-row gap-0 justify-between lg:gap-3 mb-2 ">
-        <div className="flex flex-col gap-3 mb-6 ">
+      <div className="flex flex-row gap-0 justify-between lg:gap-2 mb-2">
+        <div className="flex flex-col gap-3 mb-2">
           <h2 className="text-xl lg:text-2xl font-bold text-black">
-            Archivos finales{' '}
+            Archivos {' '}
           </h2>
           <h3 className="font-bold text-base">
             <span className="text-gray-400 text-sm lg:text-base">
@@ -385,8 +412,12 @@ export const ArchivosFinales = ({
           </AnimatePresence>
         </div>
       </div>
-      {values.link_final ?? pdfName ?? (values.archivos_avances && JSON.parse(values.archivos_avances).length > 0)
-        ? <section className="mb-4 flex flex-col lg:flex-row gap-3 w-full">
+      {values.link_final ??
+      pdfName ??
+      (values.archivos_avances &&
+        JSON.parse(values.archivos_avances).length > 0)
+        ? (
+        <section className="flex flex-col lg:flex-row gap-3 w-full">
           <div className="bg-[#fff] p-0 lg:p-0 rounded-xl w-full lg:w-full relative">
             <div className="hidden md:grid grid-cols-1 md:grid-cols-7 gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300 w-full">
               <h5 className="md:text-left col-span-2">Archivo </h5>
@@ -394,72 +425,75 @@ export const ArchivosFinales = ({
               <h5 className="md:text-left bg-yellow-500/70 text-black w-fit px-2 col-span-2">
                 Tiempo de expiración{' '}
               </h5>
-              <h5 className="text-center w-full text-black  px-2">
-                Intentos
-              </h5>
+              <h5 className="text-center w-full text-black  px-2">Intentos</h5>
               <h5 className="md:text-left"></h5>
             </div>
             {values.archivos_avances && (
-                <>
-                {JSON.parse(values.archivos_avances).map((avances: archivoavancesValues) => (
-                    <div key={avances.id} className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center mb-4 bg-gray-50 p-4 rounded-xl shadow-sm cursor-pointer w-full">
-                        <div className="hidden md:block md:text-center col-span-2">
-                            <div className="text-left flex gap-3 items-center">
-                                <img src={filarachive} alt="" className="w-10 h-10" />
-                                <span className="line-clamp-2 text-black">
-                                {formatFileName(avances.nombre)}
-                                </span>
-                            </div>
+              <>
+                {JSON.parse(values.archivos_avances).map(
+                  (avances: archivoavancesValues) => (
+                    <div
+                      key={avances.id}
+                      className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center mb-4 bg-gray-50 p-4 rounded-xl shadow-sm cursor-pointer w-full"
+                    >
+                      <div className="hidden md:block md:text-center col-span-2">
+                        <div className="text-left flex gap-3 items-center">
+                          <img src={filarachive} alt="" className="w-10 h-10" />
+                          <span className="line-clamp-2 text-black">
+                            {formatFileName(avances.nombre)}
+                          </span>
                         </div>
-                        <div className="hidden md:block md:text-center">
-                            <span className="text-left flex gap-2 font-bold items-center w-fit px-2 text-white bg-yellow-600">
-                                Avance
+                      </div>
+                      <div className="hidden md:block md:text-center">
+                        <span className="text-left flex gap-2 font-bold items-center w-fit px-2 text-white bg-yellow-600">
+                          Avance
+                        </span>
+                      </div>
+                      <div className="hidden md:block md:text-center col-span-2">
+                        <span className="text-left flex gap-2 items-center w-fit px-2 text-black">
+                          {tiempoRestante != null && tiempoRestante > 0
+                            ? (
+                            <span className="text-left flex gap-2 items-center w-fit px-2">
+                              {formatTime(tiempoRestante)}
                             </span>
-                        </div>
-                        <div className="hidden md:block md:text-center col-span-2">
-                            <span className="text-left flex gap-2 items-center w-fit px-2 text-black">
-                                {tiempoRestante != null && tiempoRestante > 0
-                                  ? (
-                                <span className="text-left flex gap-2 items-center w-fit px-2">
-                                    {formatTime(tiempoRestante)}
-                                </span>
-                                    )
-                                  : (
-                                <Skeleton
-                                    variant="rectangular"
-                                    className="w-[70%] h-full"
-                                />
-                                    )}
-                            </span>
-                        </div>
-                        <div className="hidden md:block md:text-center ">
-                            <span className="w-fit px-2 text-black">
-                                {avances.limite}
-                            </span>
-                        </div>
-                        <div className="hidden md:flex md:justify-end items-center gap-4 ">
+                              )
+                            : (
+                            <Skeleton
+                              variant="rectangular"
+                              className="w-[70%] h-full"
+                            />
+                              )}
+                        </span>
+                      </div>
+                      <div className="hidden md:block md:text-center ">
+                        <span className="w-fit px-2 text-black">
+                          {avances.limite}
+                        </span>
+                      </div>
+                      <div className="hidden md:flex md:justify-end items-center gap-4 ">
                         {!loadingDescarga
                           ? (
-                            <BsFillCloudArrowDownFill
+                          <BsFillCloudArrowDownFill
                             className=" text-green-600 text-3xl w-fit lg:w-fit text-center"
                             onClick={() => {
                               descargarArchivoZip(avances.nombre)
                             }}
-                            />
+                          />
                             )
                           : (
-                            <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-fit text-center" />
+                          <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-fit text-center" />
                             )}
                         <BsFillTrashFill
-                            className=" text-red-600 text-2xl w-fit lg:w-fit text-center"
-                            onClick={() => {
-                              preguntarArchivo(avances.id, avances.nombre)
-                            }}
+                          className=" text-red-600 text-2xl w-fit lg:w-fit text-center"
+                          onClick={() => {
+                            preguntarArchivo(avances.id, avances.nombre)
+                          }}
                         />
-                        </div>
+                      </div>
                     </div>
-                ))}
-                </>
+                  )
+                )}
+              </>
             )}
             {pdfName != undefined && (
               <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center mb-4 bg-gray-50 p-4 rounded-xl shadow-sm cursor-pointer w-full">
@@ -493,8 +527,7 @@ export const ArchivosFinales = ({
                   </span>
                 </div>
                 <div className="hidden md:block md:text-center ">
-                    <span className="w-fit px-2 text-black">
-                    </span>
+                  <span className="w-fit px-2 text-black"></span>
                 </div>
                 <div className="hidden md:flex md:justify-end items-center gap-4 ">
                   <a
@@ -558,9 +591,7 @@ export const ArchivosFinales = ({
                   </span>
                 </div>
                 <div className="hidden md:block md:text-center ">
-                    <span className="w-fit px-2 text-black">
-                        {limite}
-                    </span>
+                  <span className="w-fit px-2 text-black">{limite}</span>
                 </div>
                 <div className="hidden md:flex md:justify-end items-center gap-4 ">
                   {!loadingDescarga
@@ -586,8 +617,9 @@ export const ArchivosFinales = ({
             )}
           </div>
         </section>
+          )
         : (
-        <div className="w-full  pb-6 flex flex-col gap-4">
+        <div className="w-full  pb-4 flex flex-col gap-4">
           <h2 className="text-black w-full text-center text-xl">
             Los archivos finales aun no se han subido
           </h2>

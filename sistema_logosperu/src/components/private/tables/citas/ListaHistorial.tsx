@@ -13,11 +13,11 @@ import { quitarAcentos } from '../../../shared/functions/QuitarAcerntos'
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu'
 import { RiFilter2Fill, RiSettings3Fill } from 'react-icons/ri'
 import { MdCallMade } from 'react-icons/md'
-import { GeneracionVentas } from '../clientes/GeneracionVentas'
 import { AgregarLlamada } from './modal/AgregarLlamada'
 import { EditarLlamada } from './modal/EditarLlamada'
 import { DeleteItems } from '../../../shared/DeleteItems'
 import { IoCalendarOutline } from 'react-icons/io5'
+import { GeneracionVentas2 } from '../clientes/GeneracionVentas2'
 
 interface valuesVentasTO {
   id: number
@@ -406,7 +406,7 @@ export const ListaHistorial = (): JSX.Element => {
           </div>
         </>
           )}
-      <GeneracionVentas
+      <GeneracionVentas2
         open={open}
         setOpen={setOpen}
         datos={dato}

@@ -145,6 +145,7 @@ export const ModalContratos = ({
       // @ts-expect-error
       data.append('id_cotizacion', datos?.id)
       data.append('correlativo', datos?.id_contrato)
+      data.append('medio_ingreso', datos?.medio_ingreso)
       data.append('nombres_cliente', datos?.nombre_cliente)
       data.append('titulo_contrato', values.titulo_contrato)
       data.append('id_contrato', datos?.id_contrato)
@@ -316,7 +317,6 @@ export const ModalContratos = ({
   }
 
   useEffect(() => {
-    console.log(datos)
     if (datos) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error

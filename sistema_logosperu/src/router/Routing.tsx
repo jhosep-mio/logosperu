@@ -102,6 +102,8 @@ import { ListaCotizaciones } from '../components/private/tables/cotizaciones/Lis
 import { EditarCotizacion } from '../components/private/tables/cotizaciones/EditarCotizacion'
 import { ViewCotizacion } from '../components/private/tables/cotizaciones/ViewCotizacion'
 import { ListaContratos } from '../components/private/tables/contratos/ListaContratos'
+import { EditarContrato } from '../components/private/tables/contratos/EditarContrato'
+import { ViewContrato } from '../components/private/tables/contratos/ViewContrato'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -117,6 +119,8 @@ export const Routing = (): JSX.Element => {
 
             {/* CONTRATOS */}
             <Route path="lista-contratos" element={<ListaContratos />} />
+            <Route path="lista-contratos/editar/:id" element={<EditarContrato />} />
+            <Route path="lista-contratos/view/:id" element={<ViewContrato />} />
 
             {/* COTIZACIONES */}
             <Route path="lista-cotizaciones" element={<ListaCotizaciones />} />

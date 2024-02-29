@@ -7,7 +7,6 @@ import {
 } from 'react-icons/ri'
 import { Loading } from '../../../shared/Loading'
 import {
-  type ValuesPlanes,
   type ListaContratosValues
 } from '../../../shared/schemas/Interfaces'
 import { Paginacion } from '../../../shared/Paginacion'
@@ -17,22 +16,21 @@ import {
 } from '../../../shared/functions/QuitarAcerntos'
 import { Global } from '../../../../helper/Global'
 import axios from 'axios'
-import { getDataToPlanes } from '../../../shared/FetchingData'
 import { BsFileEarmarkPdfFill } from 'react-icons/bs'
+import { GenerarAlta } from './alta/GenerarAlta'
 
 export const ListaContratos = (): JSX.Element => {
   const { setTitle } = useAuth()
   const [productos, setProductos] = useState<ListaContratosValues[]>([])
-  const [, setSelectedItem] = useState<ListaContratosValues | null>(null)
+  const [producto, setProducto] = useState<ListaContratosValues | null>(null)
   const token = localStorage.getItem('token')
   const [loading, setLoading] = useState(true)
+  const [open, setOpen] = useState(false)
   const [totalRegistros, setTotalRegistros] = useState(0)
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(12)
-  const [, setplanes] = useState<ValuesPlanes[]>([])
-  const [, setTotalRegistros2] = useState(0)
-  const [, setOpenGenerarCorrelativo] = useState(false)
+  const [usuarios, setUsuarios] = useState<never[]>([])
 
   const getCotizaciones = async (): Promise<void> => {
     const request = await axios.get(`${Global.url}/getAllContratos`, {
@@ -44,11 +42,20 @@ export const ListaContratos = (): JSX.Element => {
     setTotalRegistros(request.data.length)
   }
 
+  const getUsuarios = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/getUsuarios`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+    setUsuarios(request.data)
+  }
+
   useEffect(() => {
     setTitle('Listado de contratos')
     Promise.all([
       getCotizaciones(),
-      getDataToPlanes('getPlanes', setplanes, setTotalRegistros2)
+      getUsuarios()
     ]).then(() => {
       setLoading(false)
     })
@@ -126,8 +133,8 @@ export const ListaContratos = (): JSX.Element => {
             <h5 className="md:text-left col-span-1">Precio</h5>
             <h5 className="md:text-left line-clamp-1 col-span-2 ">Cliente</h5>
             <h5 className="md:text-left col-span-2">Empresa</h5>
-            <h5 className="md:text-center col-span-1">Tiempo</h5>
-            <h5 className="md:text-center col-span-1">PDF</h5>
+            <h5 className="md:text-center col-span-1">Tiempo estimado</h5>
+            <h5 className="md:text-center col-span-1">VER PDF</h5>
             <h5 className="md:text-center col-span-2">Fecha de creacion</h5>
           </div>
           {filterDate().map((orden: ListaContratosValues, index: number) => (
@@ -160,7 +167,7 @@ export const ListaContratos = (): JSX.Element => {
               </div>
               <div className="hidden md:block md:text-center col-span-1">
                 <span className="text-center block text-black">
-                   {orden.tiempo}
+                   {orden.tiempo} días
                 </span>
               </div>
               <div className="hidden md:block md:text-center col-span-1">
@@ -210,10 +217,11 @@ export const ListaContratos = (): JSX.Element => {
                   <MenuItem className="p-0 hover:bg-transparent">
                     {orden.id != null && (
                       <button
-                        onClick={() => { setOpenGenerarCorrelativo(true); setSelectedItem(orden) }}
+                        type='button'
+                        onClick={() => { setOpen(true); setProducto(orden) }}
                         className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
                       >
-                        Generar Contrato
+                        Generar alta
                       </button>
                     )}
                   </MenuItem>
@@ -221,14 +229,7 @@ export const ListaContratos = (): JSX.Element => {
               </div>
             </div>
           ))}
-          {/* <GeneracionCorrelativo selectedItem={selectedItem}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
-          datos={selectedItem}
-          setSelectedItem={setSelectedItem}
-          getClientes={getCotizaciones} open={openGenerarCorrelativo} setOpen={setOpenGenerarCorrelativo} planes={planes}
-          getCotizaciones={getCotizaciones}
-          /> */}
+          <GenerarAlta datos={producto} open={open} setOpen={setOpen} usuarios={usuarios}/>
           <div className="flex flex-col md:flex-row gap-6 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">
             <p className="text-md ml-1 text-black">
               {totalRegistros} Registros

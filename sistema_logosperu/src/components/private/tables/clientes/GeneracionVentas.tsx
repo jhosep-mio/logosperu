@@ -141,6 +141,7 @@ export const GeneracionVentas = ({
     errors,
     values,
     touched,
+    isSubmitting,
     handleBlur
   } = useFormik({
     initialValues: {
@@ -201,6 +202,16 @@ export const GeneracionVentas = ({
     setarrayConacto(datos.arraycontacto ? JSON.parse(datos.arraycontacto) : [])
     getUsuarios()
   }, [open])
+
+  useEffect(() => {
+    if (errors && isSubmitting) {
+      const firstErrorKey = Object.keys(errors)[0]
+      const firstErrorElement = document.getElementsByName(firstErrorKey)[0]
+      if (firstErrorElement) {
+        firstErrorElement.focus()
+      }
+    }
+  }, [touched, errors, isSubmitting])
 
   return (
     <>

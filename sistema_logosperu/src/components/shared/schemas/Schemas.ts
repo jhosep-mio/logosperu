@@ -82,6 +82,12 @@ export const SchemaPlanes = Yup.object().shape({
   descripcion: Yup.string().required('Este campo es requerido')
 })
 
+export const SchemaValidarAlta = Yup.object().shape({
+  nombre_cliente: Yup.string().required('Este campo es requerido'),
+  id_contrato: Yup.string(),
+  fecha_inicio: Yup.string().required('Este campo es requerido')
+})
+
 export const SchemaValidarVentas = Yup.object().shape({
   id: Yup.number().required('Este campo es requerido'),
   plan: Yup.string().required('Este campo es requerido'),

@@ -33,6 +33,12 @@ export interface ListaContratosValues {
   empresa: string
   tiempo: string
   pdf: string
+  celular: string
+  email: string
+  contenido: string
+  medio_ingreso: string
+  id_cliente: string
+  dni_cliente: string
 }
 
 export interface cotizacionValues {

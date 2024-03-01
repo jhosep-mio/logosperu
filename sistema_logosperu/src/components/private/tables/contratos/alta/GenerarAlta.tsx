@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -11,6 +12,7 @@ import { type TransitionProps } from '@mui/material/transitions'
 import axios from 'axios'
 import { Global } from '../../../../../helper/Global'
 import {
+  type arrayCorreos,
   type ListaContratosValues,
   type arrayAsignacion
 } from '../../../../shared/schemas/Interfaces'
@@ -21,6 +23,8 @@ import { toast } from 'sonner'
 import EditorContexto from '../../servicios/EditorContexto'
 import { ListaUsuarios } from './ListaUsuarios'
 import { Errors } from '../../../../shared/Errors'
+import useAuth from '../../../../../hooks/useAuth'
+import { v4 as uuidv4 } from 'uuid'
 
 const Transition = React.forwardRef(function Transition (
   props: TransitionProps & {
@@ -44,10 +48,12 @@ export const GenerarAlta = ({
   setOpen,
   usuarios
 }: valuesInterface): JSX.Element => {
+  const { auth } = useAuth()
   const token = localStorage.getItem('token')
   const [loading, setLoading] = useState(false)
   const [contenido, setContenido] = useState('')
   const [personContact] = useState<string | null>(null)
+  const [correos, setCorreos] = useState<arrayCorreos[]>([])
   const [arrayPesos, setarrayPesos] = useState<arrayAsignacion[]>([
     { id: null, peso: '' }
   ])
@@ -67,6 +73,19 @@ export const GenerarAlta = ({
     return `${diaFormateado}/${mesFormateado}/${año}`
   }
 
+  const obtenerFechaHora = (): { fecha: string, hora: string } => {
+    const ahora = new Date()
+    const opcionesFecha = { year: 'numeric', month: '2-digit', day: '2-digit' }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const fecha = ahora.toLocaleDateString('es-PE', opcionesFecha)
+    const opcionesHora = { hour: '2-digit', minute: '2-digit' }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const hora = ahora.toLocaleTimeString('es-PE', opcionesHora)
+    return { fecha, hora }
+  }
+
   const generarVenta = async (): Promise<void> => {
     if (arrayPesos.length > 1) {
       setLoading(true)
@@ -80,7 +99,27 @@ export const GenerarAlta = ({
         data.append('id_contacto', personContact ?? '')
         data.append('asignacion', JSON.stringify(arrayPesos))
         data.append('fecha_alta', generarFecha())
-        data.append('fecha_inicio', generarFecha())
+        data.append('fecha_inicio', values.fecha_inicio)
+        data.append('idreal_contrato', datos?.id ?? '')
+        // ENVIO DE MAIL
+        data.append('titulo', values.asunto)
+        data.append('contexto', contenido)
+        data.append('email', auth.email)
+        data.append('email_alter', auth.email_alter)
+        console.log(JSON.stringify(correos))
+        data.append('correos', JSON.stringify(correos))
+        data.append('password', auth.pass_email)
+        data.append('firma', auth.firma)
+        const { fecha, hora } = obtenerFechaHora()
+        const avance = {
+          fecha,
+          hora,
+          asunto: values.asunto,
+          correos,
+          contexto: contenido,
+          firma: auth.firma
+        }
+        data.append('contenido', JSON.stringify(avance))
 
         const request = await axios.post(`${Global.url}/generarAlta`, data, {
           headers: {
@@ -90,11 +129,42 @@ export const GenerarAlta = ({
           }
         })
         if (request.data.status == 'success') {
+          const enviarNotificacion = async (): Promise<void> => {
+            const data = new FormData()
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            const pathName = `/admin/lista-servicios/avances/${request.data.id_venta ?? ''}`
+            data.append('id_usuario', auth.id)
+            data.append('id_venta', String(request.data.id_venta))
+            data.append('nombre', auth.name)
+            data.append('icono', 'correo')
+            data.append('url', pathName)
+            data.append(
+              'contenido',
+                  `Ha enviado una alta para el proyecto ${
+                    datos?.empresa ?? ''
+                  }  (${datos?.nombres ?? ''} ${datos?.apellidos ?? ''})`
+            )
+            data.append('hidden_users', '')
+            try {
+              await axios.post(`${Global.url}/nuevaNotificacion`, data, {
+                headers: {
+                  Authorization: `Bearer ${
+                        token !== null && token !== '' ? token : ''
+                      }`
+                }
+              })
+            } catch (error: unknown) {
+              console.log(error)
+              Swal.fire('Error al subir', '', 'error')
+            }
+          }
+          enviarNotificacion()
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           Swal.fire(`${request.data.codigo}`, '', 'success')
+
           navigate('/admin/lista-ventas')
         } else if (request.data.message.includes('codigo invalido')) {
-          toast.warning('CODIGO INVALIDO')
+          toast.warning('YA EXISTE UN ALTA Y PROYECTO PARA ESTE CONTRATO')
         } else {
           Swal.fire('Error al generar la venta', '', 'error')
         }
@@ -121,7 +191,11 @@ export const GenerarAlta = ({
   const handleClose = (): void => {
     setOpen(false)
     resetForm()
+    setCorreos([])
+    setarrayPesos([])
+    setContenido('')
   }
+
   const returnIngreso = (id: string): string => {
     if (id == '0') {
       return 'Facebook'
@@ -157,15 +231,16 @@ export const GenerarAlta = ({
     initialValues: {
       id_contrato: '',
       nombre_cliente: '',
-      fecha_inicio: ''
+      fecha_inicio: '',
+      asunto: ''
     },
     validationSchema: SchemaValidarAlta,
     onSubmit: generarVenta
   })
 
   useEffect(() => {
+    console.log(datos)
     if (open) {
-      console.log(datos)
       setValues({
         ...values,
         id_contrato: datos?.correlativo ?? '',
@@ -184,8 +259,29 @@ export const GenerarAlta = ({
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       const contenidoConTextoAdicional = textoadcional + (datos?.contenido ?? '') + textofinal
       setContenido(contenidoConTextoAdicional)
+      const correoPredeterminado = datos?.email
+      if (!correos.some((c: any) => c.correo === correoPredeterminado)) {
+        // @ts-expect-error
+        setCorreos([...correos, { id: uuidv4(), correo: correoPredeterminado }])
+      }
     }
-  }, [open, arrayPesos])
+  }, [open])
+
+  useEffect(() => {
+    if (open) {
+      const nombresColaboradores = arrayPesos
+        .filter((item: any) => item.nombre) // Filtrar los elementos que tienen un nombre definido
+        .map((item: any) => item.nombre) // Mapear los elementos para obtener solo los nombres
+        .join(' – ')
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands, @typescript-eslint/restrict-template-expressions
+      const textoadcional = `<p>Estimados Colaboradores </p><p>&nbsp;</p><p>Le damos la Bienvenida al cliente :&nbsp;<span style="background-color: rgb(249, 250, 251);"> ${datos?.empresa}</span></p><p>&nbsp;</p><ul><li>Persona de contacto : Sr. ${datos?.nombres} ${datos?.apellidos} </li><li>Mail&nbsp;: ${datos?.email} </li><li>Móvil&nbsp;: ${datos?.celular} </li></ul></p><p>&nbsp;</p>`
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const textofinal = `<p>&nbsp;</p><p>${datos?.correlativo ?? ''}/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M1 – ${returnIngreso(datos?.medio_ingreso ?? '')} </p><p>&nbsp;</p><p>COLABORADORES A CARGO: ${nombresColaboradores}</p><p>&nbsp;</p><p>FECHA DE INICIO DEL SERVICIO:&nbsp;${values.fecha_inicio}</p><p>&nbsp;</p><p>&nbsp;</p><p>SALUDOS.&nbsp;</p>`
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+      const contenidoConTextoAdicional = textoadcional + (datos?.contenido ?? '') + textofinal
+      setContenido(contenidoConTextoAdicional)
+    }
+  }, [values.fecha_inicio, arrayPesos])
 
   return (
     <>
@@ -256,10 +352,35 @@ export const GenerarAlta = ({
                     />
                     </div>
                   </div>
+                  <div className="w-full flex flex-col lg:flex-row gap-3 lg:gap-5 mt-3 lg:mt-0">
+                    <div className="w-full lg:relative pb-5">
+                      <label
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        htmlFor="email"
+                      >
+                        Asunto de mail
+                      </label>
+                      <input
+                        className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
+                        name='asunto'
+                        value={values.asunto}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        disabled={false}
+                      />
+                       <Errors
+                        errors={errors.asunto}
+                        touched={touched.asunto}
+                    />
+                    </div>
+                  </div>
+
                   <ListaUsuarios
                       arrayPesos={arrayPesos}
                       usuarios={usuarios}
                       setarrayPesos={setarrayPesos}
+                      setCorreos={setCorreos}
+                      correos={correos}
                     />
                   <div className="w-full relative">
                     <label

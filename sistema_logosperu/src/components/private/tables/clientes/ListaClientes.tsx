@@ -20,6 +20,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ModalCotizacion } from './cotizacion/ModalCotizacion'
 import axios from 'axios'
 import { Global } from '../../../../helper/Global'
+import { DeleteItemsNew } from '../../../shared/DeleteItemsNew'
+import { GeneracionCorrelativo } from './contratos/GeneracionCorrelativo'
 
 export const ListaClientes = (): JSX.Element => {
   const { setTitle } = useAuth()
@@ -34,6 +36,7 @@ export const ListaClientes = (): JSX.Element => {
   const [filters, setFilters] = useState({ filtro: '' })
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
   const [openCotizacion, setOpenCotizacion] = useState(false)
+  const [openContrato, setOpenContrato] = useState(false)
   const token = localStorage.getItem('token')
   const handleClickOpen = (): void => {
     setOpen(true)
@@ -131,6 +134,23 @@ export const ListaClientes = (): JSX.Element => {
     localStorage.setItem('TableCliente', JSON.stringify(productos))
     localStorage.setItem('filtro', filters.filtro)
     window.open('/admin/lista-clientes/status', '_blank')
+  }
+
+  const preguntar = (id: number | null): void => {
+    DeleteItemsNew({
+      ruta: 'deleteCliente',
+      id,
+      token,
+      totalPosts,
+      cantidadRegistros,
+      paginaActual,
+      setpaginaActual,
+      rutaFetch: 'getClientes',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      setData: setProductos,
+      setTotalRegistros
+    })
   }
 
   return (
@@ -448,6 +468,30 @@ export const ListaClientes = (): JSX.Element => {
                         <Link
                           to=""
                           onClick={() => {
+                            setOpenContrato(true)
+                            setValues({
+                              ...values,
+                              id_cliente: String(orden.id),
+                              medio_ingreso: orden.medio_ingreso,
+                              email: orden.email,
+                              nombre_empresa: orden.empresa ?? '',
+                              nombre_cliente: `${orden.nombres} ${orden.apellidos}`,
+                              arraycontacto: orden.arraycontacto,
+                              celular: orden.celular,
+                              dni_ruc: `${
+                                orden.dni_ruc != null ? orden.dni_ruc : ''
+                              }`
+                            })
+                          }}
+                          className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex justify-center items-center gap-x-4 p-2 flex-1"
+                        >
+                          Crear contrato
+                        </Link>
+                      </MenuItem>
+                      <MenuItem className="p-0 hover:bg-transparent">
+                        <Link
+                          to=""
+                          onClick={() => {
                             setOpenCotizacion(true)
                             setValues({
                               ...values,
@@ -467,6 +511,24 @@ export const ListaClientes = (): JSX.Element => {
                         >
                           Crear cotización
                         </Link>
+                      </MenuItem>
+                      <MenuItem className="p-0 hover:bg-transparent">
+                        <Link
+                          to={`proyectos/${orden.id}`}
+                          className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                        >
+                          Ver Proyectos
+                        </Link>
+                      </MenuItem>
+                      <MenuItem className="p-0 hover:bg-transparent">
+                        <button
+                          onClick={() => {
+                            preguntar(orden.id)
+                          }}
+                          className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex justify-center items-center gap-x-4 p-2 flex-1"
+                        >
+                          Eliminar cliente
+                        </button>
                       </MenuItem>
                     </Menu>
                   </div>
@@ -611,6 +673,11 @@ export const ListaClientes = (): JSX.Element => {
             planes={planes}
             getClientes={getClientes}
           />
+
+          <GeneracionCorrelativo
+           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+           // @ts-expect-error
+          datos={values} open={openContrato} setOpen={setOpenContrato} planes={planes} />
           <ModalCotizacion open={openCotizacion} setOpen={setOpenCotizacion} datos={values}/>
 
           <div className="flex flex-col md:flex-row gap-5 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">

@@ -133,7 +133,7 @@ export const ListaContratos = (): JSX.Element => {
             <h5 className="md:text-left col-span-1">Precio</h5>
             <h5 className="md:text-left line-clamp-1 col-span-2 ">Cliente</h5>
             <h5 className="md:text-left col-span-2">Empresa</h5>
-            <h5 className="md:text-center col-span-1">Tiempo estimado</h5>
+            <h5 className="md:text-center col-span-1">Tiempo </h5>
             <h5 className="md:text-center col-span-1">VER PDF</h5>
             <h5 className="md:text-center col-span-2">Fecha de creacion</h5>
           </div>

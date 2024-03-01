@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type Dispatch, type SetStateAction } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import 'moment/locale/es'
@@ -6,7 +6,6 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { v4 as uuidv4 } from 'uuid'
-import { type ValuesPreventaModificate, type usurioValues } from '../../../../shared/schemas/Interfaces'
 import { Global } from '../../../../../helper/Global'
 import { ModalDescripcion } from './ModalDescripcion'
 import { toast } from 'sonner'
@@ -15,14 +14,6 @@ import useAuth from '../../../../../hooks/useAuth'
 
 moment.locale('es')
 const localizer = momentLocalizer(moment) // Importa el locale español
-
-interface values {
-  title: string
-  start: Date
-  end: Date
-  client?: ValuesPreventaModificate
-  user?: usurioValues
-}
 
 interface valuesDatos {
   nombres: string
@@ -43,13 +34,11 @@ interface valuesDatos {
 moment.updateLocale('es', null) // Limpiar configuraciones previas
 moment.locale('es', {
   months:
-      'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split(
-        '_'
-      ),
+    'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split(
+      '_'
+    ),
   monthsShort: 'ene_feb_mar_abr_may_jun_jul_ago_sep_oct_nov_dic'.split('_'),
-  weekdays: 'domingo_lunes_martes_miércoles_jueves_viernes_sábado'.split(
-    '_'
-  ),
+  weekdays: 'domingo_lunes_martes_miércoles_jueves_viernes_sábado'.split('_'),
   weekdaysShort: 'dom_lun_mar_mié_jue_vie_sáb'.split('_'),
   weekdaysMin: 'do_lu_ma_mi_ju_vi_sá'.split('_'),
   week: {
@@ -58,14 +47,23 @@ moment.locale('es', {
   }
 })
 
-export const IndexCalendarioCm = ({ datos, getOneBrief }: { datos: valuesDatos, getOneBrief: () => Promise<void> }): JSX.Element => {
+export const IndexCalendarioCm = ({
+  datos,
+  getOneBrief,
+  events,
+  setEvents
+}: {
+  datos: valuesDatos
+  getOneBrief: () => Promise<void>
+  events: Event[]
+  setEvents: Dispatch<SetStateAction<Event[]>>
+}): JSX.Element => {
   const { id } = useParams()
   const { auth } = useAuth()
   const token = localStorage.getItem('token')
   const [loadingUpdate, setLoadingUpdate] = useState(false)
+  const [disabledDates] = useState([datos?.fecha_inicio]) // Lista de fechas deshabilitadas
   const [open, setOpen] = useState(false)
-  const initialEvents: any = datos.comunnity ?? []
-  const [events, setEvents] = useState<Event[]>(initialEvents)
   const [eventSelected, setEventSelected] = useState<any | null>(null)
   const messages = {
     allDay: 'Todo el día',
@@ -93,24 +91,59 @@ export const IndexCalendarioCm = ({ datos, getOneBrief }: { datos: valuesDatos, 
     return selectedDate ? moment(selectedDate).format('YYYY-MM') : ''
   }
   const components = {
-    event: (props: values) => {
+    event: (props: any) => {
       return (
-        <div
-          className="cursor-pointer h-full hover:text-black/40 w-full transition-colors outline-none duration-300 break-words flex "
-          rel="noreferrer"
-          onClick={() => { setOpen(true); setEventSelected(props) }}
-        >
-          <div className={`div_cita px-1 h-full text-white 
-          ${
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            // eslint-disable-next-line react/prop-types
-            props.event?.publicado ? 'bg-[#129990]' : 'bg-red-600'}   transition-colors rounded-t-md`}>
-            <span className="block lowercase first-letter:uppercase">
-              {props.title}
-            </span>
-          </div>
-        </div>
+        <>
+          {props.event?.tipo == 'inicio'
+            ? (
+            <div
+              className="cursor-pointer h-full hover:text-black/40 w-full transition-colors outline-none duration-300 break-words flex "
+              rel="noreferrer"
+            >
+              <div
+                className={
+                  'div_cita px-1 h-full text-white bg-green-600 transition-colors rounded-t-md'
+                }
+              >
+                <span className="block text-center">{props.title}</span>
+              </div>
+            </div>
+              )
+            : props.event?.tipo == 'solicitud_informacion'
+              ? (
+            <div
+              className="cursor-pointer h-full hover:text-black/40 w-full transition-colors outline-none duration-300 break-words flex "
+              rel="noreferrer"
+            >
+              <div
+                className={
+                  'div_cita px-1 h-full text-white bg-gray-400 transition-colors rounded-t-md'
+                }
+              >
+                <span className="block text-center">{props.title}</span>
+              </div>
+            </div>
+                )
+              : (
+            <div
+              className="cursor-pointer h-full hover:text-black/40 w-full transition-colors outline-none duration-300 break-words flex "
+              rel="noreferrer"
+              onClick={() => {
+                setOpen(true)
+                setEventSelected(props)
+              }}
+            >
+              <div
+                className={`div_cita px-1 h-full text-white 
+            ${
+              props.event?.publicado ? 'bg-[#129990]' : 'bg-red-600'
+            }   transition-colors rounded-t-md`}
+              >
+                <span className="block  ">{props.title}</span>
+              </div>
+            </div>
+                )}
+        </>
       )
     }
   }
@@ -121,13 +154,17 @@ export const IndexCalendarioCm = ({ datos, getOneBrief }: { datos: valuesDatos, 
     data.append('community', JSON.stringify(updatedEvents))
     data.append('_method', 'PUT')
     try {
-      const respuesta = await axios.post(`${Global.url}/updateCalendarioComunnityVentas/${id ?? ''}`, data, {
-        headers: {
-          Authorization: `Bearer ${
-            token !== null && token !== '' ? token : ''
-          }`
+      const respuesta = await axios.post(
+        `${Global.url}/updateCalendarioComunnityVentas/${id ?? ''}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+          }
         }
-      })
+      )
       if (respuesta.data.status == 'success') {
         toast.success('Evento guardado')
         getOneBrief()
@@ -144,6 +181,10 @@ export const IndexCalendarioCm = ({ datos, getOneBrief }: { datos: valuesDatos, 
   }
 
   const handleSelectSlot = ({ start }: { start: any }): void => {
+    const startEventDate = moment(start).format('DD/MM/YYYY')
+    if (disabledDates.includes(startEventDate)) {
+      return
+    }
     setSelectedDate(start)
     Swal.fire({
       title: 'TITULO DEL EVENTO',
@@ -191,14 +232,18 @@ export const IndexCalendarioCm = ({ datos, getOneBrief }: { datos: valuesDatos, 
       <section className="flex items-center justify-between border-b border-gray-300 h-[7%] py-1 md:py-0 lg:h-[10%] mx-1 md:px-8">
         <div className="flex gap-3 items-center ">
           <div className="w-12 md:w-14 h-full md:h-14 rounded-md bg-gradient-to-r from-[#129990] to-green-400 flex justify-center text-black text-base md:text-2xl items-center font-extrabold">
-          {datos.nombre_marca.trim() !== '' ? datos.nombre_marca.charAt(0).toUpperCase() : ''}
+            {datos.nombre_marca.trim() !== ''
+              ? datos.nombre_marca.charAt(0).toUpperCase()
+              : ''}
           </div>
           <div className="flex flex-col justify-center">
             <h1 className="text-black font-bold text-sm md:text-lg">
               CALENDARIO COMMUNITY MANAGER
             </h1>
             <div className="flex gap-2 justify-start">
-              <span className="text-gray-700 font-medium text-sm">{datos.nombre_marca }</span>
+              <span className="text-gray-700 font-medium text-sm">
+                {datos.nombre_marca}
+              </span>
             </div>
           </div>
         </div>
@@ -206,33 +251,42 @@ export const IndexCalendarioCm = ({ datos, getOneBrief }: { datos: valuesDatos, 
           type="month"
           value={formatDate()}
           onChange={handleDateChange}
-          className='bg-transparent text-black'
+          className="bg-transparent text-black"
           min="2024-01"
           max="2030-12"
         />
       </section>
       <section className="w-full h-[90%] px-6 pb-4 relative">
-          <>
-            <div className="w-full h-full px-4">
-              <Calendar
-                className="calendario_cm text-black"
-                localizer={localizer}
-                events={events}
-                startAccessor="start"
-                endAccessor="end"
-                selectable
-                messages={messages}
-                views={['agenda', 'month']}
-                defaultView="month"
-                min={workDayStart} // Establecer la hora de inicio del día
-                max={workDayEnd}
-                date={selectedDate}
-                components={components} // Use the custom event renderer
-                onSelectSlot={handleSelectSlot}
-              />
-            </div>
-          </>
-        <ModalDescripcion loadingUpdate={loadingUpdate} getOneBrief={getOneBrief} setEvents={setEvents} events={events} open={open} setOpen={setOpen} eventSelected={eventSelected} setLoadingUpdate={setLoadingUpdate}/>
+        <>
+          <div className="w-full h-full px-4">
+            <Calendar
+              className="calendario_cm text-black"
+              localizer={localizer}
+              events={events}
+              startAccessor="start"
+              endAccessor="end"
+              selectable
+              messages={messages}
+              views={['agenda', 'month']}
+              defaultView="month"
+              min={workDayStart} // Establecer la hora de inicio del día
+              max={workDayEnd}
+              date={selectedDate}
+              components={components} // Use the custom event renderer
+              onSelectSlot={handleSelectSlot}
+            />
+          </div>
+        </>
+        <ModalDescripcion
+          loadingUpdate={loadingUpdate}
+          getOneBrief={getOneBrief}
+          setEvents={setEvents}
+          events={events}
+          open={open}
+          setOpen={setOpen}
+          eventSelected={eventSelected}
+          setLoadingUpdate={setLoadingUpdate}
+        />
       </section>
     </>
   )

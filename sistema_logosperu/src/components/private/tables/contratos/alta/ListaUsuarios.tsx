@@ -1,39 +1,60 @@
 import { RiDeleteBin6Line } from 'react-icons/ri'
 import { type Dispatch, type SetStateAction, useState } from 'react'
 import { IoAddCircle, IoCloseCircle } from 'react-icons/io5'
-import { type arrayAsignacion } from '../../../../shared/schemas/Interfaces'
+import { type arrayCorreos, type arrayAsignacion } from '../../../../shared/schemas/Interfaces'
 import useAuth from '../../../../../hooks/useAuth'
+import { v4 as uuidv4 } from 'uuid'
 
 interface valuesInterface {
   arrayPesos: arrayAsignacion[]
   usuarios: never[]
   setarrayPesos: Dispatch<SetStateAction<arrayAsignacion[]>>
+  setCorreos: Dispatch<SetStateAction<arrayCorreos[]>>
+  correos: arrayCorreos[]
 }
 
 interface valueUsuarios {
   id: number
   id_rol: number
   name: string
+  email: string
 }
 
 export const ListaUsuarios = ({
   arrayPesos,
   usuarios,
-  setarrayPesos
+  setarrayPesos,
+  setCorreos,
+  correos
 }: valuesInterface): JSX.Element => {
   const [agregar, setAgregar] = useState(false)
   const { roles } = useAuth()
 
-  const eliminarArray = (id: number | null): void => {
-    const nuevoArray = arrayPesos.filter((peso) => peso.id !== id)
-    setarrayPesos(nuevoArray)
+  const agregarCorreo = (correo: string): void => {
+    setCorreos([...correos, { id: uuidv4(), correo }])
   }
 
-  const agregarArrayPesos = (peso: any, nombre: string): void => {
+  const eliminarArray = (id: number | null): void => {
+    // Obtener el usuario que se va a eliminar
+    const usuarioEliminado = arrayPesos.find((peso) => peso.id === id)
+    if (!usuarioEliminado) return // Salir si no se encuentra el usuario
+    // Filtrar el array de pesos para eliminar el usuario
+    const nuevoArrayPesos = arrayPesos.filter((peso) => peso.id !== id)
+    setarrayPesos(nuevoArrayPesos)
+    // Filtrar el array de correos para eliminar solo el correo asociado al usuario eliminado
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const correosActualizados = correos.filter((correo) => correo.correo !== usuarioEliminado.email)
+    setCorreos(correosActualizados)
+    console.log(correosActualizados)
+  }
+
+  const agregarArrayPesos = (peso: any, nombre: string, email: string): void => {
     if (peso) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      setarrayPesos([...arrayPesos, { id: Date.now(), peso, nombre }])
+      setarrayPesos([...arrayPesos, { id: Date.now(), peso, nombre, email }])
+      agregarCorreo(email)
     }
     setAgregar(false)
   }
@@ -159,7 +180,7 @@ export const ListaUsuarios = ({
                   key={index}
                   className="text-white text-center block w-full cursor-pointer py-2 hover:text-main transition-colors"
                   onClick={() => {
-                    agregarArrayPesos(String(usuario.id), usuario.name)
+                    agregarArrayPesos(String(usuario.id), usuario.name, usuario.email)
                   }}
                 >
                   {usuario.name}

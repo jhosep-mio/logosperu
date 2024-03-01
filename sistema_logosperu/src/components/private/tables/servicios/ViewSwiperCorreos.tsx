@@ -31,7 +31,7 @@ export const ViewSwiperCorreos = ({ correos }: values): JSX.Element => {
         }
       }}
     >
-      {correos.filter((correo) => correo.id != null).map((correo) => (
+      {correos?.filter((correo) => correo.id != null).map((correo) => (
         <SwiperSlide key={correo.id} className='w-full relative bg-gray-200 flex ga-2 px-2 py-1 rounded-xl items-center justify-between'>
           <span className='block w-full text-center'>{correo.correo}</span>
         </SwiperSlide>

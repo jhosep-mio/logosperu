@@ -26,7 +26,9 @@ export const SwiperAvances = ({
   datos,
   setOpen,
   setOpenActa,
-  arrayActa
+  arrayActa,
+  arrayAlta,
+  setOpenAlta
 }: {
   arrayAvances: never[]
   arrayFinal: never[]
@@ -37,6 +39,8 @@ export const SwiperAvances = ({
   setOpenActa: Dispatch<SetStateAction<boolean>>
   arrayActa: never[]
   datos: valuesDatos
+  arrayAlta: any
+  setOpenAlta: Dispatch<SetStateAction<boolean>>
 }): JSX.Element => {
   return (
     <Swiper
@@ -62,6 +66,35 @@ export const SwiperAvances = ({
         }
       }}
     >
+
+      {arrayAlta &&
+        <SwiperSlide className="" >
+            <div
+                className="w-full h-64 bg-form p-4 border-2 border-main rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main
+            hover:shadow-md hover:shadow-main "
+            >
+                <div className="h-full flex justify-between flex-col gap-2 text-black ">
+                <p className="text-base font-bold text-center">{arrayAlta?.asunto}</p>
+                <div className="w-full flex flex-col justify-center">
+                    <p className="text-gray-400 w-full text-center">
+                    {arrayAlta?.fecha}
+                    </p>
+                    <p className="text-gray-400 w-full text-center">{arrayAlta?.hora}</p>
+                </div>
+                </div>
+                <button
+                type="button"
+                className="absolute -bottom-20 ease-out transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:-bottom-5 left-0 right-0 w-fit mx-auto rounded-lg bg-main/80 text-white px-4 py-2 hover:bg-main"
+                onClick={() => {
+                  setOpenAlta(true)
+                }}
+                >
+                Ver más
+                </button>
+            </div>
+        </SwiperSlide>
+      }
+
       {arrayAvances.map((avance: avanceValues, index: number) => (
         <SwiperSlide className="" key={index}>
           <div

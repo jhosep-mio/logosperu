@@ -31,6 +31,7 @@ export const IndexDocumentos = (): JSX.Element => {
   const [arrayImages, setArrayImages] = useState<string[]>([])
   const [archivoSelected, setArchivoSelected] = useState<documentosArchivesValues | null>(null)
   const [currentPath, setCurrentPath] = useState<Folder[] | null>(null)
+  const [folderName, setFolderName] = useState<string>('')
 
   const handleContextMenu = (event: MouseEvent): void => {
     event.preventDefault()
@@ -207,6 +208,7 @@ export const IndexDocumentos = (): JSX.Element => {
       style={{ cursor: 'context-menu' }}
       onClick={() => {
         setArchivoSelected(null)
+        setFolderName('')
       }}
     >
       <div className="flex items-center justify-between space-y-2">
@@ -244,6 +246,8 @@ export const IndexDocumentos = (): JSX.Element => {
         deleteArchivo={deleteArchivo}
         currentPath={currentPath}
         setCurrentPath={setCurrentPath}
+        folderName={folderName}
+        setFolderName={setFolderName}
       />
       <Menu
         open={contextMenu !== null}

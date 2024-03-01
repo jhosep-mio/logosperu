@@ -6,7 +6,7 @@ import Swal, { type SweetAlertResult } from 'sweetalert2'
 import { SubirArchivosFinales } from '../../../shared/modals/SubirArchivosFinales'
 import { BsFillCloudArrowDownFill, BsFillTrashFill } from 'react-icons/bs'
 import { SubirArchivosPDF } from '../../../shared/modals/SubirArchivosPDF'
-import { nodata, pdf, zip } from '../../../shared/Images'
+import { pdf, zip } from '../../../shared/Images'
 import Skeleton from '@mui/material/Skeleton'
 import { IoEyeSharp } from 'react-icons/io5'
 import {
@@ -621,13 +621,8 @@ export const ArchivosFinales = ({
         : (
         <div className="w-full  pb-4 flex flex-col gap-4">
           <h2 className="text-black w-full text-center text-xl">
-            Los archivos finales aun no se han subido
+            Aun no hay archivos para este proyecto
           </h2>
-          <img
-            src={nodata}
-            alt=""
-            className="w-full object-contain  h-[200px]"
-          />
         </div>
           )}
       <SubirArchivosFinales

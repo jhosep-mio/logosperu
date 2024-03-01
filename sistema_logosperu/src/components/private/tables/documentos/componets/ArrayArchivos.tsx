@@ -1,6 +1,12 @@
+/* eslint-disable multiline-ternary */
 import { FaRegFile } from 'react-icons/fa6'
 import { GoFileDirectoryFill } from 'react-icons/go'
-import { type Dispatch, type SetStateAction, type MouseEvent, useState } from 'react'
+import {
+  type Dispatch,
+  type SetStateAction,
+  type MouseEvent,
+  useState
+} from 'react'
 import { Menu } from '@mui/material'
 import { MdDelete, MdDownload } from 'react-icons/md'
 import { AiFillEdit } from 'react-icons/ai'
@@ -8,6 +14,8 @@ import { type documentosArchivesValues } from '../../../../shared/schemas/Interf
 import { Global } from '../../../../../helper/Global'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import { IoEyeSharp } from 'react-icons/io5'
+import { ModalWord } from './ModalWord'
 
 interface Folder {
   id: string
@@ -26,7 +34,9 @@ export const ArrayArchivos = ({
   updateCita,
   deleteArchivo,
   currentPath,
-  setCurrentPath
+  setCurrentPath,
+  folderName,
+  setFolderName
 }: {
   arrayDocumentos: string[]
   setArchivoSelected: Dispatch<SetStateAction<documentosArchivesValues | null>>
@@ -45,9 +55,14 @@ export const ArrayArchivos = ({
   setArrayDocumentos: Dispatch<SetStateAction<string[]>>
   deleteDocumento: (id: string | undefined) => void
   updateCita: (updatedEvents: string[], ImagesToAdd: string[]) => Promise<void>
-  deleteArchivo: (id: string | undefined, name: string | undefined) => Promise<void>
+  deleteArchivo: (
+    id: string | undefined,
+    name: string | undefined
+  ) => Promise<void>
   currentPath: Folder[] | null
   setCurrentPath: Dispatch<SetStateAction<Folder[] | null>>
+  folderName: string
+  setFolderName: Dispatch<SetStateAction<string>>
 }): JSX.Element => {
   const formatDateTime = (dateTimeString: string): string => {
     const dateTime = new Date(dateTimeString)
@@ -62,6 +77,8 @@ export const ArrayArchivos = ({
     }
     return dateTime.toLocaleString(undefined, options)
   }
+  const [documento, setDocumento] = useState<any | null>(null)
+  const [open, setOpen] = useState(false)
 
   const handleFolderClick = (folderId: string, folderName: string): void => {
     if (currentPath === null) {
@@ -81,8 +98,6 @@ export const ArrayArchivos = ({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
-  const [folderName, setFolderName] = useState<string>('')
-
   // Manejar el inicio de la edición
   const startEditing = (): void => {
     setFolderName(archivoSelected?.name ?? '')
@@ -90,7 +105,9 @@ export const ArrayArchivos = ({
   }
 
   // Manejar los cambios en el nombre de la carpeta
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     setFolderName(event.target.value)
   }
 
@@ -119,12 +136,17 @@ export const ArrayArchivos = ({
   const descargarArchivo = async (name: string | undefined): Promise<void> => {
     setContextMenu2(null)
     try {
-      const response = await axios.get(`${Global.url}/downloadArchivoGestor/${name ?? ''}`, {
-        headers: {
-          Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
-        },
-        responseType: 'blob' // Configuración para recibir una respuesta binaria (archivo)
-      })
+      const response = await axios.get(
+        `${Global.url}/downloadArchivoGestor/${name ?? ''}`,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+          },
+          responseType: 'blob' // Configuración para recibir una respuesta binaria (archivo)
+        }
+      )
 
       // Crear un objeto URL para el blob
       const blob = new Blob([response.data])
@@ -148,7 +170,6 @@ export const ArrayArchivos = ({
 
   return (
     <>
-
       {arrayDocumentos
         ?.sort((a: any, b: any) => {
           // Si a es una carpeta y b no lo es, entonces a debe ir primero
@@ -176,7 +197,11 @@ export const ArrayArchivos = ({
                 setArchivoSelected(documento)
               }
             }}
-            onDoubleClick={() => { if (documento.type == 'carpeta') { handleFolderClick(documento.id, documento.name) } }} // Agrega el manejador de doble clic aquí
+            onDoubleClick={() => {
+              if (documento.type == 'carpeta') {
+                handleFolderClick(documento.id, documento.name)
+              }
+            }} // Agrega el manejador de doble clic aquí
             onContextMenu={(e: any) => {
               if (documento.id == archivoSelected?.id) {
                 handleContextMenu2(e)
@@ -188,38 +213,44 @@ export const ArrayArchivos = ({
             } grid grid-cols-1 md:grid-cols-5 gap-4 px-4 items-center mb-2  p-2 rounded-xl cursor-pointer w-full`}
           >
             <div className="hidden md:block md:text-center col-span-2">
-              {documento.tipo == 'archivo'
-                ? <div className="text-left flex gap-3 items-center line-clamp-1">
-                   <FaRegFile className='text-black lowercase' />
-                  <span className="text-black lowercase line-clamp-1">
-                   {cleanName(documento.name)}
+              {documento.tipo == 'archivo' ? (
+                <div className="text-left flex gap-3 items-center line-clamp-1">
+                  <FaRegFile className="text-black lowercase" />
+                  <span className="text-black  line-clamp-1">
+                    {cleanName(documento.name)}
                   </span>
                 </div>
-                : (
+              ) : (
                 <div className="text-left flex gap-3 items-center line-clamp-2">
-                    {
-                      // eslint-disable-next-line multiline-ternary
-                    documento.type == 'carpeta' && archivoSelected?.id == documento.id && folderName.length > 0 ? (
-                    // Renderizar un campo de entrada para editar el nombre de la carpeta si está en modo de edición
-                    <input
-                    type="text"
-                    onClick={(e) => { e.stopPropagation() }}
-                    value={folderName}
-                    className="flex gap-3 items-center text-black lowercase first-letter:uppercase"
-                    onChange={handleNameChange}
-                    onKeyDown={(e) => {
-                      if (e.key == 'Enter' && folderName.length > 0) {
-                        finishEditing(documento.id)
-                      }
-                    }}
-                    autoFocus
-                    />
-                    )
-                      : <span className="flex gap-3 items-center text-black lowercase first-letter:uppercase">
-                    <GoFileDirectoryFill /> {documento.name}
-                  </span>}
+                  {
+                    // eslint-disable-next-line multiline-ternary
+                    documento.type == 'carpeta' &&
+                    archivoSelected?.id == documento.id &&
+                    folderName.length > 0 ? (
+                      // Renderizar un campo de entrada para editar el nombre de la carpeta si está en modo de edición
+                      <input
+                        type="text"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                        }}
+                        value={folderName}
+                        className="flex gap-3 items-center text-black  first-letter:uppercase"
+                        onChange={handleNameChange}
+                        onKeyDown={(e) => {
+                          if (e.key == 'Enter' && folderName.length > 0) {
+                            finishEditing(documento.id)
+                          }
+                        }}
+                        autoFocus
+                      />
+                        ) : (
+                      <span className="flex gap-3 items-center text-black  first-letter:uppercase">
+                        <GoFileDirectoryFill /> {documento.name}
+                      </span>
+                        )
+                  }
                 </div>
-                  )}
+              )}
             </div>
             <div className="hidden md:block md:text-left">
               <div className="text-left flex gap-3 items-center line-clamp-2">
@@ -265,62 +296,91 @@ export const ArrayArchivos = ({
             : undefined
         }
       >
-        {archivoSelected?.type != 'carpeta'
-          ? <div
+        {archivoSelected?.type != 'carpeta' ? (
+          <div
             role="menuitem"
             className="w-[200px] relative flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none hover:bg-gray-200 focus:bg-gray-200 focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pl-3"
             data-orientation="vertical"
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            onClick={async () => { await descargarArchivo(archivoSelected?.name) }}
+            onClick={async () => {
+              await descargarArchivo(archivoSelected?.name)
+            }}
             data-radix-collection-item=""
-            >
+          >
             Descargar
             <span className="ml-auto text-xs tracking-widest text-muted-foreground">
-                <MdDownload className="text-base text-gray-600" />
+              <MdDownload className="text-base text-gray-600" />
             </span>
-            </div>
-
-          : <div
+          </div>
+        ) : (
+          <div
             role="menuitem"
             className="w-[200px] relative flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none hover:bg-gray-200 focus:bg-gray-200 focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pl-3"
             data-orientation="vertical"
             data-radix-collection-item=""
-            onClick={(e) => { e.stopPropagation(); startEditing() }}
-            >
+            onClick={(e) => {
+              e.stopPropagation()
+              startEditing()
+            }}
+          >
             Editar
             <span className="ml-auto text-xs tracking-widest text-muted-foreground">
-                <AiFillEdit className="text-base text-gray-600 " />
+              <AiFillEdit className="text-base text-gray-600 " />
             </span>
-            </div>
-        }
+          </div>
+        )}
         {archivoSelected?.type != 'carpeta'
-          ? <div
-          role="menuitem"
-          className="w-[200px] relative flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none hover:bg-gray-200 focus:bg-gray-200 focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pl-3"
-          data-orientation="vertical"
-          data-radix-collection-item=""
-          onClick={() => { deleteArchivo(archivoSelected?.id, archivoSelected?.name) }}
-        >
-          Eliminar
-          <span className="ml-auto text-xs tracking-widest text-muted-foreground">
-            <MdDelete className="text-base text-gray-600" />
-          </span>
-        </div>
-          : <div
-          role="menuitem"
-          className="w-[200px] relative flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none hover:bg-gray-200 focus:bg-gray-200 focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pl-3"
-          data-orientation="vertical"
-          data-radix-collection-item=""
-          onClick={() => { deleteDocumento(archivoSelected?.id) }}
-        >
-          Eliminar
-          <span className="ml-auto text-xs tracking-widest text-muted-foreground">
-            <MdDelete className="text-base text-gray-600" />
-          </span>
-        </div>
-        }
-
+          ? (
+          <>
+          <div
+              role="menuitem"
+              className="w-[200px] relative flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none hover:bg-gray-200 focus:bg-gray-200 focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pl-3"
+              data-orientation="vertical"
+              data-radix-collection-item=""
+              onClick={() => {
+                setDocumento(archivoSelected?.name)
+                setOpen(true)
+              }}
+            >
+              Ver
+              <span className="ml-auto text-xs tracking-widest text-muted-foreground">
+                <IoEyeSharp className="text-base text-gray-600" />
+              </span>
+            </div>
+            <div
+              role="menuitem"
+              className="w-[200px] relative flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none hover:bg-gray-200 focus:bg-gray-200 focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pl-3"
+              data-orientation="vertical"
+              data-radix-collection-item=""
+              onClick={() => {
+                deleteArchivo(archivoSelected?.id, archivoSelected?.name)
+              }}
+            >
+              Eliminar
+              <span className="ml-auto text-xs tracking-widest text-muted-foreground">
+                <MdDelete className="text-base text-gray-600" />
+              </span>
+            </div>
+          </>
+            )
+          : (
+          <div
+            role="menuitem"
+            className="w-[200px] relative flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none hover:bg-gray-200 focus:bg-gray-200 focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 pl-3"
+            data-orientation="vertical"
+            data-radix-collection-item=""
+            onClick={() => {
+              deleteDocumento(archivoSelected?.id)
+            }}
+          >
+            Eliminar
+            <span className="ml-auto text-xs tracking-widest text-muted-foreground">
+              <MdDelete className="text-base text-gray-600" />
+            </span>
+          </div>
+            )}
       </Menu>
+      <ModalWord open={open} setOpen={setOpen} documento={documento}/>
     </>
   )
 }

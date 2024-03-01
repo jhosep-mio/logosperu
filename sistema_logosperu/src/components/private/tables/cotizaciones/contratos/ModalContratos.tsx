@@ -144,6 +144,7 @@ export const ModalContratos = ({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       data.append('id_cotizacion', datos?.id)
+      console.log(datos?.id)
       data.append('correlativo', datos?.id_contrato)
       data.append('medio_ingreso', datos?.medio_ingreso)
       data.append('nombres_cliente', datos?.nombre_cliente)
@@ -197,7 +198,6 @@ export const ModalContratos = ({
             }
           }
         )
-        console.log(response)
         if (response.data.status == 'success') {
           navigate('/admin/lista-contratos')
           toast.success('Contrato generado correctamente')
@@ -205,6 +205,7 @@ export const ModalContratos = ({
           toast.error('Error al generar contrato')
         }
       } catch (error: unknown) {
+        console.log(error)
         if (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error

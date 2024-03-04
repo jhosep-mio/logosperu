@@ -39,6 +39,8 @@ export interface ListaContratosValues {
   medio_ingreso: string
   id_cliente: string
   dni_cliente: string
+  codigo: string
+  uso: number
 }
 
 export interface cotizacionValues {

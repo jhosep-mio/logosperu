@@ -18,6 +18,7 @@ import { Global } from '../../../../helper/Global'
 import axios from 'axios'
 import { BsFileEarmarkPdfFill } from 'react-icons/bs'
 import { GenerarAlta } from './alta/GenerarAlta'
+import { cn } from '../../../shared/cn'
 
 export const ListaContratos = (): JSX.Element => {
   const { setTitle } = useAuth()
@@ -127,10 +128,11 @@ export const ListaContratos = (): JSX.Element => {
         : (
         <div className="md:bg-[#fff] md:px-8 md:py-6 rounded-xl">
           <div
-            className={'hidden md:grid pr-10 lg:pr-4 items-center grid-cols-10 gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300'}
+            className={'hidden md:grid pr-10 lg:pr-4 items-center grid-cols-11 gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300'}
           >
             <h5 className="md:text-left line-clamp-1 col-span-1">CONTRATO</h5>
             <h5 className="md:text-left col-span-1">Precio</h5>
+            <h5 className="md:text-left col-span-1">COD. BRIEF</h5>
             <h5 className="md:text-left line-clamp-1 col-span-2 ">Cliente</h5>
             <h5 className="md:text-left col-span-2">Empresa</h5>
             <h5 className="md:text-center col-span-1">Tiempo </h5>
@@ -139,7 +141,7 @@ export const ListaContratos = (): JSX.Element => {
           </div>
           {filterDate().map((orden: ListaContratosValues, index: number) => (
             <div
-              className={`grid grid-cols-10 md:pr-10 lg:pr-4 relative gap-3 items-center mb-3 md:mb-0 ${
+              className={`grid grid-cols-11 md:pr-10 lg:pr-4 relative gap-3 items-center mb-3 md:mb-0 ${
                 index % 2 == 0 ? 'bg-transparent' : 'bg-gray-200'
               } md:px-4 md:py-3 rounded-xl relative shadow_class`}
               key={orden.id}
@@ -154,6 +156,11 @@ export const ListaContratos = (): JSX.Element => {
                   S./ {orden.precio}
                 </span>
               </div>
+              <div className="hidden md:block md:text-left col-span-1">
+                <span className={cn('text-left block  w-fit px-2 rounded-md text-white', orden.uso == 0 ? 'bg-green-600' : 'bg-red-600')}>
+                  {orden.codigo}
+                </span>
+              </div>
               <div className="hidden md:block md:text-center col-span-2 relative h-full">
                 <span className="text-left text-black line-clamp-1 transition-all  hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                     {orden.nombres} {orden.apellidos}
@@ -166,7 +173,7 @@ export const ListaContratos = (): JSX.Element => {
                   </span>
               </div>
               <div className="hidden md:block md:text-center col-span-1">
-                <span className="text-center block text-black">
+                <span className="text-center  text-black line-clamp-1">
                    {orden.tiempo} días
                 </span>
               </div>

@@ -20,11 +20,11 @@ import { useFormik } from 'formik'
 import { SchemaValidarAlta } from '../../../../shared/schemas/Schemas'
 import Swal from 'sweetalert2'
 import { toast } from 'sonner'
-import EditorContexto from '../../servicios/EditorContexto'
 import { ListaUsuarios } from './ListaUsuarios'
 import { Errors } from '../../../../shared/Errors'
 import useAuth from '../../../../../hooks/useAuth'
 import { v4 as uuidv4 } from 'uuid'
+import EditorPdfAltas from '../../../../shared/modals/EditorPdfAltas'
 
 const Transition = React.forwardRef(function Transition (
   props: TransitionProps & {
@@ -390,7 +390,7 @@ export const GenerarAlta = ({
                       Detalle del servicio
                     </label>
                     <div className="mt-3">
-                      <EditorContexto
+                      <EditorPdfAltas
                         content={contenido}
                         setContent={setContenido}
                       />

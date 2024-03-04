@@ -12,8 +12,9 @@ import { toast } from 'sonner'
 import { useFormik } from 'formik'
 import { AiOutlineFilePdf } from 'react-icons/ai'
 import { Errors2 } from '../../../../shared/Errors2'
-import EditorContexto from '../../servicios/EditorContexto'
 import { useNavigate } from 'react-router-dom'
+import EditorPdfAltas from '../../../../shared/modals/EditorPdfAltas'
+import Swal from 'sweetalert2'
 
 interface valuesVentasTO {
   id: number
@@ -199,6 +200,8 @@ export const ModalContratos = ({
           }
         )
         if (response.data.status == 'success') {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          Swal.fire(`${response.data.codigo}`, '', 'success')
           navigate('/admin/lista-contratos')
           toast.success('Contrato generado correctamente')
         } else {
@@ -490,7 +493,7 @@ export const ModalContratos = ({
                 Formas de pago
               </label>
               <div className="mt-3 w-full">
-                <EditorContexto content={formaPago} setContent={setFormaPago} />
+                <EditorPdfAltas content={formaPago} setContent={setFormaPago} />
               </div>
             </div>
             <div className="w-full relative">
@@ -501,7 +504,7 @@ export const ModalContratos = ({
                 Detalle del servicio
               </label>
               <div className="mt-3">
-                <EditorContexto content={contenido} setContent={setContenido} />
+                <EditorPdfAltas content={contenido} setContent={setContenido} />
               </div>
             </div>
           </div>

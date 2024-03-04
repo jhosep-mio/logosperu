@@ -4,7 +4,6 @@ import { type Dispatch, type SetStateAction, useState, useEffect } from 'react'
 import { useFormik } from 'formik'
 import { SchemaCotizacion } from '../../../../shared/schemas/Schemas'
 import { Errors } from '../../../../shared/Errors'
-import Editor from '../../../../shared/modals/ModalPDF'
 import { toast } from 'sonner'
 import axios from 'axios'
 import { Global } from '../../../../../helper/Global'
@@ -15,6 +14,7 @@ import { limpiarCadena } from '../../../../shared/functions/QuitarAcerntos'
 import { convertirNumeroALetras } from '../../../../shared/functions/GenerarTextoEnLetras'
 import { Loading } from '../../../../shared/Loading'
 import { useNavigate } from 'react-router-dom'
+import EditorPdfAltas from '../../../../shared/modals/EditorPdfAltas'
 
 export const ModalCotizacion = ({
   open,
@@ -384,7 +384,7 @@ export const ModalCotizacion = ({
               </div>
             </section>
             <section className="mt-4 jodect_editor_cotizacion">
-              <Editor content={context} setContent={setContext} />
+              <EditorPdfAltas content={context} setContent={setContext} />
             </section>
             <section className="mt-4 px-1 flex justify-end items-center">
               {!loading

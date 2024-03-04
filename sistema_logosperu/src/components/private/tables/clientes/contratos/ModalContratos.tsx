@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable multiline-ternary */
 import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
 import { SchemaContrato } from '../../../../shared/schemas/Schemas'
@@ -11,9 +12,10 @@ import { toast } from 'sonner'
 import { useFormik } from 'formik'
 import { AiOutlineFilePdf } from 'react-icons/ai'
 import { Errors2 } from '../../../../shared/Errors2'
-import EditorContexto from '../../servicios/EditorContexto'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
+import Swal from 'sweetalert2'
+import EditorPdfAltas from '../../../../shared/modals/EditorPdfAltas'
 
 interface valuesVentasTO {
   id: number
@@ -40,7 +42,9 @@ export const ModalContratos = ({
   pdfUrl: any | null
 }): JSX.Element => {
   const token = localStorage.getItem('token')
-  const [contenido, setContenido] = useState('')
+  // @ts-expect-error
+  const initialEvent = datos?.descripcion
+  const [contenido, setContenido] = useState(initialEvent)
   const [formaPago, setFormaPago] = useState('')
   const [loadingValidacion, seLoadingValidation] = useState(false)
   const navigate = useNavigate()
@@ -225,7 +229,10 @@ export const ModalContratos = ({
             }
           }
         )
+        console.log(response)
         if (response.data.status == 'success') {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          Swal.fire(`${response.data.codigo}`, '', 'success')
           navigate('/admin/lista-contratos')
           toast.success('Contrato generado correctamente')
         } else {
@@ -349,8 +356,8 @@ export const ModalContratos = ({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       if (datos?.descripcion) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         setContenido(datos?.descripcion)
       } else {
         setContenido('')
@@ -517,7 +524,7 @@ export const ModalContratos = ({
                 Formas de pago
               </label>
               <div className="mt-3 w-full">
-                <EditorContexto content={formaPago} setContent={setFormaPago} />
+                <EditorPdfAltas content={formaPago} setContent={setFormaPago} />
               </div>
             </div>
             <div className="w-full relative">
@@ -528,7 +535,7 @@ export const ModalContratos = ({
                 Detalle del servicio
               </label>
               <div className="mt-3">
-                <EditorContexto content={contenido} setContent={setContenido} />
+                <EditorPdfAltas content={contenido} setContent={setContenido} />
               </div>
             </div>
           </div>

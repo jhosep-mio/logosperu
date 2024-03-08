@@ -1,30 +1,31 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import useAuth from '../../../../hooks/useAuth'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import useAuth from '../../../../../hooks/useAuth'
 import {
   RiBarChartFill,
   RiFileExcel2Fill,
   RiFilter2Fill,
   RiSettings3Fill
 } from 'react-icons/ri'
-import { Loading } from '../../../shared/Loading'
+import { Loading } from '../../../../shared/Loading'
 import {
   type arrayContacto,
   type ValuesPlanes,
   type ValuesVenta
-} from '../../../shared/schemas/Interfaces'
-import { Paginacion } from '../../../shared/Paginacion'
-import { getDataToPlanes, getDataVentas } from '../../../shared/FetchingData'
+} from '../../../../shared/schemas/Interfaces'
+import { Paginacion } from '../../../../shared/Paginacion'
+import { getDataToPlanes, getDataVentas } from '../../../../shared/FetchingData'
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu'
 import axios from 'axios'
-import { Global } from '../../../../helper/Global'
+import { Global } from '../../../../../helper/Global'
 import Swal from 'sweetalert2'
 import {
   limpiarCadena,
   quitarAcentos
-} from '../../../shared/functions/QuitarAcerntos'
+} from '../../../../shared/functions/QuitarAcerntos'
 import { MdChevronRight } from 'react-icons/md'
-// import { GeneradorExcel } from '../../../shared/EXCEL/GeneradorExcel'
+// import { GeneradorExcel } from '../../../../shared/EXCEL/GeneradorExcel'
 
 interface Filters {
   estado?: number | null
@@ -34,8 +35,9 @@ interface Filters {
   sinFechaFinYNo1: boolean | null
 }
 
-export const ListaVentas = (): JSX.Element => {
+export const ListaVentasGrafico = (): JSX.Element => {
   const { setTitle } = useAuth()
+  const { texto } = useParams()
   const token = localStorage.getItem('token')
   const [productos, setProductos] = useState<ValuesVenta[]>([])
   const [loading, setLoading] = useState(true)
@@ -69,22 +71,31 @@ export const ListaVentas = (): JSX.Element => {
   }
 
   useEffect(() => {
-    setTitle('Listado de proyectos')
     Promise.all([
       getColaboradores(),
       getDataToPlanes('getPlanes', setplanes, setTotalRegistros),
-      getDataVentas('getVentas', setProductos, setTotalRegistros)
+      getDataVentas('getVentas2', setProductos, setTotalRegistros)
     ]).then(() => {
       setLoading(false)
     })
   }, [])
 
+  useEffect(() => {
+    setTitle(`Listado de proyectos - ${texto == 'dgrafico' ? 'DISEÑO GRAFICO' : texto?.toUpperCase() ?? ''}`)
+  }, [texto])
+
   const indexOfLastPost = paginaActual * cantidadRegistros
   const indexOfFirstPost = indexOfLastPost - cantidadRegistros
-  let totalPosts = productos.length
+  let totalPosts = 0
 
   const filterDate = (): ValuesVenta[] => {
     let filteredProductos = productos
+
+    filteredProductos = filteredProductos.filter(
+      (pro) =>
+        // @ts-expect-error
+        ((pro.categoria_plan) == (texto))
+    )
 
     if (filters.activeFilter == 'enCola') {
       filteredProductos = filteredProductos.filter(
@@ -117,7 +128,6 @@ export const ListaVentas = (): JSX.Element => {
           pro.estado != '1'
       )
     }
-
     const searchTerm = quitarAcentos(search)
     // ... puedes agregar otras condiciones de filtro aquí
     if (search.length > 0) {
@@ -184,7 +194,7 @@ export const ListaVentas = (): JSX.Element => {
         Swal.fire('Se cambio el estado', '', 'success')
         setLoading(true)
         Promise.all([
-          getDataVentas('getVentas', setProductos, setTotalRegistros)
+          getDataVentas('getVentas2', setProductos, setTotalRegistros)
         ]).then(() => {
           setLoading(false)
         })
@@ -240,45 +250,6 @@ export const ListaVentas = (): JSX.Element => {
       } // activa el filtro seleccionado y desactiva los demás
     })
   }
-
-  // useEffect(() => {
-  //   if (ordenAscendente) {
-  //     setLoading(true)
-  //     Promise.all([
-  //       getDataVentas('getVentasAscendente', setProductos, setTotalRegistros)
-  //     ]).then(() => {
-  //       setLoading(false)
-  //     })
-  //   } else if (ordenDescente) {
-  //     setLoading(true)
-  //     Promise.all([
-  //       getDataVentas('getVentasDescendente', setProductos, setTotalRegistros)
-  //     ]).then(() => {
-  //       setLoading(false)
-  //     })
-  //   } else if (ordenAscendente2) {
-  //     setLoading(true)
-  //     Promise.all([
-  //       getDataVentas('getVentasAscendente2', setProductos, setTotalRegistros)
-  //     ]).then(() => {
-  //       setLoading(false)
-  //     })
-  //   } else if (ordenDescente2) {
-  //     setLoading(true)
-  //     Promise.all([
-  //       getDataVentas('getVentasDescendente2', setProductos, setTotalRegistros)
-  //     ]).then(() => {
-  //       setLoading(false)
-  //     })
-  //   } else {
-  //     setLoading(true)
-  //     Promise.all([
-  //       getDataVentas('getVentas', setProductos, setTotalRegistros)
-  //     ]).then(() => {
-  //       setLoading(false)
-  //     })
-  //   }
-  // }, [ordenAscendente, ordenDescente, ordenAscendente2, ordenDescente2])
 
   return (
     <>
@@ -735,7 +706,7 @@ export const ListaVentas = (): JSX.Element => {
                   <MenuItem className="p-0 hover:bg-transparent">
                     {orden.id != null && (
                       <Link
-                        to={`view/${orden.id}`}
+                        to={`/admin/lista-ventas/view/${orden.id}`}
                         className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
                       >
                         Ver
@@ -745,7 +716,7 @@ export const ListaVentas = (): JSX.Element => {
                   <MenuItem className="p-0 hover:bg-transparent">
                     {orden.id != null && (
                       <Link
-                        to={`editar/${orden.id}`}
+                        to={`/admin/lista-ventas/editar/${orden.id}`}
                         className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
                       >
                         Editar
@@ -784,14 +755,6 @@ export const ListaVentas = (): JSX.Element => {
                         Datos de cliente
                       </Link>
                     )}
-                  </MenuItem>
-                  <MenuItem className="p-0 hover:bg-transparent">
-                    <Link
-                      to={`generarContrato/${orden.id}`}
-                      className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
-                    >
-                      Generar contrato
-                    </Link>
                   </MenuItem>
                   <MenuItem className="p-0 hover:bg-transparent">
                     {orden.id != null && (

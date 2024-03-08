@@ -105,6 +105,7 @@ import { ListaContratos } from '../components/private/tables/contratos/ListaCont
 import { EditarContrato } from '../components/private/tables/contratos/EditarContrato'
 import { ViewContrato } from '../components/private/tables/contratos/ViewContrato'
 import { ListaVentasToOneCliente } from '../components/private/tables/ventas/ListaVentasToOneCliente'
+import { ListaVentasGrafico } from '../components/private/tables/ventas/disenografico/ListaVentasGrafico'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -174,6 +175,7 @@ export const Routing = (): JSX.Element => {
 
             {/* VENTAS */}
             <Route path="lista-ventas" element={<ListaVentas />} />
+            <Route path="lista-ventas/categoria/:texto" element={<ListaVentasGrafico />} />
             <Route path="lista-ventas-agencia" element={<ListaProyectosAgencia />} />
             <Route path="lista-ventas/view/:id" element={<ViewVenta />} />
             <Route path="lista-ventas/editar/:id" element={<EditarVentas />} />

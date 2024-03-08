@@ -118,6 +118,7 @@ export const ViewBriefDiseñoNew = (): JSX.Element => {
         }
       }
     )
+    console.log(request.data[0].id_contrato)
 
     setValues({
       ...values,
@@ -133,7 +134,9 @@ export const ViewBriefDiseñoNew = (): JSX.Element => {
       principales_servicios: request.data[0].principales_servicios,
       colores: request.data[0].colores,
       referencias: request.data[0].referencias,
-      transmitir: request.data[0].transmitir
+      transmitir: request.data[0].transmitir,
+      id_cliente: request.data[0].id_cliente,
+      id_contrato: request.data[0].id_contrato
     })
 
     setSintetisado(request.data[0].estilo1 == 1)
@@ -318,9 +321,11 @@ export const ViewBriefDiseñoNew = (): JSX.Element => {
       nombre_empresa: '',
       historia_empresa: '',
       principales_servicios: '',
+      id_contrato: '',
       colores: '',
       referencias: '',
-      transmitir: ''
+      transmitir: '',
+      id_cliente: ''
     },
     validationSchema: SchemaBriefNew,
     onSubmit: updateBrief
@@ -417,7 +422,8 @@ export const ViewBriefDiseñoNew = (): JSX.Element => {
                   <ViewCliente
                     handleClose={handleClose}
                     open={open}
-                    id={values.id_venta}
+                    id={values.id_cliente}
+                    id_contrato={values.id_contrato}
                   />
 
                   <label className="bg-secondary-150 px-4 text-white py-2 w-fit rounded-t-md mb-5 ">

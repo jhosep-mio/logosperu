@@ -18,6 +18,7 @@ interface valueUsuarios {
   id_rol: number
   name: string
   email: string
+  genero: string
 }
 
 export const ListaUsuarios = ({
@@ -46,14 +47,13 @@ export const ListaUsuarios = ({
     // @ts-expect-error
     const correosActualizados = correos.filter((correo) => correo.correo !== usuarioEliminado.email)
     setCorreos(correosActualizados)
-    console.log(correosActualizados)
   }
 
-  const agregarArrayPesos = (peso: any, nombre: string, email: string): void => {
+  const agregarArrayPesos = (peso: any, nombre: string, email: string, genero: string): void => {
     if (peso) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      setarrayPesos([...arrayPesos, { id: Date.now(), peso, nombre, email }])
+      setarrayPesos([...arrayPesos, { id: Date.now(), peso, nombre, email, genero }])
       agregarCorreo(email)
     }
     setAgregar(false)
@@ -83,8 +83,8 @@ export const ListaUsuarios = ({
       {!agregar
         ? (
         <>
-          <div className="hidden md:grid grid-cols-1 md:grid-cols-1 gap-4 py-2 text-black relative">
-            <h5 className="md:text-center font-bold text-xl text-white">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-4 py-2 text-black relative">
+            <h5 className="text-center font-bold text-base md:text-xl text-white">
               Colaboradores
             </h5>
             <h5
@@ -100,7 +100,7 @@ export const ListaUsuarios = ({
             .filter((peso: arrayAsignacion) => peso.id != null)
             .map((pro: arrayAsignacion) => (
               <div
-                className="mx-5 md:mx-0 grid grid-cols-1 md:grid-cols-2 gap-4 items-center mb-4 bg-transparent py-1 rounded-xl text-white"
+                className="mx-5 md:mx-0 grid grid-cols-2 gap-2 md:gap-4 items-center mb-4 bg-transparent py-1 rounded-xl text-white"
                 key={pro.id}
               >
                 <div className="md:text-center">
@@ -180,7 +180,7 @@ export const ListaUsuarios = ({
                   key={index}
                   className="text-white text-center block w-full cursor-pointer py-2 hover:text-main transition-colors"
                   onClick={() => {
-                    agregarArrayPesos(String(usuario.id), usuario.name, usuario.email)
+                    agregarArrayPesos(String(usuario.id), usuario.name, usuario.email, usuario.genero)
                   }}
                 >
                   {usuario.name}

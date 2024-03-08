@@ -26,6 +26,7 @@ export const ModalComunity = ({
   longitud,
   idCliente,
   id_Codigo,
+  id_Contrato
 }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ export const ModalComunity = ({
       setLoading(true);
       const data = new FormData();
       data.append("id_venta", id_Venta);
+      data.append("id_contrato", id_Contrato);
       data.append("nombre_comercial", formulario.nombre_comercial);
       data.append("historia_empresa", formulario.historia_empresa);
       data.append("competidores", formulario.competidores);

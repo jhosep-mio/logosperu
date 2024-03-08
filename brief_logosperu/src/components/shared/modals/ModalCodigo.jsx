@@ -16,6 +16,7 @@ export const ModalCodigo = ({
   setIdCliente,
   setIdCodigo,
   setIdVenta,
+  setIdContrato,
 }) => {
   const [showError, setShowError] = useState(false);
   const [code, setCode] = useState("");
@@ -31,6 +32,7 @@ export const ModalCodigo = ({
       if (respuesta2.data.status === "success") {
         setIdCodigo(datas.codigo)
         setIdCliente(respuesta2.data.co);
+        setIdContrato(respuesta2.data.id_contrato)
         setIdVenta(respuesta2.data.venta);
         const respuestaCliente = await axios.get(
           `${Global.url}/getOneCliente/${respuesta2.data.co}`
@@ -66,6 +68,7 @@ export const ModalCodigo = ({
         setShowError(true);
       }
     } catch (error) {
+        console.log(error)
       setShowError(true);
       setCode("ERROR NO ENCONTRADO");
     }

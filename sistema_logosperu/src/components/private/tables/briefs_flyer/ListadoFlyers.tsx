@@ -19,7 +19,7 @@ export const ListadoFlyers = (): JSX.Element => {
   // const token = localStorage.getItem('token')
   const [productos, setProductos] = useState<interfaceListaDiseñoNew[]>([])
   const [loading, setLoading] = useState(true)
-  const [totalRegistros, setTotalRegistros] = useState(0)
+  const [, setTotalRegistros] = useState(0)
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(4)
@@ -87,10 +87,6 @@ export const ListadoFlyers = (): JSX.Element => {
     totalPosts = filter.length
     return filter.slice(indexOfFirstPost, indexOfLastPost)
   }
-
-  useEffect(() => {
-    setTotalRegistros(totalPosts)
-  }, [search])
 
   return (
     <>
@@ -255,7 +251,7 @@ export const ListadoFlyers = (): JSX.Element => {
 
           <div className="flex flex-col md:flex-row gap-5 md:gap-0 justify-center md:justify-between content_buttons pt-3">
             <p className="text-md ml-1 text-black">
-              {totalRegistros} Registros
+              {totalPosts} Registros
             </p>
             <Paginacion
               totalPosts={totalPosts}

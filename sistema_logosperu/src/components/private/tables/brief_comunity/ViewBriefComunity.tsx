@@ -56,6 +56,8 @@ export const ViewBriefComunity = (): JSX.Element => {
         String(request.data[0].apellidos),
       email: request.data[0].email,
       id_venta: request.data[0].id_venta,
+      id_contrato: request.data[0].id_contrato,
+      id_cliente: request.data[0].id_cliente,
       nombre_comercial: request.data[0].nombre_comercial,
       historia_empresa: request.data[0].historia_empresa,
       competidores: request.data[0].competidores,
@@ -97,20 +99,22 @@ export const ViewBriefComunity = (): JSX.Element => {
       clientes_ideales: '',
       propuesta_producto: '',
       preferencia_canal: '',
+      id_contrato: '',
       presupuesto: '',
       link_recursos: '',
       fechas_importantes: '',
       directrises_marca: '',
       elementos_visuales: '',
       restricciones_legales: '',
-      factores_consideracion: ''
+      factores_consideracion: '',
+      id_cliente: ''
     },
     validationSchema: SchemaBriefComunity,
     onSubmit: saveBrief
   })
 
   useEffect(() => {
-    setTitle('BRIEF - FLYER')
+    setTitle('BRIEF - COMMUNITY')
     getFlyer()
   }, [])
 
@@ -247,7 +251,8 @@ export const ViewBriefComunity = (): JSX.Element => {
                   <ViewCliente
                     handleClose={handleClose}
                     open={open}
-                    id={values.id_venta}
+                    id={values.id_cliente}
+                    id_contrato={values.id_contrato}
                   />
 
                   <label className="bg-secondary-150 px-4 text-white py-2 w-fit rounded-t-md mb-5 md:ml-3">

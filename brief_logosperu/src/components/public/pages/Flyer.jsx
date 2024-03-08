@@ -52,6 +52,8 @@ const Flyer = () => {
   const [idCliente, setIdCliente] = useState(0);
   const [id_Codigo, setIdCodigo] = useState(0);
   const [id_Venta, setIdVenta] = useState(0);
+  const [id_Contrato, setIdContrato] = useState(0);
+
 
   const handleOption1Change = (event) => {
     setOption1Checked(event.target.checked);
@@ -670,6 +672,7 @@ const Flyer = () => {
                   longitud={longitud}
                   marker={marker}
                   id_Venta={id_Venta}
+                  id_Contrato={id_Contrato}
                   formulario={values}
                   option1Checked={option1Checked}
                   option2Checked={option2Checked}
@@ -689,6 +692,7 @@ const Flyer = () => {
                   setValidacionCorrecta={setValidacionCorrecta}
                   setDatos={setDatos}
                   setLatitud={setLatitud}
+                  setIdContrato={setIdContrato}
                   setUbicacionValidada={setUbicacionValidada}
                   setLongitud={setLongitud}
                   setLoading={setLoading}

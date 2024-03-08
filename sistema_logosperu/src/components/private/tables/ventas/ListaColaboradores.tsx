@@ -117,7 +117,7 @@ export const ListaColaboradores = ({
         </div>
       </div>
 
-      <div className="bg-secondary-100 py-4 md:p-8 rounded-xl mb-10 w-1/2 mx-auto">
+      <div className="bg-secondary-100 py-4 md:p-8 rounded-xl mb-10 w-full lg:w-1/2 mx-auto">
         <div className="hidden md:grid grid-cols-1 md:grid-cols-1 gap-4 mb-5 p-4 text-white">
           <h5 className="md:text-center font-bold text-2xl">Colaborador a cargo</h5>
         </div>
@@ -129,7 +129,7 @@ export const ListaColaboradores = ({
             key={pro.id}
           >
             <div className="md:text-center">
-              <h5 className="md:hidden text-center text-black font-bold mb-2">
+              <h5 className="md:hidden text-center text-white font-bold mb-2">
                 Usuario
               </h5>
               <select
@@ -160,7 +160,7 @@ export const ListaColaboradores = ({
                   </select>
             </div>
             <div className="md:text-center flex flex-col items-center justify-center">
-              <h5 className="md:hidden text-black text-center font-bold mb-2">
+              <h5 className="md:hidden text-white text-center font-bold mb-2">
                 Eliminar
               </h5>
               <RiDeleteBin6Line

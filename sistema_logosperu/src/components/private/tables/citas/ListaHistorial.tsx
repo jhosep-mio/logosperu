@@ -36,7 +36,7 @@ export const ListaHistorial = (): JSX.Element => {
   const [productos, setProductos] = useState<ValuesPreventaModificate[]>([])
   const [loading, setLoading] = useState(true)
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
-  const [totalRegistros, setTotalRegistros] = useState(0)
+  const [, setTotalRegistros] = useState(0)
   const [, setTotalRegistros2] = useState(0)
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
@@ -92,10 +92,6 @@ export const ListaHistorial = (): JSX.Element => {
     totalPosts = filter.length
     return filter.slice(indexOfFirstPost, indexOfLastPost)
   }
-
-  useEffect(() => {
-    setTotalRegistros(totalPosts)
-  }, [search])
 
   const onSeachChange = ({
     target
@@ -393,7 +389,7 @@ export const ListaHistorial = (): JSX.Element => {
               )}
               <div className="flex flex-col md:flex-row gap-5 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">
                 <p className="text-md ml-1 text-black">
-                  {totalRegistros} Registros
+                  {totalPosts} Registros
                 </p>
                 <Paginacion
                   totalPosts={totalPosts}

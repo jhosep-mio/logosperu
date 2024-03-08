@@ -1,3 +1,4 @@
+/* eslint-disable multiline-ternary */
 import { useEffect, useState, type ChangeEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import useAuth from '../../../../hooks/useAuth'
@@ -168,7 +169,8 @@ export const EditarVentas = (): JSX.Element => {
       observaciones: '',
       nombres: '',
       nombre_marca: '',
-      apellidos: ''
+      apellidos: '',
+      observaciones2: ''
     },
     validationSchema: SchemaEditarVentas,
     onSubmit: savePreventa
@@ -210,10 +212,8 @@ export const EditarVentas = (): JSX.Element => {
       nombre_marca: request.data[0].nombre_marca,
       apellidos: request.data[0].apellidos,
       dni_ruc: request.data[0].dni_ruc != null ? request.data[0].dni_ruc : '',
-      observaciones:
-        request.data[0].observaciones != null
-          ? request.data[0].observaciones
-          : ''
+      observaciones: request.data[0].contrato?.adicionales ?? '',
+      observaciones2: request.data[0].observaciones ?? ''
     })
     if (request.data[0].asignacion) {
       setarrayPesos(JSON.parse(request.data[0].asignacion))
@@ -311,7 +311,7 @@ export const EditarVentas = (): JSX.Element => {
                         />
                       </div>
                     </div>
-                    <div className="w-full flex flex-col gap-3 md:flex-row">
+                    <div className="w-full flex flex-col gap-3 md:flex-row mt-3 lg:mt-0">
                       <div className="w-full md:w-1/3 lg:relative">
                         <TitleBriefs titulo="Nombre/Empresa" />
                         <InputsBriefs
@@ -441,23 +441,31 @@ export const EditarVentas = (): JSX.Element => {
                 </>
               )}
 
-              <div className="px-3 mb-4">
+              <div className="px-0 lg:px-3 mb-4">
                 <div className="w-full relative">
                   <TitleBriefs titulo="Observaciones" />
-                  <textarea
-                    className="border placeholder-gray-400 focus:outline-none
-                                            focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
-                                            border-gray-300 rounded-md resize-none text-black"
-                    name="observaciones"
-                    rows={5}
-                    value={values.observaciones}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
+                  <div
+                          className="text-black border placeholder-gray-400 focus:outline-none
+                        focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                        border-gray-300 rounded-md resize-none min-h-[80px]"
+                        >
+                          {values.observaciones && JSON.parse(values.observaciones).length > 0 ? (
+                            <ul>
+                              {JSON.parse(values.observaciones).map(
+                                (item: any, index: any) => (
+                                  <li
+                                    key={index}
+                                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                                  >{ `• ${item.cantidad} ${item.elemento}`}</li>
+                                )
+                              )}
+                            </ul>
+                          ) : values.observaciones2}
+                        </div>
                 </div>
               </div>
 
-              <div className="w-full flex gap-5 px-3 justify-center mb-10">
+              <div className="w-full flex gap-5 lg:px-3 justify-center mb-4 lg:mb-10">
                 <div className="w-full contenido_calendario relative">
                   <TitleBriefs titulo="Fecha del Alta" />
                   <input
@@ -483,7 +491,7 @@ export const EditarVentas = (): JSX.Element => {
                 </div>
               </div>
 
-              <div className="w-full flex gap-5 px-3">
+              <div className="w-full flex flex-col lg:flex-row gap-5 lg:px-3">
                 <div className="w-full contenido_calendario relative">
                   <TitleBriefs titulo="Fecha de inicio" />
                   <input

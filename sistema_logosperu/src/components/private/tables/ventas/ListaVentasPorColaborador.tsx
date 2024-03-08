@@ -39,7 +39,7 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
   const token = localStorage.getItem('token')
   const [productos, setProductos] = useState<ValuesVenta[]>([])
   const [loading, setLoading] = useState(true)
-  const [totalRegistros, setTotalRegistros] = useState(0)
+  const [, setTotalRegistros] = useState(0)
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(12)
@@ -188,10 +188,6 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
     totalPosts = filteredProductos.length
     return filteredProductos.slice(indexOfFirstPost, indexOfLastPost)
   }
-
-  useEffect(() => {
-    setTotalRegistros(totalPosts)
-  }, [search, filters])
 
   const onSeachChange = ({
     target
@@ -845,7 +841,7 @@ export const ListaVentasPorColaborador = (): JSX.Element => {
 
           <div className="flex flex-col md:flex-row gap-6 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">
             <p className="text-md ml-1 text-black">
-              {totalRegistros} Registros
+              {totalPosts} Registros
             </p>
             <Paginacion
               totalPosts={totalPosts}

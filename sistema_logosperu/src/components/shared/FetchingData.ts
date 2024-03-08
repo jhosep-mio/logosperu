@@ -83,6 +83,7 @@ export const getDataNew = async (ruta: string, setDatos: Dispatch<SetStateAction
     }
   })
   setDatos(request.data)
+  console.log(request.data)
   setTotalRegistros(request.data.length)
 }
 
@@ -178,6 +179,7 @@ export const getDataVentas = async (ruta: string, setDatos: Dispatch<SetStateAct
     }
   })
   setDatos(request.data)
+  console.log(request.data)
   setTotalRegistros(request.data.length)
 }
 

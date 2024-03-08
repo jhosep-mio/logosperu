@@ -711,6 +711,12 @@ export interface arrayAsignacion {
   peso: string
 }
 
+export interface arrayAdicionales {
+  id: number | null
+  elemento: string
+  cantidad: number
+}
+
 export interface arrayCorreos {
   id: number | null
   correo: string

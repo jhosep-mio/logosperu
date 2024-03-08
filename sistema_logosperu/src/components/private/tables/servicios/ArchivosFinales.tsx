@@ -341,7 +341,7 @@ export const ArchivosFinales = ({
     <>
       <div className="flex flex-row gap-0 justify-between lg:gap-2 mb-2">
         <div className="flex flex-col gap-3 mb-2">
-          <h2 className="text-xl lg:text-2xl font-bold text-black">
+          <h2 className="text-base lg:text-2xl font-bold text-black">
             Archivos {' '}
           </h2>
           <h3 className="font-bold text-base">
@@ -353,7 +353,7 @@ export const ArchivosFinales = ({
         <div className="w-40 relative h-fit flex justify-end">
           <button
             type="button"
-            className="w-40 px-4 h-fit bg-gray-500  rounded-xl font-normal text-white py-1"
+            className="w-40 px-4 h-fit bg-gray-500  rounded-xl font-normal text-sm lg:text-base text-white py-1"
             onClick={() => {
               if (validateBrief == null || validateBrief) {
                 setSeleccion(!seleccion)
@@ -620,7 +620,7 @@ export const ArchivosFinales = ({
           )
         : (
         <div className="w-full  pb-4 flex flex-col gap-4">
-          <h2 className="text-black w-full text-center text-xl">
+          <h2 className="text-black w-full text-center text-sm lg:text-xl">
             Aun no hay archivos para este proyecto
           </h2>
         </div>

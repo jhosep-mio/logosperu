@@ -35,6 +35,7 @@ export const ModalFlyer = ({
   id_Codigo,
   option5Checked,
   option6Checked,
+  id_Contrato
 }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ export const ModalFlyer = ({
       setLoading(true);
       const data = new FormData();
       data.append("id_venta", id_Venta);
+      data.append("id_contrato", id_Contrato);
       data.append("nombre_comercial", formulario.nombre_comercial);
       data.append("medios1", option1Checked.toString());
       data.append("medios2", option2Checked.toString());

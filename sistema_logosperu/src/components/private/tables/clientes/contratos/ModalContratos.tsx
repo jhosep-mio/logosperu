@@ -3,6 +3,7 @@
 import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
 import { SchemaContrato } from '../../../../shared/schemas/Schemas'
 import {
+  type arrayAdicionales,
   type VluesContrato
 } from '../../../../shared/schemas/Interfaces'
 import { convertirNumeroALetras } from '../../../../shared/functions/GenerarTextoEnLetras'
@@ -10,12 +11,13 @@ import { Global } from '../../../../../helper/Global'
 import axios from 'axios'
 import { toast } from 'sonner'
 import { useFormik } from 'formik'
-import { AiOutlineFilePdf } from 'react-icons/ai'
 import { Errors2 } from '../../../../shared/Errors2'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import Swal from 'sweetalert2'
 import EditorPdfAltas from '../../../../shared/modals/EditorPdfAltas'
+import { IoCloseCircleOutline } from 'react-icons/io5'
+import { Chip } from '@mui/material'
 
 interface valuesVentasTO {
   id: number
@@ -44,10 +46,38 @@ export const ModalContratos = ({
   const token = localStorage.getItem('token')
   // @ts-expect-error
   const initialEvent = datos?.descripcion
+  const [openAdicional, setOpenAdicional] = useState(false)
   const [contenido, setContenido] = useState(initialEvent)
-  const [formaPago, setFormaPago] = useState('')
+  const [formaPago, setFormaPago] = useState(
+    '<ul><li><strong style="color: red;">S/ 00.00&nbsp;</strong><strong>+&nbsp;IGV</strong><strong>&nbsp;</strong>A la aceptación del presente contrato</li><li><strong>S/ 00.00 </strong>&nbsp;<strong>+&nbsp;IGV</strong>&nbsp;A la los 10 días del proyecto&nbsp;</li><li><strong>S/ 00.00&nbsp;+ IGV a la aprobación del proyecto&nbsp;</strong></li></ul>'
+  )
   const [loadingValidacion, seLoadingValidation] = useState(false)
   const navigate = useNavigate()
+  const [arrayAdicionales, setArrayAdicionales] = useState<
+  arrayAdicionales[] | null
+  >(null)
+
+  const agregarArrayPesos = (elemento: string): void => {
+    let encontrado = false
+    // Generar un nuevo identificador único usando uuid
+    const id = uuidv4()
+    // Inicializar arrayAdicionales como un array vacío si es undefined
+    const nuevosAdicionales = arrayAdicionales ? [...arrayAdicionales] : []
+    // Iterar sobre nuevosAdicionales para buscar el elemento
+    nuevosAdicionales.forEach((item: any) => {
+      if (item.elemento === elemento) {
+        encontrado = true
+        // Si el elemento ya existe, incrementar su contador
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+        item.cantidad += 1
+      }
+    })
+    // Si el elemento no fue encontrado, agregarlo con contador 1
+    if (!encontrado) {
+      nuevosAdicionales.push({ id, elemento, cantidad: 1 })
+    }
+    setArrayAdicionales(nuevosAdicionales)
+  }
 
   const formatearContrato = (cadena: string): string => {
     const partes = cadena.split('_')
@@ -55,13 +85,11 @@ export const ModalContratos = ({
   }
 
   const formatearContrato2 = (cadena: string): string => {
-    const numeros = cadena.match(/\d+/g)
-
-    if (numeros && numeros.length >= 2) {
-      const numero1 = numeros[0]
-      const numero2 = numeros[1]
-      const textoFormateado = `${numero1} - ${numero2}`
-      return textoFormateado
+    const match = cadena.match(/_([0-9]{4})_([0-9]{2})/)
+    if (match && match.length >= 3) {
+      const numero1 = match[1]
+      const numero2 = match[2]
+      return `${numero1}-${numero2}`
     } else {
       return cadena
     }
@@ -110,6 +138,7 @@ export const ModalContratos = ({
       data.append('primero', values.primero)
       data.append('contenido', contenido)
       data.append('_method', 'PUT')
+      console.log(formatearContrato2(datos?.id_contrato))
 
       try {
         const response = await axios.post(
@@ -124,7 +153,6 @@ export const ModalContratos = ({
             responseType: 'blob'
           }
         )
-        console.log(response)
         const pdfBlob = new Blob([response.data], { type: 'application/pdf' })
         const pdfUrl = window.URL.createObjectURL(pdfBlob)
         setPdfUrl(pdfUrl) // Guarda la URL del PDF en el estado para mostrarlo en el componente
@@ -177,6 +205,7 @@ export const ModalContratos = ({
       // @ts-expect-error
       data.append('id_cotizacion', idCotizacion)
       data.append('correlativo', datos?.id_contrato)
+      data.append('adicionales', JSON.stringify(arrayAdicionales ?? ''))
       data.append('medio_ingreso', datos?.medio_ingreso)
       data.append('nombres_cliente', datos?.nombre_cliente)
       data.append('titulo_contrato', values.titulo_contrato)
@@ -241,10 +270,10 @@ export const ModalContratos = ({
       } catch (error: unknown) {
         console.log(error)
         if (
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
           error.request.response.includes(
-              `Duplicate entry '${datos?.id_contrato}' for key 'contratos.correlativo'`
+            `Duplicate entry '${datos?.id_contrato}' for key 'contratos.correlativo'`
           )
         ) {
           toast.error('Contrato duplicado')
@@ -326,17 +355,15 @@ export const ModalContratos = ({
 
   const getOneBrief = async (): Promise<void> => {
     const request2 = await axios.get(
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        `${Global.url}/showToContrato/${formatearContrato(
-          datos?.id_contrato
-        )}`,
-        {
-          headers: {
-            Authorization: `Bearer ${
-              token !== null && token !== '' ? `Bearer ${token}` : ''
-            }`
-          }
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      `${Global.url}/showToContrato/${formatearContrato(datos?.id_contrato)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${
+            token !== null && token !== '' ? `Bearer ${token}` : ''
+          }`
         }
+      }
     )
     setValues({
       ...values,
@@ -349,6 +376,14 @@ export const ModalContratos = ({
       // @ts-expect-error
       precio: datos?.precio
     })
+  }
+
+  const eliminarArray = (id: number | null): void => {
+    const usuarioEliminado = arrayAdicionales?.find((peso) => peso.id === id)
+    if (!usuarioEliminado) return // Salir si no se encuentra el usuario
+    const nuevoArrayPesos = arrayAdicionales?.filter((peso) => peso.id !== id)
+    // @ts-expect-error
+    setArrayAdicionales(nuevoArrayPesos)
   }
 
   useEffect(() => {
@@ -366,16 +401,48 @@ export const ModalContratos = ({
     }
   }, [datos])
 
+  useEffect(() => {
+    const ul = document.createElement('ul') // Crear un elemento ul
+    // Iterar sobre arrayAdicionales y crear un li para cada elemento
+    arrayAdicionales?.forEach((item: any) => {
+      const li = document.createElement('li') // Crear un elemento li
+      if (item.elemento === 'Impresión de tarjeta de presentación') {
+        // Generar el HTML específico para 'Impresión de tarjeta de presentación'
+        li.innerHTML = `
+          <p>IMPRESIÓN DE TARJETA DE PRESENTACIÓN:</p>
+          <p>Descripción:</p>
+          <p>1 millar x 1 nombre.&nbsp;</p>
+          <p>Tamaño: 9 x 5.5 cm.</p>
+          <p>Material: Papel couché de 250gr. Mate o brillante (a elección del cliente).</p>
+          <p>Envío Lima: Gratis&nbsp;&nbsp;</p>
+          <p>Envío Provincia: Servicio de COLLECT</p>
+        `
+      } else {
+        const cantidadFormateada = item.cantidad.toString().padStart(2, '0')
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        li.textContent = `${cantidadFormateada} ${item.elemento}`
+      }
+      ul.appendChild(li) // Agregar el li al ul
+    })
+    // Obtener el HTML del ul y establecerlo como contenido
+    const nombresColaboradores = ul.outerHTML
+    const textofinal = '<p>&nbsp;</p>'
+    // @ts-expect-error
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    const contenidoConTextoAdicional = (datos?.descripcion ?? '') + textofinal + nombresColaboradores
+    setContenido(contenidoConTextoAdicional)
+  }, [arrayAdicionales])
+
   return (
     <form
-      className="flex flex-col bg-white rounded-md relative p-4     "
+      className="flex flex-col bg-white rounded-md relative p-4"
       onSubmit={handleSubmit}
     >
       <div className="flex w-full flex-col">
         <div className="w-full flex flex-col text-white">
-          <div className="mb-3 md:mb-0 w-full bg-form rounded-md rounded-tl-none md:p-3 text-black flex flex-col items-end gap-2 lg:gap-x-5 lg:gap-y-0">
-          <div className="w-full flex flex-col lg:flex-row gap-3 lg:gap-5 mt-3 lg:mt-0">
-              <div className="w-full lg:relative pb-5">
+          <div className="mb-3 md:mb-0 w-full bg-form rounded-md rounded-tl-none md:p-3 text-black flex flex-col items-end gap-0 lg:gap-x-5 lg:gap-y-0">
+            <div className="w-full flex flex-col lg:flex-row gap-3 lg:gap-5 mt-3 lg:mt-0">
+              <div className="w-full relative pb-0 md:pb-5">
                 <label
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   htmlFor="email"
@@ -388,7 +455,7 @@ export const ModalContratos = ({
                   disabled
                 />
               </div>
-              <div className="w-full lg:relative pb-5">
+              <div className="w-full relative pb-0 md:pb-5">
                 <label
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   htmlFor="email"
@@ -401,14 +468,9 @@ export const ModalContratos = ({
                   disabled
                 />
               </div>
-              <div className="w-full px-3  lg:hidden flex items-center justify-center">
-                <button className="bg-red-500 text-white rounded-xl px-5 py-2 mx-auto flex items-center justify-center gap-3 ">
-                  <AiOutlineFilePdf /> Visualizar contrato
-                </button>
-              </div>
             </div>
-            <div className="w-full flex flex-col lg:flex-row gap-3 lg:gap-5 mt-3 lg:mt-0">
-              <div className="w-full lg:relative pb-5">
+            <div className="w-full flex flex-col lg:flex-row gap-0 lg:gap-5 mt-3 lg:mt-0">
+              <div className="w-full relative pb-5 ">
                 <label
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   htmlFor="email"
@@ -432,7 +494,7 @@ export const ModalContratos = ({
                   touched={touched.tipo_documento}
                 />
               </div>
-              <div className="w-full  lg:relative pb-5">
+              <div className="w-full relative pb-5 ">
                 <label
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   htmlFor="email"
@@ -453,12 +515,7 @@ export const ModalContratos = ({
                   touched={touched.dni_cliente}
                 />
               </div>
-              <div className="w-full px-3  lg:hidden flex items-center justify-center">
-                <button className="bg-red-500 text-white rounded-xl px-5 py-2 mx-auto flex items-center justify-center gap-3 ">
-                  <AiOutlineFilePdf /> Visualizar contrato
-                </button>
-              </div>
-              <div className="w-full lg:relative pb-5">
+              <div className="w-full relative pb-5 ">
                 <label
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   htmlFor="email"
@@ -477,8 +534,8 @@ export const ModalContratos = ({
                 <Errors2 errors={errors.fecha} touched={touched.fecha} />
               </div>
             </div>
-            <div className="w-full flex flex-col lg:flex-row gap-3 lg:gap-5 mt-3 lg:mt-0 items-center">
-              <div className="w-full lg:relative pb-5">
+            <div className="w-full flex flex-col lg:flex-row gap-0 lg:gap-5 mt-0 lg:mt-0 items-center">
+              <div className="w-full relative pb-5">
                 <label
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   htmlFor="email"
@@ -496,7 +553,7 @@ export const ModalContratos = ({
                 />
                 <Errors2 errors={errors.tiempo} touched={touched.tiempo} />
               </div>
-              <div className="w-full  lg:relative pb-5">
+              <div className="w-full  relative pb-5">
                 <label
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   htmlFor="email"
@@ -527,13 +584,276 @@ export const ModalContratos = ({
                 <EditorPdfAltas content={formaPago} setContent={setFormaPago} />
               </div>
             </div>
-            <div className="w-full relative">
-              <label
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                htmlFor="email"
-              >
-                Detalle del servicio
-              </label>
+            {openAdicional &&
+                <div className="w-[50%] h-full overflow-y-auto bg-white p-2 absolute right-0 top-0 bottom-0 shadow-md border rounded-md border-gray-300 z-10">
+                <IoCloseCircleOutline className="absolute top-2 right-2 text-2xl cursor-pointer" onClick={() => { setOpenAdicional(false) }}/>
+                <h2 className="text-center w-full uppercase font-bold">
+                    Adicionales
+                </h2>
+                <div className="flex flex-col gap-1 mt-3">
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => { agregarArrayPesos('Diseño de Firma(s) de correo(s)') }} >
+                    Diseño de Firma de correo
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Portada(s)')
+                    }}
+                    >
+                    Diseño de Portada
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Perfil(es)')
+                    }}
+                    >
+                    Diseño de Perfil
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Tarjeta(s) de presentación')
+                    }}
+                    >
+                    Diseño de Tarjeta de presentación
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Hoja(s) membretada(s)')
+                    }}
+                    >
+                    Diseño de Hoja membretada
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Flyer(s)')
+                    }}
+                    >
+                    Diseño de Flyer
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Brochure 04 caras')
+                    }}
+                    >
+                    Diseño de Brochure 04 caras
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Brochure 06 caras')
+                    }}
+                    >
+                    Diseño de Brochure 06 caras
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Brochure 08 caras')
+                    }}
+                    >
+                    Diseño de Brochure 08 caras
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Fotocheck(s) o uniforme(s)')
+                    }}
+                    >
+                    Diseño de Fotocheck o uniforme
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Etiqueta(s)')
+                    }}
+                    >
+                    Diseño de Etiqueta
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Montaje(s)')
+                    }}
+                    >
+                    Diseño de Montaje
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Creacion de Reel 10s')
+                    }}
+                    >
+                    Creacion de Reel 10s
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Creacion de Reel 20s')
+                    }}
+                    >
+                    Creacion de Reel 20s
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Creacion de Reel 30s')
+                    }}
+                    >
+                    Creacion de Reel 30s
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Animación de Logo(s)')
+                    }}
+                    >
+                    Animación de Logo
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Animación de Personaje(s)')
+                    }}
+                    >
+                    Animación de Personaje
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Personaje(s)')
+                    }}
+                    >
+                    Diseño de Personaje
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Manual de marca(s)')
+                    }}
+                    >
+                    Diseño de Manual de marca
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Vectorización de logo(s)')
+                    }}
+                    >
+                    Vectorización de logo
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Letrero(s)')
+                    }}
+                    >
+                    Diseño de Letrero
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Sticker(s)')
+                    }}
+                    >
+                    Diseño de sticker
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Banner(s)')
+                    }}
+                    >
+                    Diseño de Banner
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Volante(s)')
+                    }}
+                    >
+                    Diseño de Volante
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Sobre(s)')
+                    }}
+                    >
+                    Diseño de Sobre
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Folder(s)')
+                    }}
+                    >
+                    Diseño de Folder
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Bolsa(s)')
+                    }}
+                    >
+                    Diseño de Bolsa
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Calendario(s)')
+                    }}
+                    >
+                    Diseño de Calendario
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Impresión de tarjeta de presentación')
+                    }}
+                    >
+                    Impresión de tarjeta de presentación
+                    </p>
+                </div>
+                </div>
+            }
+            <div className="w-full relative mt-3">
+              <div className="flex justify-between items-center">
+                <label
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  htmlFor="email"
+                >
+                  Detalle del servicio
+                </label>
+                <button
+                  type="button"
+                  onClick={() => { setOpenAdicional(true) }}
+                  className="bg-red-600 px-2 py-1 rounded-md text-white hover:bg-red-700 transition-colors text-sm"
+                >
+                  Adicionales
+                </button>
+              </div>
+              {// @ts-expect-error
+              arrayAdicionales?.length > 0 &&
+                <div className='flex flex-row flex-wrap gap-3 justify-center mt-2'>
+                  {arrayAdicionales?.map((elemento) => (
+                      <Chip
+                        key={elemento.id}
+                        label={`${elemento.cantidad} ${elemento.elemento}`}
+                        variant="outlined"
+                        // onClick={handleClick}
+                        onDelete={() => { eliminarArray(elemento.id) }}
+                      />
+                  ))}
+                </div>
+              }
+
               <div className="mt-3">
                 <EditorPdfAltas content={contenido} setContent={setContenido} />
               </div>
@@ -542,54 +862,45 @@ export const ModalContratos = ({
         </div>
       </div>
       <div className="h-fit flex w-full justify-end items-center gap-3 rounded-md text-black ">
-        {/* <div className="w-full">
-          <div className="w-fit relative ml-4 ">
-            <button
-              type="button"
-              className="bg-red-500 hover:bg-red-700 transition-colors text-white flex items-center justify-center gap-3 px-4 py-2"
-              onClick={() => {
-                setOpenPDF(true)
-              }}
-            >
-              <IoDocument className="text-white" /> Subir PDF
-            </button>
-          </div>
-        </div> */}
         <div className="flex w-fit gap-3 rounded-md text-black ">
-          {!loading
-            ? <input
-                type="submit"
-                className="bg-secondary-150 px-3 py-2 text-white rounded-md cursor-pointer"
-                value="Previsualizar"
+          {!loading ? (
+            <input
+              type="submit"
+              className="bg-secondary-150 px-3 py-2 text-white rounded-md cursor-pointer"
+              value="Previsualizar"
             />
-            : <input
-                type="button"
-                disabled
-                className="bg-secondary-150/70 px-3 py-2 text-white rounded-md cursor-pointer"
-                value="Cargando..."
+          ) : (
+            <input
+              type="button"
+              disabled
+              className="bg-secondary-150/70 px-3 py-2 text-white rounded-md cursor-pointer"
+              value="Cargando..."
             />
-          }
-          {pdfUrl &&
-                <>
-            {!loadingValidacion
-              ? <button
-                type="button"
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                onClick={async () => { await SaveContrato() }}
-                className="rounded-md w-[100px] bg-secundario h-fit px-3 text-white py-2 hover:bg-green-700 transition-colors"
+          )}
+          {pdfUrl && (
+            <>
+              {!loadingValidacion ? (
+                <button
+                  type="button"
+                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                  onClick={async () => {
+                    await SaveContrato()
+                  }}
+                  className="rounded-md w-[100px] bg-secundario h-fit px-3 text-white py-2 hover:bg-green-700 transition-colors"
                 >
-                Continuar
+                  Continuar
                 </button>
-              : <button
-                type="button"
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                className="rounded-md w-[100px] bg-secundario h-fit px-3 text-white py-2 hover:bg-green-700 transition-colors"
+              ) : (
+                <button
+                  type="button"
+                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                  className="rounded-md w-[100px] bg-secundario h-fit px-3 text-white py-2 hover:bg-green-700 transition-colors"
                 >
-                Validando...
+                  Validando...
                 </button>
-            }
+              )}
             </>
-        }
+          )}
         </div>
       </div>
     </form>

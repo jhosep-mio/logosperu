@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { motion } from 'framer-motion'
 import { cn } from '../../../../shared/cn'
 import { useState, type Dispatch, type SetStateAction } from 'react'
@@ -8,6 +9,10 @@ import moment from 'moment'
 import 'moment/locale/es'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { v4 as uuidv4 } from 'uuid'
+import { Global } from '../../../../../helper/Global'
+import axios from 'axios'
+import { useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
 interface Card {
   id: number
@@ -60,6 +65,8 @@ export const IndexComunity = ({
   datos: values
   getOneBrief: () => Promise<void>
 }): JSX.Element => {
+  const { id } = useParams()
+  const token = localStorage.getItem('token')
   const [selected, setSelected] = useState<Card | null>(null)
   const [lastSelected, setLastSelected] = useState<Card | null>(null)
   const initialEvents: any = datos.comunnity ?? []
@@ -143,7 +150,35 @@ export const IndexComunity = ({
     }
   }
 
-  const handleCreateEvent = (): void => {
+  const updateCita = async (updatedEvents: Event[]): Promise<void> => {
+    const data = new FormData()
+    data.append('community', JSON.stringify(updatedEvents))
+    data.append('_method', 'PUT')
+    try {
+      const respuesta = await axios.post(
+        `${Global.url}/updateCalendarioComunnityVentas/${id ?? ''}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+          }
+        }
+      )
+      if (respuesta.data.status == 'success') {
+        toast.success('Calendario creado')
+        getOneBrief()
+      } else {
+        toast.error('Error al crear')
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error('Error al crear')
+    }
+  }
+
+  const handleCreateEvent = async (): Promise<void> => {
     const parsedDate = moment(datos?.fecha_inicio, 'DD/MM/YYYY').toDate()
     const newEvent = {
       title: 'INICIO DE CM',
@@ -159,9 +194,11 @@ export const IndexComunity = ({
       end: parsedDate,
       tipo: 'solicitud_informacion'
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    const updatedEvents = [...events, newEvent, newSolicitudEvento]
     // @ts-expect-error
-    setEvents([...events, newEvent, newSolicitudEvento])
+    setEvents(updatedEvents)
+    // @ts-expect-error
+    await updateCita(updatedEvents)
   }
 
   return (
@@ -170,12 +207,14 @@ export const IndexComunity = ({
         <div key={i} className='w-full h-full'>
           <motion.div
             onClick={() => {
-              handleClick(card)
+              if (events.length > 0) {
+                handleClick(card)
+              }
             }}
             className={cn(
               'relative overflow-hidden',
               selected?.id === card.id
-                ? 'rounded-lg cursor-pointer fixed inset-0 w-[90%] h-[90%] m-auto z-[120] flex justify-center items-center flex-wrap flex-col'
+                ? 'rounded-lg cursor-pointer fixed inset-0 w-[97%] h-[97%] lg:w-[90%] lg:h-[90%] m-auto z-[120] flex justify-center items-center flex-wrap flex-col'
                 : lastSelected?.id === card.id
                   ? 'z-40 bg-white rounded-xl h-full w-full'
                   : 'bg-white rounded-xl h-full w-full'

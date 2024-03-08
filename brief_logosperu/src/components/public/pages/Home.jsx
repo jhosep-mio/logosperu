@@ -71,6 +71,7 @@ const Home = () => {
   const [idCliente, setIdCliente] = useState(0);
   const [id_Codigo, setIdCodigo] = useState(0);
   const [id_Venta, setIdVenta] = useState(0);
+  const [id_Contrato, setIdContrato] = useState(0);
   const [showError, setShowError] = useState(false);
   const [sintetisado, setSintetisado] = useState(true);
   const [integrado, setIntegrado] = useState(false);
@@ -267,6 +268,7 @@ const Home = () => {
         setIdCliente(respuesta2.data.co);
         setIdCodigo(codigo);
         setIdVenta(respuesta2.data.venta)
+        setIdContrato(respuesta2.data.id_contrato)
         const respuestaCliente = await axios.get(
           `${Global.url}/getOneCliente/${respuesta2.data.co}`
         );
@@ -526,6 +528,7 @@ const Home = () => {
         setLoading(true);
         const data = new FormData();
         data.append("id_venta", id_Venta);
+        data.append("id_contrato", id_Contrato);
         data.append("tipo", datas.base_proyecto);
         data.append("logo_referencia", imagen1.archivo);
         data.append("nombre_empresa", datas.nombre_empresa);

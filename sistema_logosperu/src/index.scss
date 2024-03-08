@@ -6,6 +6,17 @@
   width: 0px;
 }
 
+.scroll_transparent::-webkit-scrollbar-track {
+    background-color: none;
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+.scroll_transparent::-webkit-scrollbar-thumb {
+    background: #888; /* Color del thumb */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+
 .fondo_documentos {
   & .MuiList-root {
     padding: 4px !important;
@@ -776,6 +787,23 @@ input[type="number"] {
 }
 
 @media (max-width: 576px) {
+
+    .modal_dialog_correlativo{
+        & .MuiDialog-container{
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        & .MuiPaper-root{
+            padding: 0 !important;
+            margin:  10px 0 !important;
+            width: 98% !important;
+            max-width:  98% !important;
+        }
+        & .MuiPaper-root-MuiDialog-paper {
+            margin: 0 !important;
+        }
+    }
+
   .moda_registro {
     & .MuiPaper-root {
       min-width: 100% !important;
@@ -1202,4 +1230,14 @@ input[type="date"] {
   inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
+}
+
+
+@media(max-width: 992px){
+
+    .content_modal{
+        .rbc-month-view{
+        }
+    }
+
 }

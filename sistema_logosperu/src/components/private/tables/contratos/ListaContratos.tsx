@@ -141,11 +141,155 @@ export const ListaContratos = (): JSX.Element => {
           </div>
           {filterDate().map((orden: ListaContratosValues, index: number) => (
             <div
-              className={`grid grid-cols-11 md:pr-10 lg:pr-4 relative gap-3 items-center mb-3 md:mb-0 ${
+              className={`grid grid-cols-1 lg:grid-cols-11 md:pr-10 lg:pr-4 relative gap-3 items-center mb-3 md:mb-0 ${
                 index % 2 == 0 ? 'bg-transparent' : 'bg-gray-200'
               } md:px-4 md:py-3 rounded-xl relative shadow_class`}
               key={orden.id}
             >
+              <div
+                // to={`view-servicio/${orden.id}`}
+                className="flex flex-col gap-3 md:hidden bg-form p-4 rounded-xl"
+              >
+                <div className="md:hidden flex justify-between gap-3">
+                  <div className="md:text-center ">
+                    <h5 className="md:hidden text-black font-bold mb-0 text-sm">
+                      Correlativo
+                    </h5>
+                    <span className='text-black'>{(orden.correlativo)}</span>
+                  </div>
+                  <div className="md:text-right ">
+                    <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
+                      Precio
+                    </h5>
+                    <span className="text-right w-full text-black line-clamp-1">
+                        S./ {orden.precio}
+                    </span>
+                  </div>
+                </div>
+                <div className="md:hidden flex justify-between gap-3">
+                  <div className="md:text-left">
+                    <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-left">
+                      Codigo
+                    </h5>
+                    <span className={cn('text-left block  w-fit px-2 rounded-md text-white', orden.uso == 0 ? 'bg-green-600' : 'bg-red-600')}>
+                        {orden.codigo}
+                    </span>
+                  </div>
+                  <div className="md:text-right ">
+                    <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
+                      Cliente
+                    </h5>
+                    <span className="text-right w-full text-black line-clamp-1">
+                        {orden.nombres} {orden.apellidos}
+                    </span>
+                  </div>
+                </div>
+                <div className="md:hidden flex justify-between gap-3">
+                  <div className="md:text-left">
+                    <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-left">
+                      Empresa
+                    </h5>
+                    <span className="text-left w-full text-black line-clamp-1">
+                        {orden.empresa}
+                    </span>
+                  </div>
+                  <div className="md:text-right ">
+                    <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
+                      Tiempo
+                    </h5>
+                    <span className="text-right w-full text-black line-clamp-1">
+                        {orden.tiempo} días
+                    </span>
+                  </div>
+                </div>
+                <div className="md:hidden flex justify-between gap-3">
+                  <div className="md:text-left">
+                    <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-left">
+                      PDF
+                    </h5>
+                    <Link target='_blank' to={`${Global.urlImages}/contratos/${orden.pdf ?? ''}`} className="text-center block text-black">
+                        <BsFileEarmarkPdfFill className='mx-auto text-3xl text-main hover:text-main_dark transition-colors cursor-pointer'/>
+                    </Link>
+                  </div>
+                  <div className="md:text-right ">
+                    <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
+                      Fecha
+                    </h5>
+                    <span className="text-right w-full text-black line-clamp-1">
+                        {formatearFecha(orden.created_at)}
+                    </span>
+                  </div>
+                </div>
+                {/* <div className="md:hidden flex justify-between gap-3">
+                  <div className="md:text-center ">
+                    <h5 className="md:hidden text-black font-bold mb-0 text-sm">
+                      Plan
+                    </h5>
+                    <span className="text-left w-full text-black line-clamp-1">
+                      {planes.map((plan) =>
+                        orden.id_contrato.split('_')[0] == plan.codigo
+                          ? plan.nombre
+                          : ''
+                      )}
+                    </span>
+                  </div>
+                  {!filters.enCola && (
+                    <div className="md:text-right ">
+                      <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
+                        Colaborador
+                      </h5>
+                      <span className="text-right w-full text-black line-clamp-1">
+                        {JSON.parse(orden.asignacion)?.map((asignacion: any) =>
+                          colaboradores
+                            .filter(
+                              (colaborador: { id: number, name: string }) =>
+                                colaborador.id == asignacion.peso
+                            )
+                            .map(
+                              (colaborador: { name: string }) =>
+                                colaborador.name
+                            )
+                            .join(', ')
+                        )}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {!filters.enCola && (
+                  <div className="md:hidden flex justify-between gap-3">
+                    <div className="md:text-center ">
+                      <h5 className="md:hidden text-[#62be6d] font-bold mb-0 text-sm ">
+                        Fecha de Inicio
+                      </h5>
+                      <span className="text-left block text-[#62be6d]">
+                        {orden.fecha_inicio}
+                      </span>
+                    </div>
+                    {!filters.sinFechaFinYNo1
+                      ? (
+                      <div className="md:text-right ">
+                        <h5 className="md:hidden text-red-500 text-right font-bold mb-0 text-sm">
+                          Fecha de cierre
+                        </h5>
+                        <span className="text-right block text-red-500">
+                          {orden.fecha_fin}
+                        </span>
+                      </div>
+                        )
+                      : (
+                      <div className="md:text-right ">
+                        <h5 className="md:hidden text-gray-500 text-right font-bold mb-0 text-sm">
+                          Fecha de alta
+                        </h5>
+                        <span className="text-right block text-gray-500">
+                          {orden.fecha_alta}
+                        </span>
+                      </div>
+                        )}
+                  </div>
+                )} */}
+              </div>
+
               <div className="hidden md:block md:text-center col-span-1">
                 <span className="text-left block text-black w-full line-clamp-1">
                   {(orden.correlativo)}
@@ -166,7 +310,6 @@ export const ListaContratos = (): JSX.Element => {
                     {orden.nombres} {orden.apellidos}
                 </span>
               </div>
-
               <div className="hidden md:block md:text-center col-span-2 relative h-full">
                 <span className="text-left text-black line-clamp-1 transition-all  hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                   {orden.empresa }
@@ -182,7 +325,6 @@ export const ListaContratos = (): JSX.Element => {
                    <BsFileEarmarkPdfFill className='mx-auto text-3xl text-main hover:text-main_dark transition-colors cursor-pointer'/>
                 </Link>
               </div>
-
               <div className="hidden md:block md:text-center col-span-2">
                 <span className="text-center block text-black">
                   {formatearFecha(orden.created_at)}

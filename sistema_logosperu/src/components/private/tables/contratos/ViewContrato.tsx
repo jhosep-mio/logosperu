@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
 import { toast } from 'sonner'
@@ -10,6 +11,8 @@ import useAuth from '../../../../hooks/useAuth'
 import { Loading } from '../../../shared/Loading'
 import { convertirNumeroALetras } from '../../../shared/functions/GenerarTextoEnLetras'
 import { Errors2 } from '../../../shared/Errors2'
+import { type arrayAdicionales } from '../../../shared/schemas/Interfaces'
+import { Chip } from '@mui/material'
 
 export const ViewContrato = (): JSX.Element => {
   const { id } = useParams()
@@ -20,6 +23,9 @@ export const ViewContrato = (): JSX.Element => {
   const [, seLoadingValidation] = useState(false)
   const [loading, setLoading] = useState(true)
   const [pdfUrl, setPdfUrl] = useState('')
+  const [arrayAdicionales, setArrayAdicionales] = useState<
+  arrayAdicionales[] | null
+  >(null)
 
   const formatearContrato = (cadena: string): string => {
     const partes = cadena.split('_')
@@ -88,6 +94,9 @@ export const ViewContrato = (): JSX.Element => {
       }
       if (request.data.contenido) {
         setContenido(request.data.contenido)
+      }
+      if (request.data.adicionales) {
+        setArrayAdicionales(JSON.parse(request.data.adicionales))
       }
       if (request.data.pdf) {
         setPdfUrl(request.data.pdf)
@@ -409,6 +418,21 @@ export const ViewContrato = (): JSX.Element => {
               ></div>
             </div>
           </div>
+
+          {// @ts-expect-error
+              arrayAdicionales?.length > 0 &&
+              <div className='flex flex-row flex-wrap gap-3 justify-center mt-2'>
+                {arrayAdicionales?.map((elemento) => (
+                    <Chip
+                      key={elemento.id}
+                      variant='filled'
+                      className='bg-white'
+                      label={`${elemento.cantidad} ${elemento.elemento}`}
+                      // onClick={handleClick}
+                    />
+                ))}
+              </div>
+            }
 
           <div className="mt-3 w-full bg-white border border-gray-200 p-3 rounded-md">
             <div

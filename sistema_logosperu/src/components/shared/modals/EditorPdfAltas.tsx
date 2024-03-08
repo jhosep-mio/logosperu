@@ -1,10 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { type editorValues } from '../schemas/Interfaces'
 
 const EditorPdfAltas = ({ content, setContent }: editorValues): JSX.Element => {
   const [editorContent, setEditorContent] = useState(content)
+
+  useEffect(() => {
+    setEditorContent(content)
+  }, [content])
 
   const handleContentChange = (value: string): void => {
     // Procesa el contenido antes de actualizar el estado
@@ -14,9 +18,11 @@ const EditorPdfAltas = ({ content, setContent }: editorValues): JSX.Element => {
   }
 
   const processContent = (content: string): string => {
-    // Aquí puedes realizar cualquier procesamiento necesario en el contenido antes de enviarlo
-    // Por ejemplo, podrías reemplazar el emoji con su equivalente de entidad HTML
-    return content.replace(/✅/g, '&#10003;')
+    // Reemplazar el emoji ✅
+    let processedContent = content.replace(/✅/g, '&#10003;')
+    processedContent = processedContent.replace(/💰/g, '&#10003')
+    // Aquí puedes realizar cualquier otro procesamiento necesario en el contenido antes de enviarlo
+    return processedContent
   }
 
   return (

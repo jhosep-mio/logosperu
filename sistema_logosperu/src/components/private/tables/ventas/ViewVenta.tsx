@@ -1,3 +1,5 @@
+/* eslint-disable multiline-ternary */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import useAuth from '../../../../hooks/useAuth'
@@ -11,7 +13,10 @@ import { Errors } from '../../../shared/Errors'
 import { SchemaEditarVentas } from '../../../shared/schemas/Schemas'
 import { logo } from '../../../shared/Images'
 import { convertirFecha } from '../../../shared/functions/QuitarAcerntos'
-import { type arrayContacto, type arrayAsignacion } from '../../../shared/schemas/Interfaces'
+import {
+  type arrayContacto,
+  type arrayAsignacion
+} from '../../../shared/schemas/Interfaces'
 import { ListaColaboradoresView } from './ListaColaboradoresView'
 type ValuePiece = Date | null
 type Value = ValuePiece | [ValuePiece, ValuePiece]
@@ -41,8 +46,7 @@ export const ViewVenta = (): JSX.Element => {
     setUsuarios(request.data)
   }
 
-  const savePreventa = async (): Promise<void> => {
-  }
+  const savePreventa = async (): Promise<void> => {}
 
   const {
     handleSubmit,
@@ -64,6 +68,7 @@ export const ViewVenta = (): JSX.Element => {
       apellidos: '',
       codigo: '',
       observaciones: '',
+      observaciones2: '',
       comentarios: '',
       uso: 0
     },
@@ -92,24 +97,26 @@ export const ViewVenta = (): JSX.Element => {
       )
     }
 
+    console.log(request.data[0])
+
     setValues({
       ...values,
       id_contrato: request.data[0].id_contrato,
       nombres: request.data[0].nombres,
       medio_ingreso: request.data[0].medio_ingreso,
       nombre_empresa:
-      personacontacto &&
-        request.data[0].empresa_cliente
-        ? request.data[0].empresa_cliente
-        : personacontacto
+        personacontacto && request.data[0].empresa_cliente
+          ? request.data[0].empresa_cliente
+          : personacontacto
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          ? `${request.data[0].nombres} ${request.data[0].apellidos}`
-          : request.data[0].nombre_empresa,
+            ? `${request.data[0].nombres} ${request.data[0].apellidos}`
+            : request.data[0].nombre_empresa,
       nombre_marca: request.data[0].nombre_marca,
       apellidos: request.data[0].apellidos,
       dni_ruc: request.data[0].dni_ruc,
       codigo: request.data[0].codigo,
-      observaciones: request.data[0].observaciones,
+      observaciones: request.data[0].contrato?.adicionales ?? '',
+      observaciones2: request.data[0].observaciones ?? '',
       comentarios: request.data[0].comentarios,
       uso: request.data[0].uso
     })
@@ -151,9 +158,9 @@ export const ViewVenta = (): JSX.Element => {
   return (
     <>
       <div className="">
-        {loading
-          ? <Loading />
-          : (
+        {loading ? (
+          <Loading />
+        ) : (
           <div className="card">
             <form
               className="flex flex-col bg-white rounded-md mt-4 p-4 md:p-10 relative"
@@ -227,7 +234,7 @@ export const ViewVenta = (): JSX.Element => {
                         />
                       </div>
                     </div>
-                    <div className="w-full flex flex-col gap-3 md:flex-row">
+                    <div className="w-full flex flex-col gap-3 md:flex-row mt-2 md:mt-0">
                       <div className="w-full md:w-1/3 lg:relative">
                         <TitleBriefs titulo="Nombre/Empresa" />
                         <InputsBriefs
@@ -299,74 +306,92 @@ export const ViewVenta = (): JSX.Element => {
                       </div>
                     </div>
                     {datosContacto && (
-                        <>
+                      <>
                         <h2 className="px-3 pt-4 text-gray-700 font-bold w-full text-left">
-                            PERSONA A CARGO DEL PROYECTO
+                          PERSONA A CARGO DEL PROYECTO
                         </h2>
                         <div className="mb-3 md:mb-0 w-full bg-form rounded-md rounded-tl-none md:p-3 text-black flex flex-col items-end gap-2 lg:gap-5">
-                            <div className="w-full flex flex-col gap-3 md:flex-row">
-                                <div className="w-full md:w-1/4 lg:relative">
-                                <TitleBriefs titulo="Nombres" />
-                                <input
-                                    className="border placeholder-gray-400 focus:outline-none
+                          <div className="w-full flex flex-col gap-3 md:flex-row">
+                            <div className="w-full md:w-1/4 lg:relative">
+                              <TitleBriefs titulo="Nombres" />
+                              <input
+                                className="border placeholder-gray-400 focus:outline-none
                                                                                     focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
                                                                                     border-gray-300 rounded-md transition-all text-black"
-                                    type='text'
-                                    disabled
-                                    value={datosContacto.nombres}
-                                />
-                                </div>
-                                <div className="w-full md:w-1/4 lg:relative">
-                                    <TitleBriefs titulo="Correo" />
-                                    <input
-                                        className="border placeholder-gray-400 focus:outline-none
+                                type="text"
+                                disabled
+                                value={datosContacto.nombres}
+                              />
+                            </div>
+                            <div className="w-full md:w-1/4 lg:relative">
+                              <TitleBriefs titulo="Correo" />
+                              <input
+                                className="border placeholder-gray-400 focus:outline-none
                                                                                         focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
                                                                                         border-gray-300 rounded-md transition-all text-black"
-                                        type='text'
-                                        disabled
-                                        value={datosContacto.correo}
-                                    />
-                                </div>
-                                <div className="w-full md:w-1/4 lg:relative">
-                                <TitleBriefs titulo="Celular" />
-                                <input
-                                    className="border placeholder-gray-400 focus:outline-none
-                                                                                    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
-                                                                                    border-gray-300 rounded-md transition-all text-black"
-                                    type='text'
-                                    disabled
-                                    value={datosContacto.celular}
-                                />
-                                </div>
-                                <div className="w-full md:w-1/4 lg:relative">
-                                <TitleBriefs titulo="Marca" />
-                                <input
-                                    className="border placeholder-gray-400 focus:outline-none
-                                                                                    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
-                                                                                    border-gray-300 rounded-md transition-all text-black"
-                                    type='text'
-                                    disabled
-                                    value={datosContacto.marca}
-                                />
-                                </div>
+                                type="text"
+                                disabled
+                                value={datosContacto.correo}
+                              />
                             </div>
+                            <div className="w-full md:w-1/4 lg:relative">
+                              <TitleBriefs titulo="Celular" />
+                              <input
+                                className="border placeholder-gray-400 focus:outline-none
+                                                                                    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                                                    border-gray-300 rounded-md transition-all text-black"
+                                type="text"
+                                disabled
+                                value={datosContacto.celular}
+                              />
+                            </div>
+                            <div className="w-full md:w-1/4 lg:relative">
+                              <TitleBriefs titulo="Marca" />
+                              <input
+                                className="border placeholder-gray-400 focus:outline-none
+                                                                                    focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                                                    border-gray-300 rounded-md transition-all text-black"
+                                type="text"
+                                disabled
+                                value={datosContacto.marca}
+                              />
+                            </div>
+                          </div>
                         </div>
-                        </>
+                      </>
                     )}
                     <div className="w-full">
-                      <div className="w-full relative">
+                      <div className="w-full relative mt-3 md:mt-0">
                         <TitleBriefs titulo="Observaciones" />
-                        <textarea
+                        <div
+                          className="text-black border placeholder-gray-400 focus:outline-none
+                        focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                        border-gray-300 rounded-md resize-none min-h-[80px]"
+                        >
+                          {values.observaciones && JSON.parse(values.observaciones).length > 0 ? (
+                            <ul>
+                              {JSON.parse(values.observaciones).map(
+                                (item: any, index: any) => (
+                                  <li
+                                    key={index}
+                                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                                  >{ `• ${item.cantidad} ${item.elemento}`}</li>
+                                )
+                              )}
+                            </ul>
+                          ) : values.observaciones2}
+                        </div>
+                        {/* <textarea
                           className="border placeholder-gray-400 focus:outline-none
                                             focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
                                             border-gray-300 rounded-md resize-none text-black"
                           name="observaciones"
                           rows={5}
                           value={values.observaciones}
-                        />
+                        /> */}
                       </div>
                     </div>
-                    <div className="w-full">
+                    <div className="w-full mt-3 md:mt-0">
                       <div className="w-full relative">
                         <TitleBriefs titulo="Comentarios generales" />
                         <textarea
@@ -383,14 +408,15 @@ export const ViewVenta = (): JSX.Element => {
                 </div>
               </div>
 
-              <div className="w-full flex gap-5 px-3 justify-center mb-10 mt-3">
+              <div className="w-full flex gap-5 px-0 lg:px-3 justify-center mb-4 lg:mb-10 mt-3">
                 <div className="w-full contenido_calendario relative">
                   <TitleBriefs titulo="Fecha del Alta" />
                   <input
                     type="date"
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error
-                    value={fechaAlta ? fechaAlta.toISOString().substr(0, 10) : ''}
+                    value={
+                        // @ts-expect-error
+                      fechaAlta ? fechaAlta.toISOString().substr(0, 10) : ''
+                    }
                     className="border placeholder-gray-400 focus:outline-none
                     focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
                     border-gray-300 rounded-md transition-all text-black text-center cursor-pointer"
@@ -398,7 +424,7 @@ export const ViewVenta = (): JSX.Element => {
                 </div>
               </div>
 
-              <div className="w-full flex gap-5 px-3 mt-0">
+              <div className="w-full gap-5 px-0 lg:px-3 mt-0 flex flex-col md:flex-row">
                 <div className="w-full contenido_calendario relative">
                   <TitleBriefs titulo="Fecha de inicio" />
                   <input
@@ -428,7 +454,7 @@ export const ViewVenta = (): JSX.Element => {
                   />
                 </div>
               </div>
-              <section className="w-full px-4 mt-6">
+              <section className="w-full md:px-0 lg:px-4 mt-6">
                 <ListaColaboradoresView
                   arrayPesos={arrayPesos}
                   usuarios={usuarios}
@@ -445,7 +471,7 @@ export const ViewVenta = (): JSX.Element => {
               </div>
             </form>
           </div>
-            )}
+        )}
       </div>
     </>
   )

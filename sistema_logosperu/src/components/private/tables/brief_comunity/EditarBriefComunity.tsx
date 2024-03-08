@@ -94,6 +94,8 @@ export const EditarBriefComunity = (): JSX.Element => {
         ' ' +
         String(request.data[0].apellidos),
       id_venta: request.data[0].id_venta,
+      id_contrato: request.data[0].id_contrato,
+      id_cliente: request.data[0].id_cliente,
       nombre_comercial: request.data[0].nombre_comercial,
       historia_empresa: request.data[0].historia_empresa,
       competidores: request.data[0].competidores,
@@ -141,14 +143,16 @@ export const EditarBriefComunity = (): JSX.Element => {
       directrises_marca: '',
       elementos_visuales: '',
       restricciones_legales: '',
-      factores_consideracion: ''
+      factores_consideracion: '',
+      id_contrato: '',
+      id_cliente: ''
     },
     validationSchema: SchemaBriefComunity,
     onSubmit: saveBrief
   })
 
   useEffect(() => {
-    setTitle('EDITAR BRIEF DE FLYER')
+    setTitle('EDITAR BRIEF DE COMMUNITY')
     getFlyer()
   }, [])
 

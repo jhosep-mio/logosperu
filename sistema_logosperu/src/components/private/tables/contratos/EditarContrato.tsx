@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
 import { toast } from 'sonner'
@@ -11,6 +12,10 @@ import { Loading } from '../../../shared/Loading'
 import { convertirNumeroALetras } from '../../../shared/functions/GenerarTextoEnLetras'
 import { Errors2 } from '../../../shared/Errors2'
 import EditorContexto from '../servicios/EditorContexto'
+import { type arrayAdicionales } from '../../../shared/schemas/Interfaces'
+import { IoCloseCircleOutline } from 'react-icons/io5'
+import { v4 as uuidv4 } from 'uuid'
+import { Chip } from '@mui/material'
 
 export const EditarContrato = (): JSX.Element => {
   const { id } = useParams()
@@ -21,10 +26,44 @@ export const EditarContrato = (): JSX.Element => {
   const [loadingValidacion, seLoadingValidation] = useState(false)
   const [loading, setLoading] = useState(true)
   const [pdfUrl, setPdfUrl] = useState('')
+  const [openAdicional, setOpenAdicional] = useState(false)
+  const [arrayAdicionales, setArrayAdicionales] = useState<
+  arrayAdicionales[] | null
+  >(null)
 
   const formatearContrato = (cadena: string): string => {
     const partes = cadena.split('_')
     return partes[0]
+  }
+
+  const agregarArrayPesos = (elemento: string): void => {
+    let encontrado = false
+    // Generar un nuevo identificador único usando uuid
+    const id = uuidv4()
+    // Inicializar arrayAdicionales como un array vacío si es undefined
+    const nuevosAdicionales = arrayAdicionales ? [...arrayAdicionales] : []
+    // Iterar sobre nuevosAdicionales para buscar el elemento
+    nuevosAdicionales.forEach((item: any) => {
+      if (item.elemento === elemento) {
+        encontrado = true
+        // Si el elemento ya existe, incrementar su contador
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+        item.cantidad += 1
+      }
+    })
+    // Si el elemento no fue encontrado, agregarlo con contador 1
+    if (!encontrado) {
+      nuevosAdicionales.push({ id, elemento, cantidad: 1 })
+    }
+    setArrayAdicionales(nuevosAdicionales)
+  }
+
+  const eliminarArray = (id: number | null): void => {
+    const usuarioEliminado = arrayAdicionales?.find((peso) => peso.id === id)
+    if (!usuarioEliminado) return // Salir si no se encuentra el usuario
+    const nuevoArrayPesos = arrayAdicionales?.filter((peso) => peso.id !== id)
+    // @ts-expect-error
+    setArrayAdicionales(nuevoArrayPesos)
   }
 
   const formatearContrato2 = (cadena: string): string => {
@@ -88,6 +127,9 @@ export const EditarContrato = (): JSX.Element => {
       if (request.data.contenido) {
         setContenido(request.data.contenido)
       }
+      if (request.data.adicionales) {
+        setArrayAdicionales(JSON.parse(request.data.adicionales))
+      }
       if (request.data.pdf) {
         setPdfUrl(request.data.pdf)
       }
@@ -105,6 +147,7 @@ export const EditarContrato = (): JSX.Element => {
       data.append('correlativo', values?.correlativo)
       data.append('medio_ingreso', values?.medio_ingreso)
       data.append('nombres_cliente', values?.nombre_cliente)
+      data.append('adicionales', JSON.stringify(arrayAdicionales ?? ''))
       data.append('titulo_contrato', values.titulo_contrato)
       data.append('id_contrato', values?.correlativo)
       data.append('tipo_documento', values.tipo_documento)
@@ -155,7 +198,6 @@ export const EditarContrato = (): JSX.Element => {
             }
           }
         )
-        console.log(response)
         if (response.data.status == 'success') {
           toast.success('Contrato generado correctamente')
         } else {
@@ -406,8 +448,9 @@ export const EditarContrato = (): JSX.Element => {
             </div>
           </div>
           <div className="w-full  relative formas_pago">
+          <div className="w-full  relative formas_pago">
               <label
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-black"
+                className="text-sm font-medium text-black leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 htmlFor="email"
               >
                 Formas de pago
@@ -415,14 +458,240 @@ export const EditarContrato = (): JSX.Element => {
               <div className="mt-3 w-full">
                 <EditorContexto content={formaPago} setContent={setFormaPago} />
               </div>
+            </div>
           </div>
+            {openAdicional &&
+                <div className="w-[50%] bg-white p-2 text-black fixed right-0 top-0 bottom-0 shadow-md border rounded-md border-gray-300 z-10">
+                <IoCloseCircleOutline className="absolute top-2 right-2 text-2xl cursor-pointer" onClick={() => { setOpenAdicional(false) }}/>
+                <h2 className="text-center w-full uppercase font-bold">
+                    Adicionales
+                </h2>
+                <div className="flex flex-col gap-1 mt-3">
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Firma(s) de correo(s)')
+                    }}
+                    >
+                    Firma de correo
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Portada(s)')
+                    }}
+                    >
+                    Portada
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Perfil(es)')
+                    }}
+                    >
+                    Perfil
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Tarjeta(s) de presentación')
+                    }}
+                    >
+                    Tarjeta de presentación
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Hoja(s) membretada(s)')
+                    }}
+                    >
+                    Hoja membretada
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Flyer(s)')
+                    }}
+                    >
+                    Flyer
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Brochure 04 caras')
+                    }}
+                    >
+                    Brochure 04 caras
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Brochure 06 caras')
+                    }}
+                    >
+                    Brochure 06 caras
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Brochure 08 caras')
+                    }}
+                    >
+                    Brochure 08 caras
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Fotosheck(s) o uniforme(s)')
+                    }}
+                    >
+                    Fotosheck o uniforme
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Etiqueta(s)')
+                    }}
+                    >
+                    Etiqueta
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Montaje(s)')
+                    }}
+                    >
+                    Montaje
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Reel(s)')
+                    }}
+                    >
+                    Reel
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Animación de Logo(s)')
+                    }}
+                    >
+                    Animación de Logo
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Animación de Personaje(s)')
+                    }}
+                    >
+                    Animación de Personaje
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Manual de marca(s)')
+                    }}
+                    >
+                    Manual de marca
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Vectorización de logo(s)')
+                    }}
+                    >
+                    Vectorización de logo
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de Letrero(s)')
+                    }}
+                    >
+                    Diseño de Letrero
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Banner(s)')
+                    }}
+                    >
+                    Banner
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Volante(s)')
+                    }}
+                    >
+                    Volante
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Sobre(s)')
+                    }}
+                    >
+                    Sobre
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Folder(s)')
+                    }}
+                    >
+                    Folder
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Bolsa(s)')
+                    }}
+                    >
+                    Bolsa
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Calendario(s)')
+                    }}
+                    >
+                    Calendario
+                    </p>
+                </div>
+                </div>
+            }
           <div className="w-full relative">
-              <label
-                className="text-sm font-medium leading-none text-black peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                htmlFor="email"
-              >
-                Detalle del servicio
-              </label>
+          <div className="flex justify-between items-center mt-4">
+                <label
+                  className="text-sm text-black font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  htmlFor="email"
+                >
+                  Detalle del servicio
+                </label>
+                <button
+                  type="button"
+                  onClick={() => { setOpenAdicional(true) }}
+                  className="bg-red-600 px-2 py-1 rounded-md text-white hover:bg-red-700 transition-colors text-sm"
+                >
+                  Adicionales
+                </button>
+              </div>
+              {// @ts-expect-error
+              arrayAdicionales?.length > 0 &&
+                <div className='flex flex-row flex-wrap gap-3 justify-center mt-2'>
+                  {arrayAdicionales?.map((elemento) => (
+                      <Chip
+                        key={elemento.id}
+                        label={`${elemento.cantidad} ${elemento.elemento}`}
+                        variant="outlined"
+                        // onClick={handleClick}
+                        onDelete={() => { eliminarArray(elemento.id) }}
+                      />
+                  ))}
+                </div>
+              }
               <div className="mt-3">
                 <EditorContexto content={contenido} setContent={setContenido} />
               </div>

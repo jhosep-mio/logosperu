@@ -26,6 +26,7 @@ import {
 import { BsPersonVcardFill } from 'react-icons/bs'
 import { HiRectangleGroup } from 'react-icons/hi2'
 import { FaTasks } from 'react-icons/fa'
+import { ModalRegistroLaboral } from '../tables/asistencia_laboral/ModalRegistroLaboral'
 
 const SideBar = (): JSX.Element => {
   const {
@@ -40,6 +41,8 @@ const SideBar = (): JSX.Element => {
   } = useAuth()
   const token = localStorage.getItem('token')
   const [showMenu, setShowMenu] = useState(false)
+  const [openRegistro, setopenRegistro] = useState(false)
+
   const [showSubmenu, setShowSubmenu] = useState(false)
   //   const [showSubmenu2, setShowSubmenu2] = useState(false)
   const [showSubmenu3, setShowSubmenu3] = useState(false)
@@ -50,10 +53,13 @@ const SideBar = (): JSX.Element => {
   const [showSubmenu9, setShowSubmenu9] = useState(false)
   const [showSubmenu10, setShowSubmenu10] = useState(false)
   const [showSubmenu11, setShowSubmenu11] = useState(false)
+  const [showSubmenu12, setShowSubmenu12] = useState(false)
   const navigate = useNavigate()
   const [activeItem, setActiveItem] = useState(0)
   const [activeItem2, setActiveItem2] = useState(0)
   const [colaboradores, setColaboradores] = useState([])
+  const [events, setEvents] = useState<Event[]>([])
+  const [Event, setEvent] = useState<any | undefined>(undefined)
 
   const cerrarSession = async (): Promise<void> => {
     const data = new FormData()
@@ -104,12 +110,27 @@ const SideBar = (): JSX.Element => {
           showMenu ? 'left-0' : 'left-full'
         } transition-all`}
       >
+        {/* asistencia laboral */}
+        <ModalRegistroLaboral Event={Event} setEvent={setEvent} open={openRegistro} setOpen={setopenRegistro} setEvents={setEvents} events={events}/>
+
         <div>
           <h1 className="text-center text-2xl font-bold text-black mb-5">
             <img src={logo} alt="" className="m-auto w-[5.4rem]" />
           </h1>
           <hr className="mb-5" />
           <ul className="ml-0 p-0">
+            <li className="">
+              <button
+                className={
+                  'flex items-center gap-3 py-2 animate-pulse rounded-lg text-white justify-center text-center bg-main mb-4 transition-colors w-full relative'
+                }
+                onClick={() => {
+                  setopenRegistro(!openRegistro)
+                }}
+              >
+                {!Event ? 'Registrar asistencia' : 'Registrar actividades'}
+              </button>
+            </li>
             <li className="">
               <button
                 className={
@@ -382,23 +403,138 @@ const SideBar = (): JSX.Element => {
                               showSubmenu6 ? '' : 'h-0'
                             } overflow-hidden transition-all`}
                           >
-                            <li>
-                              <Link
-                                to="lista-ventas"
-                                className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                            <ul
+                              className={` ${
+                                showSubmenu6 ? '' : 'h-0'
+                              } overflow-hidden transition-all`}
+                            >
+                              <button
+                                onClick={() => {
+                                  setShowSubmenu12(!showSubmenu12)
+                                  handleItemClick(299)
+                                }}
+                                className={`bg-transparent ${
+                                  showSubmenu12
+                                    ? 'after:absolute after:w-4 after:bg-gray-500 after:h-[1px] after:bottom-0 after:left-0'
+                                    : ''
+                                }  py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
                                   activeItem == 299
                                     ? 'before:bg-main'
                                     : 'before:bg-gray-500'
                                 } hover:text-main transition-colors`}
-                                onClick={() => {
-                                  handleItemClick(299)
-                                  setShowMenu(false)
-                                  setLoadingComponents(false)
-                                }}
                               >
-                                Proyectos de clientes
-                              </Link>
-                            </li>
+                                <span className="flex items-center gap-4 w-full ">
+                                    Proyectos de clientes
+                                </span>
+                                <RiArrowRightSLine
+                                  className={`mt-1  ${
+                                    showSubmenu12 ? 'rotate-90' : ''
+                                  } transition-all`}
+                                />
+                              </button>
+                              <ul
+                                className={` ml-4 ${
+                                    showSubmenu12 ? '' : 'h-0'
+                                } overflow-y-hidden transition-all`}
+                              >
+                                <li>
+
+                                    <ul
+                                        className={` ${
+                                        showSubmenu12 ? 'h-[160px]' : 'h-0'
+                                        } overflow-y-hidden transition-all`}
+                                    >
+                                        {roles.map(
+                                          (role: RolsValues): React.ReactNode =>
+                                            auth.id_rol == role.id &&
+                                            JSON.parse(role.accesos).map(
+                                              (route: { peso: string }, index: number) => (
+                                                <>
+                                                {route.peso == 'superusuario' ||
+                                                route.peso == 'diseño'
+                                                  ? (
+                                                    <Fragment key={index}>
+                                                    <li>
+                                                        <Link
+                                                        to="/admin/lista-ventas"
+                                                        className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                                            activeItem2 == 1
+                                                            ? 'before:bg-main'
+                                                            : 'before:bg-gray-500'
+                                                        } hover:text-main transition-colors`}
+                                                        onClick={() => {
+                                                          handleItemClick2(1)
+                                                          setShowMenu(false)
+                                                          setLoadingComponents(false)
+                                                        }}
+                                                        >
+                                                         Todos
+                                                        </Link>
+                                                    </li>
+                                                    <li>
+                                                        <Link
+                                                        to="/admin/lista-ventas/categoria/dgrafico"
+                                                        className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                                            activeItem2 == 999
+                                                            ? 'before:bg-main'
+                                                            : 'before:bg-gray-500'
+                                                        } hover:text-main transition-colors`}
+                                                        onClick={() => {
+                                                          handleItemClick2(999)
+                                                          setShowMenu(false)
+                                                          setLoadingComponents(false)
+                                                        }}
+                                                        >
+                                                         Diseño grafico
+                                                        </Link>
+                                                    </li>
+                                                    <li>
+                                                        <Link
+                                                        to="/admin/lista-ventas/categoria/desarrollo"
+                                                        className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                                            activeItem2 == 998
+                                                            ? 'before:bg-main'
+                                                            : 'before:bg-gray-500'
+                                                        } hover:text-main transition-colors`}
+                                                        onClick={() => {
+                                                          handleItemClick2(998)
+                                                          setShowMenu(false)
+                                                          setLoadingComponents(false)
+                                                        }}
+                                                        >
+                                                         Desarrollo web
+                                                        </Link>
+                                                    </li>
+                                                    <li>
+                                                        <Link
+                                                        to="/admin/lista-ventas/categoria/community"
+                                                        className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                                            activeItem2 == 997
+                                                            ? 'before:bg-main'
+                                                            : 'before:bg-gray-500'
+                                                        } hover:text-main transition-colors`}
+                                                        onClick={() => {
+                                                          handleItemClick2(997)
+                                                          setShowMenu(false)
+                                                          setLoadingComponents(false)
+                                                        }}
+                                                        >
+                                                         Comunity M.
+                                                        </Link>
+                                                    </li>
+                                                    </Fragment>
+                                                    )
+                                                  : (
+                                                      ''
+                                                    )}
+                                                </>
+                                              )
+                                            )
+                                        )}
+                                    </ul>
+                                </li>
+                              </ul>
+                            </ul>
                             <li>
                               <Link
                                 to="lista-ventas-agencia"
@@ -894,7 +1030,6 @@ const SideBar = (): JSX.Element => {
               <FaTasks className="text-main/80 text-xl" />{' '} Gestor de tareas
               </Link>
             </li>
-
             <li >
               <Link
                 to="documentos"

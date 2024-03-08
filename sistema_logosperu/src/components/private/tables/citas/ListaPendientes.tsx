@@ -39,7 +39,7 @@ export const ListaPendientes = (): JSX.Element => {
   const [productos, setProductos] = useState<pendientesValues[]>([])
   const [loading, setLoading] = useState(true)
   const [planes, setplanes] = useState<ValuesPlanes[]>([])
-  const [totalRegistros, setTotalRegistros] = useState(0)
+  const [, setTotalRegistros] = useState(0)
   const [, setTotalRegistros2] = useState(0)
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
@@ -111,10 +111,6 @@ export const ListaPendientes = (): JSX.Element => {
     }
     return filteredItems.reverse()
   }
-
-  useEffect(() => {
-    setTotalRegistros(totalPosts)
-  }, [search])
 
   const onSeachChange = ({
     target
@@ -225,7 +221,7 @@ export const ListaPendientes = (): JSX.Element => {
                   {/* PC */}
                   <div className="hidden md:block md:text-center">
                     <span className="text-left block text-black w-full line-clamp-1">
-                      #{totalRegistros - index }
+                      #{totalPosts - index }
                     </span>
                   </div>
                   <div className="hidden md:block md:text-center col-span-2">
@@ -286,7 +282,7 @@ export const ListaPendientes = (): JSX.Element => {
               ))}
               <div className="flex flex-col md:flex-row gap-5 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">
                 <p className="text-md ml-1 text-black">
-                  {totalRegistros} Registros
+                  {totalPosts} Registros
                 </p>
                 <Paginacion
                   totalPosts={totalPosts}

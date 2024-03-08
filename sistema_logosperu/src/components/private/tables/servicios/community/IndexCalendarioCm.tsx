@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
@@ -11,6 +12,7 @@ import { ModalDescripcion } from './ModalDescripcion'
 import { toast } from 'sonner'
 import { useParams } from 'react-router-dom'
 import useAuth from '../../../../../hooks/useAuth'
+import { ModalInformacion } from './modals/ModalInformacion'
 
 moment.locale('es')
 const localizer = momentLocalizer(moment) // Importa el locale español
@@ -64,6 +66,7 @@ export const IndexCalendarioCm = ({
   const [loadingUpdate, setLoadingUpdate] = useState(false)
   const [disabledDates] = useState([datos?.fecha_inicio]) // Lista de fechas deshabilitadas
   const [open, setOpen] = useState(false)
+  const [openInformacion, setOpenInformacion] = useState(false)
   const [eventSelected, setEventSelected] = useState<any | null>(null)
   const messages = {
     allDay: 'Todo el día',
@@ -81,7 +84,8 @@ export const IndexCalendarioCm = ({
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     showMore: (total: any) => `+ Ver más (${total})`
   }
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  // @ts-expect-error
+  const [selectedDate, setSelectedDate] = useState<Date | null>(Date.now())
   const workDayStart = new Date() // Fecha de inicio para el día de trabajo
   workDayStart.setHours(9, 0, 0, 0)
   const workDayEnd = new Date() // Fecha de fin para el día de trabajo
@@ -114,6 +118,10 @@ export const IndexCalendarioCm = ({
             <div
               className="cursor-pointer h-full hover:text-black/40 w-full transition-colors outline-none duration-300 break-words flex "
               rel="noreferrer"
+              onClick={() => {
+                setOpenInformacion(true)
+                setEventSelected(props)
+              }}
             >
               <div
                 className={
@@ -203,11 +211,14 @@ export const IndexCalendarioCm = ({
         const newEvent = {
           id: uuidv4(),
           title: result.value,
-          publicado: false,
+          publicado: true,
           start,
           end: start,
           descripcion: null,
-          user: auth,
+          user: {
+            name: auth.name,
+            id: auth.id
+          },
           comentarios: null
         }
         // Agregar el nuevo evento al array de eventos
@@ -256,9 +267,9 @@ export const IndexCalendarioCm = ({
           max="2030-12"
         />
       </section>
-      <section className="w-full h-[90%] px-6 pb-4 relative">
+      <section className="w-full h-[90%] px-0 lg:px-6 pb-4 relative content_modal">
         <>
-          <div className="w-full h-full px-4">
+          <div className="w-full h-full px-2 lg:px-4">
             <Calendar
               className="calendario_cm text-black"
               localizer={localizer}
@@ -284,6 +295,16 @@ export const IndexCalendarioCm = ({
           events={events}
           open={open}
           setOpen={setOpen}
+          eventSelected={eventSelected}
+          setLoadingUpdate={setLoadingUpdate}
+        />
+        <ModalInformacion
+          loadingUpdate={loadingUpdate}
+          getOneBrief={getOneBrief}
+          setEvents={setEvents}
+          events={events}
+          open={openInformacion}
+          setOpen={setOpenInformacion}
           eventSelected={eventSelected}
           setLoadingUpdate={setLoadingUpdate}
         />

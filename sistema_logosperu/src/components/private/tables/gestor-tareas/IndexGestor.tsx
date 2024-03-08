@@ -211,7 +211,6 @@ export const IndexGestor = (): JSX.Element => {
 
           {loading
             ? <Loading />
-
             : (
             <section className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5 2xl:grid-cols-6 relative">
               <div

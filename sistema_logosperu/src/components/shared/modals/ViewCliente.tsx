@@ -13,7 +13,9 @@ import { TitleBriefs } from '../TitleBriefs'
 export const ViewCliente = ({
   handleClose,
   open,
-  id
+  id,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  id_contrato
 }: any): JSX.Element => {
   const [loading, setLoading] = useState(true)
   const [productos, setProductos] = useState({ id_contrato: '', nombres: '', apellidos: '', celular: '', email: '', edad: '', sexo: '' })
@@ -27,14 +29,14 @@ export const ViewCliente = ({
 
   const getOneBrief = async (): Promise<void> => {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    const request = await axios.get(`${Global.url}/getClientesDate/${id}`, {
+    const request = await axios.get(`${Global.url}/getOnePreventa/${id}`, {
       headers: {
         Authorization: `Bearer ${
             token !== null && token !== '' ? `Bearer ${token}` : ''
           }`
       }
     })
-    setProductos(request.data[0])
+    setProductos(request.data)
   }
 
   return (
@@ -71,7 +73,7 @@ export const ViewCliente = ({
                                                       border-gray-300 rounded-md transition-all text-center"
                             type="text"
                             disabled
-                            value={productos.id_contrato}
+                            value={id_contrato}
                           />
                         </div>
                       </div>

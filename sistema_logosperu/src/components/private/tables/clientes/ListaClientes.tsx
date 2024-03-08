@@ -38,9 +38,9 @@ export const ListaClientes = (): JSX.Element => {
   const [openCotizacion, setOpenCotizacion] = useState(false)
   const [openContrato, setOpenContrato] = useState(false)
   const token = localStorage.getItem('token')
-  const handleClickOpen = (): void => {
-    setOpen(true)
-  }
+  //   const handleClickOpen = (): void => {
+  //     setOpen(true)
+  //   }
   const [open, setOpen] = useState(false)
 
   const getClientes = async (): Promise<void> => {
@@ -57,7 +57,7 @@ export const ListaClientes = (): JSX.Element => {
     setTitle('Listado de clientes')
     Promise.all([
       getClientes(),
-      getDataToPlanes('getPlanes', setplanes, setTotalRegistros2)
+      getDataToPlanes('getPlanes2', setplanes, setTotalRegistros2)
     ]).then(() => {
       setLoading(false)
     })
@@ -440,7 +440,7 @@ export const ListaClientes = (): JSX.Element => {
                           Reporte
                         </Link>
                       </MenuItem>
-                      <MenuItem className="p-0 hover:bg-transparent">
+                      {/* <MenuItem className="p-0 hover:bg-transparent">
                         <Link
                           to=""
                           onClick={() => {
@@ -463,7 +463,7 @@ export const ListaClientes = (): JSX.Element => {
                         >
                           Generar venta
                         </Link>
-                      </MenuItem>
+                      </MenuItem> */}
                       <MenuItem className="p-0 hover:bg-transparent">
                         <Link
                           to=""

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, {
   type Dispatch,
@@ -160,8 +161,6 @@ export const GenerarAlta = ({
           }
           enviarNotificacion()
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          Swal.fire(`${request.data.codigo}`, '', 'success')
-
           navigate('/admin/lista-ventas')
         } else if (request.data.message.includes('codigo invalido')) {
           toast.warning('YA EXISTE UN ALTA Y PROYECTO PARA ESTE CONTRATO')
@@ -239,7 +238,6 @@ export const GenerarAlta = ({
   })
 
   useEffect(() => {
-    console.log(datos)
     if (open) {
       setValues({
         ...values,
@@ -250,12 +248,12 @@ export const GenerarAlta = ({
       })
       const nombresColaboradores = arrayPesos
         .filter((item: any) => item.nombre) // Filtrar los elementos que tienen un nombre definido
-        .map((item: any) => item.nombre) // Mapear los elementos para obtener solo los nombres
+        .map((item: any) => `${item.genero === 'mujer' ? 'Srta.' : ''} ${item.nombre}`)
         .join(' – ')
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands, @typescript-eslint/restrict-template-expressions
-      const textoadcional = `<p>Estimados Colaboradores </p><p>&nbsp;</p><p>Le damos la Bienvenida al cliente :&nbsp;<span style="background-color: rgb(249, 250, 251);"> ${datos?.empresa}</span></p><p>&nbsp;</p><ul><li>Persona de contacto : Sr. ${datos?.nombres} ${datos?.apellidos} </li><li>Mail&nbsp;: ${datos?.email} </li><li>Móvil&nbsp;: ${datos?.celular} </li></ul></p><p>&nbsp;</p>`
+      const textoadcional = `<p>Estimados Colaboradores </p><p>&nbsp;</p><p>Le damos la Bienvenida al cliente :&nbsp;<span style="background-color: rgb(249, 250, 251);"> ${datos?.empresa ?? ''}</span></p><p>&nbsp;</p><ul><li>Persona de contacto : Sr. ${datos?.nombres} ${datos?.apellidos} </li><li>Mail&nbsp;: ${datos?.email ?? ''} </li><li>Móvil&nbsp;: ${datos?.celular ?? ''} </li></ul></p><p>&nbsp;</p>`
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const textofinal = `<p>&nbsp;</p><p>${datos?.correlativo ?? ''}/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M1 – ${returnIngreso(datos?.medio_ingreso ?? '')} </p><p>&nbsp;</p><p>COLABORADORES A CARGO: ${nombresColaboradores}</p><p>&nbsp;</p><p>FECHA DE INICIO DEL SERVICIO:&nbsp;${values.fecha_inicio}</p><p>&nbsp;</p><p>&nbsp;</p><p>SALUDOS&nbsp;</p>`
+      const textofinal = `<p>&nbsp;</p><p>${datos?.correlativo ?? ''}/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M1 – ${returnIngreso(datos?.medio_ingreso ?? '')} </p><p>&nbsp;</p><p>COLABORADORES A CARGO: ${nombresColaboradores}</p><p>&nbsp;</p><p>FECHA DE INICIO DEL SERVICIO:&nbsp;${values.fecha_inicio ?? ''}</p><p>&nbsp;</p><p>&nbsp;</p><p>SALUDOS&nbsp;</p>`
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       const contenidoConTextoAdicional = textoadcional + (datos?.contenido ?? '') + textofinal
       setContenido(contenidoConTextoAdicional)
@@ -265,18 +263,18 @@ export const GenerarAlta = ({
         setCorreos([...correos, { id: uuidv4(), correo: correoPredeterminado }])
       }
     }
-  }, [open])
+  }, [datos, open])
 
   useEffect(() => {
     if (open) {
       const nombresColaboradores = arrayPesos
         .filter((item: any) => item.nombre) // Filtrar los elementos que tienen un nombre definido
-        .map((item: any) => item.nombre) // Mapear los elementos para obtener solo los nombres
+        .map((item: any) => `${item.genero === 'mujer' ? 'Srta.' : ''} ${item.nombre}`)
         .join(' – ')
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands, @typescript-eslint/restrict-template-expressions
-      const textoadcional = `<p>Estimados Colaboradores </p><p>&nbsp;</p><p>Le damos la Bienvenida al cliente :&nbsp;<span style="background-color: rgb(249, 250, 251);"> ${datos?.empresa}</span></p><p>&nbsp;</p><ul><li>Persona de contacto : Sr. ${datos?.nombres} ${datos?.apellidos} </li><li>Mail&nbsp;: ${datos?.email} </li><li>Móvil&nbsp;: ${datos?.celular} </li></ul></p><p>&nbsp;</p>`
+      const textoadcional = `<p>Estimados Colaboradores </p><p>&nbsp;</p><p>Le damos la Bienvenida al cliente :&nbsp;<span style="background-color: rgb(249, 250, 251);"> ${datos?.empresa}</span></p><p>&nbsp;</p><ul><li>Persona de contacto : Sr. ${datos?.nombres} ${datos?.apellidos} </li><li>Mail&nbsp;: ${datos?.email ?? ''} </li><li>Móvil&nbsp;: ${datos?.celular ?? ''} </li></ul></p><p>&nbsp;</p>`
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const textofinal = `<p>&nbsp;</p><p>${datos?.correlativo ?? ''}/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M1 – ${returnIngreso(datos?.medio_ingreso ?? '')} </p><p>&nbsp;</p><p>COLABORADORES A CARGO: ${nombresColaboradores}</p><p>&nbsp;</p><p>FECHA DE INICIO DEL SERVICIO:&nbsp;${values.fecha_inicio}</p><p>&nbsp;</p><p>&nbsp;</p><p>SALUDOS.&nbsp;</p>`
+      const textofinal = `<p>&nbsp;</p><p>${datos?.correlativo ?? ''}/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M1 – ${returnIngreso(datos?.medio_ingreso ?? '')} </p><p>&nbsp;</p><p>COLABORADORES A CARGO: ${nombresColaboradores}</p><p>&nbsp;</p><p>FECHA DE INICIO DEL SERVICIO:&nbsp;${values.fecha_inicio ?? ''}</p><p>&nbsp;</p><p>&nbsp;</p><p>SALUDOS.&nbsp;</p>`
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       const contenidoConTextoAdicional = textoadcional + (datos?.contenido ?? '') + textofinal
       setContenido(contenidoConTextoAdicional)
@@ -292,7 +290,7 @@ export const GenerarAlta = ({
         onClose={handleClose}
         maxWidth={'md'}
         aria-describedby="alert-dialog-slide-description"
-        className="w-screen p-0 m-0"
+        className="w-screen p-0 m-0 modal_dialog_correlativo"
       >
         <section
           className={'grid grid-cols-1 gap-10'}
@@ -374,7 +372,6 @@ export const GenerarAlta = ({
                     />
                     </div>
                   </div>
-
                   <ListaUsuarios
                       arrayPesos={arrayPesos}
                       usuarios={usuarios}

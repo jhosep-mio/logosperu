@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import useAuth from '../../../../hooks/useAuth'
 import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
@@ -80,6 +81,7 @@ export const VistaTarea = (): JSX.Element => {
   const [tituloContenido, setTituloContenido] = useState<string | null>(null)
   const [agregar, setAgregar] = useState(false)
   const [openModal, setOpenModal] = useState(false)
+  const [fecha, setFecha] = useState('')
   const token = localStorage.getItem('token')
   const [events, setEvents] = useState<[]>([])
   const [colaboradores, setColaboradores] = useState<never[]>([])
@@ -198,6 +200,16 @@ export const VistaTarea = (): JSX.Element => {
         (event: any) => event.id === idTablero
       )
       setTablero(filteredEvents[0].contenido)
+
+      const opcionesDeFormato = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }
+      const fecha = new Date(filteredEvents[0].fecha)
+      // @ts-expect-error
+      const fechaFormateada = fecha.toLocaleDateString('es-ES', opcionesDeFormato)
+      setFecha(fechaFormateada)
       setEvents(parsedEvents)
     }
     setLoading(false)
@@ -241,7 +253,7 @@ export const VistaTarea = (): JSX.Element => {
             Espacio de trabajo de {auth.name.toUpperCase()}
           </h1>
           <div className="flex gap-2 justify-start">
-            <span className="text-white text-sm">12/03/2020</span>
+            <span className="text-white text-sm">{fecha}</span>
           </div>
         </div>
       </div>
@@ -257,7 +269,7 @@ export const VistaTarea = (): JSX.Element => {
           settituloContenidoEdicion(null)
         }}
       >
-        <div className="w-full h-full relative flex gap-3 pt-[8vh]">
+        <div className="w-full h-[93%] overflow-y-auto relative flex gap-3 mt-[8vh] scroll_transparent">
           {tablero?.length > 0 &&
             tablero.map((table) => (
               <div

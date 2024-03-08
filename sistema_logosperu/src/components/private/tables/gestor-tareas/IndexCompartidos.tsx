@@ -47,6 +47,7 @@ export const IndexCompartidos = (): JSX.Element => {
         }
       }
     )
+    console.log(request)
     setTasks(request.data)
   }
   const getTareas = async (): Promise<void> => {
@@ -57,6 +58,7 @@ export const IndexCompartidos = (): JSX.Element => {
         }`
       }
     })
+    console.log(request)
     setAllTares(request.data)
   }
 

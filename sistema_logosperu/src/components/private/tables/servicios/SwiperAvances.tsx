@@ -68,7 +68,7 @@ export const SwiperAvances = ({
     >
 
       {arrayAlta &&
-        <SwiperSlide className="" >
+        <SwiperSlide className="" onClick={() => { setOpenAlta(true) }}>
             <div
                 className="w-full h-64 bg-form p-4 border-2 border-main rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main
             hover:shadow-md hover:shadow-main "
@@ -84,7 +84,7 @@ export const SwiperAvances = ({
                 </div>
                 <button
                 type="button"
-                className="absolute -bottom-20 ease-out transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:-bottom-5 left-0 right-0 w-fit mx-auto rounded-lg bg-main/80 text-white px-4 py-2 hover:bg-main"
+                className="absolute -bottom-20 ease-out transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:-bottom-0 left-0 right-0 w-fit mx-auto rounded-lg bg-main/80 text-white px-4 py-2 hover:bg-main"
                 onClick={() => {
                   setOpenAlta(true)
                 }}
@@ -96,7 +96,10 @@ export const SwiperAvances = ({
       }
 
       {arrayAvances.map((avance: avanceValues, index: number) => (
-        <SwiperSlide className="" key={index}>
+        <SwiperSlide className="" key={index} onClick={() => {
+          setAvance(avance)
+          setOpen(true)
+        }}>
           <div
             className="w-full h-64 bg-gray-100 p-4 border-2 border-main rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main
         hover:shadow-md hover:shadow-main "

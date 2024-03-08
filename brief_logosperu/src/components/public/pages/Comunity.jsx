@@ -25,6 +25,7 @@ const Comunity = () => {
 
   const [idCliente, setIdCliente] = useState(0);
   const [id_Codigo, setIdCodigo] = useState(0);
+  const [id_Contrato, setIdContrato] = useState(0);
   const [id_Venta, setIdVenta] = useState(0);
 
   const validarCodigo = () => {
@@ -543,6 +544,7 @@ const Comunity = () => {
                   imagen2={imagen2}
                   idCliente={idCliente}
                   id_Codigo={id_Codigo}
+                  id_Contrato={id_Contrato}
                 />
               ) : (
                 <ModalCodigo
@@ -556,6 +558,7 @@ const Comunity = () => {
                   setIdCliente={setIdCliente}
                   setIdCodigo={setIdCodigo}
                   setIdVenta={setIdVenta}
+                  setIdContrato={setIdContrato}
                 />
               )}
             </>

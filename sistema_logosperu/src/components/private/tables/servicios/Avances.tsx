@@ -370,6 +370,7 @@ export const Avances = (): JSX.Element => {
           ? JSON.parse(request.data[0].community)
           : []
       }))
+      console.log(request.data[0].community)
 
       if (request.data[0].email && request.data[0].email != null) {
         setCorreos([
@@ -452,15 +453,15 @@ export const Avances = (): JSX.Element => {
         <>
            {(datos?.id_contrato.split('_')[0]).includes('LPCM')
              ? <form className="mt-5" onSubmit={handleSubmit}>
-              <section className="grid grid-cols-3 gap-5 mt-1">
-                <div className="w-full h-[600px] col-span-2 min-h-[600px] bg-white rounded-xl p-4">
+              <section className="grid grid-cols-2 lg:grid-cols-3 gap-5 mt-1">
+                <div className="w-full h-[300px] lg:h-[600px] col-span-2 min-h-[300px] lg:min-h-[600px] bg-white rounded-xl p-4">
                   <IndexComunity
                     cards={cards}
                     datos={datos}
                     getOneBrief={getOneBrief}
                   />
                 </div>
-                <div className="h-[600px] flex flex-col gap-3">
+                <div className="h-[600px] flex flex-col gap-3 col-span-2 lg:col-span-1">
                   <div className="bg-white rounded-xl w-full pb-6 h-fit p-4">
                     <h2 className="text-[#129990] font-bold text-center w-full uppercase text-[24px]">
                       Métricas
@@ -512,7 +513,7 @@ export const Avances = (): JSX.Element => {
                     </h3>
                   </div>
                   <span
-                    className="w-fit px-4 py-2 bg-main text-white font-bold rounded-xl absolute right-2 flex gap-2 items-center cursor-pointer"
+                    className="w-fit px-4 py-2 bg-main text-white font-bold rounded-xl text-xs md:text-base absolute right-2 top-8 lg:top-0 flex gap-2 items-center cursor-pointer"
                     onClick={() => {
                       if (
                         datos.correo &&
@@ -568,13 +569,13 @@ export const Avances = (): JSX.Element => {
               </div>
               <div className="bg-white p-4 rounded-xl mt-6">
                 <div className="flex justify-between gap-2 mb-4">
-                  <h2 className="text-xl w-full lg:text-2xl font-bold text-black">
+                  <h2 className="text-base w-full lg:text-2xl font-bold text-black">
                     Comentario general
                   </h2>
                   <div className="flex gap-2 w-full justify-end">
                     <input
                       type="submit"
-                      className="bg-main_2-200 text-white hover:bg-primary flex items-center gap-2 py-2 px-4 rounded-lg transition-colors cursor-pointer"
+                      className="bg-main_2-200 text-white hover:bg-primary flex items-center text-sm lg:text-base gap-2 h-fit lg:h-auto py-2 px-4 rounded-lg transition-colors cursor-pointer"
                       value="Grabar comentario"
                     />
                   </div>

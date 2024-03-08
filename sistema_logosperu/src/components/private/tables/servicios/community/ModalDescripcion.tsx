@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable multiline-ternary */
 import { Dialog, DialogContent } from '@mui/material'
 import { type Dispatch, type SetStateAction, useState, useEffect } from 'react'
@@ -15,13 +16,12 @@ import axios from 'axios'
 import useAuth from '../../../../../hooks/useAuth'
 import Swal from 'sweetalert2'
 import { v4 as uuidv4 } from 'uuid'
-import { FaCheckDouble } from 'react-icons/fa'
-import { FaEyeLowVision } from 'react-icons/fa6'
 import { useParams } from 'react-router-dom'
 import { ListaComentarios } from './ListaComentarios'
 import { CrearComentario } from './CrearComentario'
 import { ResponderComentario } from './ResponderComentario'
-import Editor from '../../clientes/cotizacion/Editor'
+import moment from 'moment'
+import EditorComunnity from './modals/EditorComunnity'
 
 export const ModalDescripcion = ({
   open,
@@ -79,6 +79,28 @@ export const ModalDescripcion = ({
           }
         }
       ])
+      const updatedEvents = events.map((event: any) => {
+        if (event.id == eventSelected?.event.id) {
+          // Obtener la fecha actual
+          let currentDate = moment()
+          // Asegurarse de que el evento no venza en domingo
+          if (currentDate.day() === 5) { // Si es sábado
+            currentDate = currentDate.add(2, 'days') // Agregar dos días para evitar domingo
+          } else if (currentDate.day() === 6) { // Si es domingo
+            currentDate = currentDate.add(1, 'days') // Agregar un día para evitar domingo
+          }
+          // Agregar dos días al día actual
+          currentDate = currentDate.add(2, 'days')
+          // Establecer la hora a las 12 de la noche
+          currentDate = currentDate.startOf('day').add(12, 'hours')
+          return {
+            ...event,
+            fecha_vencimiento: currentDate.toDate()
+          }
+        }
+        return event
+      })
+      setEvents(updatedEvents)
     }
     e.target.value = ''
   }
@@ -104,6 +126,7 @@ export const ModalDescripcion = ({
     const nuevoArray = arrayArchivos.filter((peso) => peso.id !== id)
     setArrayArchivos(nuevoArray)
   }
+
   const updateCantidadVistas = (): void => {
     if (selectedUser && selectedArchivo) {
       setArrayArchivos((prevState) => {
@@ -241,19 +264,19 @@ export const ModalDescripcion = ({
     })
   }
 
-  const updateEstadoById = (): void => {
-    const updatedEvents = events.map((event: any) => {
-      if (event.id == eventSelected?.event.id) {
-        return {
-          ...event,
-          publicado: !event.publicado
-        }
-      }
-      return event
-    })
-    updateCita(updatedEvents)
-    setEvents(updatedEvents)
-  }
+  //   const updateEstadoById = (): void => {
+  //     const updatedEvents = events.map((event: any) => {
+  //       if (event.id == eventSelected?.event.id) {
+  //         return {
+  //           ...event,
+  //           publicado: !event.publicado
+  //         }
+  //       }
+  //       return event
+  //     })
+  //     updateCita(updatedEvents)
+  //     setEvents(updatedEvents)
+  //   }
 
   return (
     <>
@@ -266,33 +289,24 @@ export const ModalDescripcion = ({
         aria-describedby="alert-dialog-description"
         className="modal_community_clientes"
       >
-        <DialogContent className="w-full h-[550px] grid grid-cols-2 gap-10 bg-transparent quitaR_padding">
-          <section className="w-full h-[550px] bg-white p-4 rounded-md flex flex-col justify-between overflow-y-auto">
+        <DialogContent className="w-full h-[510px] grid grid-cols-1 lg:grid-cols-2 gap-10 bg-transparent quitaR_padding">
+          <section className="w-full h-[510px] bg-white p-4 rounded-md flex flex-col justify-between overflow-y-auto">
             <div className='w-full '>
                 <div className="w-full relative">
                 <h1 className="w-full uppercase text-center font-bold text-2xl">
                     {eventSelected?.title}
                 </h1>
-                {eventSelected?.event?.publicado ? (
-                    <FaCheckDouble
-                    className="absolute left-0 text-2xl text-green-500 top-0 bottom-0 cursor-pointer my-auto"
-                    onClick={updateEstadoById}
+                {comentarios.length == 0 && !eventSelected?.event?.publicado &&
+                    <RiDeleteBin6Line
+                        className="absolute right-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto"
+                        onClick={handleDeleteClick}
                     />
-                ) : (
-                    <FaEyeLowVision
-                    className="absolute left-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto "
-                    onClick={updateEstadoById}
-                    />
-                )}
-                <RiDeleteBin6Line
-                    className="absolute right-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto"
-                    onClick={handleDeleteClick}
-                />
+                }
                 </div>
                 <div className="mt-6">
-                <Editor content={contexto} setContent={setContexto} />
+                <EditorComunnity content={contexto} setContent={setContexto} />
                 </div>
-                <div className="w-full mt-4 flex items-center justify-between gap-3">
+                <div className="w-full mt-4 flex items-center justify-between flex-col-reverse lg:flex-row gap-3">
                 <div className="relative w-fit">
                     <button
                     type="button"
@@ -332,7 +346,7 @@ export const ModalDescripcion = ({
                                 src={`${URL.createObjectURL(
                                     pro.imagen1.archivo
                                 )}`}
-                                className="w-[120px] h-[120px] object-contain cursor-pointer bg-gray-100 shadow-md"
+                                className="w-[200px] h-[200px] object-contain cursor-pointer bg-gray-100 shadow-md"
                                 />
                             </RViewerTrigger>
                             </RViewer>
@@ -342,7 +356,7 @@ export const ModalDescripcion = ({
                             muted
                             autoPlay
                             loop
-                            className="w-[120px] h-[120px] object-contain bg-gray-100 shadow-md"
+                            className="w-[200px] h-[200px] object-contain bg-gray-100 shadow-md"
                             />
                               )
                             ) : (
@@ -355,15 +369,19 @@ export const ModalDescripcion = ({
                                 muted
                                 autoPlay
                                 loop
-                                className="w-[120px] h-[120px] object-contain bg-gray-100 shadow-md"
+                                className="w-[200px] h-[200px] object-contain bg-gray-100 shadow-md"
                                 />
                             ) : (
-                                <img
-                                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                                src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
-                                alt=""
-                                className="w-[120px] h-[120px]  object-contain bg-gray-100 shadow-md"
-                                />
+                                <RViewer
+                                imageUrls={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                                >
+                                <RViewerTrigger>
+                                    <img
+                                    src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                                    className="w-[200px] h-[200px] object-contain cursor-pointer bg-gray-100 shadow-md"
+                                    />
+                                </RViewerTrigger>
+                                </RViewer>
                             )}
                             </div>
                               )

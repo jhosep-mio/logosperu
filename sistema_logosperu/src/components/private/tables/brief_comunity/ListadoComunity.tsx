@@ -19,7 +19,7 @@ export const ListadoComunity = (): JSX.Element => {
   // const token = localStorage.getItem('token')
   const [productos, setProductos] = useState<interfaceListaDiseñoNew[]>([])
   const [loading, setLoading] = useState(true)
-  const [totalRegistros, setTotalRegistros] = useState(0)
+  const [, setTotalRegistros] = useState(0)
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(4)
@@ -65,32 +65,31 @@ export const ListadoComunity = (): JSX.Element => {
   }
 
   const filterDate = (): interfaceListaDiseñoNew[] => {
-    if (search.length === 0) {
-      const producto = productos.slice(indexOfFirstPost, indexOfLastPost)
-      return producto
-    }
+    let filteredProductos = productos
 
-    const filter = productos.filter((pro) => {
-      const fullName = `${pro.nombres} ${pro.apellidos}`.toLowerCase()
-      const searchTerm = quitarAcentos(search.toLowerCase())
-
-      return (
-        quitarAcentos(fullName).includes(searchTerm) ||
-        quitarAcentos(pro.nombre_empresa.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
-        String(pro.id).includes((search)) ||
-        String(pro.celular).includes((search)) ||
-        String(pro.email).includes((search)) ||
-        String(pro.id_contrato.toLowerCase()).includes((search.toLowerCase()))
+    if (auth.id_rol != 99) {
+      filteredProductos = filteredProductos.filter((pro: any) =>
+        pro.asignacion2 ? JSON.parse(pro.asignacion2)?.some((item: any) => item.peso == auth.id) : pro.asignacion3 && JSON.parse(pro.asignacion3)?.some((item: any) => item.peso == auth.id)
       )
-    })
-
-    totalPosts = filter.length
-    return filter.slice(indexOfFirstPost, indexOfLastPost)
+    }
+    // ... puedes agregar otras condiciones de filtro aquí
+    if (search.length > 0) {
+      filteredProductos = filteredProductos.filter((pro) => {
+        const fullName = `${pro.nombres} ${pro.apellidos}`.toLowerCase()
+        const searchTerm = quitarAcentos(search.toLowerCase())
+        return (
+          (quitarAcentos(fullName).includes(searchTerm) ||
+          quitarAcentos(pro.nombre_empresa.toLowerCase()).includes(quitarAcentos(search.toLowerCase())) ||
+          String(pro.id).includes((search)) ||
+          String(pro.celular).includes((search)) ||
+          String(pro.email).includes((search)) ||
+          String(pro.id_contrato.toLowerCase()).includes((search.toLowerCase())))
+        )
+      })
+    }
+    totalPosts = filteredProductos.length
+    return filteredProductos.slice(indexOfFirstPost, indexOfLastPost)
   }
-
-  useEffect(() => {
-    setTotalRegistros(totalPosts)
-  }, [search])
 
   return (
     <>
@@ -255,7 +254,7 @@ export const ListadoComunity = (): JSX.Element => {
 
           <div className="flex flex-col md:flex-row gap-5 md:gap-0 justify-center md:justify-between content_buttons pt-3">
             <p className="text-md ml-1 text-black">
-              {totalRegistros} Registros
+              {totalPosts} Registros
             </p>
             <Paginacion
               totalPosts={totalPosts}

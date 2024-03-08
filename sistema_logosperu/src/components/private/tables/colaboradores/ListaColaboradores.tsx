@@ -11,6 +11,8 @@ import { Paginacion } from '../../../shared/Paginacion'
 import { getColaboradresList } from '../../../shared/FetchingData'
 import { quitarAcentos } from '../../../shared/functions/QuitarAcerntos'
 import { Global } from '../../../../helper/Global'
+import axios from 'axios'
+import { toast } from 'sonner'
 
 export const ListaColaboradores = (): JSX.Element => {
   const { setTitle } = useAuth()
@@ -21,6 +23,7 @@ export const ListaColaboradores = (): JSX.Element => {
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(14)
   const [estado, setEstado] = useState(false)
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
     setTitle('Listado de colaboradores')
@@ -85,29 +88,39 @@ export const ListaColaboradores = (): JSX.Element => {
     setSearch(target.value)
   }
 
-  //   const exportarWsp = (resumen: string, id: string | undefined): void => {
-  //     const fechaActual = new Date().toLocaleDateString('es-ES', {
-  //       day: 'numeric',
-  //       month: 'numeric',
-  //       year: 'numeric'
-  //     })
-  //     const comentarios = JSON.parse(resumen)
-  //     let mensajeWsp = `RESUMEN ${(auth.name).toUpperCase()} / ${fechaActual.replace(
-  //       /\//g,
-  //       '-'
-  //     )}\n\n`
-  //     comentarios
-  //       .filter((comentario: valuesResumen) => (comentario.fecha == fechaActual && comentario.userId == id))
-  //       .forEach((comentario: valuesResumen) => {
-  //         console.log(comentario)
-  //         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-  //         mensajeWsp += `- AGENCIA: ${comentario.texto.toUpperCase()}`
-  //       })
-  //     const mensajeWspEncoded = encodeURIComponent(mensajeWsp)
-  //     const urlWhatsApp = `https://web.whatsapp.com/send?text=${mensajeWspEncoded}`
-  //     // Abrir WhatsApp con el mensaje predefinido en una nueva ventana o pestaña
-  //     window.open(urlWhatsApp, '_blank')
-  //   }
+  const cambiarEstado = async (id: number): Promise<void> => {
+    try {
+      // Ask for confirmation before proceeding
+      const confirmed = window.confirm(`¿Estas seguro de desactivar el usuario con id ${id ?? ''}?`)
+      if (!confirmed) {
+        return // If not confirmed, exit the function
+      }
+      const data = new FormData()
+      data.append('estado', '0')
+      data.append('_method', 'PUT')
+      const request = await axios.post(`${Global.url}/DesactivarUsuario/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+        }
+      })
+      if (request.data.status === 'success') {
+        toast.success('Se cambio el estado', '', 'success')
+        setLoading(true)
+        setLoading(true)
+
+        Promise.all([
+          getColaboradresList('getUsuarios', setProductos, setTotalRegistros)
+        ]).then(() => {
+          setLoading(false)
+        })
+      } else {
+        toast.error('Error', '', 'error')
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error('Error', '', 'error')
+    }
+  }
 
   return (
     <>
@@ -264,6 +277,15 @@ export const ListaColaboradores = (): JSX.Element => {
                       >
                         Gestor de Tareas
                       </Link>
+                    </MenuItem>
+                    <MenuItem className="p-0 hover:bg-transparent">
+                      <button
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        onClick={async () => { await cambiarEstado(orden.id) }}
+                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                      >
+                        Desactivar usuario
+                      </button>
                     </MenuItem>
                   </Menu>
                 </div>

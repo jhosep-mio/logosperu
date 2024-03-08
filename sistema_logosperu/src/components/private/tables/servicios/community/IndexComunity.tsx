@@ -59,18 +59,20 @@ moment.locale('es', {
 export const IndexComunity = ({
   cards,
   datos,
-  getOneBrief
+  getOneBrief,
+  events,
+  setEvents
 }: {
   cards: Card[]
   datos: values
   getOneBrief: () => Promise<void>
+  events: Event[]
+  setEvents: Dispatch<SetStateAction<Event[]>>
 }): JSX.Element => {
   const { id } = useParams()
   const token = localStorage.getItem('token')
   const [selected, setSelected] = useState<Card | null>(null)
   const [lastSelected, setLastSelected] = useState<Card | null>(null)
-  const initialEvents: any = datos.comunnity ?? []
-  const [events, setEvents] = useState<Event[]>(initialEvents)
   const handleClick = (card: Card): void => {
     setLastSelected(selected)
     setSelected(card)

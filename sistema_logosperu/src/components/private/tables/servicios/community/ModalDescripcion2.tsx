@@ -34,20 +34,19 @@ export const ModalDescripcion2 = ({
 
   useEffect(() => {
     console.log(eventSelected)
-    if (eventSelected?.event) {
-      if (eventSelected?.event?.descripcion?.contexto) {
-        setContexto((eventSelected?.event?.descripcion?.contexto))
+    if (eventSelected) {
+      if (eventSelected?.descripcion?.contexto) {
+        setContexto(eventSelected?.descripcion?.contexto)
       } else {
         setContexto('')
       }
-      if (eventSelected?.event?.descripcion?.arrayArchivos) {
-        setArrayArchivos(eventSelected?.event?.descripcion?.arrayArchivos)
+      if (eventSelected?.descripcion?.arrayArchivos) {
+        setArrayArchivos(eventSelected?.descripcion?.arrayArchivos)
       } else {
         setArrayArchivos([])
       }
-
-      if (eventSelected?.event?.comentarios) {
-        setComentarios(eventSelected?.event?.comentarios)
+      if (eventSelected?.comentarios) {
+        setComentarios(eventSelected?.comentarios)
       } else {
         setComentarios([])
       }
@@ -65,89 +64,174 @@ export const ModalDescripcion2 = ({
         aria-describedby="alert-dialog-description"
         className="modal_community_clientes"
       >
-        <DialogContent className="w-full h-[550px] grid grid-cols-2 gap-10 bg-transparent quitaR_padding">
-          <section className="w-full h-[550px] bg-white p-4 rounded-md flex flex-col justify-between overflow-y-auto">
-            <div className='w-full '>
+        {eventSelected?.tipo != 'solicitud_informacion' ? (
+          <DialogContent className="w-full h-[550px] grid grid-cols-2 gap-10 bg-transparent quitaR_padding">
+            <section className="w-full h-[550px] bg-white p-4 rounded-md flex flex-col justify-between overflow-y-auto">
+              <div className="w-full ">
                 <div className="w-full relative">
-                <h1 className="w-full uppercase text-center font-bold text-2xl">
+                  <h1 className="w-full uppercase text-center font-bold text-2xl">
                     {eventSelected?.title}
-                </h1>
+                  </h1>
                 </div>
                 <div className="mt-6">
-                <Editor content={contexto} setContent={setContexto} />
+                  <Editor content={contexto} setContent={setContexto} />
                 </div>
                 <div className="w-full mt-4 flex items-center justify-between gap-3">
-
-                <p className="uppercase text-gray-600">
+                  <p className="uppercase text-gray-600">
                     Creado por:{' '}
                     <span className="font-bold">
-                    {eventSelected?.event?.user?.name}
+                      {eventSelected?.user?.name}
                     </span>
-                </p>
+                  </p>
                 </div>
                 <div className="w-full grid grid-cols-2 mt-6 gap-6 justify-center flex-grow ">
-                {arrayArchivos?.map((pro: any) => (
+                  {arrayArchivos?.map((pro: any) => (
                     <div className="flex gap-4 justify-center" key={pro.id}>
-                    <div className="group relative">
+                      <div className="group relative">
                         {pro.imagen1.archivo != null &&
                         pro.imagen1.archivo.size > 0 ? (
                               pro.imagen1.archivo.type.includes('image') ? (
                             <RViewer
-                            imageUrls={`${URL.createObjectURL(
+                              imageUrls={`${URL.createObjectURL(
                                 pro.imagen1.archivo
-                            )}`}
+                              )}`}
                             >
-                            <RViewerTrigger>
+                              <RViewerTrigger>
                                 <img
-                                src={`${URL.createObjectURL(
+                                  src={`${URL.createObjectURL(
                                     pro.imagen1.archivo
-                                )}`}
-                                className="w-[120px] h-[120px] object-contain cursor-pointer bg-gray-100 shadow-md"
+                                  )}`}
+                                  className="w-[120px] h-[120px] object-contain cursor-pointer bg-gray-100 shadow-md"
                                 />
-                            </RViewerTrigger>
+                              </RViewerTrigger>
                             </RViewer>
                               ) : (
                             <video
-                            src={`${URL.createObjectURL(pro.imagen1.archivo)}`}
-                            muted
-                            autoPlay
-                            loop
-                            className="w-[120px] h-[120px] object-contain bg-gray-100 shadow-md"
+                              src={`${URL.createObjectURL(
+                                pro.imagen1.archivo
+                              )}`}
+                              muted
+                              autoPlay
+                              loop
+                              className="w-[120px] h-[120px] object-contain bg-gray-100 shadow-md"
                             />
                               )
                             ) : (
                               pro.imagen1.archivo && (
                             <div className="w-full">
-                            {isVideo(pro.imagen1.archivoName) ? (
+                              {isVideo(pro.imagen1.archivoName) ? (
                                 <video
-                                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                                src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
-                                muted
-                                autoPlay
-                                loop
-                                className="w-[120px] h-[120px] object-contain bg-gray-100 shadow-md"
+                                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                                  src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                                  muted
+                                  autoPlay
+                                  loop
+                                  className="w-[120px] h-[120px] object-contain bg-gray-100 shadow-md"
                                 />
-                            ) : (
+                              ) : (
                                 <img
-                                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                                src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
-                                alt=""
-                                className="w-[120px] h-[120px]  object-contain bg-gray-100 shadow-md"
+                                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                                  src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                                  alt=""
+                                  className="w-[120px] h-[120px]  object-contain bg-gray-100 shadow-md"
                                 />
-                            )}
+                              )}
                             </div>
                               )
                             )}
+                      </div>
                     </div>
-                    </div>
-                ))}
+                  ))}
                 </div>
-            </div>
-          </section>
-          <section className="w-full ">
-            <ListaComentarios2 comentarios={comentarios}/>
-          </section>
-        </DialogContent>
+              </div>
+            </section>
+            <section className="w-full ">
+              <ListaComentarios2 comentarios={comentarios} />
+            </section>
+          </DialogContent>
+        ) : (
+          <DialogContent className="w-full h-[550px] bg-transparent quitaR_padding">
+            <section className="w-full h-[550px] bg-white p-4 rounded-md flex flex-col justify-between overflow-y-auto">
+              <div className="w-full ">
+                <div className="w-full relative">
+                  <h1 className="w-full uppercase text-center font-bold text-2xl">
+                    {eventSelected?.title}
+                  </h1>
+                </div>
+                <div className="mt-6">
+                  <Editor content={contexto} setContent={setContexto} />
+                </div>
+                <div className="w-full mt-4 flex items-center justify-between gap-3">
+                  <p className="uppercase text-gray-600">
+                    Creado por:{' '}
+                    <span className="font-bold">
+                      {eventSelected?.user?.name}
+                    </span>
+                  </p>
+                </div>
+                <div className="w-full grid grid-cols-2 mt-6 gap-6 justify-center flex-grow ">
+                  {arrayArchivos?.map((pro: any) => (
+                    <div className="flex gap-4 justify-center" key={pro.id}>
+                      <div className="group relative">
+                        {pro.imagen1.archivo != null &&
+                        pro.imagen1.archivo.size > 0 ? (
+                              pro.imagen1.archivo.type.includes('image') ? (
+                            <RViewer
+                              imageUrls={`${URL.createObjectURL(
+                                pro.imagen1.archivo
+                              )}`}
+                            >
+                              <RViewerTrigger>
+                                <img
+                                  src={`${URL.createObjectURL(
+                                    pro.imagen1.archivo
+                                  )}`}
+                                  className="w-[120px] h-[120px] object-contain cursor-pointer bg-gray-100 shadow-md"
+                                />
+                              </RViewerTrigger>
+                            </RViewer>
+                              ) : (
+                            <video
+                              src={`${URL.createObjectURL(
+                                pro.imagen1.archivo
+                              )}`}
+                              muted
+                              autoPlay
+                              loop
+                              className="w-[120px] h-[120px] object-contain bg-gray-100 shadow-md"
+                            />
+                              )
+                            ) : (
+                              pro.imagen1.archivo && (
+                            <div className="w-full">
+                              {isVideo(pro.imagen1.archivoName) ? (
+                                <video
+                                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                                  src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                                  muted
+                                  autoPlay
+                                  loop
+                                  className="w-[120px] h-[120px] object-contain bg-gray-100 shadow-md"
+                                />
+                              ) : (
+                                <img
+                                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                                  src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                                  alt=""
+                                  className="w-[120px] h-[120px]  object-contain bg-gray-100 shadow-md"
+                                />
+                              )}
+                            </div>
+                              )
+                            )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </DialogContent>
+        )}
       </Dialog>
     </>
   )

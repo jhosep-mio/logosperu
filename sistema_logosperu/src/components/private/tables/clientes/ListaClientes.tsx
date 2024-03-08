@@ -38,9 +38,20 @@ export const ListaClientes = (): JSX.Element => {
   const [openCotizacion, setOpenCotizacion] = useState(false)
   const [openContrato, setOpenContrato] = useState(false)
   const token = localStorage.getItem('token')
-  //   const handleClickOpen = (): void => {
-  //     setOpen(true)
-  //   }
+  const [usuarios, setUsuarios] = useState<never[]>([])
+
+  const getUsuarios = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/getUsuarios`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+    setUsuarios(request.data)
+  }
+
+  const handleClickOpen = (): void => {
+    setOpen(true)
+  }
   const [open, setOpen] = useState(false)
 
   const getClientes = async (): Promise<void> => {
@@ -57,7 +68,8 @@ export const ListaClientes = (): JSX.Element => {
     setTitle('Listado de clientes')
     Promise.all([
       getClientes(),
-      getDataToPlanes('getPlanes2', setplanes, setTotalRegistros2)
+      getDataToPlanes('getPlanes2', setplanes, setTotalRegistros2),
+      getUsuarios()
     ]).then(() => {
       setLoading(false)
     })
@@ -440,7 +452,7 @@ export const ListaClientes = (): JSX.Element => {
                           Reporte
                         </Link>
                       </MenuItem>
-                      {/* <MenuItem className="p-0 hover:bg-transparent">
+                      <MenuItem className="p-0 hover:bg-transparent">
                         <Link
                           to=""
                           onClick={() => {
@@ -461,9 +473,9 @@ export const ListaClientes = (): JSX.Element => {
                           }}
                           className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex justify-center items-center gap-x-4 p-2 flex-1"
                         >
-                          Generar venta
+                          Crear alta
                         </Link>
-                      </MenuItem> */}
+                      </MenuItem>
                       <MenuItem className="p-0 hover:bg-transparent">
                         <Link
                           to=""
@@ -672,7 +684,15 @@ export const ListaClientes = (): JSX.Element => {
             datos={values}
             planes={planes}
             getClientes={getClientes}
+            usuarios={usuarios}
           />
+          {/* <GenerarAlta
+            datos={values}
+            planes={planes}
+            open={open}
+            setOpen={setOpen}
+            usuarios={usuarios}
+          /> */}
 
           <GeneracionCorrelativo
            // eslint-disable-next-line @typescript-eslint/ban-ts-comment

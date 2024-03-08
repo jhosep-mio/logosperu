@@ -42,11 +42,10 @@ export const ArchivosFinales = ({
   pdfName,
   setpdfName,
   fechaCreacion,
-  plan,
-  validateBrief
+  plan
 }: valuesData): JSX.Element => {
   const { id } = useParams()
-  const { setShowError, setDownloadProgress } = useAuth()
+  const { setDownloadProgress } = useAuth()
   const token = localStorage.getItem('token')
   const [loadingDescarga, setLoadingDescarga] = useState(false)
   const [open, setOpen] = useState(false)
@@ -330,12 +329,12 @@ export const ArchivosFinales = ({
     return `${d} días ${h} horas ${m} min`
   }
 
-  const mostrarError = (): void => {
-    setShowError({
-      estado: 'warning',
-      texto: 'No hay un brief asociado a este proyecto.'
-    })
-  }
+  //   const mostrarError = (): void => {
+  //     setShowError({
+  //       estado: 'warning',
+  //       texto: 'No hay un brief asociado a este proyecto.'
+  //     })
+  //   }
 
   return (
     <>
@@ -355,11 +354,7 @@ export const ArchivosFinales = ({
             type="button"
             className="w-40 px-4 h-fit bg-gray-500  rounded-xl font-normal text-sm lg:text-base text-white py-1"
             onClick={() => {
-              if (validateBrief == null || validateBrief) {
-                setSeleccion(!seleccion)
-              } else {
-                mostrarError()
-              }
+              setSeleccion(!seleccion)
             }}
           >
             Subir archivo

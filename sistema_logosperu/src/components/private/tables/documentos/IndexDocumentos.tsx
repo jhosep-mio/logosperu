@@ -203,7 +203,7 @@ export const IndexDocumentos = (): JSX.Element => {
 
   return (
     <div
-      className="w-full h-full bg-white p-4"
+      className="w-full h-full bg-white p-4 overflow-y-auto"
       onContextMenu={handleContextMenu}
       style={{ cursor: 'context-menu' }}
       onClick={() => {

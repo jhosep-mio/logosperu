@@ -146,7 +146,7 @@ export const EditarContrato = (): JSX.Element => {
       const data = new FormData()
       data.append('correlativo', values?.correlativo)
       data.append('medio_ingreso', values?.medio_ingreso)
-      data.append('nombres_cliente', values?.nombre_cliente)
+      data.append('nombres_cliente', values?.nombre_empresa)
       data.append('adicionales', JSON.stringify(arrayAdicionales ?? ''))
       data.append('titulo_contrato', values.titulo_contrato)
       data.append('id_contrato', values?.correlativo)

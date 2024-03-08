@@ -82,11 +82,11 @@ export const ListaBriefDiseñoNew = (): JSX.Element => {
   const filterDate = (): interfaceListaDiseñoNew[] => {
     let filteredProductos = productos
 
-    if (auth.id_rol != 99) {
-      filteredProductos = filteredProductos.filter((pro: any) =>
-        pro.asignacion2 ? JSON.parse(pro.asignacion2)?.some((item: any) => item.peso == auth.id) : pro.asignacion3 && JSON.parse(pro.asignacion3)?.some((item: any) => item.peso == auth.id)
-      )
-    }
+    // if (auth.id_rol != 99) {
+    //   filteredProductos = filteredProductos.filter((pro: any) =>
+    //     pro.asignacion2 ? JSON.parse(pro.asignacion2)?.some((item: any) => item.peso == auth.id) : pro.asignacion3 && JSON.parse(pro.asignacion3)?.some((item: any) => item.peso == auth.id)
+    //   )
+    // }
     // ... puedes agregar otras condiciones de filtro aquí
     if (search.length > 0) {
       filteredProductos = filteredProductos.filter((pro) => {

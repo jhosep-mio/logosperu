@@ -119,7 +119,7 @@ const SideBar = (): JSX.Element => {
           </h1>
           <hr className="mb-5" />
           <ul className="ml-0 p-0">
-            <li className="">
+            {/* <li className="">
               <button
                 className={
                   'flex items-center gap-3 py-2 animate-pulse rounded-lg text-white justify-center text-center bg-main mb-4 transition-colors w-full relative'
@@ -130,7 +130,7 @@ const SideBar = (): JSX.Element => {
               >
                 {!Event ? 'Registrar asistencia' : 'Registrar actividades'}
               </button>
-            </li>
+            </li> */}
             <li className="">
               <button
                 className={

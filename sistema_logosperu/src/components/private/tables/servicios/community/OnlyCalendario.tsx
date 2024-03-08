@@ -15,13 +15,14 @@ export const OnlyCalendario = ({
   setOpen: Dispatch<SetStateAction<boolean>>
 }): JSX.Element => {
   const eventos = [...events]
+
   return (
     <div className="bg-white rounded-xl w-full h-full ">
       {eventos.reverse().map((event: any, index) => {
         const startDate = new Date(event.start)
         const formattedDate = moment(startDate).format('YYYY-MM-DD')
         return (
-          <div key={index} className="border-b border-gray-200 py-2 px-4 cursor-pointer" onClick={() => { setSelectedItem(event); setOpen(true) }}>
+          <div key={index} className="border-b border-gray-200 py-2 px-4 cursor-pointer" onClick={() => { if (event.tipo != 'inicio') { setSelectedItem(event); setOpen(true) } }}>
             <p className="text-lg font-semibold text-gray-600">
               {formattedDate}
             </p>
@@ -30,14 +31,5 @@ export const OnlyCalendario = ({
         )
       })}
     </div>
-    // <Calendar
-    //   className="calendario_cm text-black"
-    //   localizer={localizer}
-    //   events={events}
-    //   startAccessor="start"
-    //   endAccessor="end"
-    //   selectable={false}
-    //   defaultView="agenda"
-    // />
   )
 }

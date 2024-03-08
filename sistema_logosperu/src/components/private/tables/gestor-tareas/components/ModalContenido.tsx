@@ -606,13 +606,14 @@ export const ModalContenido = ({
           }
         }
       )
-      if (result.data.status == 'success') {
+      if (result.data.status) {
         handleShardTasksDelete()
         setEstadoCheck(false)
         setIdShared(null)
         setValidacionShared(false)
       }
     } catch (error) {
+      console.log(error)
       console.log(error)
     }
     setloadignDelete(false)
@@ -696,6 +697,9 @@ export const ModalContenido = ({
         setopenChekList(false)
         setOpenOptionsItemList(null)
         setopenQuestionDelete(false)
+        setValidacionShared(false)
+        setIdShared(null)
+        setEstadoCheck(false)
       }}
       scroll={'body'}
       aria-labelledby="alert-dialog-title"

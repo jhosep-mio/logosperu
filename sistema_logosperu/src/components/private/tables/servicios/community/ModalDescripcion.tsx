@@ -22,6 +22,9 @@ import { CrearComentario } from './CrearComentario'
 import { ResponderComentario } from './ResponderComentario'
 import moment from 'moment'
 import EditorComunnity from './modals/EditorComunnity'
+import { FaEdit, FaSave } from 'react-icons/fa'
+import { cn } from '../../../../shared/cn'
+import { icono } from '../../../../shared/Images'
 
 export const ModalDescripcion = ({
   open,
@@ -53,7 +56,7 @@ export const ModalDescripcion = ({
   const [selectedUser] = useState<usurioValues | null>(null)
   const [cantidadVistas, setCantidadVistas] = useState<string>('')
   const [openRegistro, setOpenRegistro] = useState(false)
-
+  const [edicion, setEdicion] = useState(true)
   const [selectedArchivo] = useState<string>('')
   const [archivosAEliminar, setarchivosAEliminar] = useState<
   arrayCategoriasToPortafolio[] | undefined
@@ -84,9 +87,11 @@ export const ModalDescripcion = ({
           // Obtener la fecha actual
           let currentDate = moment()
           // Asegurarse de que el evento no venza en domingo
-          if (currentDate.day() === 5) { // Si es sábado
+          if (currentDate.day() === 5) {
+            // Si es sábado
             currentDate = currentDate.add(2, 'days') // Agregar dos días para evitar domingo
-          } else if (currentDate.day() === 6) { // Si es domingo
+          } else if (currentDate.day() === 6) {
+            // Si es domingo
             currentDate = currentDate.add(1, 'days') // Agregar un día para evitar domingo
           }
           // Agregar dos días al día actual
@@ -173,7 +178,7 @@ export const ModalDescripcion = ({
     console.log(eventSelected)
     if (eventSelected?.event) {
       if (eventSelected?.event?.descripcion?.contexto) {
-        setContexto((eventSelected?.event?.descripcion?.contexto))
+        setContexto(eventSelected?.event?.descripcion?.contexto)
       } else {
         setContexto('')
       }
@@ -223,6 +228,7 @@ export const ModalDescripcion = ({
           estado: 'success',
           texto: 'Evento actualizado'
         })
+        setEdicion(true)
       } else {
         Swal.fire('Error al actualizar', '', 'error')
       }
@@ -289,138 +295,255 @@ export const ModalDescripcion = ({
         aria-describedby="alert-dialog-description"
         className="modal_community_clientes"
       >
-        <DialogContent className="w-full h-[510px] grid grid-cols-1 lg:grid-cols-2 gap-10 bg-transparent quitaR_padding">
-          <section className="w-full h-[510px] bg-white p-4 rounded-md flex flex-col justify-between overflow-y-auto">
-            <div className='w-full '>
-                <div className="w-full relative">
-                <h1 className="w-full uppercase text-center font-bold text-2xl">
-                    {eventSelected?.title}
-                </h1>
-                {comentarios.length == 0 && !eventSelected?.event?.publicado &&
-                    <RiDeleteBin6Line
-                        className="absolute right-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto"
-                        onClick={handleDeleteClick}
+        <DialogContent className="w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-10 bg-transparent quitaR_padding">
+          {!edicion && (
+            <FaSave
+              className="absolute top-3 left-3 text-main text-2xl cursor-pointer z-10"
+              onClick={() => {
+                setEdicion(!edicion)
+              }}
+            />
+          )}
+          <section
+            className={cn(
+              'w-full h-fit rounded-md flex flex-col justify-between overflow-y-auto',
+              edicion ? 'bg-transparent' : 'bg-white p-4 '
+            )}
+          >
+            {!edicion ? (
+              <>
+                <div className="w-full ">
+                  <div className="w-full relative">
+                    <h1 className="w-full uppercase text-center font-bold text-2xl">
+                      {eventSelected?.title}
+                    </h1>
+                    {comentarios.length == 0 &&
+                      !eventSelected?.event?.publicado && (
+                        <RiDeleteBin6Line
+                          className="absolute right-0 text-2xl text-red-500 top-0 bottom-0 cursor-pointer my-auto"
+                          onClick={handleDeleteClick}
+                        />
+                    )}
+                  </div>
+                  <div className="mt-6">
+                    <EditorComunnity
+                      content={contexto}
+                      setContent={setContexto}
                     />
-                }
-                </div>
-                <div className="mt-6">
-                <EditorComunnity content={contexto} setContent={setContexto} />
-                </div>
-                <div className="w-full mt-4 flex items-center justify-between flex-col-reverse lg:flex-row gap-3">
-                <div className="relative w-fit">
-                    <button
-                    type="button"
-                    className="bg-red-500 text-white px-4 text-lg rounded-lg flex gap-3 items-center"
-                    >
-                    <IoImageOutline className="text-xl" />
-                    Adjuntar archivo
-                    </button>
-                    <input
-                    className="absolute inset-0 file:hidden opacity-0 cursor-pointer"
-                    type="file"
-                    accept="image/*, video/*" // Aquí se aceptan tanto imágenes como videos
-                    onChange={handleImageChange}
-                    />
-                </div>
-                <p className="uppercase text-gray-600">
-                    Creado por:{' '}
-                    <span className="font-bold">
-                    {eventSelected?.event?.user?.name}
-                    </span>
-                </p>
-                </div>
-                <div className="w-full grid grid-cols-2 mt-6 gap-6 justify-center flex-grow ">
-                {arrayArchivos?.map((pro: any) => (
-                    <div className="flex gap-4 justify-center" key={pro.id}>
-                    <div className="group relative">
-                        {pro.imagen1.archivo != null &&
-                        pro.imagen1.archivo.size > 0 ? (
-                              pro.imagen1.archivo.type.includes('image') ? (
-                            <RViewer
-                            imageUrls={`${URL.createObjectURL(
-                                pro.imagen1.archivo
-                            )}`}
-                            >
-                            <RViewerTrigger>
-                                <img
-                                src={`${URL.createObjectURL(
-                                    pro.imagen1.archivo
+                  </div>
+                  <div className="w-full mt-4 flex items-center justify-between flex-col-reverse lg:flex-row gap-3">
+                    <div className="relative w-fit">
+                      <button
+                        type="button"
+                        className="bg-red-500 text-white px-4 text-lg rounded-lg flex gap-3 items-center"
+                      >
+                        <IoImageOutline className="text-xl" />
+                        Adjuntar archivo
+                      </button>
+                      <input
+                        className="absolute inset-0 file:hidden opacity-0 cursor-pointer"
+                        type="file"
+                        accept="image/*, video/*" // Aquí se aceptan tanto imágenes como videos
+                        onChange={handleImageChange}
+                      />
+                    </div>
+                    <p className="uppercase text-gray-600">
+                      Creado por:{' '}
+                      <span className="font-bold">
+                        {eventSelected?.event?.user?.name}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="w-full grid grid-cols-2 mt-6 gap-6 justify-center flex-grow ">
+                    {arrayArchivos?.map((pro: any) => (
+                      <div className="flex gap-4 justify-center" key={pro.id}>
+                        <div className="group relative">
+                          {pro.imagen1.archivo != null &&
+                          pro.imagen1.archivo.size > 0 ? (
+                                pro.imagen1.archivo.type.includes('image') ? (
+                              <RViewer
+                                imageUrls={`${URL.createObjectURL(
+                                  pro.imagen1.archivo
                                 )}`}
-                                className="w-[200px] h-[200px] object-contain cursor-pointer bg-gray-100 shadow-md"
-                                />
-                            </RViewerTrigger>
-                            </RViewer>
-                              ) : (
-                            <video
-                            src={`${URL.createObjectURL(pro.imagen1.archivo)}`}
-                            muted
-                            autoPlay
-                            loop
-                            className="w-[200px] h-[200px] object-contain bg-gray-100 shadow-md"
-                            />
-                              )
-                            ) : (
-                              pro.imagen1.archivo && (
-                            <div className="w-full">
-                            {isVideo(pro.imagen1.archivoName) ? (
-                                <video
-                                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                                src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                              >
+                                <RViewerTrigger>
+                                  <img
+                                    src={`${URL.createObjectURL(
+                                      pro.imagen1.archivo
+                                    )}`}
+                                    className="w-[200px] h-[200px] object-contain cursor-pointer bg-gray-100 shadow-md"
+                                  />
+                                </RViewerTrigger>
+                              </RViewer>
+                                ) : (
+                              <video
+                                src={`${URL.createObjectURL(
+                                  pro.imagen1.archivo
+                                )}`}
                                 muted
                                 autoPlay
                                 loop
                                 className="w-[200px] h-[200px] object-contain bg-gray-100 shadow-md"
-                                />
-                            ) : (
-                                <RViewer
-                                imageUrls={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
-                                >
-                                <RViewerTrigger>
-                                    <img
+                              />
+                                )
+                              ) : (
+                                pro.imagen1.archivo && (
+                              <div className="w-full">
+                                {isVideo(pro.imagen1.archivoName) ? (
+                                  <video
+                                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                                     src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
-                                    className="w-[200px] h-[200px] object-contain cursor-pointer bg-gray-100 shadow-md"
-                                    />
-                                </RViewerTrigger>
-                                </RViewer>
-                            )}
-                            </div>
-                              )
-                            )}
-                        <RiDeleteBin6Line
-                        className="cursor-pointer text-center opacity-0 text-main transition-opacity group-hover:opacity-100 absolute right-1 top-1 text-2xl z-10"
-                        onClick={() => {
-                          eliminarArray(pro.id)
-                        }}
-                        />
-                    </div>
-                    </div>
-                ))}
+                                    muted
+                                    autoPlay
+                                    loop
+                                    className="w-[200px] h-[200px] object-contain bg-gray-100 shadow-md"
+                                  />
+                                ) : (
+                                  <RViewer
+                                    imageUrls={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                                  >
+                                    <RViewerTrigger>
+                                      <img
+                                        src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                                        className="w-[200px] h-[200px] object-contain cursor-pointer bg-gray-100 shadow-md"
+                                      />
+                                    </RViewerTrigger>
+                                  </RViewer>
+                                )}
+                              </div>
+                                )
+                              )}
+                          <RiDeleteBin6Line
+                            className="cursor-pointer text-center opacity-0 text-main transition-opacity group-hover:opacity-100 absolute right-1 top-1 text-2xl z-10"
+                            onClick={() => {
+                              eliminarArray(pro.id)
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-            </div>
-            <div className="w-full flex justify-center mb-3">
-              {loadingUpdate ? (
-                <button
-                  disabled
-                  className="w-fit mx-auto px-5 py-2 rounded-md bg-green-700 transition-colors text-white"
-                >
-                  Validando...
-                </button>
-              ) : (
-                <button
-                  className="w-fit mx-auto px-5 py-2 rounded-md bg-green-600 hover:bg-green-700 transition-colors text-white"
-                  onClick={() => {
-                    updateEventDescriptionById()
-                  }}
-                >
-                  Grabar
-                </button>
-              )}
-            </div>
+                <div className="w-full flex justify-center mb-3">
+                  {loadingUpdate ? (
+                    <button
+                      disabled
+                      className="w-fit mx-auto px-5 py-2 rounded-md bg-green-700 transition-colors text-white"
+                    >
+                      Validando...
+                    </button>
+                  ) : (
+                    <button
+                      className="w-fit mx-auto px-5 py-2 rounded-md bg-green-600 hover:bg-green-700 transition-colors text-white"
+                      onClick={() => {
+                        updateEventDescriptionById()
+                      }}
+                    >
+                      Grabar
+                    </button>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="w-full ">
+                <div className="bg-white w-fit mx-auto p-4 rounded-md relative">
+                  <FaEdit
+                    className="absolute top-3 right-3 text-main text-2xl cursor-pointer z-10"
+                    onClick={() => {
+                      setEdicion(!edicion)
+                    }}
+                  />
+                  <div className="w-full flex gap-3 items-center">
+                    <img
+                      src={icono}
+                      alt=""
+                      className="object-contain w-14 h-14 bg-white rounded-full p-2 border-2 border-main"
+                    />
+                    <div className="flex flex-col gap-0">
+                      <span className="text-black font-semibold text-lg">
+                        ELP Consultores
+                      </span>
+                      <span className="text-gray-500 font-medium">
+                        17/07/2024
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full mt-6">
+                    <div
+                      className=""
+                      dangerouslySetInnerHTML={{ __html: contexto }}
+                    ></div>
+                  </div>
+                  <div className="w-full mt-6 grid gap-3 justify-start" style={{ gridTemplateColumns: `repeat(${arrayArchivos.length}, 1fr)` }}>
+                    {arrayArchivos?.map((pro: any) => (
+                      <div className={cn('flex gap-4 justify-center')} key={pro.id}>
+                        <div className="group relative w-full">
+                          {pro.imagen1.archivo && (
+                            <div className="w-full">
+                              {isVideo(pro.imagen1.archivoName) ? (
+                                <video
+                                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                                  src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                                  muted
+                                  autoPlay
+                                  loop
+                                  className="w-full h-[400px] object-contain bg-gray-100 shadow-md"
+                                />
+                              ) : (
+                                <RViewer
+                                  imageUrls={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                                >
+                                  <RViewerTrigger>
+                                    <img
+                                      src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
+                                      className="w-full h-[400px] object-contain cursor-pointer bg-gray-100 shadow-md"
+                                    />
+                                  </RViewerTrigger>
+                                </RViewer>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
+
           <section className="w-full ">
-            <CrearComentario setComentarios={setComentarios} getOneBrief={getOneBrief} events={events} setEvents={setEvents} eventSelected={eventSelected}/>
-            <ListaComentarios setIdComentario={setIdComentario} setOpen={setOpenResponder} setTexto={setTexto} comentarios={comentarios} setComentarios={setComentarios} getOneBrief={getOneBrief} events={events} setEvents={setEvents} eventSelected={eventSelected}/>
-            <ResponderComentario comentarios={comentarios} getComentarios={getOneBrief} idComentario={idComentario} open={openResponder} setComentarios={setComentarios} setIdComentario={setIdComentario} setOpen={setOpenResponder} textoComentario={texto} eventSelected={eventSelected} events={events} setEvents={setEvents}/>
+            <CrearComentario
+              setComentarios={setComentarios}
+              getOneBrief={getOneBrief}
+              events={events}
+              setEvents={setEvents}
+              eventSelected={eventSelected}
+            />
+            <ListaComentarios
+              setIdComentario={setIdComentario}
+              setOpen={setOpenResponder}
+              setTexto={setTexto}
+              comentarios={comentarios}
+              setComentarios={setComentarios}
+              getOneBrief={getOneBrief}
+              events={events}
+              setEvents={setEvents}
+              eventSelected={eventSelected}
+            />
+            <ResponderComentario
+              comentarios={comentarios}
+              getComentarios={getOneBrief}
+              idComentario={idComentario}
+              open={openResponder}
+              setComentarios={setComentarios}
+              setIdComentario={setIdComentario}
+              setOpen={setOpenResponder}
+              textoComentario={texto}
+              eventSelected={eventSelected}
+              events={events}
+              setEvents={setEvents}
+            />
           </section>
         </DialogContent>
         <AnimatePresence>

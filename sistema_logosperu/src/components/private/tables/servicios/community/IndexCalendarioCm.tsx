@@ -233,7 +233,7 @@ export const IndexCalendarioCm = ({
   const handleDateChange = (e: any): void => {
     const { value } = e.target
     const [year, month] = value.split('-').map(Number)
-    if (year > 2023) {
+    if (year > 2022) {
       setSelectedDate(new Date(year, month - 1, 1))
     }
   }
@@ -263,7 +263,7 @@ export const IndexCalendarioCm = ({
           value={formatDate()}
           onChange={handleDateChange}
           className="bg-transparent text-black"
-          min="2024-01"
+          min="2023-01"
           max="2030-12"
         />
       </section>

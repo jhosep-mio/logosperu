@@ -99,7 +99,7 @@ export const ModalContratos = ({
     if (contenido) {
       setLoading(true)
       const data = new FormData()
-      data.append('nombres_cliente', datos?.nombre_cliente)
+      data.append('nombres_cliente', datos?.nombre_empresa)
       data.append('titulo_contrato', values.titulo_contrato)
       data.append('id_contrato', datos?.id_contrato)
       data.append('tipo_documento', values.tipo_documento)

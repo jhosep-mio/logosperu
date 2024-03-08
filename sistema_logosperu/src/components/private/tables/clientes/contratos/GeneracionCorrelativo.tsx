@@ -261,7 +261,7 @@ export const GeneracionCorrelativo = ({
           ) : (
             <div className="w-full">
               <DialogTitle className="text-center">
-                {'Generar venta'}
+                {'CREAR CONTRATO'}
               </DialogTitle>
               <DialogContent className="w-full md:w-96 max-h-[500px] p-0">
                 <DialogContentText

@@ -90,13 +90,8 @@ export const SchemaValidarAlta = Yup.object().shape({
 })
 
 export const SchemaValidarVentas = Yup.object().shape({
-  id: Yup.number().required('Este campo es requerido'),
-  plan: Yup.string().required('Este campo es requerido'),
   nombre_empresa: Yup.string().required('Este campo es requerido'),
-  id_cliente: Yup.string().required('Este campo es requerido'),
-  medio_ingreso: Yup.string().required('Este campo es requerido'),
-  dni_ruc: Yup.string(),
-  id_contrato: Yup.string()
+  id_cliente: Yup.string().required('Este campo es requerido')
 })
 
 export const SchemaContrato = Yup.object().shape({

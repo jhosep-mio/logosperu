@@ -142,6 +142,7 @@ export const Avances = (): JSX.Element => {
   const [limite, setLimite] = useState(0)
   const [openMailFinal, setOpenMailFinal] = useState(false)
   const [validateBrief, seValidateBrief] = useState<boolean | null>(null)
+  const [events, setEvents] = useState<Event[]>([])
 
   const updatePropuestas = async (): Promise<void> => {
     setLoading(true)
@@ -370,7 +371,9 @@ export const Avances = (): JSX.Element => {
           ? JSON.parse(request.data[0].community)
           : []
       }))
-      console.log(request.data[0].community)
+      setEvents(request.data[0].community
+        ? JSON.parse(request.data[0].community)
+        : [])
 
       if (request.data[0].email && request.data[0].email != null) {
         setCorreos([
@@ -459,6 +462,8 @@ export const Avances = (): JSX.Element => {
                     cards={cards}
                     datos={datos}
                     getOneBrief={getOneBrief}
+                    events={events}
+                    setEvents={setEvents}
                   />
                 </div>
                 <div className="h-[600px] flex flex-col gap-3 col-span-2 lg:col-span-1">
@@ -490,8 +495,7 @@ export const Avances = (): JSX.Element => {
                       Últimos eventos
                     </h2>
                     <OnlyCalendario
-                      // @ts-expect-error
-                      events={datos?.comunnity}
+                      events={events}
                       // @ts-expect-error
                       setSelectedItem={setSelectedItem}
                       setOpen={setOpenModal}

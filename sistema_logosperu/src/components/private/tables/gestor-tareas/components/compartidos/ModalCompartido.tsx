@@ -238,7 +238,7 @@ export const ModalCompartido = ({
         setValidacionShared(true)
         setEstadoCheck(true)
       } else {
-        setValidacionShared(false)
+        setEstadoCheck(false)
       }
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
@@ -259,7 +259,7 @@ export const ModalCompartido = ({
         setStartDate(null)
       }
     }
-  }, [contenidoSeleccionado])
+  }, [contenidoSeleccionado, open])
 
   const variants = {
     open: {
@@ -695,6 +695,9 @@ export const ModalCompartido = ({
         setopenChekList(false)
         setOpenOptionsItemList(null)
         setopenQuestionDelete(false)
+        setValidacionShared(false)
+        setIdShared(null)
+        setEstadoCheck(false)
       }}
       scroll={'body'}
       aria-labelledby="alert-dialog-title"

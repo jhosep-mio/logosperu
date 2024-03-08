@@ -127,7 +127,7 @@ export const CrearComentario = ({
   return (
     <>
       <div className="w-full bg-white p-2 rounded-xl mb-3">
-        <p className="w-full h-12 rounded-xl bg-primary border border-gray-400 p-2 text-gray-600 flex items-center gap-4">
+        <p className="w-full h-16 rounded-xl bg-primary border border-gray-400 p-2 text-gray-600 flex items-center gap-4">
           <img
             src={defaultPerfil}
             alt=""

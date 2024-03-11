@@ -65,6 +65,7 @@ export const IndexCalendarioCm = ({
   const token = localStorage.getItem('token')
   const [loadingUpdate, setLoadingUpdate] = useState(false)
   const [disabledDates] = useState([datos?.fecha_inicio]) // Lista de fechas deshabilitadas
+  console.log(datos)
   const [open, setOpen] = useState(false)
   const [openInformacion, setOpenInformacion] = useState(false)
   const [eventSelected, setEventSelected] = useState<any | null>(null)
@@ -96,6 +97,9 @@ export const IndexCalendarioCm = ({
   }
   const components = {
     event: (props: any) => {
+      const fechaActual = new Date()
+      // Obtener la fecha de vencimiento de props.event
+      const fechaVencimiento = new Date(props.event?.fecha_vencimiento)
       return (
         <>
           {props.event?.tipo == 'inicio'
@@ -144,7 +148,7 @@ export const IndexCalendarioCm = ({
               <div
                 className={`div_cita px-1 h-full text-white 
             ${
-              props.event?.publicado ? 'bg-[#129990]' : 'bg-red-600'
+              props.event?.publicado || fechaVencimiento < fechaActual ? 'bg-[#129990]' : 'bg-red-600'
             }   transition-colors rounded-t-md`}
               >
                 <span className="block  ">{props.title}</span>
@@ -211,7 +215,7 @@ export const IndexCalendarioCm = ({
         const newEvent = {
           id: uuidv4(),
           title: result.value,
-          publicado: true,
+          publicado: false,
           start,
           end: start,
           descripcion: null,
@@ -297,6 +301,7 @@ export const IndexCalendarioCm = ({
           setOpen={setOpen}
           eventSelected={eventSelected}
           setLoadingUpdate={setLoadingUpdate}
+          marca={datos?.nombre_marca}
         />
         <ModalInformacion
           loadingUpdate={loadingUpdate}

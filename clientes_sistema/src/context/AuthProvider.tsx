@@ -22,6 +22,8 @@ export interface AuthContextValue {
   setLoadingComponents: Dispatch<SetStateAction<boolean>>
   guia: boolean
   setGuia: Dispatch<SetStateAction<boolean>>
+  downloadProgress: number
+  setDownloadProgress: Dispatch<SetStateAction<number>>
 }
 
 const AuthContext = createContext<AuthContextValue | null >(null)
@@ -32,6 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
   const [token, setToken] = useState('')
   const [title, setTitle] = useState('')
   const [loadingComponents, setLoadingComponents] = useState(false)
+  const [downloadProgress, setDownloadProgress] = useState(0)
   const [guia, setGuia] = useState(false)
 
   useEffect(() => {
@@ -80,7 +83,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
         title,
         setTitle,
         loadingComponents,
-        setLoadingComponents
+        setLoadingComponents,
+        downloadProgress,
+        setDownloadProgress
       }}
     >
       {children}

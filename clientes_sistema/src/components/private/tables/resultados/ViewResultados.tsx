@@ -1,6 +1,6 @@
 /* eslint-disable multiline-ternary */
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import useAuth from '../../../../hooks/useAuth'
 import axios from 'axios'
 import { Global } from '../../../../helper/Global'
@@ -20,7 +20,8 @@ import Skeleton from '@mui/material/Skeleton'
 import { SwiperAvances } from './avances/SwiperAvances'
 import { ViewFinal } from './avances/ViewFinal'
 import Tour from 'reactour'
-import { IndexComunity } from './comunnity/IndexComunity'
+import { LoadingSmall } from '../../../shared/LoadingSmall'
+// import { IndexComunity } from './comunnity/IndexComunity'
 
 interface values {
   nombres: string
@@ -90,8 +91,7 @@ const useResponsiveTour = (): any => {
 export const ViewResultados = (): JSX.Element => {
   const { steps } = useResponsiveTour()
   const { id } = useParams()
-  const { token, guia, setGuia, auth } = useAuth()
-  const navigate = useNavigate()
+  const { token, guia, setGuia, auth, setDownloadProgress } = useAuth()
   const [limite, setLimite] = useState(0)
   const [loading, setLoading] = useState(false)
   const [pdfurl, setpdfurl] = useState('')
@@ -142,7 +142,6 @@ export const ViewResultados = (): JSX.Element => {
   })
   const [, setOpenAvance] = useState(false)
   const [openFinal, setOpenFinal] = useState(false)
-
   const [fechaCreacion, setFechaCreacion] = useState<Date | null>(null)
   const plazo = 30 * 24 * 60 * 60 * 1000 // 30 días en milisegundos
   const [tiempoRestante, setTiempoRestante] = useState<number | null>(null)
@@ -152,36 +151,6 @@ export const ViewResultados = (): JSX.Element => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     return new Date(ano, mes - 1, dia)
-  }
-
-  const upadateBanner = async (): Promise<void> => {
-    setLoadingComponents(true)
-    const data = new FormData()
-    data.append('_method', 'PUT')
-
-    try {
-      const respuesta = await axios.post(
-        `${Global.url}/updateBanner/${id ?? ''}`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${
-              token !== null && token !== '' ? token : ''
-            }`
-          }
-        }
-      )
-
-      if (respuesta.data.status === 'success') {
-        Swal.fire('Actualizado correctamente', '', 'success')
-        navigate('/admin/banners')
-      } else {
-        Swal.fire('Error al realizar la edicion', '', 'error')
-      }
-    } catch (error) {
-      Swal.fire('Error', '', 'error')
-    }
-    setLoadingComponents(false)
   }
 
   const getBanner = async (): Promise<void> => {
@@ -254,20 +223,20 @@ export const ViewResultados = (): JSX.Element => {
     setLoadingComponents(false)
   }
 
-  const getData2 = async (): Promise<void> => {
-    const request = await axios.get(
-      `${Global.url}/showToResultados/${id ?? ''}`,
-      {
-        headers: {
-          mode: 'no-cors',
-          Authorization: `Bearer ${
-            token !== null && token !== '' ? `Bearer ${token}` : ''
-          }`
-        }
-      }
-    )
-    setresultado(request.data[0])
-  }
+  //   const getData2 = async (): Promise<void> => {
+  //     const request = await axios.get(
+  //       `${Global.url}/showToResultados/${id ?? ''}`,
+  //       {
+  //         headers: {
+  //           mode: 'no-cors',
+  //           Authorization: `Bearer ${
+  //             token !== null && token !== '' ? `Bearer ${token}` : ''
+  //           }`
+  //         }
+  //       }
+  //     )
+  //     setresultado(request.data[0])
+  //   }
 
   const formatearNombre = (fileName: string): string => {
     const prefixIndex = fileName.indexOf('_')
@@ -289,6 +258,13 @@ export const ViewResultados = (): JSX.Element => {
             Authorization: `Bearer ${
               token !== null && token !== '' ? `Bearer ${token}` : ''
             }`
+          },
+          onDownloadProgress: (e) => {
+            const loaded = (e.loaded)
+            const total = e.total
+            if (total) {
+              setDownloadProgress(((loaded) / total) * 100)
+            }
           }
         })
         const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -375,6 +351,13 @@ export const ViewResultados = (): JSX.Element => {
             Authorization: `Bearer ${
               token !== null && token !== '' ? `Bearer ${token}` : ''
             }`
+          },
+          onDownloadProgress: (e) => {
+            const loaded = (e.loaded)
+            const total = e.total
+            if (total) {
+              setDownloadProgress(((loaded) / total) * 100)
+            }
           }
         })
         const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -467,12 +450,12 @@ export const ViewResultados = (): JSX.Element => {
     setGuia(false)
   }
 
-  const cards = [
-    {
-      id: 1,
-      title: 'Calendario comunnity'
-    }
-  ]
+  //   const cards = [
+  //     {
+  //       id: 1,
+  //       title: 'Calendario comunnity'
+  //     }
+  //   ]
 
   return (
     <>
@@ -482,19 +465,16 @@ export const ViewResultados = (): JSX.Element => {
       ) : (
         <>
           <Tour steps={steps} isOpen={guia} onRequestClose={handleClose} />
-          <div className="w-full h-fit min-h-[85px] bg-white p-4 rounded-xl mt-6">
+          {/* <div className="w-full h-fit min-h-[85px] bg-white p-4 rounded-xl mt-6">
               <IndexComunity
                 cards={cards}
                 datos={resultado}
                 getOneBrief={getData2}
               />
-           </div>
+           </div> */}
 
           <form
             className="bg-form p-3 md:p-8 rounded-xl mt-0 lg:mt-4 mb-4 first-stepP"
-            onSubmit={() => {
-              void upadateBanner()
-            }}
           >
 
             {resultado.propuestas || resultado.archivos_finales ? (
@@ -594,7 +574,8 @@ export const ViewResultados = (): JSX.Element => {
                                   />
                                         )
                                       : (
-                                  <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-full text-center" />
+                                        <LoadingSmall/>
+                                    //   <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-full text-center" />
                                         )}
                               </span>
                             </div>
@@ -771,7 +752,8 @@ export const ViewResultados = (): JSX.Element => {
                                 />
                                       )
                                     : (
-                                <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-full text-center" />
+                                        <LoadingSmall/>
+                                  // <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-full text-center" />
                                       )}
                             </div>
                           </div>

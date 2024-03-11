@@ -1,3 +1,4 @@
+/* eslint-disable multiline-ternary */
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../../../../hooks/useAuth'
@@ -24,6 +25,7 @@ import {
   quitarAcentos
 } from '../../../shared/functions/QuitarAcerntos'
 import { MdChevronRight } from 'react-icons/md'
+import { GenerarAlta } from './alta/GenerarAlta'
 // import { GeneradorExcel } from '../../../shared/EXCEL/GeneradorExcel'
 
 interface Filters {
@@ -38,6 +40,10 @@ export const ListaVentas = (): JSX.Element => {
   const { setTitle } = useAuth()
   const token = localStorage.getItem('token')
   const [productos, setProductos] = useState<ValuesVenta[]>([])
+
+  const [proyecto, setProyecto] = useState<ValuesVenta | null>(null)
+  const [OpenAlta, setOpenAlta] = useState(false)
+
   const [loading, setLoading] = useState(true)
   const [, setTotalRegistros] = useState(0)
   const [paginaActual, setpaginaActual] = useState<number>(1)
@@ -45,6 +51,7 @@ export const ListaVentas = (): JSX.Element => {
   const [cantidadRegistros] = useState(12)
   const navigate = useNavigate()
   const [colaboradores, setColaboradores] = useState([])
+  const [usuarios, setUsuarios] = useState([])
   const [filters, setFilters] = useState<Filters>({
     estado: null,
     fechaFin: null,
@@ -67,11 +74,20 @@ export const ListaVentas = (): JSX.Element => {
     })
     setColaboradores(request.data)
   }
+  const getUsuarios = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/getUsuarios`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+    setUsuarios(request.data)
+  }
 
   useEffect(() => {
     setTitle('Listado de proyectos')
     Promise.all([
       getColaboradores(),
+      getUsuarios(),
       getDataToPlanes('getPlanes', setplanes, setTotalRegistros),
       getDataVentas('getVentas', setProductos, setTotalRegistros)
     ]).then(() => {
@@ -366,9 +382,9 @@ export const ListaVentas = (): JSX.Element => {
           </Link>
         </div>
       </div>
-      {loading
-        ? <Loading />
-        : (
+      {loading ? (
+        <Loading />
+      ) : (
         <div className="md:bg-[#fff] md:px-8 md:py-6 rounded-xl">
           <div
             className={`hidden md:grid pr-10 lg:pr-4 items-center grid_teplate_ventas ${
@@ -399,21 +415,63 @@ export const ListaVentas = (): JSX.Element => {
                 </h5>
                 <h5 className="md:text-center w-fit flex gap-2 items-center col-span-2">
                   Fecha de Inicio
-                  <div className='flex flex-col'>
+                  <div className="flex flex-col">
                     <MdChevronRight
-                   onClick={() => { setOrdenAscendente(!ordenAscendente); setOrdenAscendente2(false); setOrdenDescente(false); setOrdenDescente2(false) }} className={`${!ordenAscendente ? 'text-gray-400' : 'text-main'} -rotate-90 hover:text-main transition-colors cursor-pointer`} title='Ascendente'/>
-                    <MdChevronRight onClick={() => { setOrdenDescente(!ordenDescente); setOrdenAscendente(false); setOrdenAscendente2(false); setOrdenDescente2(false) }} className={`${!ordenDescente ? 'text-gray-400' : 'text-main'} rotate-90 hover:text-main transition-colors cursor-pointer`} title='Descendente'/>
+                      onClick={() => {
+                        setOrdenAscendente(!ordenAscendente)
+                        setOrdenAscendente2(false)
+                        setOrdenDescente(false)
+                        setOrdenDescente2(false)
+                      }}
+                      className={`${
+                        !ordenAscendente ? 'text-gray-400' : 'text-main'
+                      } -rotate-90 hover:text-main transition-colors cursor-pointer`}
+                      title="Ascendente"
+                    />
+                    <MdChevronRight
+                      onClick={() => {
+                        setOrdenDescente(!ordenDescente)
+                        setOrdenAscendente(false)
+                        setOrdenAscendente2(false)
+                        setOrdenDescente2(false)
+                      }}
+                      className={`${
+                        !ordenDescente ? 'text-gray-400' : 'text-main'
+                      } rotate-90 hover:text-main transition-colors cursor-pointer`}
+                      title="Descendente"
+                    />
                   </div>
                 </h5>
                 {!filters.sinFechaFinYNo1 && (
-                <h5 className="md:text-center w-fit flex gap-2 items-center col-span-2">
+                  <h5 className="md:text-center w-fit flex gap-2 items-center col-span-2">
                     Fecha Final
-                    <div className='flex flex-col'>
-                        <MdChevronRight
-                    onClick={() => { setOrdenAscendente2(!ordenAscendente2); setOrdenAscendente(false); setOrdenDescente2(false); setOrdenDescente(false) }} className={`${!ordenAscendente2 ? 'text-gray-400' : 'text-main'} -rotate-90 hover:text-main transition-colors cursor-pointer`} title='Ascendente'/>
-                        <MdChevronRight onClick={() => { setOrdenDescente2(!ordenDescente2); setOrdenDescente(false); setOrdenAscendente2(false); setOrdenAscendente(false) }} className={`${!ordenDescente2 ? 'text-gray-400' : 'text-main'} rotate-90 hover:text-main transition-colors cursor-pointer`} title='Descendente'/>
-                  </div>
-                </h5>
+                    <div className="flex flex-col">
+                      <MdChevronRight
+                        onClick={() => {
+                          setOrdenAscendente2(!ordenAscendente2)
+                          setOrdenAscendente(false)
+                          setOrdenDescente2(false)
+                          setOrdenDescente(false)
+                        }}
+                        className={`${
+                          !ordenAscendente2 ? 'text-gray-400' : 'text-main'
+                        } -rotate-90 hover:text-main transition-colors cursor-pointer`}
+                        title="Ascendente"
+                      />
+                      <MdChevronRight
+                        onClick={() => {
+                          setOrdenDescente2(!ordenDescente2)
+                          setOrdenDescente(false)
+                          setOrdenAscendente2(false)
+                          setOrdenAscendente(false)
+                        }}
+                        className={`${
+                          !ordenDescente2 ? 'text-gray-400' : 'text-main'
+                        } rotate-90 hover:text-main transition-colors cursor-pointer`}
+                        title="Descendente"
+                      />
+                    </div>
+                  </h5>
                 )}
               </>
             )}
@@ -481,19 +539,30 @@ export const ListaVentas = (): JSX.Element => {
                       Cliente
                     </h5>
                     {orden.id_contacto
-                      ? <>
-                  {orden.arraycontacto && JSON.parse(orden.arraycontacto).length > 0 &&
-                    JSON.parse(orden.arraycontacto).filter((contacto: arrayContacto) => String(contacto.id ?? '') == orden.id_contacto).map((contacto: arrayContacto) => (
-                    <span key={contacto.id} className="text-left w-full text-black line-clamp-1">
-                        {contacto.nombres}
-                    </span>
-                    ))
-                    }
-                  </>
-                      : <span className="text-left w-full text-black line-clamp-1">
-                    {orden.nombres} {orden.apellidos}
-                </span>
-                }
+                      ? (
+                      <>
+                        {orden.arraycontacto &&
+                          JSON.parse(orden.arraycontacto).length > 0 &&
+                          JSON.parse(orden.arraycontacto)
+                            .filter(
+                              (contacto: arrayContacto) =>
+                                String(contacto.id ?? '') == orden.id_contacto
+                            )
+                            .map((contacto: arrayContacto) => (
+                              <span
+                                key={contacto.id}
+                                className="text-left w-full text-black line-clamp-1"
+                              >
+                                {contacto.nombres}
+                              </span>
+                            ))}
+                      </>
+                        )
+                      : (
+                      <span className="text-left w-full text-black line-clamp-1">
+                        {orden.nombres} {orden.apellidos}
+                      </span>
+                        )}
                   </div>
                   <div className="md:text-right ">
                     <h5 className="md:hidden text-black font-bold mb-0 text-sm bg text-right">
@@ -611,25 +680,35 @@ export const ListaVentas = (): JSX.Element => {
               )}
               <div className="hidden md:block md:text-center col-span-2 relative h-full">
                 {orden.id_contacto
-                  ? <>
-                  {orden.arraycontacto && JSON.parse(orden.arraycontacto).length > 0 &&
-                    JSON.parse(orden.arraycontacto).filter((contacto: arrayContacto) => String(contacto.id ?? '') == orden.id_contacto).map((contacto: arrayContacto) => (
-                    <span key={contacto.id} className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
-                        {contacto.nombres}
-                    </span>
-                    ))
-                    }
+                  ? (
+                  <>
+                    {orden.arraycontacto &&
+                      JSON.parse(orden.arraycontacto).length > 0 &&
+                      JSON.parse(orden.arraycontacto)
+                        .filter(
+                          (contacto: arrayContacto) =>
+                            String(contacto.id ?? '') == orden.id_contacto
+                        )
+                        .map((contacto: arrayContacto) => (
+                          <span
+                            key={contacto.id}
+                            className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10"
+                          >
+                            {contacto.nombres}
+                          </span>
+                        ))}
                   </>
-                  : <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
+                    )
+                  : (
+                  <span className="text-left text-black line-clamp-1 transition-all hover:w-[150%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                     {orden.nombres} {orden.apellidos}
-                </span>
-                }
-
+                  </span>
+                    )}
               </div>
               <div className="hidden md:block md:text-center col-span-2 relative h-full">
                 <span className="text-left text-black line-clamp-1 transition-all hover:w-[200%] hover:bg-white hover:absolute hover:inset-0 w-full h-full z-10">
                   {orden.nombre_marca ? orden.nombre_marca : 'No registrado'}
-                  </span>
+                </span>
               </div>
               <div className="hidden md:block md:text-center col-span-2">
                 <span className="text-center block text-black">
@@ -663,41 +742,35 @@ export const ListaVentas = (): JSX.Element => {
                     : 'bg-gray-300 text-gray-500'
                 }`}
               >
-                {orden.estado == '1'
-                  ? (
+                {orden.estado == '1' ? (
                   <>
                     {/* <BsCheckCircle className="hidden lg:block" /> */}
                     <span className="text-center bg-red-600 text-white font-bold w-fit line-clamp-1">
                       Abandono
                     </span>
                   </>
-                    )
-                  : orden.fecha_fin != null
-                    ? (
+                ) : orden.fecha_fin != null ? (
                   <>
                     {/* <BsCheckCircle className="hidden lg:block" /> */}
                     <span className="text-center bg-[#1A5515] text-white font-bold w-fit line-clamp-1">
                       Finalizado
                     </span>
                   </>
-                      )
-                    : !orden.fecha_inicio && !orden.fecha_alta
-                        ? (
+                ) : !orden.fecha_inicio && !orden.fecha_alta ? (
                   <>
                     {/* <BsGraphUp className="hidden lg:block" /> */}
                     <span className="text-center gap-2 font-bold px-2 line-clamp-1 ">
                       En cola
                     </span>
                   </>
-                          )
-                        : (
+                ) : (
                   <>
                     {/* <BsGraphUp className="hidden lg:block" /> */}
                     <span className="text-center gap-2 font-bold w-fit line-clamp-1">
                       En proceso
                     </span>
                   </>
-                          )}
+                )}
               </div>
               {!filters.enCola && (
                 <>
@@ -732,6 +805,16 @@ export const ListaVentas = (): JSX.Element => {
                   transition
                   menuClassName="bg-secondary-100 p-4"
                 >
+                  {orden.id != null && !orden.fecha_alta && (
+                    <MenuItem className="p-0 hover:bg-transparent">
+                      <button
+                      onClick={() => { setProyecto(orden); setOpenAlta(true) }}
+                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                      >
+                        Generar alta
+                      </button>
+                    </MenuItem>
+                  )}
                   <MenuItem className="p-0 hover:bg-transparent">
                     {orden.id != null && (
                       <Link
@@ -826,9 +909,7 @@ export const ListaVentas = (): JSX.Element => {
             </div>
           ))}
           <div className="flex flex-col md:flex-row gap-6 md:gap-0 justify-center md:justify-between content_buttons pt-3 mt-5">
-            <p className="text-md ml-1 text-black">
-              {totalPosts} Registros
-            </p>
+            <p className="text-md ml-1 text-black">{totalPosts} Registros</p>
             <Paginacion
               totalPosts={totalPosts}
               cantidadRegistros={cantidadRegistros}
@@ -836,8 +917,14 @@ export const ListaVentas = (): JSX.Element => {
               setpaginaActual={setpaginaActual}
             />
           </div>
+          <GenerarAlta
+          datos={proyecto}
+          open={OpenAlta}
+          setOpen={setOpenAlta}
+          usuarios={usuarios}
+          />
         </div>
-          )}
+      )}
     </>
   )
 }

@@ -104,6 +104,9 @@ export const IndexComunity = ({
 
   const components = {
     event: (props: any) => {
+      const fechaActual = new Date()
+      // Obtener la fecha de vencimiento de props.event
+      const fechaVencimiento = new Date(props.event?.fecha_vencimiento)
       return (
         <>
           {props.event?.tipo == 'inicio'
@@ -140,7 +143,7 @@ export const IndexComunity = ({
               <div
                 className={`div_cita px-1 h-full text-white 
             ${
-              props.event?.publicado ? 'bg-[#129990]' : 'bg-red-600'
+                props.event?.publicado || fechaVencimiento < fechaActual ? 'bg-[#129990]' : 'bg-red-600'
             }   transition-colors rounded-t-md`}
               >
                 <span className="block  ">{props.title}</span>

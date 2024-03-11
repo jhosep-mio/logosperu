@@ -16,7 +16,7 @@ import Swal from 'sweetalert2'
 import { Toaster } from 'sonner'
 
 const SideBar = (): JSX.Element => {
-  const { auth, setGuia } = useAuth()
+  const { auth, setGuia, downloadProgress } = useAuth()
   const [showMenu, setShowMenu] = useState(false)
 
   const generarAlerta = (): void => {
@@ -26,6 +26,30 @@ const SideBar = (): JSX.Element => {
   return (
     <>
        <Toaster position="top-center" richColors />
+
+       {downloadProgress != 0 && downloadProgress != 100 && (
+        <div className="w-full md:w-96 absolute right-0 md:right-3 bottom-0 z-[60] bg-white  py-3 px-4 rounded-t-lg shadow-black shadow-md">
+          <h2 className='text-center w-full text-black font-medium mb-4 text-lg'>Descarga de archivos</h2>
+          <div className="relative flex items-center justify-center">
+            <p className="text-black font-bold absolute inset-0 text-center">
+              Preparando descarga {(downloadProgress).toFixed(2)} %
+            </p>
+            <div
+              className="rounded-lg bg-gray-400 w-full"
+            >
+              <div
+                className="rounded-lg bg-green-700"
+                style={{
+                  width: `${downloadProgress}%`,
+                  height: '25px',
+                  transition: 'width 0.3s ease'
+                }}
+              ></div>
+            </div>
+          </div>
+        </div>
+       )}
+
       <div
         className={`xl:h-[96vh] fixed xl:static w-[70%] md:w-[40%] lg:w-[30%] xl:w-auto h-full lg:ml-4 top-0 my-auto lg:rounded-2xl bg-[#F0F3F4] shadow-xl px-4 pb-4 pt-2 flex flex-col justify-between z-50 ${
           showMenu ? 'left-0' : '-left-full'

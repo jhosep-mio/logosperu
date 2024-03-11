@@ -34,7 +34,8 @@ export const ModalDescripcion = ({
   setEvents,
   loadingUpdate,
   setLoadingUpdate,
-  getOneBrief
+  getOneBrief,
+  marca
 }: {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
@@ -44,6 +45,7 @@ export const ModalDescripcion = ({
   loadingUpdate: boolean
   setLoadingUpdate: Dispatch<SetStateAction<boolean>>
   getOneBrief: () => Promise<void>
+  marca: string
 }): JSX.Element => {
   const { id } = useParams()
   const [contexto, setContexto] = useState('')
@@ -175,7 +177,6 @@ export const ModalDescripcion = ({
   }
 
   useEffect(() => {
-    console.log(eventSelected)
     if (eventSelected?.event) {
       if (eventSelected?.event?.descripcion?.contexto) {
         setContexto(eventSelected?.event?.descripcion?.contexto)
@@ -270,19 +271,15 @@ export const ModalDescripcion = ({
     })
   }
 
-  //   const updateEstadoById = (): void => {
-  //     const updatedEvents = events.map((event: any) => {
-  //       if (event.id == eventSelected?.event.id) {
-  //         return {
-  //           ...event,
-  //           publicado: !event.publicado
-  //         }
-  //       }
-  //       return event
-  //     })
-  //     updateCita(updatedEvents)
-  //     setEvents(updatedEvents)
-  //   }
+  const obtenerFecha = (): string => {
+    const fechaActual = new Date()
+    // Obtener el día, mes y año de la fecha actual
+    const dia = fechaActual.getDate()
+    const mes = fechaActual.getMonth() + 1 // Nota: JavaScript cuenta los meses desde 0 (enero es 0), por lo que se suma 1.
+    const año = fechaActual.getFullYear()
+    // Formatear la fecha en el formato deseado
+    return `${dia}/${mes}/${año}`
+  }
 
   return (
     <>
@@ -295,7 +292,7 @@ export const ModalDescripcion = ({
         aria-describedby="alert-dialog-description"
         className="modal_community_clientes"
       >
-        <DialogContent className="w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-10 bg-transparent quitaR_padding">
+        <DialogContent className="w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-10 bg-transparent quitaR_padding scroll_movil">
           {!edicion && (
             <FaSave
               className="absolute top-3 left-3 text-main text-2xl cursor-pointer z-10"
@@ -306,7 +303,7 @@ export const ModalDescripcion = ({
           )}
           <section
             className={cn(
-              'w-full h-fit rounded-md flex flex-col justify-between overflow-y-auto',
+              'w-full h-full lg:h-fit rounded-md  flex flex-col justify-between overflow-y-auto',
               edicion ? 'bg-transparent' : 'bg-white p-4 '
             )}
           >
@@ -446,7 +443,7 @@ export const ModalDescripcion = ({
               </>
             ) : (
               <div className="w-full ">
-                <div className="bg-white w-fit mx-auto p-4 rounded-md relative">
+                <div className="bg-white w-full min-h-[400px] mx-auto p-4 rounded-md relative">
                   <FaEdit
                     className="absolute top-3 right-3 text-main text-2xl cursor-pointer z-10"
                     onClick={() => {
@@ -461,10 +458,10 @@ export const ModalDescripcion = ({
                     />
                     <div className="flex flex-col gap-0">
                       <span className="text-black font-semibold text-lg">
-                        ELP Consultores
+                        {marca}
                       </span>
                       <span className="text-gray-500 font-medium">
-                        17/07/2024
+                        {obtenerFecha()}
                       </span>
                     </div>
                   </div>
@@ -487,7 +484,7 @@ export const ModalDescripcion = ({
                                   muted
                                   autoPlay
                                   loop
-                                  className="w-full h-[400px] object-contain bg-gray-100 shadow-md"
+                                  className="w-full h-[200px] lg:h-[400px] object-contain bg-gray-100 shadow-md"
                                 />
                               ) : (
                                 <RViewer
@@ -496,7 +493,7 @@ export const ModalDescripcion = ({
                                   <RViewerTrigger>
                                     <img
                                       src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
-                                      className="w-full h-[400px] object-contain cursor-pointer bg-gray-100 shadow-md"
+                                      className="w-full h-[200px] lg:h-[400px] object-contain cursor-pointer bg-gray-100 shadow-md"
                                     />
                                   </RViewerTrigger>
                                 </RViewer>
@@ -512,7 +509,7 @@ export const ModalDescripcion = ({
             )}
           </section>
 
-          <section className="w-full ">
+          <section className="w-full h-full md:h-fit">
             <CrearComentario
               setComentarios={setComentarios}
               getOneBrief={getOneBrief}

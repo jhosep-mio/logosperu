@@ -61,13 +61,15 @@ export const IndexComunity = ({
   datos,
   getOneBrief,
   events,
-  setEvents
+  setEvents,
+  brief
 }: {
   cards: Card[]
   datos: values
   getOneBrief: () => Promise<void>
   events: Event[]
   setEvents: Dispatch<SetStateAction<Event[]>>
+  brief: any | null
 }): JSX.Element => {
   const { id } = useParams()
   const token = localStorage.getItem('token')
@@ -185,6 +187,15 @@ export const IndexComunity = ({
 
   const handleCreateEvent = async (): Promise<void> => {
     const parsedDate = moment(datos?.fecha_inicio, 'DD/MM/YYYY').toDate()
+    let currentDate = moment()
+    if (currentDate.day() === 5) {
+      currentDate = currentDate.add(2, 'days') // Agregar dos días para evitar domingo
+    } else if (currentDate.day() === 6) {
+      currentDate = currentDate.add(1, 'days') // Agregar un día para evitar domingo
+    }
+    currentDate = currentDate.add(2, 'days')
+    currentDate = currentDate.startOf('day').add(12, 'hours')
+
     const newEvent = {
       title: 'INICIO DE CM',
       start: moment(parsedDate, 'DD/MM/YYYY').toDate(),
@@ -194,7 +205,8 @@ export const IndexComunity = ({
 
     const newSolicitudEvento = {
       id: uuidv4(),
-      title: 'SOLICITUD DE INFORMACIÓN',
+      title: 'LLENADO DE BRIEF',
+      fecha_vencimiento: currentDate.toDate(),
       start: parsedDate,
       end: parsedDate,
       tipo: 'solicitud_informacion'
@@ -233,6 +245,7 @@ export const IndexComunity = ({
                 getOneBrief={getOneBrief}
                 events={events}
                 setEvents={setEvents}
+                brief={brief}
               />
             )}
             <section className="w-full h-full relative cursor-pointer">
@@ -289,13 +302,15 @@ const SelectedCard = ({
   datos,
   getOneBrief,
   events,
-  setEvents
+  setEvents,
+  brief
 }: {
   selected: Card | null
   datos: values
   getOneBrief: () => Promise<void>
   events: Event[]
   setEvents: Dispatch<SetStateAction<Event[]>>
+  brief: any | null
 }): JSX.Element => {
   return (
     <div
@@ -317,7 +332,7 @@ const SelectedCard = ({
         }}
         className="relative w-full h-full"
       >
-        <IndexCalendarioCm datos={datos} getOneBrief={getOneBrief} events={events} setEvents={setEvents} />
+        <IndexCalendarioCm datos={datos} getOneBrief={getOneBrief} events={events} setEvents={setEvents} brief={brief}/>
       </motion.div>
     </div>
   )

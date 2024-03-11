@@ -15,7 +15,9 @@ import { ViewAvance } from './ViewAvance'
 import { FiInstagram } from 'react-icons/fi'
 import { BsChatRightText } from 'react-icons/bs'
 import { FaWhatsapp, FaFacebookF } from 'react-icons/fa'
-
+import ico from '../../../../assets/logo/iconowhite.png'
+import vieweb from '../../../../assets/webView.svg'
+import { TfiWorld } from 'react-icons/tfi'
 import {
   type valuesResumen,
   type FinalValues,
@@ -143,6 +145,7 @@ export const Avances = (): JSX.Element => {
   const [openMailFinal, setOpenMailFinal] = useState(false)
   const [validateBrief, seValidateBrief] = useState<boolean | null>(null)
   const [events, setEvents] = useState<Event[]>([])
+  const [brief, setBrief] = useState<any | null>(null)
 
   const updatePropuestas = async (): Promise<void> => {
     setLoading(true)
@@ -229,6 +232,13 @@ export const Avances = (): JSX.Element => {
         }
       )
       setplan(requestPlan.data[0])
+
+      if (request.data[0].contrato) {
+        setBrief({ codigo: request.data[0].contrato.codigo, uso: request.data[0].contrato.uso })
+      } else {
+        setBrief({ codigo: request.data[0].codigo, uso: request.data[0].uso })
+      }
+
       if (requestPlan.data[0].tipo?.includes('Diseño Logotipo')) {
         const respuesta = await axios.get(
           `${Global.url}/oneBriefDiseñoNewToSeguimiento/${id ?? ''}`,
@@ -347,6 +357,7 @@ export const Avances = (): JSX.Element => {
         ...prevDatos,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         nombres: `${request.data[0].nombres} ${request.data[0].apellidos}`,
+        nombre_empresa_final: request.data[0].nombre_empresa,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         correo: `${request.data[0].email}`,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -464,6 +475,7 @@ export const Avances = (): JSX.Element => {
                     getOneBrief={getOneBrief}
                     events={events}
                     setEvents={setEvents}
+                    brief={brief}
                   />
                 </div>
                 <div className="h-[600px] flex flex-col gap-3 col-span-2 lg:col-span-1">
@@ -671,17 +683,37 @@ export const Avances = (): JSX.Element => {
                 </div>
               </div>
 
-              <div className="bg-white p-4 rounded-xl mt-6">
-                <ArchivosFinales
-                  getOneBrief={getOneBrief}
-                  values={values}
-                  pdfName={pdfName}
-                  setpdfName={setpdfName}
-                  fechaCreacion={fechaCreacion}
-                  limite={limite}
-                  plan={plan}
-                  validateBrief={validateBrief}
-                />
+              <div className="flex gap-6 justify-between">
+                <div className="bg-white p-4 rounded-xl mt-6 w-[70%]">
+                  <ArchivosFinales
+                    getOneBrief={getOneBrief}
+                    values={values}
+                    pdfName={pdfName}
+                    setpdfName={setpdfName}
+                    fechaCreacion={fechaCreacion}
+                    limite={limite}
+                    plan={plan}
+                    validateBrief={validateBrief}
+                  />
+                </div>
+                <div className="w-[30%] mt-6 rounded-xl bg_web_client p-4">
+                  <div className="flex gap-1 justify-between items-start">
+                          <div className=" w-[50%]">
+                            <div className="flex gap-2 items-center">
+                              <img src={ico} alt="" width={22}/>
+                              <span className='font-[400] text-lg text-white'>Logos Perú</span>
+
+                            </div>
+
+                            <h6 className='block text-center text-white font-[500] text-2xl mt-5'>Primer avance</h6>
+                            <a href="" className='btn_vieweb w-fit bg-white rounded-full flex items-center gap-2 px-6 py-2 text-center text-black mt-5 mx-auto'><TfiWorld className="text-main"/>Ver web </a>
+                          </div>
+                          <div className="w-[50%]">
+                          <img src={vieweb} alt="" className='w-[73%] block mx-auto  imgViewWeb'/>
+
+                          </div>
+                  </div>
+                </div>
               </div>
 
               <div className="bg-white p-4 rounded-xl mt-6">

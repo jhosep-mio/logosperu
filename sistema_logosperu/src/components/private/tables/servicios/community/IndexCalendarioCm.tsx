@@ -13,6 +13,8 @@ import { toast } from 'sonner'
 import { useParams } from 'react-router-dom'
 import useAuth from '../../../../../hooks/useAuth'
 import { ModalInformacion } from './modals/ModalInformacion'
+import { IoNotifications } from 'react-icons/io5'
+import { ModalCorreoConfirmacion } from './modals/ModalCorreoConfirmacion'
 
 moment.locale('es')
 const localizer = momentLocalizer(moment) // Importa el locale español
@@ -53,22 +55,24 @@ export const IndexCalendarioCm = ({
   datos,
   getOneBrief,
   events,
-  setEvents
+  setEvents,
+  brief
 }: {
   datos: valuesDatos
   getOneBrief: () => Promise<void>
   events: Event[]
   setEvents: Dispatch<SetStateAction<Event[]>>
+  brief: any | null
 }): JSX.Element => {
   const { id } = useParams()
   const { auth } = useAuth()
   const token = localStorage.getItem('token')
   const [loadingUpdate, setLoadingUpdate] = useState(false)
   const [disabledDates] = useState([datos?.fecha_inicio]) // Lista de fechas deshabilitadas
-  console.log(datos)
   const [open, setOpen] = useState(false)
   const [openInformacion, setOpenInformacion] = useState(false)
   const [eventSelected, setEventSelected] = useState<any | null>(null)
+  const [openConfirmacion, setOpenConfirmacion] = useState(false)
   const messages = {
     allDay: 'Todo el día',
     previous: 'Anterior',
@@ -219,6 +223,8 @@ export const IndexCalendarioCm = ({
           start,
           end: start,
           descripcion: null,
+          tema: null,
+          hora: null,
           user: {
             name: auth.name,
             id: auth.id
@@ -261,6 +267,9 @@ export const IndexCalendarioCm = ({
               </span>
             </div>
           </div>
+          <div className='pl-4'>
+            <IoNotifications className='text-2xl text-red-400' onClick={() => { setOpenConfirmacion(true) }}/>
+          </div>
         </div>
         <input
           type="month"
@@ -302,6 +311,7 @@ export const IndexCalendarioCm = ({
           eventSelected={eventSelected}
           setLoadingUpdate={setLoadingUpdate}
           marca={datos?.nombre_marca}
+          nombres={datos?.nombres}
         />
         <ModalInformacion
           loadingUpdate={loadingUpdate}
@@ -312,6 +322,17 @@ export const IndexCalendarioCm = ({
           setOpen={setOpenInformacion}
           eventSelected={eventSelected}
           setLoadingUpdate={setLoadingUpdate}
+          brief= {brief}
+          datos={datos}
+        />
+        <ModalCorreoConfirmacion
+            loadingUpdate={loadingUpdate}
+            getOneBrief={getOneBrief}
+            open={openConfirmacion}
+            setOpen={setOpenConfirmacion}
+            eventSelected={eventSelected}
+            setLoadingUpdate={setLoadingUpdate}
+            datos={datos}
         />
       </section>
     </>

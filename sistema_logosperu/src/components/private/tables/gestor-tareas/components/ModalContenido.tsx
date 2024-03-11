@@ -4,7 +4,6 @@ import { BiTask, BiLabel } from 'react-icons/bi'
 import { type DuoContent } from '../../../../shared/schemas/Interfaces'
 import { SlOptions } from 'react-icons/sl'
 import { CgDetailsMore } from 'react-icons/cg'
-import Editor from './Editor'
 import { useParams } from 'react-router-dom'
 import { IoClose } from 'react-icons/io5'
 import { v4 as uuidv4 } from 'uuid'
@@ -23,6 +22,7 @@ import { LoadingSmall } from '../../../../shared/LoadingSmall'
 import { ModalFecha } from './fecha/ModalFecha'
 import { FaRegCalendarCheck } from 'react-icons/fa6'
 import { TbClockHour5 } from 'react-icons/tb'
+import EditorPdfAltas from '../../../../shared/modals/EditorPdfAltas'
 
 interface arrayListado {
   id: string
@@ -1158,7 +1158,7 @@ export const ModalContenido = ({
           {edicion
             ? (
             <>
-              <Editor content={contexto} setContent={setContexto} />
+              <EditorPdfAltas content={contexto} setContent={setContexto} />
               <div className='flex gap-3 items-center'>
                 <button
                     className="bg-cyan-600 hover:bg-cyan-700 text-white transition-colors rounded-md px-4 py-2 mt-3"

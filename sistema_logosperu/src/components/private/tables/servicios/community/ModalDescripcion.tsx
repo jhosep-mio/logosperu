@@ -35,7 +35,8 @@ export const ModalDescripcion = ({
   loadingUpdate,
   setLoadingUpdate,
   getOneBrief,
-  marca
+  marca,
+  nombres
 }: {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
@@ -46,9 +47,14 @@ export const ModalDescripcion = ({
   setLoadingUpdate: Dispatch<SetStateAction<boolean>>
   getOneBrief: () => Promise<void>
   marca: string
+  nombres: string
 }): JSX.Element => {
   const { id } = useParams()
+  const { auth } = useAuth()
   const [contexto, setContexto] = useState('')
+  const [tema, setTema] = useState('')
+  const [hora, setHora] = useState('')
+
   const [arrayArchivos, setArrayArchivos] = useState<
   arrayCategoriasToPortafolio[]
   >([])
@@ -67,6 +73,45 @@ export const ModalDescripcion = ({
   const [openResponder, setOpenResponder] = useState(false)
   const [idComentario, setIdComentario] = useState<string | null>('')
   const [texto, setTexto] = useState<string | null>('')
+
+  const enviarCorreo = async (): Promise<void> => {
+    let currentDate = moment()
+    if (currentDate.day() === 5) {
+      currentDate = currentDate.add(2, 'days')
+    } else if (currentDate.day() === 6) {
+      currentDate = currentDate.add(1, 'days')
+    }
+    currentDate = currentDate.add(2, 'days')
+    currentDate = currentDate.startOf('day').add(12, 'hours')
+    const formattedDate = currentDate.format('DD/MM/YYYY')
+
+    try {
+      const data = new FormData()
+      data.append(
+        'titulo',
+        `CONFIRMACION DE POST - ${(eventSelected?.event?.title).toUpperCase()}`
+      )
+      data.append('nombres', nombres)
+      data.append('post', (eventSelected?.event?.title).toUpperCase())
+      data.append('fecha', formattedDate)
+      data.append('firma', auth.firma)
+
+      const respuesta = await axios.post(
+        `${Global.url}/enviarCorreoInfoCommunity`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+          }
+        }
+      )
+      console.log(respuesta)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault()
@@ -166,7 +211,9 @@ export const ModalDescripcion = ({
           ...event,
           descripcion: {
             contexto,
-            arrayArchivos
+            arrayArchivos,
+            tema,
+            hora
           }
         }
       }
@@ -182,6 +229,16 @@ export const ModalDescripcion = ({
         setContexto(eventSelected?.event?.descripcion?.contexto)
       } else {
         setContexto('')
+      }
+      if (eventSelected?.event?.descripcion?.hora) {
+        setHora(eventSelected?.event?.descripcion?.hora)
+      } else {
+        setHora('')
+      }
+      if (eventSelected?.event?.descripcion?.tema) {
+        setTema(eventSelected?.event?.descripcion?.tema)
+      } else {
+        setTema('')
       }
       if (eventSelected?.event?.descripcion?.arrayArchivos) {
         setArrayArchivos(eventSelected?.event?.descripcion?.arrayArchivos)
@@ -211,6 +268,9 @@ export const ModalDescripcion = ({
     data.append('community', JSON.stringify(updatedEvents))
     data.append('archivosAEliminar', JSON.stringify(archivosAEliminar))
     data.append('_method', 'PUT')
+    if (arrayArchivos.length > 0) {
+      enviarCorreo()
+    }
     try {
       const respuesta = await axios.post(
         `${Global.url}/updateCalendarioComunnityVentas/${id ?? ''}`,
@@ -271,14 +331,20 @@ export const ModalDescripcion = ({
     })
   }
 
-  const obtenerFecha = (): string => {
-    const fechaActual = new Date()
-    // Obtener el día, mes y año de la fecha actual
-    const dia = fechaActual.getDate()
-    const mes = fechaActual.getMonth() + 1 // Nota: JavaScript cuenta los meses desde 0 (enero es 0), por lo que se suma 1.
-    const año = fechaActual.getFullYear()
-    // Formatear la fecha en el formato deseado
-    return `${dia}/${mes}/${año}`
+  const obtenerFecha = (fechaActual: string): string => {
+    const fecha = new Date(fechaActual)
+    // Verificar si la fecha es válida
+    if (isNaN(fecha.getTime())) {
+      return '' // O puedes manejar este caso de otra manera según tu lógica
+    }
+    const dia = fecha.getDate()
+    const mes = fecha.getMonth() + 1
+    const año = fecha.getFullYear()
+    // Asegúrate de agregar ceros a la izquierda si es necesario para mantener el formato
+    const diaFormateado = dia < 10 ? `0${dia}` : `${dia}`
+    const mesFormateado = mes < 10 ? `0${mes}` : `${mes}`
+    // Formatear la fecha en el formato deseado (dd/mm/yyyy)
+    return `${diaFormateado}/${mesFormateado}/${año}`
   }
 
   return (
@@ -322,7 +388,53 @@ export const ModalDescripcion = ({
                         />
                     )}
                   </div>
-                  <div className="mt-6">
+                  <div className="mt-4">
+                    <div className="w-full flex gap-3">
+                      <div className="w-full relative pb-0 md:pb-3">
+                        <label
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          htmlFor="email"
+                        >
+                          Descripción
+                        </label>
+                        <input
+                          className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
+                          value={tema}
+                          onChange={(e) => {
+                            setTema(e.target.value)
+                          }}
+                        />
+                      </div>
+                      <div className="w-24 relative pb-0 md:pb-3">
+                        <label
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          htmlFor="email"
+                        >
+                          Hora
+                        </label>
+                        <select
+                        id="hora"
+                        name="hora"
+                        className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
+                        value={hora}
+                        onChange={(e) => {
+                          setHora(e.target.value)
+                        }}
+                        >
+                        {Array.from({ length: 10 }, (_, i) => i + 9).map(hour => (
+                            <option key={hour} value={`${hour}:00`}>{`${hour}:00`}</option>
+                        ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-0 rounded-md overflow-hidden relative">
+                    <label
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      htmlFor="email"
+                    >
+                      Copy
+                    </label>
                     <EditorComunnity
                       content={contexto}
                       setContent={setContexto}
@@ -461,9 +573,15 @@ export const ModalDescripcion = ({
                         {marca}
                       </span>
                       <span className="text-gray-500 font-medium">
-                        {obtenerFecha()}
+                        {obtenerFecha(eventSelected?.event?.start)} : {hora}
                       </span>
                     </div>
+                  </div>
+                  <div className="w-full mt-6">
+                    <p>
+                      <strong>Tema: </strong>
+                      {tema}
+                    </p>
                   </div>
                   <div className="w-full mt-6">
                     <div
@@ -471,9 +589,17 @@ export const ModalDescripcion = ({
                       dangerouslySetInnerHTML={{ __html: contexto }}
                     ></div>
                   </div>
-                  <div className="w-full mt-6 grid gap-3 justify-start" style={{ gridTemplateColumns: `repeat(${arrayArchivos.length}, 1fr)` }}>
+                  <div
+                    className="w-full mt-6 grid gap-3 justify-start"
+                    style={{
+                      gridTemplateColumns: `repeat(${arrayArchivos.length}, 1fr)`
+                    }}
+                  >
                     {arrayArchivos?.map((pro: any) => (
-                      <div className={cn('flex gap-4 justify-center')} key={pro.id}>
+                      <div
+                        className={cn('flex gap-4 justify-center')}
+                        key={pro.id}
+                      >
                         <div className="group relative w-full">
                           {pro.imagen1.archivo && (
                             <div className="w-full">

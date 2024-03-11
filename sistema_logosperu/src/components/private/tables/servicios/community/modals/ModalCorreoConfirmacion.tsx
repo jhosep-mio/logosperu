@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable multiline-ternary */
 import { Dialog, DialogContent } from '@mui/material'
-import { type Dispatch, type SetStateAction } from 'react'
+import { type Dispatch, type SetStateAction, useState } from 'react'
 import axios from 'axios'
 import { Global } from '../../../../../../helper/Global'
 import { toast } from 'sonner'
@@ -25,12 +25,11 @@ interface valuesDatos {
   comunnity: string
 }
 
-export const ModalInformacion = ({
+export const ModalCorreoConfirmacion = ({
   open,
   setOpen,
   eventSelected,
   loadingUpdate,
-  brief,
   datos,
   setLoadingUpdate,
   getOneBrief
@@ -38,16 +37,15 @@ export const ModalInformacion = ({
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
   eventSelected: any | null
-  events: Event[]
-  setEvents: Dispatch<SetStateAction<Event[]>>
   loadingUpdate: boolean
   setLoadingUpdate: Dispatch<SetStateAction<boolean>>
   getOneBrief: () => Promise<void>
-  brief: any | null
   datos: valuesDatos
 }): JSX.Element => {
   const token = localStorage.getItem('token')
   const { auth } = useAuth()
+  const marca = datos?.nombre_marca
+  const [asunto, setAsunto] = useState(`CONFIRMACION DE CALENDARIO ${(marca).toUpperCase()} -`)
 
   const enviarCorreo = async (): Promise<void> => {
     setLoadingUpdate(true)
@@ -62,15 +60,14 @@ export const ModalInformacion = ({
       currentDate = currentDate.startOf('day').add(12, 'hours')
       const formattedDate = currentDate.format('DD/MM/YYYY')
       const data = new FormData()
-      // @ts-expect-error
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      data.append('titulo', `SOLICITUD DE LLENADO DE BRIEF - ${datos?.empresa}`)
+      data.append('titulo', asunto)
       data.append('nombres', datos.nombres)
-      data.append('codigo', brief.codigo)
       data.append('fecha', formattedDate)
       data.append('firma', auth.firma)
+      data.append('email_cliente', datos?.email)
+      data.append('celular_cliente', datos?.celular)
 
-      const respuesta = await axios.post(`${Global.url}/enviarSolicitudBriefCommunity`, data,
+      const respuesta = await axios.post(`${Global.url}/confirmacionCalendario`, data,
         {
           headers: {
             Authorization: `Bearer ${
@@ -91,8 +88,6 @@ export const ModalInformacion = ({
     }
   }
 
-  const fechaActual = new Date()
-  const fechaVencimiento = new Date(eventSelected?.fecha_vencimiento)
   return (
     <>
       <Dialog
@@ -104,25 +99,19 @@ export const ModalInformacion = ({
         aria-describedby="alert-dialog-description"
         className=""
       >
-        <DialogContent className="w-full h-fit bg-transparent quitaR_padding relative">
+        <DialogContent className="w-[600px] h-fit bg-transparent quitaR_padding relative">
         <IoMdCloseCircle className='absolute top-2 right-6 text-3xl z-10 cursor-pointer' onClick={() => { setOpen(false) }}/>
-          <section className="w-full h-fit bg-white p-4 rounded-md flex flex-col justify-between overflow-y-auto">
-            <div className="w-full ">
-              <div className="w-full relative">
-                <h1 className="w-full uppercase text-center font-bold text-2xl">
-                  {eventSelected?.title}
-                </h1>
-              </div>
-              <div className="mt-6">
-                {fechaVencimiento < fechaActual && brief.uso == '0'
-                  ? <span className='text-red-700 text-xl'>PLAZO DE ENVIO DE INFORMACIÓN VENCIDO</span>
-                  : brief.uso == '0' ? <span className='text-gray-700 text-xl'>El cliente aun no completo el brief con codigo <strong>{brief.codigo}</strong></span>
-                    : <span className='text-gray-700 text-xl'>El cliente ya completo el llenado de brief con codigo <strong>{brief.codigo}</strong></span>
-                }
-              </div>
-            </div>
-            {fechaVencimiento < fechaActual && brief.uso == '0'
-              ? <div className="w-full flex justify-center mt-10">
+          <section className="w-full h-fit bg-white p-4 mt-3 rounded-md flex flex-col justify-between overflow-y-auto">
+          <input
+            type="text"
+            placeholder="ASUNTO"
+            className="text-black outline-none px-4 py-3 border border-gray-400 w-full"
+            value={asunto}
+            onChange={(e) => {
+              setAsunto(e.target.value)
+            }}
+          />
+           <div className="w-full flex justify-center mt-10">
               {loadingUpdate ? (
                 <button
                   disabled
@@ -137,29 +126,10 @@ export const ModalInformacion = ({
                     enviarCorreo()
                   }}
                 >
-                  Enviar acta de estado
+                  Enviar confirmación
                 </button>
               )}
             </div>
-              : brief.uso == '0' && <div className="w-full flex justify-center mt-10">
-              {loadingUpdate ? (
-                <button
-                  disabled
-                  className="w-fit mx-auto px-5 py-2 rounded-md bg-green-700 transition-colors text-white"
-                >
-                  Validando...
-                </button>
-              ) : (
-                <button
-                  className="w-fit mx-auto px-5 py-2 rounded-md bg-green-600 hover:bg-green-700 transition-colors text-white"
-                  onClick={() => {
-                    enviarCorreo()
-                  }}
-                >
-                  Enviar solicitud de información
-                </button>
-              )}
-            </div>}
           </section>
         </DialogContent>
       </Dialog>

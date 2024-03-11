@@ -437,6 +437,47 @@
   }
 }
 
+// VIEW CARD WEB CLIENT 
+.bg_web_client{
+  background-image: url(./assets/diego.svg);
+  background-size: cover;
+
+  h6{
+    transition: all ease-out .3s;
+  }
+
+  &:hover{
+    & .imgViewWeb{
+      scale: 1.05;
+    }
+
+    h6{
+      letter-spacing: 0.8px;
+      scale: 1.01;
+
+    }
+  }
+
+  & .imgViewWeb{
+    transition: all .5s ease-out;
+  }
+}
+
+
+.btn_vieweb{
+  border: 1px solid #fff;
+  transition: all .3s;
+
+  &:hover{
+    background: transparent;
+    color: #fff !important;
+
+    svg{
+      color: #fff;
+    }
+  }
+}
+
 .content_acta_Acaptacion {
   .content_editor {
     & .ql-container {

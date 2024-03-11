@@ -338,7 +338,7 @@ export const ArchivosFinales = ({
 
   return (
     <>
-      <div className="flex flex-row gap-0 justify-between lg:gap-2 mb-2">
+      <div className="flex flex-row gap-0 justify-between lg:gap-2 mb-2 ">
         <div className="flex flex-col gap-3 mb-2">
           <h2 className="text-base lg:text-2xl font-bold text-black">
             Archivos {' '}

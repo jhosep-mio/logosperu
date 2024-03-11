@@ -162,6 +162,8 @@ export const IndexGestor = (): JSX.Element => {
     setTitle('Logos Perú')
   }, [])
 
+  const eventos = [...events]
+
   return (
     <>
       <div className="flex gap-3 items-center border-b border-gray-300 h-[7vh] py-1 md:py-0 lg:h-[10vh] mx-1 md:px-8">
@@ -223,7 +225,7 @@ export const IndexGestor = (): JSX.Element => {
                   Crear nuevo tablero
                 </p>
               </div>
-              {events?.map((producto: any, index: number) => (
+              {eventos?.reverse().map((producto: any, index: number) => (
                 <Link
                   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                   to={`${auth.id}/view/${producto.id}/image/${index}`}

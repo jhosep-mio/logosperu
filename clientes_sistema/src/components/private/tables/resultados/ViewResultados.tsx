@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable multiline-ternary */
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -11,17 +12,16 @@ import {
   type avanceValues,
   type bannersValues
 } from '../../../shared/Interfaces'
-import espera from './../../../../assets/logo/espera.svg'
 import { Worker, Viewer } from '@react-pdf-viewer/core'
-import { BsFillCloudArrowDownFill } from 'react-icons/bs'
 import Header2 from '../../includes/Header2'
-import { pdf, zip } from '../../../shared/Images'
-import Skeleton from '@mui/material/Skeleton'
 import { SwiperAvances } from './avances/SwiperAvances'
 import { ViewFinal } from './avances/ViewFinal'
 import Tour from 'reactour'
-import { LoadingSmall } from '../../../shared/LoadingSmall'
-// import { IndexComunity } from './comunnity/IndexComunity'
+import { Archivos } from './components/Archivos'
+import { IndexComunity } from './comunnity/IndexComunity'
+import { FaFacebookF, FaTiktok } from 'react-icons/fa'
+import { FiInstagram } from 'react-icons/fi'
+import { v4 as uuidv4 } from 'uuid'
 
 interface values {
   nombres: string
@@ -95,6 +95,7 @@ export const ViewResultados = (): JSX.Element => {
   const [limite, setLimite] = useState(0)
   const [loading, setLoading] = useState(false)
   const [pdfurl, setpdfurl] = useState('')
+  const [correos, setCorreos] = useState([])
   const { setTitle } = useAuth()
   const [loadingComponents, setLoadingComponents] = useState(true)
   const [resultado, setresultado] = useState<bannersValues>({
@@ -115,8 +116,10 @@ export const ViewResultados = (): JSX.Element => {
     updated_at: '',
     community: ''
   })
+  const [brief, setBrief] = useState<any | null>(null)
   const [arrayAvances, setArrayAvances] = useState([])
   const [arrayFinal, setArrayFinal] = useState([])
+  const [events, setEvents] = useState<Event[]>([])
   const [, setAvance] = useState<avanceValues>({
     contexto: '',
     imagenes: [],
@@ -154,6 +157,12 @@ export const ViewResultados = (): JSX.Element => {
   }
 
   const getBanner = async (): Promise<void> => {
+    const requestColabordador = await axios.get(`${Global.url}/getColaboradores`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+
     const request = await axios.get(
       `${Global.url}/showToResultados/${id ?? ''}`,
       {
@@ -190,11 +199,33 @@ export const ViewResultados = (): JSX.Element => {
           console.error('Error al cargar el PDF:', error)
         })
     }
+
+    if (request.data[0].asignacion && requestColabordador.data) {
+      const asignaciones = JSON.parse(request.data[0].asignacion)
+      const correos2: any = []
+      asignaciones.forEach((asignacion: any) => {
+        // Buscar el colaborador cuyo ID coincide con el peso de la asignación
+        const colaborador = requestColabordador.data.find((colaborador: any) => colaborador.id == asignacion.peso)
+        if (colaborador) {
+          correos2.push({ id: uuidv4(), correo: colaborador.email })
+        }
+      })
+      setCorreos(correos2)
+    }
+
+    if (request.data[0].contrato) {
+      setBrief({ codigo: request.data[0].contrato.codigo, uso: request.data[0].contrato.uso })
+    } else {
+      setBrief({ codigo: request.data[0].codigo, uso: request.data[0].uso })
+    }
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     setTitle(`${request.data[0].id_contrato}`)
     setresultado(request.data[0])
     setFechaCreacion(
       request.data[0].fecha_fin ? parseFecha(request.data[0].fecha_fin) : null
+    )
+    setEvents(
+      request.data[0].community ? JSON.parse(request.data[0].community) : []
     )
     setLimite(request.data[0].limitar_descarga)
     if (request.data[0].array_avances) {
@@ -218,25 +249,29 @@ export const ViewResultados = (): JSX.Element => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       fecha: `${request.data[0].array_final}`,
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      nombre_marca: `${request.data[0].nombre_marca}`
+      nombre_marca: `${request.data[0].nombre_marca}`,
+      aprobacion: request.data[0].aprobacion
+        ? JSON.parse(request.data[0].aprobacion)
+        : []
     }))
+    console.log(JSON.parse(request.data[0].aprobacion))
     setLoadingComponents(false)
   }
 
-  //   const getData2 = async (): Promise<void> => {
-  //     const request = await axios.get(
-  //       `${Global.url}/showToResultados/${id ?? ''}`,
-  //       {
-  //         headers: {
-  //           mode: 'no-cors',
-  //           Authorization: `Bearer ${
-  //             token !== null && token !== '' ? `Bearer ${token}` : ''
-  //           }`
-  //         }
-  //       }
-  //     )
-  //     setresultado(request.data[0])
-  //   }
+  const getData2 = async (): Promise<void> => {
+    const request = await axios.get(
+      `${Global.url}/showToResultados/${id ?? ''}`,
+      {
+        headers: {
+          mode: 'no-cors',
+          Authorization: `Bearer ${
+            token !== null && token !== '' ? `Bearer ${token}` : ''
+          }`
+        }
+      }
+    )
+    setresultado(request.data[0])
+  }
 
   const formatearNombre = (fileName: string): string => {
     const prefixIndex = fileName.indexOf('_')
@@ -260,10 +295,10 @@ export const ViewResultados = (): JSX.Element => {
             }`
           },
           onDownloadProgress: (e) => {
-            const loaded = (e.loaded)
+            const loaded = e.loaded
             const total = e.total
             if (total) {
-              setDownloadProgress(((loaded) / total) * 100)
+              setDownloadProgress((loaded / total) * 100)
             }
           }
         })
@@ -324,19 +359,14 @@ export const ViewResultados = (): JSX.Element => {
       }  (${datos?.nombres ?? ''} )`
     )
     try {
-      await axios.post(
-        `${Global.url}/storeNotiGeneral`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${
-              token !== null && token !== '' ? token : ''
-            }`
-          }
+      await axios.post(`${Global.url}/storeNotiGeneral`, data, {
+        headers: {
+          Authorization: `Bearer ${
+            token !== null && token !== '' ? token : ''
+          }`
         }
-      )
-    } catch (error: unknown) {
-    }
+      })
+    } catch (error: unknown) {}
   }
 
   const descargarFinal = async (): Promise<void> => {
@@ -353,10 +383,10 @@ export const ViewResultados = (): JSX.Element => {
             }`
           },
           onDownloadProgress: (e) => {
-            const loaded = (e.loaded)
+            const loaded = e.loaded
             const total = e.total
             if (total) {
-              setDownloadProgress(((loaded) / total) * 100)
+              setDownloadProgress((loaded / total) * 100)
             }
           }
         })
@@ -403,19 +433,43 @@ export const ViewResultados = (): JSX.Element => {
     }
   }
 
-  function formatFileName (fileName: string): string {
-    return fileName.split('_').pop() ?? fileName
+  const descargarArchivoZip = async (nombre: string): Promise<void> => {
+    setLoading(true)
+    try {
+      const response = await axios({
+        method: 'get',
+        url: `${Global.url}/descargarArchivosAvances/${nombre ?? ''}`,
+        responseType: 'blob', // Indicar que la respuesta es un blob (archivo)
+        headers: {
+          Authorization: `Bearer ${
+            token !== null && token !== '' ? `Bearer ${token}` : ''
+          }`
+        },
+        onDownloadProgress: (e) => {
+          const loaded = e.loaded
+          const total = e.total
+          if (total) {
+            setDownloadProgress((loaded / total) * 100)
+          }
+        }
+      })
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${formatFileName(nombre)}` // Cambiar por el nombre real del archivo
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setDownloadProgress(0)
+    }
+    setLoading(false)
   }
 
-  const formatTime = (ms: number): string => {
-    let s = Math.floor(ms / 1000)
-    let m = Math.floor(s / 60)
-    let h = Math.floor(m / 60)
-    const d = Math.floor(h / 24)
-    h %= 24
-    m %= 60
-    s %= 60
-    return `${d} días ${h} horas ${m} minutos ${s} segundos`
+  function formatFileName (fileName: string): string {
+    return fileName.split('_').pop() ?? fileName
   }
 
   useEffect(() => {
@@ -450,12 +504,12 @@ export const ViewResultados = (): JSX.Element => {
     setGuia(false)
   }
 
-  //   const cards = [
-  //     {
-  //       id: 1,
-  //       title: 'Calendario comunnity'
-  //     }
-  //   ]
+  const cards = [
+    {
+      id: 1,
+      title: 'Calendario comunnity'
+    }
+  ]
 
   return (
     <>
@@ -465,391 +519,68 @@ export const ViewResultados = (): JSX.Element => {
       ) : (
         <>
           <Tour steps={steps} isOpen={guia} onRequestClose={handleClose} />
-          {/* <div className="w-full h-fit min-h-[85px] bg-white p-4 rounded-xl mt-6">
-              <IndexComunity
-                cards={cards}
-                datos={resultado}
-                getOneBrief={getData2}
-              />
-           </div> */}
-
-          <form
-            className="bg-form p-3 md:p-8 rounded-xl mt-0 lg:mt-4 mb-4 first-stepP"
-          >
-
-            {resultado.propuestas || resultado.archivos_finales ? (
-              <>
-                <div className="flex flex-col md:items-start gap-y-2 mb-8 md:px-4">
-                  <div className="flex flex-col gap-0 lg:gap-3 mb-2 lg:mb-6 ">
-                    <h2 className="text-xl lg:text-2xl font-bold">
-                      Archivos finales
-                    </h2>
-                    <h3 className="font-bold text-base">
-                      <span className="text-gray-400 text-sm lg:text-base">
-                        Tiene 30 dias para descargar sus archivos
-                      </span>{' '}
-                    </h3>
-                  </div>
-                  {/* MOVIL */}
-                  {
-                    // eslint-disable-next-line eqeqeq
-                    resultado.archivos_finales != undefined &&
-                      resultado.archivos_finales && (
-                        <div className="flex flex-col gap-3 md:hidden shadow_class p-4">
-                          <div className="flex md:hidden gap-4">
-                            <img src={zip} alt="" className="w-10 h-10" />
-                            <span className="flex md:justify-left items-center gap-3 font-bold">
-                              {formatFileName(resultado.archivos_finales)}
-                            </span>
-                          </div>
-                          <div className="md:hidden flex justify-between gap-3">
-                            <div className="md:text-center ">
-                              <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                                Tipo de archivo
-                              </h5>
-                              <span className="text-left block">Editables</span>
-                            </div>
-                            <div className="md:text-right ">
-                              <h5 className="md:hidden text-[#62be6d] font-bold mb-0 text-sm bg">
-                                Fecha de creación
-                              </h5>
-                              <span className="text-right block">
-                                {resultado.fecha_fin}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="md:hidden flex justify-between gap-3">
-                            <div className="md:text-center ">
-                              <h5 className="md:hidden text-black bg-yellow-400 w-fit px-2 font-bold mb-0 text-sm ">
-                                Tiempo de expiración
-                              </h5>
-                              {tiempoRestante != null && tiempoRestante <= 0
-                                ? (
-                                <span className="text-left block text-red-500">
-                                  Plazo expirado
-                                </span>
-                                  )
-                                : tiempoRestante != null &&
-                                tiempoRestante > 0
-                                  ? (
-                                <span className="text-left block text-black">
-                                  {formatTime(tiempoRestante)}
-                                </span>
-                                    )
-                                  : (
-                                <Skeleton
-                                  variant="rectangular"
-                                  className="w-[70%] h-full"
-                                />
-                                    )}
-                            </div>
-                          </div>
-                          <div className="md:hidden flex justify-between gap-3 ">
-                            <div className="md:text-center second-stepM">
-                              <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                                Descargar
-                              </h5>
-                              <span className="text-left block ">
-                                {tiempoRestante != null &&
-                                tiempoRestante <= 0
-                                  ? (
-                                  <BsFillCloudArrowDownFill
-                                    className=" text-red-800 text-3xl w-fit lg:w-full text-center"
-                                    onClick={() => {
-                                      Swal.fire(
-                                        'Su plazo para descargar sus archivos venció',
-                                        'Comuniquese con el área de ventas +51 987 038 024',
-                                        'warning'
-                                      )
-                                    }}
-                                  />
-                                    )
-                                  : !loading
-                                      ? (
-                                  <BsFillCloudArrowDownFill
-                                    className=" text-green-600 text-3xl w-fit lg:w-full text-center cursor-pointer "
-                                    onClick={() => {
-                                      descargarFinal()
-                                    }}
-                                  />
-                                        )
-                                      : (
-                                        <LoadingSmall/>
-                                    //   <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-full text-center" />
-                                        )}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                    )
-                  }
-                  {
-                    // eslint-disable-next-line eqeqeq
-                    resultado.propuestas != undefined &&
-                      resultado.propuestas && (
-                        <div className="flex flex-col gap-3 md:hidden shadow_class p-4">
-                          <div className="flex md:hidden gap-4">
-                            <img src={pdf} alt="" className="w-10 h-10" />
-                            <span className="flex md:justify-left items-center gap-3 font-bold">
-                              {formatFileName(resultado.propuestas)}
-                            </span>
-                          </div>
-                          <div className="md:hidden flex justify-between gap-3">
-                            <div className="md:text-center ">
-                              <h5 className="md:hidden text-black font-bold mb-0 text-sm">
-                                Tipo de archivo
-                              </h5>
-                              <span className="text-left block">Propuesta</span>
-                            </div>
-                            <div className="md:text-right ">
-                              <h5 className="md:hidden text-[#62be6d] font-bold mb-0 text-sm bg">
-                                Fecha de creación
-                              </h5>
-                              <span className="text-right block">
-                                {resultado.fecha_fin}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="md:hidden flex justify-between gap-3">
-                            <div className="md:text-center ">
-                              <h5 className="md:hidden text-black bg-yellow-400 w-fit px-2 font-bold mb-0 text-sm ">
-                                Tiempo de expiración
-                              </h5>
-                              {tiempoRestante != null && tiempoRestante <= 0
-                                ? (
-                                <span className="text-left block text-red-500">
-                                  Plazo expirado
-                                </span>
-                                  )
-                                : tiempoRestante != null &&
-                                tiempoRestante > 0
-                                  ? (
-                                <span className="text-left block text-black">
-                                  {formatTime(tiempoRestante)}
-                                </span>
-                                    )
-                                  : (
-                                <Skeleton
-                                  variant="rectangular"
-                                  className="w-[70%] h-full"
-                                />
-                                    )}
-                            </div>
-                          </div>
-                          <div className="md:hidden flex justify-between gap-3">
-                            <div className="md:text-center ">
-                              <h5 className="md:hidden text-black font-bold mb-0 text-sm ">
-                                Descargar
-                              </h5>
-                              <span className="text-left block ">
-                                {tiempoRestante != null &&
-                                tiempoRestante <= 0
-                                  ? (
-                                  <BsFillCloudArrowDownFill
-                                    className=" text-red-800 text-3xl w-fit lg:w-full text-center"
-                                    onClick={() => {
-                                      Swal.fire(
-                                        'Su plazo para descargar sus archivos venció',
-                                        'Comuniquese con el área de ventas +51 987 038 024',
-                                        'warning'
-                                      )
-                                    }}
-                                  />
-                                    )
-                                  : !loading
-                                      ? (
-                                  <BsFillCloudArrowDownFill
-                                    className=" text-green-600 text-3xl w-fit lg:w-full text-center cursor-pointer"
-                                    onClick={(e: any) => {
-                                      e.preventDefault()
-                                      descargarPDF()
-                                    }}
-                                  />
-                                        )
-                                      : (
-                                  <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-full text-center" />
-                                        )}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                    )
-                  }
-                  {/* PC */}
-                  <div className="hidden md:grid grid-cols-1 md:grid-cols-6 gap-4 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300 w-full">
-                    <h5 className="md:text-left col-span-2">Archivo </h5>
-                    <h5 className="md:text-left">Tipo de archivo</h5>
-                    <h5 className="md:text-left">Fecha de creación </h5>
-                    <h5 className="md:text-left bg-yellow-500/70 text-black w-fit px-2">
-                      Tiempo de expiración{' '}
-                    </h5>
-                  </div>
-                  {
-                    // eslint-disable-next-line eqeqeq
-                    resultado.archivos_finales != undefined &&
-                      resultado.archivos_finales && (
-                        <div className="hidden lg:grid grid-cols-1 md:grid-cols-6 gap-3 items-center mb-3 md:mb-0 bg-transparent p-4 rounded-xl relative shadow_class w-full">
-                          <div className="hidden md:block md:text-center col-span-2">
-                            <div className="text-left flex gap-3 items-center">
-                              <img src={zip} alt="" className="w-10 h-10" />
-                              <span className="line-clamp-2 text-black">
-                                {formatFileName(resultado.archivos_finales)}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="hidden md:block md:text-center">
-                            <span className="text-left flex gap-2 font-bold items-center w-fit px-2">
-                              Editables
-                            </span>
-                          </div>
-                          <div className="hidden md:block md:text-center">
-                            <span className="text-center flex gap-2 items-center w-fit px-2">
-                              {resultado.fecha_fin}
-                            </span>
-                          </div>
-                          <div className="hidden md:block md:text-center col-span-2">
-                            {tiempoRestante != null && tiempoRestante <= 0
-                              ? (
-                              <span className="text-left flex gap-2 items-center w-fit px-2 text-red-500">
-                                Plazo expirado
-                              </span>
-                                )
-                              : tiempoRestante != null && tiempoRestante > 0
-                                ? (
-                              <span className="text-left flex gap-2 items-center w-fit px-2">
-                                {formatTime(tiempoRestante)}
-                              </span>
-                                  )
-                                : (
-                              <Skeleton
-                                variant="rectangular"
-                                className="w-[70%] h-full"
-                              />
-                                  )}
-                          </div>
-                          <div className="hidden md:flex md:justify-center items-center absolute right-10 top-0 bottom-0">
-                            <div className="md:text-center second-stepP">
-                              {tiempoRestante != null && tiempoRestante <= 0
-                                ? (
-                                <BsFillCloudArrowDownFill
-                                  className=" text-red-800 text-3xl w-fit lg:w-full text-center"
-                                  onClick={() => {
-                                    Swal.fire(
-                                      'Su plazo para descargar sus archivos venció',
-                                      'Comuniquese con el área de ventas +51 987 038 024',
-                                      'warning'
-                                    )
-                                  }}
-                                />
-                                  )
-                                : !loading
-                                    ? (
-                                <BsFillCloudArrowDownFill
-                                  className=" text-green-600 text-3xl w-fit lg:w-full text-center cursor-pointer"
-                                  onClick={() => {
-                                    descargarFinal()
-                                  }}
-                                />
-                                      )
-                                    : (
-                                        <LoadingSmall/>
-                                  // <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-full text-center" />
-                                      )}
-                            </div>
-                          </div>
-                        </div>
-                    )
-                  }
-                  {
-                    // eslint-disable-next-line eqeqeq
-                    resultado.propuestas != undefined &&
-                      resultado.propuestas && (
-                        <div className="hidden lg:grid grid-cols-1 md:grid-cols-6 gap-3 items-center mb-3 md:mb-0 bg-transparent p-4 rounded-xl relative shadow_class w-full">
-                          <div className="hidden md:block md:text-center col-span-2">
-                            <div className="text-left flex gap-3 items-center">
-                              <img src={pdf} alt="" className="w-10 h-10" />
-                              <span className="line-clamp-2 text-black">
-                                {formatFileName(resultado.propuestas)}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="hidden md:block md:text-center">
-                            <span className="text-left flex gap-2 font-bold items-center w-fit px-2">
-                              Propuesta
-                            </span>
-                          </div>
-                          <div className="hidden md:block md:text-center">
-                            <span className="text-center flex gap-2 items-center w-fit px-2">
-                              {resultado.fecha_fin}
-                            </span>
-                          </div>
-                          <div className="hidden md:block md:text-center col-span-2">
-                            {tiempoRestante != null && tiempoRestante <= 0
-                              ? (
-                              <span className="text-left flex gap-2 items-center w-fit px-2 text-red-500">
-                                Plazo expirado
-                              </span>
-                                )
-                              : tiempoRestante != null && tiempoRestante > 0
-                                ? (
-                              <span className="text-left flex gap-2 items-center w-fit px-2">
-                                {formatTime(tiempoRestante)}
-                              </span>
-                                  )
-                                : (
-                              <Skeleton
-                                variant="rectangular"
-                                className="w-[70%] h-full"
-                              />
-                                  )}
-                          </div>
-                          <div className="hidden md:flex md:justify-center items-center absolute right-10 top-0 bottom-0">
-                            <div className="md:text-center">
-                              {tiempoRestante != null && tiempoRestante <= 0
-                                ? (
-                                <BsFillCloudArrowDownFill
-                                  className=" text-red-800 text-3xl w-fit lg:w-full text-center"
-                                  onClick={() => {
-                                    Swal.fire(
-                                      'Su plazo para descargar sus archivos venció',
-                                      'Comuniquese con el área de ventas +51 987 038 024',
-                                      'warning'
-                                    )
-                                  }}
-                                />
-                                  )
-                                : !loading
-                                    ? (
-                                <BsFillCloudArrowDownFill
-                                  className=" text-green-600 text-3xl w-fit lg:w-full text-center cursor-pointer"
-                                  onClick={(e: any) => {
-                                    e.preventDefault()
-                                    descargarPDF()
-                                  }}
-                                />
-                                      )
-                                    : (
-                                <BsFillCloudArrowDownFill className=" text-green-800 text-3xl w-fit lg:w-full text-center" />
-                                      )}
-                            </div>
-                          </div>
-                        </div>
-                    )
-                  }
-                </div>
-              </>
-            ) : (
-              <div className="w-full flex flex-col items-center justify-center gap-10 mb-10">
-                <p className="text-2xl md:text-2xl text-black font-bold w-full text-center">
-                  AUN NO SE HAN SUBIDO ARCHIVOS
-                </p>
-                <img
-                  src={espera}
-                  alt=""
-                  className="w-52 h-fit object-contain animate-pulse"
+          {(resultado?.id_contrato.split('_')[0]).includes('LPCM') &&
+            <section className="grid grid-cols-2 lg:grid-cols-3 lg:gap-5 mt-4">
+              <div className="w-full h-[400px] lg:h-[600px] col-span-2 min-h-[300px] lg:min-h-[600px] bg-white rounded-xl p-4">
+                <IndexComunity
+                  cards={cards}
+                  datos={resultado}
+                  getOneBrief={getData2}
+                  events={events}
+                  brief={brief}
+                  correos={correos}
                 />
               </div>
-            )}
+              <div className="h-[600px] flex flex-col gap-3 col-span-2 lg:col-span-1">
+                <div className="bg-white rounded-xl w-full pb-6 h-fit p-4">
+                  <h2 className="text-[#129990] font-bold text-center w-full uppercase text-[24px]">
+                    Métricas
+                  </h2>
+                  <div className="w-full bg-[#0861F2] py-3 rounded-lg px-3 mt-6 relative cursor-pointer">
+                    <FaFacebookF className="text-2xl text-white" />
+                    <span className="absolute inset-0 m-auto w-full h-full text-center flex items-center justify-center text-white text-lg mb-[1px]">
+                      Facebook
+                    </span>
+                  </div>
+                  <div className='w-full bg-[url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw0NBw0HDQ0HDQcHBw0HBwcNDQ8NDQcNFREWFhURExMYHSggGBoxGxUTITEhJSkrOjouFx8zODMsNygtLisBCgoKDQ0NDw0NFysZFRkrKysrKysrKysrKystKy0tLS0rKysrKysrLS0rLSsrKysrKysrKystLSsrKysrKysrLf/AABEIAIgBcQMBIgACEQEDEQH/xAAbAAADAQEBAQEAAAAAAAAAAAAAAgQBAwYHBf/EABcQAQEBAQAAAAAAAAAAAAAAAAABAhH/xAAaAQEBAQEBAQEAAAAAAAAAAAACAwEHAAYF/8QAGxEAAwEBAQEBAAAAAAAAAAAAAAECAxESEyH/2gAMAwEAAhEDEQA/APO8Y7XJblVaHXeo5g1yXiis9wAAorMaMDQorC0YGsNWHyAAUVhaAAGrC0AAUVhaAAGrC0YGhRWHyYGsUVh4AANWFoAAaoLkGsBqibg1pWl0k8zWlBdJPMYMDeknmMGAuknmMCtb0k8xgVpdIvM1pWl0k8zWla3pJ5mtKC6SeYwYG9B8ztcluVFyW5cwnU6GqJ7klypuS3K06jVE1yXii5LcrTqNUcA63JLlZaG9Qobxiqs9wAAasLRgaFFYWjA1hqwuQACisPAABqwtAAFFYWjGgKKwuTA0GrC5MACisLkAAasLkAAaoLk0MBpk3ma0rW9JPM1pWl0k8zWlBdIvMYMDeknmMGAuknmMGdBdJPM1pQ90HzP1rklypuS3Lkc6n1qomuS3Ki5LcrzqNUTXJblTckuVp1GqJ7ktyouS3K86jVE1yW5UXJbladRqie5Zx3uS3K06iVHEHuS3Kq0N/DAAqrM4DGg1ZjRgaFFYWjAAasLQABRWHgAA1YWgACisLkGNCisLkwNBqwtGABRWHgAA1YXIAA1QHBoYC6SeYwYC6SeY3R0vWt6SeZrelaXSTzN6GMb0HzPS3JblRcluXFp1P11RPckuVNyS5WnUaonuS3Ki5LcrzqNUTXJblTckuVp1GqJ7klypuS3K06jVE1yW5UXJbledRqia5LcqbklytOo1RPcluVFyW5XnUSon4x3uSXK06D6cwa5ZxVWe4YAFFZjQAA1YXJgaxRWFyAaw1YWgACisLQAA1YWgACisPkGNCisLkwNYasLQABRWFoAAaoLkGsBqgODWlBdJPMbrAG9B8z2dyS5U3JLlwlaGqie5LcqLktytOo1RNcluVNyS5WnUaonuSXKm5LcrTqNUTXJblRcluV51GqJ7klypuSXK06jVE9yW5UXJbledRqia5LcqbklytOolRPckuVNyW5XnUaomuS3Ki5LcrTqNUT3JblRcluV51GqJw63JblVaC6hA3jFVZ7gABRWFoGNBqwtGABRWFoAAaszgABRWFoAAasLkGNCisPkwNCisPDA1hqw8AAKKwtAA1vszye+uS3Ki5LcuEKj8xUT3JblRcluSVDVE9yW5UXJLk1Q1RPcluVFyW5VWg1RPckuVNyW5VnUaomuS3Ki5LcrzqNUTXJblTckuVp1EqJ7ktyouS3K86jVE1yW5U3JLladRqie5JcqbktyvOo1RNcluVFyW5WnUaomuS3Km5JcrzqNUT3JblRcluVp1GqJrlnHe5LcrTqNUcQ6XJblZaG/gobxiis9wwNCisLkwNBqwuTAAorC0AANWFyAAUVhaAAGrC0Y0BRWFyY0AvZnk+lXJblRcluXC1R+AqJ7ktyouS3JqhKie5JcqLktySoaonuS3Ki5LckqGqJ7ktyouS3JKhqie5JcqLktyatjVE9yW5UXJblWdRqia5LcqbklytOolRPckuVNyW5XnUaomuS3Ki5LcrTqNUT3JLlTckuV51GqJ7ktyouS3K06jVE1yW5U3JLledRqie5JcqbktytOo1RNcluVFyW5WnUaonuSXKm5JcrzqNUT2Md7ktytOovRyB7kvFVZv4YAFFZnDA0KKw+TA1hqwuQACisLQAA1YWgABez3D6tcluVFyW5cPVHySonuS3Ki5LcmqGqJrktyouS3JKhqie5LcqLktySoSonuSXKm5JckqGqJ7ktyouS3JKhqie5LcqLktyaoaonuSXKm5JckqGqJ7ktyouS3KisSonuSXKm5LcqzqNUTXJblRcluVp1GqJrktypuSXK86jVE9yW5UXJbladRqia5LcqLktytOo1RPckuVNyW5XnUaomuS3Ki5LcrTqNUTXJblTckuV51GqJ7klypuS3K06jVE1yW5UXJbledRqjhxjtcluVp0F1HMGuS8UVnuAAFFZnAY0KKwtGBrC9mcPsVyW5AcTTPhkxbklyASY0xbktyASY0xbktyAaY0xbkly0EmNMS5LcgEmJMW5LcgEmNMS5LcgGmNMW5LcgEmNMW5LcsBJjTFuS3IBpsSYtyW5AUmmNMS5LcgLzTGmLckuWhaaY0xLktyAvNMaYtyS5AWmmNMW5LcsC80xpi3JbkBaaY0xbkly0LzTGmJcluQFppjTFuSXIC80xpi3JeALTTGmYAFU2aAAL0zD//Z")] bg-cover bg-center py-3 rounded-lg px-3 mt-6 relative cursor-pointer'>
+                    <FiInstagram className="text-2xl text-white" />
+                    <span className="absolute inset-0 m-auto w-full h-full text-center flex items-center justify-center text-white text-lg mb-[1px]">
+                      Instagram
+                    </span>
+                  </div>
+                  <div className="w-full bg-[#0DC143] py-3 rounded-lg px-3 mt-6 relative cursor-pointer">
+                    <FaTiktok className="text-2xl text-white" />
+                    <span className="absolute inset-0 m-auto w-full h-full text-center flex items-center justify-center text-white text-lg mb-[1px]">
+                      TikTok
+                    </span>
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl w-full h-full p-4 overflow-hidden">
+                  <h2 className="text-[#129990] font-bold text-center w-full uppercase text-[24px]">
+                    Últimos eventos
+                  </h2>
+                  {/* <OnlyCalendario
+                    events={events}
+                    // @ts-expect-error
+                    setSelectedItem={setSelectedItem}
+                    setOpen={setOpenModal}
+                  /> */}
+                </div>
+              </div>
+            </section>
+          }
+
+          <form className="bg-form p-3 md:p-8 rounded-xl mt-0 lg:mt-4 mb-4 first-stepP">
+            <Archivos
+              resultado={resultado}
+              formatFileName={formatFileName}
+              tiempoRestante={tiempoRestante}
+              loading={loading}
+              descargarFinal={descargarFinal}
+              descargarPDF={descargarPDF}
+              descargarArchivoZip={descargarArchivoZip}
+            />
+
             <div className="flex gap-2 w-full justify-end">
               <input type="hidden" name="oculto" value="1" />
               <Link

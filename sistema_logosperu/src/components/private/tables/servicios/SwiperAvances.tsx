@@ -53,16 +53,16 @@ export const SwiperAvances = ({
           slidesPerView: 2
         },
         576: {
-          slidesPerView: 3
+          slidesPerView: 2
         },
         768: {
-          slidesPerView: 4
+          slidesPerView: 3
         },
         992: {
-          slidesPerView: 5
+          slidesPerView: 4
         },
         1200: {
-          slidesPerView: 6
+          slidesPerView: 5
         }
       }}
     >
@@ -101,16 +101,15 @@ export const SwiperAvances = ({
           setOpen(true)
         }}>
           <div
-            className="w-full h-64 bg-gray-100 p-4 border-2 border-main rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main
-        hover:shadow-md hover:shadow-main "
+            className="w-full h-[290px] cursor-pointer bg-white p-5 px-6 shadowCard border-2 border-[#cecece] rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main/70"
           >
             <div className="h-full flex justify-between flex-col gap-2 text-black ">
-              <p className="text-base font-bold text-center">{avance.asunto}</p>
-              <div className="w-full flex flex-col justify-center">
-                <p className="text-gray-400 w-full text-center">
+              <p className=" font-bold text-center text-[#353535] text-base">{avance.asunto}</p>
+              <div className="w-full flex flex-col justify-center ">
+                <p className="text-gray-500 w-full text-center">
                   {avance.fecha}
                 </p>
-                <p className="text-gray-400 w-full text-center">
+                <p className="text-gray-500 w-full text-center">
                   {avance.hora}
                 </p>
               </div>
@@ -132,7 +131,7 @@ export const SwiperAvances = ({
       {arrayFinal.map((final: FinalValues, index: number) => (
         <SwiperSlide className="" key={index}>
           <div
-            className="w-full h-64 bg-form p-4 border-2 border-main rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main
+            className="w-full h-64 bg-form p-4 px-6 border-2 border-main rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main
         hover:shadow-md hover:shadow-main "
           >
             <div className="h-full flex justify-between flex-col gap-2 text-black ">

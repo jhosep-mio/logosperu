@@ -1,3 +1,4 @@
+/* eslint-disable multiline-ternary */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Fragment, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -15,9 +16,12 @@ import { ViewAvance } from './ViewAvance'
 import { FiInstagram } from 'react-icons/fi'
 import { BsChatRightText } from 'react-icons/bs'
 import { FaWhatsapp, FaFacebookF } from 'react-icons/fa'
-import ico from '../../../../assets/logo/iconowhite.png'
+// import ico from '../../../../assets/logo/iconowhite.png'
 import vieweb from '../../../../assets/webView.svg'
 import { TfiWorld } from 'react-icons/tfi'
+import { motion, useAnimation } from 'framer-motion'
+import { CiViewTimeline, CiPaperplane, CiCircleCheck, CiGlobe } from 'react-icons/ci'
+import { PiCheck } from 'react-icons/pi'
 import {
   type valuesResumen,
   type FinalValues,
@@ -234,7 +238,10 @@ export const Avances = (): JSX.Element => {
       setplan(requestPlan.data[0])
 
       if (request.data[0].contrato) {
-        setBrief({ codigo: request.data[0].contrato.codigo, uso: request.data[0].contrato.uso })
+        setBrief({
+          codigo: request.data[0].contrato.codigo,
+          uso: request.data[0].contrato.uso
+        })
       } else {
         setBrief({ codigo: request.data[0].codigo, uso: request.data[0].uso })
       }
@@ -358,8 +365,11 @@ export const Avances = (): JSX.Element => {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         nombres: `${request.data[0].nombres} ${request.data[0].apellidos}`,
         nombre_empresa_final: request.data[0].nombre_empresa,
+        empresa: request.data[0].nombre_empresa,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         correo: `${request.data[0].email}`,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        email: `${request.data[0].email}`,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         celular: `${request.data[0].celular}`,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -380,11 +390,14 @@ export const Avances = (): JSX.Element => {
         observaciones: request.data[0].observaciones,
         comunnity: request.data[0].community
           ? JSON.parse(request.data[0].community)
+          : [],
+        aprobacion: request.data[0].aprobacion
+          ? JSON.parse(request.data[0].aprobacion)
           : []
       }))
-      setEvents(request.data[0].community
-        ? JSON.parse(request.data[0].community)
-        : [])
+      setEvents(
+        request.data[0].community ? JSON.parse(request.data[0].community) : []
+      )
 
       if (request.data[0].email && request.data[0].email != null) {
         setCorreos([
@@ -459,11 +472,51 @@ export const Avances = (): JSX.Element => {
     })
   }
 
+  const percentage = 50
+
+  const fillAnimation = useAnimation()
+
+  useEffect(() => {
+    const circumference = 2 * Math.PI * 50 // Circunferencia del círculo
+    let progress = (circumference * percentage) / 100 // Longitud del borde de progreso
+
+    // Ajuste para asegurarse de que el borde se extienda completamente alrededor del círculo
+    progress = Math.min(progress, circumference)
+
+    fillAnimation.start({
+      strokeDasharray: `${progress} ${circumference}`,
+      transition: {
+        duration: 1,
+        type: 'spring',
+        stiffness: 100
+      }
+    })
+  }, [percentage, fillAnimation])
+
+  const calculateX = (percentage: number): number => {
+    return 59 + 50 * Math.sin((2 * Math.PI * percentage) / 100)
+  }
+
+  // Función para calcular las coordenadas Y de la posición final del arco
+  const calculateY = (percentage: number): number => {
+    return 60 - 50 * Math.cos((2 * Math.PI * percentage) / 100)
+  }
+
+  const [procesosActivos, setProcesosActivos] = useState<number[]>([])
+
+  const agregarProceso = (id: number): void => {
+    const procesosActivosCopy = [...procesosActivos]
+
+    procesosActivosCopy.push(id)
+
+    setProcesosActivos(procesosActivosCopy)
+  }
+
   return (
     <>
-      {loading
-        ? <Loading />
-        : (
+      {loading ? (
+        <Loading />
+      ) : (
         <>
            {(datos?.id_contrato.split('_')[0]).includes('LPCM')
              ? <form className="mt-5" onSubmit={handleSubmit}>
@@ -620,7 +673,8 @@ export const Avances = (): JSX.Element => {
             </form>
              : (
             <form className="mt-5" onSubmit={handleSubmit}>
-              <div className="bg-white p-4 rounded-xl mt-6">
+              <div className="flex gap-6 justify-between">
+              <div className="bg-white px-10 py-8 rounded-xl flex flex-1">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 md:gap-0">
                   <span className="text-left flex flex-col md:flex-row gap-2 md:gap-6 text-black uppercase">
                     <span className="text-sm md:text-base font-bold">
@@ -645,7 +699,8 @@ export const Avances = (): JSX.Element => {
                       )
                     })}
                   </span>
-                  {!values.fecha_fin && (
+
+                  {/* {!values.fecha_fin && (
                     <div className="p-0 bg-yellow-600 hover:bg-yellow-700 rounded-xl">
                       {id != null && values.fecha_fin == null && (
                         <button
@@ -679,13 +734,151 @@ export const Avances = (): JSX.Element => {
                         </button>
                       )}
                     </div>
-                  )}
+                  )} */}
                 </div>
+
+              </div>
+              <div className="bg-white  rounded-xl flex px-6 py-8 pb-4 flex-col justify-center items-center">
+                    <div className="relative">
+                      <div className={`w-20 h-20 rounded-full bg_neu relative ${Number(percentage) == 100 ? 'bg-complete-view' : ''} shadow-lg`}>
+                        <div className="absolute rounded-full inset-0 m-auto w-full h-full "></div>
+                        <div className="absolute inset-0 m-auto svg_porcentaje overflow-hidden">
+                          <motion.svg
+                            className="w-full h-full"
+                            viewBox="0 0 120 120"
+                            initial={false}
+                            animate={fillAnimation}
+                          >
+                            <motion.path
+                              fill="none"
+                              stroke={`${Number(percentage) === 100 ? '#38e36b' : '#D23741'}`}
+                              strokeWidth="10"
+                              strokeLinecap="round"
+                              d={`M 60,10 A 50,50 0 ${
+                                percentage <= 50 ? 0 : 1
+                              } 1 ${calculateX(percentage)},${calculateY(
+                                percentage
+                              )}`}
+                            />
+                          </motion.svg>
+                        </div>
+                        <div className="absolute inset-0 flex justify-center items-center text-lg font-bold text-gray-800">
+                          <span className={`${Number(percentage) === 100 ? 'text-white' : 'text-[#D23741]'} `}>{percentage}%</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <span className="block mt-5 text-[#252525]">
+                      {Number(percentage) === 100 ? 'Proyecto terminado' : 'Porcentaje del proyecto'}
+                    </span>
+                  </div>
+
               </div>
 
-              <div className="flex gap-6 justify-between">
-                <div className="bg-white p-4 rounded-xl mt-6 w-[70%]">
-                  <ArchivosFinales
+              <div className="flex gap-2 justify-between">
+                <div className="bg-white p-4 px-4 rounded-xl mt-6 w-[68%]">
+
+                  <h5 className='text-[#202020] font-bold text-xl'>Procesos completados</h5>
+
+                  <div className="grid grid-cols-5 gap-3 h-[80%]  place-content-center">
+                    <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
+                        <div className="flex items-center justify-between gap-2">
+                                <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(1) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(1) }}>
+
+                                {procesosActivos.includes(1) ? (
+                                  <PiCheck className='text-white  text-3xl transition-all duration-200' />
+
+                                ) : (
+                                  <CiViewTimeline className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+
+                                )}
+                                </span>
+                                <span>
+                                  <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Brief</h5>
+                                  <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>12 de Marzo</p>
+                                </span>
+
+                        </div>
+                    </div>
+                    <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
+                        <div className="flex items-center justify-between gap-2">
+                                <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(2) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(2) }}>
+
+                                {procesosActivos.includes(2) ? (
+                                  <PiCheck className='text-white  text-3xl transition-all duration-200' />
+
+                                ) : (
+                                  <CiPaperplane className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+
+                                )}
+                                </span>
+                                <span>
+                                  <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>1° Avance</h5>
+                                  <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>13 de Marzo</p>
+                                </span>
+
+                        </div>
+                    </div>
+                    <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
+                        <div className="flex items-center justify-between gap-2">
+                                <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(3) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(3) }}>
+
+                                {procesosActivos.includes(3) ? (
+                                  <PiCheck className='text-white  text-3xl transition-all duration-200' />
+
+                                ) : (
+                                  <CiPaperplane className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+
+                                )}
+                                </span>
+                                <span>
+                                  <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>2° Avance</h5>
+                                  <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>14 de Marzo</p>
+                                </span>
+
+                        </div>
+                    </div>
+                    <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
+                        <div className="flex items-center justify-between gap-2">
+                                <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(4) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(4) }}>
+
+                                {procesosActivos.includes(4) ? (
+                                  <PiCheck className='text-white  text-3xl transition-all duration-200' />
+
+                                ) : (
+                                  <CiGlobe className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+
+                                )}
+                                </span>
+                                <span>
+                                  <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Dominio</h5>
+                                  <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>14 de Marzo</p>
+                                </span>
+
+                        </div>
+                    </div>
+                    <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
+                        <div className="flex items-center justify-between gap-2">
+                                <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(5) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(5) }}>
+
+                                {procesosActivos.includes(5) ? (
+                                  <PiCheck className='text-white  text-3xl transition-all duration-200' />
+
+                                ) : (
+                                  <CiCircleCheck className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+
+                                )}
+                                </span>
+                                <span>
+                                  <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Finalizado</h5>
+                                  <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>16 de Marzo</p>
+                                </span>
+
+                        </div>
+                    </div>
+
+                  </div>
+                  {/* <ArchivosFinales
                     getOneBrief={getOneBrief}
                     values={values}
                     pdfName={pdfName}
@@ -694,24 +887,37 @@ export const Avances = (): JSX.Element => {
                     limite={limite}
                     plan={plan}
                     validateBrief={validateBrief}
-                  />
+                  /> */}
                 </div>
-                <div className="w-[30%] mt-6 rounded-xl bg_web_client p-4">
+                <div className="w-[32%] mt-6 rounded-xl bg_web_client p-4">
                   <div className="flex gap-1 justify-between items-start">
-                          <div className=" w-[50%]">
-                            <div className="flex gap-2 items-center">
-                              <img src={ico} alt="" width={22}/>
-                              <span className='font-[400] text-lg text-white'>Logos Perú</span>
+                    <div className=" w-[50%]">
+                      {/* <div className="flex gap-2 items-center">
+                        <img src={ico} alt="" width={22} />
+                        <span className="font-[400] text-lg text-white">
+                          Logos Perú
+                        </span>
+                      </div> */}
 
-                            </div>
-
-                            <h6 className='block text-center text-white font-[500] text-2xl mt-5'>Primer avance</h6>
-                            <a href="" className='btn_vieweb w-fit bg-white rounded-full flex items-center gap-2 px-6 py-2 text-center text-black mt-5 mx-auto'><TfiWorld className="text-main"/>Ver web </a>
-                          </div>
-                          <div className="w-[50%]">
-                          <img src={vieweb} alt="" className='w-[73%] block mx-auto  imgViewWeb'/>
-
-                          </div>
+                      <h6 className="block text-center text-white font-[500] text-2xl mt-7">
+                        Logos Perú
+                      </h6>
+                      <a
+                        href="https://logosperu.com.pe/"
+                        target='_blank'
+                        className="btn_vieweb w-fit bg-white rounded-full flex items-center gap-2 px-6 py-2 text-center text-black mt-5 mx-auto" rel="noreferrer"
+                      >
+                        <TfiWorld className="text-main" />
+                        Ver web{' '}
+                      </a>
+                    </div>
+                    <div className="w-[50%]">
+                      <img
+                        src={vieweb}
+                        alt=""
+                        className="w-[73%] block mx-auto  imgViewWeb"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -805,96 +1011,95 @@ export const Avances = (): JSX.Element => {
                   </div>
                 </div>
               </div>
-
             </form>
                )}
-            <ModalQuestion
-                open={openQuestion}
-                setOpen={setOpenQuestion}
-                openCorreo={setOpen}
-                setOpenCorreoActa={setOpenCorreoActa}
-                setOpenAvisoNotificacion={setOpenAvisoNotificacion}
-                values={values}
-                setOpenActaAceptacion={setOpenActaAceptacion}
-              />
-              <ModalActaEstado
-                open={openCorreoActa}
-                setOpen={setOpenCorreoActa}
-                idVenta={id}
-                getOneBrief={getOneBrief}
-                datos={datos}
-                correos={correos}
-                setCorreos={setCorreos}
-              />
-              <ModalRegistro
-                open={open}
-                setOpen={setOpen}
-                idVenta={id}
-                getOneBrief={getOneBrief}
-                datos={datos}
-                correos={correos}
-                setCorreos={setCorreos}
-              />
+          <ModalQuestion
+            open={openQuestion}
+            setOpen={setOpenQuestion}
+            openCorreo={setOpen}
+            setOpenCorreoActa={setOpenCorreoActa}
+            setOpenAvisoNotificacion={setOpenAvisoNotificacion}
+            values={values}
+            setOpenActaAceptacion={setOpenActaAceptacion}
+          />
+          <ModalActaEstado
+            open={openCorreoActa}
+            setOpen={setOpenCorreoActa}
+            idVenta={id}
+            getOneBrief={getOneBrief}
+            datos={datos}
+            correos={correos}
+            setCorreos={setCorreos}
+          />
+          <ModalRegistro
+            open={open}
+            setOpen={setOpen}
+            idVenta={id}
+            getOneBrief={getOneBrief}
+            datos={datos}
+            correos={correos}
+            setCorreos={setCorreos}
+          />
 
-              <ModalaAvisonNotificacion
-                open={openAvisoNotificacion}
-                setOpen={setOpenAvisoNotificacion}
-                idVenta={id}
-                getOneBrief={getOneBrief}
-                datos={datos}
-                correos={correos}
-                setCorreos={setCorreos}
-              />
+          <ModalaAvisonNotificacion
+            open={openAvisoNotificacion}
+            setOpen={setOpenAvisoNotificacion}
+            idVenta={id}
+            getOneBrief={getOneBrief}
+            datos={datos}
+            correos={correos}
+            setCorreos={setCorreos}
+          />
 
-              <ModalActaAceptacion
-                open={openActaAceptacion}
-                setOpen={setOpenActaAceptacion}
-                idVenta={id}
-                getOneBrief={getOneBrief}
-                datos={datos}
-                correos={correos}
-                setCorreos={setCorreos}
-              />
+          <ModalActaAceptacion
+            open={openActaAceptacion}
+            setOpen={setOpenActaAceptacion}
+            idVenta={id}
+            getOneBrief={getOneBrief}
+            datos={datos}
+            correos={correos}
+            setCorreos={setCorreos}
+          />
 
-              <ViewAvance
-                open={openAvance}
-                setOpen={setOpenAvance}
-                avance={avance}
-                datos={datos}
-              />
-              <ViewFinal
-                open={openFinal}
-                setOpen={setOpenFinal}
-                avance={final}
-                datos={datos}
-              />
+          <ViewAvance
+            open={openAvance}
+            setOpen={setOpenAvance}
+            avance={avance}
+            datos={datos}
+          />
+          <ViewFinal
+            open={openFinal}
+            setOpen={setOpenFinal}
+            avance={final}
+            datos={datos}
+          />
 
-              <ViewAlta
-                open={openAlta}
-                setOpen={setopenAlta}
-                avance={arrayAlta}
-                datos={datos}
-              />
+          <ViewAlta
+            open={openAlta}
+            setOpen={setopenAlta}
+            avance={arrayAlta}
+            datos={datos}
+          />
 
-              <ModalCorreoFinal2
-                open={openCorreoFinal}
-                setOpen={setOpenCorreoFinal}
-                correos={correos}
-                setCorreos={setCorreos}
-                idVenta={id}
-                datos={datos2}
-                getOneBrief={getOneBrief}
-              />
+          <ModalCorreoFinal2
+            open={openCorreoFinal}
+            setOpen={setOpenCorreoFinal}
+            correos={correos}
+            setCorreos={setCorreos}
+            idVenta={id}
+            datos={datos2}
+            getOneBrief={getOneBrief}
+          />
 
-              <RegistroEmail2
-                open={openMailFinal}
-                setOpen={setOpenMailFinal}
-                id={datos2?.idCliente}
-                getOneBrief={getOneBrief}
-              />
-              {datos.hora_acta && (
-                <ViewActa open={openActa} setOpen={setOpenActa} datos={datos} />
-              )}
+          <RegistroEmail2
+            open={openMailFinal}
+            setOpen={setOpenMailFinal}
+            id={datos2?.idCliente}
+            getOneBrief={getOneBrief}
+          />
+          {datos.hora_acta && (
+            <ViewActa open={openActa} setOpen={setOpenActa} datos={datos} />
+          )}
           <button
             className="bg-green-700 rounded-full p-4 fixed right-6 bottom-6 "
             onClick={() => {
@@ -908,7 +1113,7 @@ export const Avances = (): JSX.Element => {
             <BsChatRightText className="text-white text-3xl" />
           </button>
         </>
-          )}
+      )}
 
       <ModalDescripcion2
         eventSelected={selectedItem}

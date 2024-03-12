@@ -11,6 +11,12 @@ export interface Values {
   transmitir: string
 }
 
+export interface archivoavancesValues {
+  id: string
+  nombre: string
+  limite: string
+}
+
 export interface ImagenState {
   archivo: File | null
   archivoName: string

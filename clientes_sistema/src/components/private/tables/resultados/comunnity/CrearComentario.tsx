@@ -1,4 +1,4 @@
-import { useState, type Dispatch, type SetStateAction } from 'react'
+import { useState, type Dispatch, type SetStateAction, useEffect } from 'react'
 import useAuth from '../../../../../hooks/useAuth'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
@@ -16,6 +16,7 @@ interface valuesProps {
   events: Event[]
   setEvents: Dispatch<SetStateAction<Event[]>>
   eventSelected: any | null
+  datos: any
 }
 
 export const CrearComentario = ({
@@ -23,7 +24,8 @@ export const CrearComentario = ({
   setComentarios,
   events,
   setEvents,
-  eventSelected
+  eventSelected,
+  datos
 }: valuesProps): JSX.Element => {
   const { id } = useParams()
   const { auth } = useAuth()
@@ -44,6 +46,10 @@ export const CrearComentario = ({
     e.target.style.height = `${e.target.scrollHeight}px` // Ajusta la altura
   }
 
+  useEffect(() => {
+    console.log(datos)
+  }, [])
+
   const obtenerFecha = (): string => {
     const fecha = new Date()
     return `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`
@@ -61,6 +67,9 @@ export const CrearComentario = ({
     try {
       const data = new FormData()
       data.append('nombres', auth.name)
+      data.append('contrato', datos.id_contrato)
+      data.append('empresa', datos.nombre_marca)
+      data.append('id', id?.toString() ?? '')
 
       const respuesta = await axios.post(`${Global.url}/enviarCorreoComentarioCommunity/${id ?? ''}`, data,
         {

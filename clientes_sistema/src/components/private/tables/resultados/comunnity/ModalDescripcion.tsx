@@ -4,13 +4,15 @@ import { type Dispatch, type SetStateAction, useState, useEffect } from 'react'
 import { Global } from '../../../../../helper/Global'
 import {
   type comentariosValues,
-  type arrayCategoriasToPortafolio
+  type arrayCategoriasToPortafolio,
+  type bannersValues
 } from '../../../../shared/Interfaces'
-import Editor from './Editor'
 import { CrearComentario } from './CrearComentario'
 import { ListaComentarios } from './ListaComentarios'
 import { ResponderComentario } from './ResponderComentario'
-import { Link } from 'react-router-dom'
+import icono from './../../../../../assets/logo/icono.png'
+import { cn } from '../../../../shared/cn'
+import { IoMdCloseCircle } from 'react-icons/io'
 
 export const ModalDescripcion = ({
   open,
@@ -18,7 +20,9 @@ export const ModalDescripcion = ({
   eventSelected,
   events,
   setEvents,
-  getOneBrief
+  getOneBrief,
+  datos,
+  correos
 }: {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
@@ -26,6 +30,8 @@ export const ModalDescripcion = ({
   events: Event[]
   setEvents: Dispatch<SetStateAction<Event[]>>
   getOneBrief: () => Promise<void>
+  datos: bannersValues
+  correos: never[]
 }): JSX.Element => {
   const [contexto, setContexto] = useState('')
   const [arrayArchivos, setArrayArchivos] = useState<
@@ -35,6 +41,8 @@ export const ModalDescripcion = ({
   const [openResponder, setOpenResponder] = useState(false)
   const [idComentario, setIdComentario] = useState<string | null>('')
   const [texto, setTexto] = useState<string | null>('')
+  const [tema, setTema] = useState('')
+  const [hora, setHora] = useState('')
 
   const isVideo = (fileName: string): boolean => {
     const videoExtensions = ['.mp4', '.avi', '.mov'] // Agregar más extensiones de video si es necesario
@@ -45,11 +53,22 @@ export const ModalDescripcion = ({
   }
 
   useEffect(() => {
+    console.log(eventSelected?.event)
     if (eventSelected?.event) {
       if (eventSelected?.event?.descripcion?.contexto) {
         setContexto(eventSelected?.event?.descripcion?.contexto)
       } else {
         setContexto('')
+      }
+      if (eventSelected?.event?.descripcion?.hora) {
+        setHora(eventSelected?.event?.descripcion?.hora)
+      } else {
+        setHora('')
+      }
+      if (eventSelected?.event?.descripcion?.tema) {
+        setTema(eventSelected?.event?.descripcion?.tema)
+      } else {
+        setTema('')
       }
       if (eventSelected?.event?.descripcion?.arrayArchivos) {
         setArrayArchivos(eventSelected?.event?.descripcion?.arrayArchivos)
@@ -65,6 +84,22 @@ export const ModalDescripcion = ({
     }
   }, [eventSelected, open])
 
+  const obtenerFecha = (fechaActual: string): string => {
+    const fecha = new Date(fechaActual)
+    // Verificar si la fecha es válida
+    if (isNaN(fecha.getTime())) {
+      return '' // O puedes manejar este caso de otra manera según tu lógica
+    }
+    const dia = fecha.getDate()
+    const mes = fecha.getMonth() + 1
+    const año = fecha.getFullYear()
+    // Asegúrate de agregar ceros a la izquierda si es necesario para mantener el formato
+    const diaFormateado = dia < 10 ? `0${dia}` : `${dia}`
+    const mesFormateado = mes < 10 ? `0${mes}` : `${mes}`
+    // Formatear la fecha en el formato deseado (dd/mm/yyyy)
+    return `${diaFormateado}/${mesFormateado}/${año}`
+  }
+
   return (
     <>
       <Dialog
@@ -76,32 +111,53 @@ export const ModalDescripcion = ({
         aria-describedby="alert-dialog-description"
         className="modal_community_clientes"
       >
-        <DialogContent className="w-full h-[550px] grid grid-cols-2 gap-10 bg-transparent quitaR_padding">
-          <section className="w-full h-[550px] bg-white p-4 rounded-md flex flex-col justify-between ">
+        <DialogContent className="w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-10 bg-transparent quitaR_padding scroll_movil">
+          <section className="w-full relative h-full lg:h-fit rounded-md  flex flex-col justify-between overflow-y-auto bg-white ">
+           <IoMdCloseCircle className='absolute top-2 right-2 text-3xl z-10 cursor-pointer' onClick={() => { setOpen(false) }}/>
             <div className="w-full ">
-              <div className="w-full relative">
-                <h1 className="w-full uppercase text-center font-bold text-2xl">
-                  {eventSelected?.title}
-                </h1>
-              </div>
-              <div className="mt-6">
-                <Editor content={contexto} setContent={setContexto} />
-              </div>
-              <div className="w-full mt-4 flex items-center justify-between gap-3">
-                <p className="uppercase text-gray-600">
-                  Creado por:{' '}
-                  <span className="font-bold">
-                    {eventSelected?.event?.user?.name}
-                  </span>
-                </p>
-              </div>
-              <div className="w-full grid grid-cols-2 mt-6 gap-6 justify-center flex-grow ">
-                {arrayArchivos?.map((pro: any) => (
-                  <div className="flex gap-4 justify-center" key={pro.id}>
-                    <div className="group relative">
-                      {pro.imagen1.archivo != null && pro.imagen1.archivo && (
-                          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                          <Link to={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`} target='_blank' className="w-full cursor-pointer">
+              <div className="bg-white w-full min-h-[400px] mx-auto p-4 rounded-md relative">
+                <div className="w-full flex gap-3 items-center">
+                  <img
+                    src={icono}
+                    alt=""
+                    className="object-contain w-14 h-14 bg-white rounded-full p-2 border-2 border-main"
+                  />
+                  <div className="flex flex-col gap-0">
+                    <span className="text-black font-semibold text-lg">
+                      {datos?.nombre_marca}
+                    </span>
+                    <span className="text-gray-500 font-medium">
+                      {obtenerFecha(eventSelected?.event?.start)}  {hora && `: ${hora}`}
+                    </span>
+                  </div>
+                </div>
+                {tema &&
+                    <div className="w-full mt-6">
+                    <p>
+                        <strong>Tema: {tema}</strong>
+                    </p>
+                    </div>
+                }
+                <div className="w-full mt-6">
+                  <div
+                    className=""
+                    dangerouslySetInnerHTML={{ __html: contexto }}
+                  ></div>
+                </div>
+                <div
+                  className="w-full mt-6 grid gap-3 justify-start"
+                  style={{
+                    gridTemplateColumns: `repeat(${arrayArchivos.length}, 1fr)`
+                  }}
+                >
+                  {arrayArchivos?.map((pro: any) => (
+                    <div
+                      className={cn('flex gap-4 justify-center')}
+                      key={pro.id}
+                    >
+                      <div className="group relative w-full">
+                        {pro.imagen1.archivo && (
+                          <div className="w-full">
                             {isVideo(pro.imagen1.archivoName) ? (
                               <video
                                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -109,22 +165,21 @@ export const ModalDescripcion = ({
                                 muted
                                 autoPlay
                                 loop
-                                className="w-[150px] h-[150px] object-contain bg-gray-100 shadow-md"
+                                className="w-full h-[200px] lg:h-[400px] object-contain bg-gray-100 shadow-md"
                               />
                             ) : (
                               <img
                                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                                 src={`${Global.urlImages}/archivosComunnity/${pro.imagen1.archivoName}`}
-                                alt=""
-                                className="w-[150px] h-[150px]  object-contain bg-gray-100 shadow-md"
+                                className="w-full h-[200px] lg:h-[400px] object-contain cursor-pointer bg-gray-100 shadow-md"
                               />
                             )}
-                          </Link>
-                      )
-                          }
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </section>
@@ -135,6 +190,7 @@ export const ModalDescripcion = ({
               events={events}
               setEvents={setEvents}
               eventSelected={eventSelected}
+              datos={datos}
             />
             <ListaComentarios
               setIdComentario={setIdComentario}
@@ -146,6 +202,8 @@ export const ModalDescripcion = ({
               events={events}
               setEvents={setEvents}
               eventSelected={eventSelected}
+              datos={datos}
+              correos={correos}
             />
             <ResponderComentario
               comentarios={comentarios}
@@ -162,7 +220,6 @@ export const ModalDescripcion = ({
             />
           </section>
         </DialogContent>
-
       </Dialog>
     </>
   )

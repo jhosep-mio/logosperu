@@ -15,6 +15,7 @@ import useAuth from '../../../../../hooks/useAuth'
 import { ModalInformacion } from './modals/ModalInformacion'
 import { IoNotifications } from 'react-icons/io5'
 import { ModalCorreoConfirmacion } from './modals/ModalCorreoConfirmacion'
+import { cn } from '../../../../shared/cn'
 
 moment.locale('es')
 const localizer = momentLocalizer(moment) // Importa el locale español
@@ -70,6 +71,7 @@ export const IndexCalendarioCm = ({
   const [loadingUpdate, setLoadingUpdate] = useState(false)
   const [disabledDates] = useState([datos?.fecha_inicio]) // Lista de fechas deshabilitadas
   const [open, setOpen] = useState(false)
+  const [openHistorial, setOpenHistorial] = useState(false)
   const [openInformacion, setOpenInformacion] = useState(false)
   const [eventSelected, setEventSelected] = useState<any | null>(null)
   const [openConfirmacion, setOpenConfirmacion] = useState(false)
@@ -267,18 +269,36 @@ export const IndexCalendarioCm = ({
               </span>
             </div>
           </div>
-          <div className='pl-4'>
-            <IoNotifications className='text-2xl text-red-400' onClick={() => { setOpenConfirmacion(true) }}/>
-          </div>
         </div>
-        <input
-          type="month"
-          value={formatDate()}
-          onChange={handleDateChange}
-          className="bg-transparent text-black"
-          min="2023-01"
-          max="2030-12"
-        />
+        <div className='flex gap-6 justify-end'>
+            <div className='relative'>
+                <span className='text-black bg-gray-300 py-1 px-3 rounded-md' onClick={() => { setOpenHistorial(!openHistorial) }}>Historial</span>
+                {openHistorial &&
+                <div className='absolute bg-gray-200 p-2 shadow-md mt-4 left-0 right-0 text-black w-[400px] z-[999] top-full flex flex-col gap-4'>
+                    {// @ts-expect-error
+                    datos?.aprobacion.length > 0
+                    // @ts-expect-error
+                      ? datos.aprobacion.map((apro: any) => (
+                            <div key={apro.id} className={cn('flex gap-2', apro.aprobacion == 'false' ? 'bg-red-600' : apro.aprobacion == 'true' ? 'bg-green-700' : '')}>
+                                <span>{apro.asunto}</span>
+                            </div>
+                      ))
+                      : 'No existe un historial'
+                    }
+                </div>}
+            </div>
+            <div className='pl-4'>
+                <IoNotifications className='text-2xl text-red-400' onClick={() => { setOpenConfirmacion(true) }}/>
+            </div>
+            <input
+            type="month"
+            value={formatDate()}
+            onChange={handleDateChange}
+            className="bg-transparent text-black"
+            min="2023-01"
+            max="2030-12"
+            />
+        </div>
       </section>
       <section className="w-full h-[90%] px-0 lg:px-6 pb-4 relative content_modal">
         <>
@@ -312,6 +332,7 @@ export const IndexCalendarioCm = ({
           setLoadingUpdate={setLoadingUpdate}
           marca={datos?.nombre_marca}
           nombres={datos?.nombres}
+          email={datos?.email}
         />
         <ModalInformacion
           loadingUpdate={loadingUpdate}
@@ -333,6 +354,9 @@ export const IndexCalendarioCm = ({
             eventSelected={eventSelected}
             setLoadingUpdate={setLoadingUpdate}
             datos={datos}
+            setEvents={setEvents}
+            events={events}
+            updateCita={updateCita}
         />
       </section>
     </>

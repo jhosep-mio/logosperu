@@ -8,6 +8,8 @@ import { toast } from 'sonner'
 import { IoMdCloseCircle } from 'react-icons/io'
 import moment from 'moment'
 import useAuth from '../../../../../../hooks/useAuth'
+import { v4 as uuidv4 } from 'uuid'
+import { useParams } from 'react-router-dom'
 
 interface valuesDatos {
   nombres: string
@@ -49,6 +51,21 @@ export const ModalInformacion = ({
   const token = localStorage.getItem('token')
   const { auth } = useAuth()
 
+  const { id } = useParams()
+
+  const obtenerFechaHora = (): { fecha: string, hora: string } => {
+    const ahora = new Date()
+    const opcionesFecha = { year: 'numeric', month: '2-digit', day: '2-digit' }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const fecha = ahora.toLocaleDateString('es-PE', opcionesFecha)
+    const opcionesHora = { hour: '2-digit', minute: '2-digit' }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const hora = ahora.toLocaleTimeString('es-PE', opcionesHora)
+    return { fecha, hora }
+  }
+
   const enviarCorreo = async (): Promise<void> => {
     setLoadingUpdate(true)
     try {
@@ -62,15 +79,37 @@ export const ModalInformacion = ({
       currentDate = currentDate.startOf('day').add(12, 'hours')
       const formattedDate = currentDate.format('DD/MM/YYYY')
       const data = new FormData()
+      const { fecha, hora } = obtenerFechaHora()
+
+      const correos = [
+        { id: uuidv4(), correo: datos?.email },
+        { id: uuidv4(), correo: auth.email }
+      ]
+      const avance = {
+        fecha,
+        hora,
+        // @ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        asunto: `SOLICITUD DE LLENADO DE BRIEF - ${datos?.empresa}`,
+        imagenes: [],
+        archivos: [],
+        correos,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        contexto: `<p>Buenas tardes estimado(a)&nbsp;<strong>${datos?.nombres}</strong>,</p><p><br></p><p>El presente correo es para solicitarle el llenado del Brief de Community Manager en nuestro sistema.</p><p class="ql-align-justify">Para poder acceder al formulario virtual puede acceder al siguiente enlace:&nbsp;<a href="https://brief.logosperu.com.pe/community" rel="noopener noreferrer" target="_blank" style="color: rgb(17, 85, 204);">https://brief.logosperu.com.pe/community</a>.</p><p><br></p><p><strong>Le recordamos que su codigo de verificación es el siguiente:</strong></p><p><br></p><p class="ql-align-justify"><strong>${brief.codigo}</strong></p><p><br></p><p><br></p><p><strong>NOTA:</strong></p><p class="ql-align-justify">Tiene hasta el dia ${formattedDate} para completar la informacion solicitada, caso contrario quedara en standby su proyecto.</p><p><br></p><p class="ql-align-justify"><strong>Recuerde que necesitamos dicha información para poder iniciar el proyecto con éxito.</strong></p><p><br></p><p>Muchas gracias</p><p><br></p>`,
+        firma: auth.firma
+      }
       // @ts-expect-error
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       data.append('titulo', `SOLICITUD DE LLENADO DE BRIEF - ${datos?.empresa}`)
       data.append('nombres', datos.nombres)
       data.append('codigo', brief.codigo)
       data.append('fecha', formattedDate)
+      data.append('array_avances', JSON.stringify(avance))
       data.append('firma', auth.firma)
+      data.append('correos', JSON.stringify(correos))
+      data.append('_method', 'PUT')
 
-      const respuesta = await axios.post(`${Global.url}/enviarSolicitudBriefCommunity`, data,
+      const respuesta = await axios.post(`${Global.url}/enviarSolicitudBriefCommunity/${id ?? ''}`, data,
         {
           headers: {
             Authorization: `Bearer ${

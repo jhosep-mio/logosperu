@@ -36,7 +36,8 @@ export const ModalDescripcion = ({
   setLoadingUpdate,
   getOneBrief,
   marca,
-  nombres
+  nombres,
+  email
 }: {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
@@ -48,6 +49,7 @@ export const ModalDescripcion = ({
   getOneBrief: () => Promise<void>
   marca: string
   nombres: string
+  email: string
 }): JSX.Element => {
   const { id } = useParams()
   const { auth } = useAuth()
@@ -84,7 +86,10 @@ export const ModalDescripcion = ({
     currentDate = currentDate.add(2, 'days')
     currentDate = currentDate.startOf('day').add(12, 'hours')
     const formattedDate = currentDate.format('DD/MM/YYYY')
-
+    const correos = [
+      { id: uuidv4(), correo: email },
+      { id: uuidv4(), correo: auth.email }
+    ]
     try {
       const data = new FormData()
       data.append(
@@ -95,6 +100,7 @@ export const ModalDescripcion = ({
       data.append('post', (eventSelected?.event?.title).toUpperCase())
       data.append('fecha', formattedDate)
       data.append('firma', auth.firma)
+      data.append('correos', JSON.stringify(correos))
 
       const respuesta = await axios.post(
         `${Global.url}/enviarCorreoInfoCommunity`,

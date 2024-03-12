@@ -49,8 +49,8 @@ html {
 
   .modal_community_clientes {
     z-index: 998 !important;
-    .quitaR_padding{
-      padding: 0 20px !important;
+    .quitaR_padding {
+      padding: 0 20px 0 0 !important;
     }
     & .MuiPaper-root {
       width: 1400px !important;
@@ -59,7 +59,7 @@ html {
       background: transparent;
       box-shadow: none !important;
       resize: both;
-      height: 60vh;
+      // height: 100vh;
     }
   }
   
@@ -148,12 +148,42 @@ html {
   }
 }
 
+.swal2-confirm-first {
+    background-color: #3085d6;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 24px;
+    margin-right: 10px; /* Ajusta el margen derecho para separar los botones */
+  }
+  
+  .swal2-cancel-second {
+    background-color: #d33;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 24px;
+  }
+
 @media (max-width: 576px) {
   .rpv-core__canvas-layer {
     & canvas {
       height: 100% !important;
       margin-bottom: 20px !important;
     }
+  }
+
+  .modal_community_clientes .quitaR_padding {
+    padding: 0 !important;
+  }
+
+  .modal_community_clientes .MuiPaper-root {
+    margin: 10px !important;
+    max-height: 98%;
+  }
+
+  .calendario_cm .rbc-toolbar-label {
+    font-size: 32px !important;
   }
 }
 

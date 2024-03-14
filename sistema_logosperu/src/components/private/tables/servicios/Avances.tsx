@@ -16,7 +16,6 @@ import { ViewAvance } from './ViewAvance'
 import { FiInstagram } from 'react-icons/fi'
 import { BsChatRightText } from 'react-icons/bs'
 import { FaWhatsapp, FaFacebookF } from 'react-icons/fa'
-// import ico from '../../../../assets/logo/iconowhite.png'
 import vieweb from '../../../../assets/webView.svg'
 import { TfiWorld } from 'react-icons/tfi'
 import { motion, useAnimation } from 'framer-motion'
@@ -32,7 +31,6 @@ import {
 import { ArchivosFinales } from './ArchivosFinales'
 import { ViewFinal } from './ViewFinal'
 import { ViewActa } from './ViewActa'
-
 // import { Chat } from './Chat'
 import { RegistroMarca } from './RegistroMarca'
 import { RegistroMail } from './RegistroMail'
@@ -472,7 +470,7 @@ export const Avances = (): JSX.Element => {
     })
   }
 
-  const percentage = 50
+  const percentage = 60
 
   const fillAnimation = useAnimation()
 
@@ -506,9 +504,7 @@ export const Avances = (): JSX.Element => {
 
   const agregarProceso = (id: number): void => {
     const procesosActivosCopy = [...procesosActivos]
-
     procesosActivosCopy.push(id)
-
     setProcesosActivos(procesosActivosCopy)
   }
 
@@ -671,348 +667,545 @@ export const Avances = (): JSX.Element => {
                 </div>
               </div>
             </form>
-             : (
-            <form className="mt-5" onSubmit={handleSubmit}>
-              <div className="flex gap-6 justify-between">
-              <div className="bg-white px-10 py-8 rounded-xl flex flex-1">
-                <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 md:gap-0">
-                  <span className="text-left flex flex-col md:flex-row gap-2 md:gap-6 text-black uppercase">
-                    <span className="text-sm md:text-base font-bold">
-                      COLABORADOR(ES) A CARGO:
-                    </span>
-                    {colaborador?.map((asignacion: any, index: number) => {
-                      const assignedCollaborators = colaboradores
-                        .filter(
-                          (colaborador: { id: number, name: string }) =>
-                            colaborador.id == asignacion.peso
-                        )
-                        .map(
-                          (colaborador: { name: string }) => colaborador.name
-                        )
-                      return (
-                        <Fragment key={index}>
-                          {assignedCollaborators && (
-                            <span>{assignedCollaborators}</span>
-                          )}
-                          {index < colaborador.length - 1}
-                        </Fragment>
-                      )
-                    })}
-                  </span>
+             : (datos?.id_contrato.split('_')[0]).includes('LPW') || (datos?.id_contrato.split('_')[0]).includes('LPTV') || (datos?.id_contrato.split('_')[0]).includes('LPLANDINGS')
+                 ? <form className="mt-5" onSubmit={handleSubmit}>
+                 <div className="flex gap-6 justify-between">
+                 <div className="bg-white px-4 py-6 gap-4 rounded-xl flex justify-between flex-1">
+                   <div className="w-full flex flex-1  gap-4 ">
+                       <span className="text-left w-1/2 shadow-md p-4 px-8 rounded-md flex flex-col  gap-2 md:gap-6 text-black ">
+                       <span className="text-sm md:text-base font-bold text-center uppercase text-main">
+                         WEB INFORMATIVA
+                       </span>
 
-                  {/* {!values.fecha_fin && (
-                    <div className="p-0 bg-yellow-600 hover:bg-yellow-700 rounded-xl">
-                      {id != null && values.fecha_fin == null && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (datos2?.email && datos2?.comentarios) {
-                              setOpenCorreoFinal(true)
-                            } else if (!datos2?.comentarios) {
-                              Swal.fire(
-                                'Debe colocar sus comentarios generales',
-                                '',
-                                'warning'
-                              )
-                            } else {
-                              Swal.fire({
-                                title:
-                                  'EL cliente no tiene un email registrado',
-                                showDenyButton: true,
-                                confirmButtonText: 'Registrar email',
-                                denyButtonText: 'Cancelar'
-                              }).then(async (result: SweetAlertResult) => {
-                                if (result.isConfirmed) {
-                                  setOpenMailFinal(true)
-                                }
-                              })
-                            }
-                          }}
-                          className="text-sm text-center w-full md:text-base transition-colors text-white font-bold flex items-center justify-center gap-x-4 p-2 flex-1 rounded-xl"
-                        >
-                          Finalizar servicio
-                        </button>
-                      )}
-                    </div>
-                  )} */}
-                </div>
+                             <p className='text-[#252525] mt-2 font-semibold text-center'><a href="https://logosperu.com.pe/" target='_blank' rel="noreferrer" className='text-blue-500'>logosperu.com.pe</a></p>
+                             <p className='text-center'>3 correos corporativos</p>
 
-              </div>
-              <div className="bg-white  rounded-xl flex px-6 py-8 pb-4 flex-col justify-center items-center">
-                    <div className="relative">
-                      <div className={`w-20 h-20 rounded-full bg_neu relative ${Number(percentage) == 100 ? 'bg-complete-view' : ''} shadow-lg`}>
-                        <div className="absolute rounded-full inset-0 m-auto w-full h-full "></div>
-                        <div className="absolute inset-0 m-auto svg_porcentaje overflow-hidden">
-                          <motion.svg
-                            className="w-full h-full"
-                            viewBox="0 0 120 120"
-                            initial={false}
-                            animate={fillAnimation}
-                          >
-                            <motion.path
-                              fill="none"
-                              stroke={`${Number(percentage) === 100 ? '#38e36b' : '#D23741'}`}
-                              strokeWidth="10"
-                              strokeLinecap="round"
-                              d={`M 60,10 A 50,50 0 ${
-                                percentage <= 50 ? 0 : 1
-                              } 1 ${calculateX(percentage)},${calculateY(
-                                percentage
-                              )}`}
-                            />
-                          </motion.svg>
-                        </div>
-                        <div className="absolute inset-0 flex justify-center items-center text-lg font-bold text-gray-800">
-                          <span className={`${Number(percentage) === 100 ? 'text-white' : 'text-[#D23741]'} `}>{percentage}%</span>
-                        </div>
-                      </div>
-                    </div>
+                     </span>
+                     <span className="text-left w-1/2 shadow-md p-4 px-8 rounded-md flex flex-col  gap-2  text-black uppercase">
+                       <span className="text-sm md:text-base font-bold text-main text-center">
+                         COLABORADOR(ES) A CARGO
+                       </span>
+                       {colaborador?.map((asignacion: any, index: number) => {
+                         const assignedCollaborators = colaboradores
+                           .filter(
+                             (colaborador: { id: number, name: string }) =>
+                               colaborador.id == asignacion.peso
+                           )
+                           .map(
+                             (colaborador: { name: string }) => colaborador.name
+                           )
+                         return (
+                           <Fragment key={index}>
+                             {assignedCollaborators && (
+                               <span className='text-center'>{assignedCollaborators}</span>
+                             )}
+                             {index < colaborador.length - 1}
+                           </Fragment>
+                         )
+                       })}
 
-                    <span className="block mt-5 text-[#252525]">
-                      {Number(percentage) === 100 ? 'Proyecto terminado' : 'Porcentaje del proyecto'}
-                    </span>
-                  </div>
+                     </span>
 
-              </div>
+                     {/* {!values.fecha_fin && (
+                       <div className="p-0 bg-yellow-600 hover:bg-yellow-700 rounded-xl">
+                         {id != null && values.fecha_fin == null && (
+                           <button
+                             type="button"
+                             onClick={() => {
+                               if (datos2?.email && datos2?.comentarios) {
+                                 setOpenCorreoFinal(true)
+                               } else if (!datos2?.comentarios) {
+                                 Swal.fire(
+                                   'Debe colocar sus comentarios generales',
+                                   '',
+                                   'warning'
+                                 )
+                               } else {
+                                 Swal.fire({
+                                   title:
+                                     'EL cliente no tiene un email registrado',
+                                   showDenyButton: true,
+                                   confirmButtonText: 'Registrar email',
+                                   denyButtonText: 'Cancelar'
+                                 }).then(async (result: SweetAlertResult) => {
+                                   if (result.isConfirmed) {
+                                     setOpenMailFinal(true)
+                                   }
+                                 })
+                               }
+                             }}
+                             className="text-sm text-center w-full md:text-base transition-colors text-white font-bold flex items-center justify-center gap-x-4 p-2 flex-1 rounded-xl"
+                           >
+                             Finalizar servicio
+                           </button>
+                         )}
+                       </div>
+                     )} */}
+                   </div>
 
-              <div className="flex gap-2 justify-between">
-                <div className="bg-white p-4 px-4 rounded-xl mt-6 w-[68%]">
+                   <div className="flex gap-4">
 
-                  <h5 className='text-[#202020] font-bold text-xl'>Procesos completados</h5>
+                       <div className=" shadow-md rounded-lg ">
+                           <div className="bg_date_card_avance w-[180px] h-full rounded-lg p-8 px-6 flex flex-col items-center justify-center text-[#202020]">
+                               <h6 className='font-bold text-2xl text-[#2fba59]'>11 Feb</h6>
 
-                  <div className="grid grid-cols-5 gap-3 h-[80%]  place-content-center">
-                    <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
-                        <div className="flex items-center justify-between gap-2">
-                                <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(1) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(1) }}>
+                               <span className='mt-1 text-center'>Fecha de inicio</span>
+                           </div>
 
-                                {procesosActivos.includes(1) ? (
-                                  <PiCheck className='text-white  text-3xl transition-all duration-200' />
+                       </div>
 
-                                ) : (
-                                  <CiViewTimeline className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+                       <div className=" shadow-md rounded-lg">
+                           <div className="bg_date_card_avance w-[180px] h-full rounded-lg p-8 px-6 flex flex-col items-center justify-center text-[#202020]">
+                               <h6 className='font-bold text-2xl text-[#ca3a3a]'>13 Feb</h6>
 
-                                )}
-                                </span>
-                                <span>
-                                  <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Brief</h5>
-                                  <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>12 de Marzo</p>
-                                </span>
+                               <span className='mt-1 text-center'>Fecha final</span>
+                           </div>
 
-                        </div>
-                    </div>
-                    <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
-                        <div className="flex items-center justify-between gap-2">
-                                <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(2) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(2) }}>
+                       </div>
 
-                                {procesosActivos.includes(2) ? (
-                                  <PiCheck className='text-white  text-3xl transition-all duration-200' />
+                   </div>
 
-                                ) : (
-                                  <CiPaperplane className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+                 </div>
+                 <div className="bg-white  rounded-xl flex px-6 py-8 pb-4 flex-col justify-center items-center">
+                       <div className="relative">
+                         <div className={`w-20 h-20 rounded-full bg_neu relative ${Number(percentage) == 100 ? 'bg-complete-view' : ''} shadow-lg`}>
+                           <div className="absolute rounded-full inset-0 m-auto w-full h-full "></div>
+                           <div className="absolute inset-0 m-auto svg_porcentaje overflow-hidden">
+                             <motion.svg
+                               className="w-full h-full"
+                               viewBox="0 0 120 120"
+                               initial={false}
+                               animate={fillAnimation}
+                             >
+                               <motion.path
+                                 fill="none"
+                                 stroke={`${Number(percentage) === 100 ? '#38e36b' : '#D23741'}`}
+                                 strokeWidth="10"
+                                 strokeLinecap="round"
+                                 d={`M 60,10 A 50,50 0 ${
+                                   percentage <= 50 ? 0 : 1
+                                 } 1 ${calculateX(percentage)},${calculateY(
+                                   percentage
+                                 )}`}
+                               />
+                             </motion.svg>
+                           </div>
+                           <div className="absolute inset-0 flex justify-center items-center text-lg font-bold text-gray-800">
+                             <span className={`${Number(percentage) === 100 ? 'text-white' : 'text-[#D23741]'} `}>{percentage}%</span>
+                           </div>
+                         </div>
+                       </div>
 
-                                )}
-                                </span>
-                                <span>
-                                  <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>1° Avance</h5>
-                                  <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>13 de Marzo</p>
-                                </span>
+                       <span className="block mt-5 text-[#252525]">
+                         {Number(percentage) === 100 ? 'Proyecto terminado' : 'Porcentaje del proyecto'}
+                       </span>
+                     </div>
 
-                        </div>
-                    </div>
-                    <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
-                        <div className="flex items-center justify-between gap-2">
-                                <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(3) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(3) }}>
+                 </div>
 
-                                {procesosActivos.includes(3) ? (
-                                  <PiCheck className='text-white  text-3xl transition-all duration-200' />
+                 <div className="flex gap-2 justify-between">
+                   <div className="bg-white p-4 px-4 rounded-xl mt-6 w-[68%]">
 
-                                ) : (
-                                  <CiPaperplane className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+                     <h5 className='text-[#202020] font-bold text-xl'>Procesos completados</h5>
 
-                                )}
-                                </span>
-                                <span>
-                                  <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>2° Avance</h5>
-                                  <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>14 de Marzo</p>
-                                </span>
+                     <div className="grid grid-cols-5 gap-3 h-[80%]  place-content-center">
+                       <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
+                           <div className="flex items-center justify-between gap-2">
+                                   <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(1) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(1) }}>
 
-                        </div>
-                    </div>
-                    <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
-                        <div className="flex items-center justify-between gap-2">
-                                <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(4) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(4) }}>
+                                   {procesosActivos.includes(1) ? (
+                                     <PiCheck className='text-white  text-3xl transition-all duration-200' />
 
-                                {procesosActivos.includes(4) ? (
-                                  <PiCheck className='text-white  text-3xl transition-all duration-200' />
+                                   ) : (
+                                     <CiViewTimeline className='text-[#4E54C8]  text-3xl transition-all duration-200' />
 
-                                ) : (
-                                  <CiGlobe className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+                                   )}
+                                   </span>
+                                   <span>
+                                     <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Brief</h5>
+                                     <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>12 de Marzo</p>
+                                   </span>
 
-                                )}
-                                </span>
-                                <span>
-                                  <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Dominio</h5>
-                                  <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>14 de Marzo</p>
-                                </span>
+                           </div>
+                       </div>
+                       <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
+                           <div className="flex items-center justify-between gap-2">
+                                   <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(2) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(2) }}>
 
-                        </div>
-                    </div>
-                    <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
-                        <div className="flex items-center justify-between gap-2">
-                                <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(5) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(5) }}>
+                                   {procesosActivos.includes(2) ? (
+                                     <PiCheck className='text-white  text-3xl transition-all duration-200' />
 
-                                {procesosActivos.includes(5) ? (
-                                  <PiCheck className='text-white  text-3xl transition-all duration-200' />
+                                   ) : (
+                                     <CiPaperplane className='text-[#4E54C8]  text-3xl transition-all duration-200' />
 
-                                ) : (
-                                  <CiCircleCheck className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+                                   )}
+                                   </span>
+                                   <span>
+                                     <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>1° Avance</h5>
+                                     <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>13 de Marzo</p>
+                                   </span>
 
-                                )}
-                                </span>
-                                <span>
-                                  <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Finalizado</h5>
-                                  <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>16 de Marzo</p>
-                                </span>
+                           </div>
+                       </div>
+                       <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
+                           <div className="flex items-center justify-between gap-2">
+                                   <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(3) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(3) }}>
 
-                        </div>
-                    </div>
+                                   {procesosActivos.includes(3) ? (
+                                     <PiCheck className='text-white  text-3xl transition-all duration-200' />
 
-                  </div>
-                  {/* <ArchivosFinales
-                    getOneBrief={getOneBrief}
-                    values={values}
-                    pdfName={pdfName}
-                    setpdfName={setpdfName}
-                    fechaCreacion={fechaCreacion}
-                    limite={limite}
-                    plan={plan}
-                    validateBrief={validateBrief}
-                  /> */}
-                </div>
-                <div className="w-[32%] mt-6 rounded-xl bg_web_client p-4">
-                  <div className="flex gap-1 justify-between items-start">
-                    <div className=" w-[50%]">
-                      {/* <div className="flex gap-2 items-center">
-                        <img src={ico} alt="" width={22} />
-                        <span className="font-[400] text-lg text-white">
-                          Logos Perú
+                                   ) : (
+                                     <CiPaperplane className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+
+                                   )}
+                                   </span>
+                                   <span>
+                                     <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>2° Avance</h5>
+                                     <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>14 de Marzo</p>
+                                   </span>
+
+                           </div>
+                       </div>
+                       <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
+                           <div className="flex items-center justify-between gap-2">
+                                   <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(4) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(4) }}>
+
+                                   {procesosActivos.includes(4) ? (
+                                     <PiCheck className='text-white  text-3xl transition-all duration-200' />
+
+                                   ) : (
+                                     <CiGlobe className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+
+                                   )}
+                                   </span>
+                                   <span>
+                                     <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Dominio</h5>
+                                     <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>14 de Marzo</p>
+                                   </span>
+
+                           </div>
+                       </div>
+                       <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
+                           <div className="flex items-center justify-between gap-2">
+                                   <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(5) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(5) }}>
+
+                                   {procesosActivos.includes(5) ? (
+                                     <PiCheck className='text-white  text-3xl transition-all duration-200' />
+
+                                   ) : (
+                                     <CiCircleCheck className='text-[#4E54C8]  text-3xl transition-all duration-200' />
+
+                                   )}
+                                   </span>
+                                   <span>
+                                     <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Finalizado</h5>
+                                     <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>16 de Marzo</p>
+                                   </span>
+
+                           </div>
+                       </div>
+
+                     </div>
+                     {/* <ArchivosFinales
+                       getOneBrief={getOneBrief}
+                       values={values}
+                       pdfName={pdfName}
+                       setpdfName={setpdfName}
+                       fechaCreacion={fechaCreacion}
+                       limite={limite}
+                       plan={plan}
+                       validateBrief={validateBrief}
+                     /> */}
+                   </div>
+                   <div className="w-[32%] mt-6 rounded-xl bg_web_client p-4">
+                     <div className="flex gap-1 justify-between items-start">
+                       <div className=" w-[50%]">
+                         {/* <div className="flex gap-2 items-center">
+                           <img src={ico} alt="" width={22} />
+                           <span className="font-[400] text-lg text-white">
+                             Logos Perú
+                           </span>
+                         </div> */}
+
+                         <h6 className="block text-center text-white font-[500] text-2xl mt-7">
+                           Logos Perú
+                         </h6>
+                         <a
+                           href="https://logosperu.com.pe/"
+                           target='_blank'
+                           className="btn_vieweb w-fit bg-white rounded-full flex items-center gap-2 px-6 py-2 text-center text-black mt-5 mx-auto" rel="noreferrer"
+                         >
+                           <TfiWorld className="text-main" />
+                           Ver web{' '}
+                         </a>
+                       </div>
+                       <div className="w-[50%]">
+                         <img
+                           src={vieweb}
+                           alt=""
+                           className="w-[73%] block mx-auto  imgViewWeb"
+                         />
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+
+                 <div className="bg-white p-4 rounded-xl mt-6">
+                   <div className="w-full flex flex-col justify-start md:items-start gap-y-2 relative">
+                     <div className="flex flex-col gap-2 mb-3 ">
+                       <h2 className="text-xl lg:text-2xl font-bold text-black">
+                         Seguimiento del proyecto
+                       </h2>
+                       <h3 className="font-bold text-base">
+                         <span className="text-gray-400 text-sm lg:text-base">
+                           Correos recibidos
+                         </span>{' '}
+                       </h3>
+                     </div>
+                     <span
+                       className="w-fit px-4 py-2 bg-main text-white font-bold rounded-xl absolute right-2 flex gap-2 items-center cursor-pointer"
+                       onClick={() => {
+                         if (
+                           datos.correo &&
+                           datos.correo != 'null' &&
+                           datos.correo != null
+                         ) {
+                           setOpenQuestion(true)
+                         } else {
+                           Swal.fire({
+                             title: 'EL cliente no tiene un email registrado',
+                             showDenyButton: true,
+                             confirmButtonText: 'Registrar email',
+                             denyButtonText: 'Cancelar'
+                           }).then(async (result: SweetAlertResult) => {
+                             if (result.isConfirmed) {
+                               setOpenMail(true)
+                             }
+                           })
+                         }
+                       }}
+                     >
+                       Agregar avance
+                     </span>
+                     <section className="w-full quitar_padding_bottom">
+                       <SwiperAvances
+                         arrayAlta={arrayAlta}
+                         arrayAvances={arrayAvances}
+                         setAvance={setAvance}
+                         setOpen={setOpenAvance}
+                         setOpenFinal={setOpenFinal}
+                         arrayFinal={arrayFinal}
+                         setFinal={setfinal}
+                         setOpenActa={setOpenActa}
+                         arrayActa={arrayActa}
+                         datos={datos}
+                         setOpenAlta={setopenAlta}
+                       />
+                     </section>
+                   </div>
+                 </div>
+
+                 <div className="bg-white p-4 rounded-xl mt-6">
+                   <div className="flex justify-between gap-2 mb-4">
+                     <h2 className="text-xl w-full lg:text-2xl font-bold text-black">
+                       Comentario general
+                     </h2>
+                     <div className="flex gap-2 w-full justify-end">
+                       <input
+                         type="submit"
+                         className="bg-main_2-200 text-white hover:bg-primary flex items-center gap-2 py-2 px-4 rounded-lg transition-colors cursor-pointer"
+                         value="Grabar comentario"
+                       />
+                     </div>
+                   </div>
+                   <div className="w-full flex justify-center items-center flex-col md:flex-row gap-2 lg:gap-5">
+                     <div className="w-full">
+                       <textarea
+                         cols={30}
+                         rows={10}
+                         className="border placeholder-gray-400 focus:outline-none
+                                                         focus:border-black w-full  pr-4 h-24 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                         border-gray-300 rounded-md transition-all text-black"
+                         name="comentarios"
+                         value={values.comentarios}
+                         onChange={handleChange}
+                         onBlur={handleBlur}
+                       ></textarea>
+
+                       <Errors
+                         errors={errors.comentarios}
+                         touched={touched.comentarios}
+                       />
+                     </div>
+                   </div>
+                 </div>
+               </form>
+                 : (
+                    <form className="mt-5" onSubmit={handleSubmit}>
+                    <div className="bg-white p-4 rounded-xl mt-6">
+                    <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 md:gap-0">
+                        <span className="text-left flex flex-col md:flex-row gap-2 md:gap-6 text-black uppercase">
+                        <span className="text-sm md:text-base font-bold">
+                            COLABORADOR(ES) A CARGO:
                         </span>
-                      </div> */}
-
-                      <h6 className="block text-center text-white font-[500] text-2xl mt-7">
-                        Logos Perú
-                      </h6>
-                      <a
-                        href="https://logosperu.com.pe/"
-                        target='_blank'
-                        className="btn_vieweb w-fit bg-white rounded-full flex items-center gap-2 px-6 py-2 text-center text-black mt-5 mx-auto" rel="noreferrer"
-                      >
-                        <TfiWorld className="text-main" />
-                        Ver web{' '}
-                      </a>
+                        {colaborador?.map((asignacion: any, index: number) => {
+                          const assignedCollaborators = colaboradores
+                            .filter(
+                              (colaborador: { id: number, name: string }) =>
+                                colaborador.id == asignacion.peso
+                            )
+                            .map((colaborador: { name: string }) => colaborador.name)
+                          return (
+                            <Fragment key={index}>
+                                {assignedCollaborators && (
+                                <span>{assignedCollaborators}</span>
+                                )}
+                                {index < colaborador.length - 1}
+                            </Fragment>
+                          )
+                        })}
+                        </span>
+                        {!values.fecha_fin && (
+                        <div className="p-0 bg-yellow-600 hover:bg-yellow-700 rounded-xl">
+                            {id != null && values.fecha_fin == null && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                  if (datos2?.email && datos2?.comentarios) {
+                                    setOpenCorreoFinal(true)
+                                  } else if (!datos2?.comentarios) {
+                                    Swal.fire(
+                                      'Debe colocar sus comentarios generales',
+                                      '',
+                                      'warning'
+                                    )
+                                  } else {
+                                    Swal.fire({
+                                      title: 'EL cliente no tiene un email registrado',
+                                      showDenyButton: true,
+                                      confirmButtonText: 'Registrar email',
+                                      denyButtonText: 'Cancelar'
+                                    }).then(async (result: SweetAlertResult) => {
+                                      if (result.isConfirmed) {
+                                        setOpenMailFinal(true)
+                                      }
+                                    })
+                                  }
+                                }}
+                                className="text-sm text-center w-full md:text-base transition-colors text-white font-bold flex items-center justify-center gap-x-4 p-2 flex-1 rounded-xl"
+                            >
+                                Finalizar servicio
+                            </button>
+                            )}
+                        </div>
+                        )}
                     </div>
-                    <div className="w-[50%]">
-                      <img
-                        src={vieweb}
-                        alt=""
-                        className="w-[73%] block mx-auto  imgViewWeb"
-                      />
                     </div>
-                  </div>
-                </div>
-              </div>
 
-              <div className="bg-white p-4 rounded-xl mt-6">
-                <div className="w-full flex flex-col justify-start md:items-start gap-y-2 relative">
-                  <div className="flex flex-col gap-2 mb-3 ">
-                    <h2 className="text-xl lg:text-2xl font-bold text-black">
-                      Seguimiento del proyecto
-                    </h2>
-                    <h3 className="font-bold text-base">
-                      <span className="text-gray-400 text-sm lg:text-base">
-                        Correos recibidos
-                      </span>{' '}
-                    </h3>
-                  </div>
-                  <span
-                    className="w-fit px-4 py-2 bg-main text-white font-bold rounded-xl absolute right-2 flex gap-2 items-center cursor-pointer"
-                    onClick={() => {
-                      if (
-                        datos.correo &&
-                        datos.correo != 'null' &&
-                        datos.correo != null
-                      ) {
-                        setOpenQuestion(true)
-                      } else {
-                        Swal.fire({
-                          title: 'EL cliente no tiene un email registrado',
-                          showDenyButton: true,
-                          confirmButtonText: 'Registrar email',
-                          denyButtonText: 'Cancelar'
-                        }).then(async (result: SweetAlertResult) => {
-                          if (result.isConfirmed) {
-                            setOpenMail(true)
-                          }
-                        })
-                      }
-                    }}
-                  >
-                    Agregar avance
-                  </span>
-                  <section className="w-full quitar_padding_bottom">
-                    <SwiperAvances
-                      arrayAlta={arrayAlta}
-                      arrayAvances={arrayAvances}
-                      setAvance={setAvance}
-                      setOpen={setOpenAvance}
-                      setOpenFinal={setOpenFinal}
-                      arrayFinal={arrayFinal}
-                      setFinal={setfinal}
-                      setOpenActa={setOpenActa}
-                      arrayActa={arrayActa}
-                      datos={datos}
-                      setOpenAlta={setopenAlta}
+                    <div className="bg-white p-4 rounded-xl mt-6">
+                    <ArchivosFinales
+                        getOneBrief={getOneBrief}
+                        values={values}
+                        pdfName={pdfName}
+                        setpdfName={setpdfName}
+                        fechaCreacion={fechaCreacion}
+                        limite={limite}
+                        plan={plan}
+                        validateBrief={validateBrief}
                     />
-                  </section>
-                </div>
-              </div>
+                    </div>
 
-              <div className="bg-white p-4 rounded-xl mt-6">
-                <div className="flex justify-between gap-2 mb-4">
-                  <h2 className="text-xl w-full lg:text-2xl font-bold text-black">
-                    Comentario general
-                  </h2>
-                  <div className="flex gap-2 w-full justify-end">
-                    <input
-                      type="submit"
-                      className="bg-main_2-200 text-white hover:bg-primary flex items-center gap-2 py-2 px-4 rounded-lg transition-colors cursor-pointer"
-                      value="Grabar comentario"
-                    />
-                  </div>
-                </div>
-                <div className="w-full flex justify-center items-center flex-col md:flex-row gap-2 lg:gap-5">
-                  <div className="w-full">
-                    <textarea
-                      cols={30}
-                      rows={10}
-                      className="border placeholder-gray-400 focus:outline-none
-                                                      focus:border-black w-full  pr-4 h-24 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
-                                                      border-gray-300 rounded-md transition-all text-black"
-                      name="comentarios"
-                      value={values.comentarios}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    ></textarea>
+                    <div className="bg-white p-4 rounded-xl mt-6">
+                        <div className="w-full flex flex-col justify-start md:items-start gap-y-2 relative">
+                        <div className="flex flex-col gap-2 mb-3 ">
+                            <h2 className="text-xl lg:text-2xl font-bold text-black">
+                            Seguimiento del proyecto
+                            </h2>
+                            <h3 className="font-bold text-base">
+                            <span className="text-gray-400 text-sm lg:text-base">
+                                Correos recibidos
+                            </span>{' '}
+                            </h3>
+                        </div>
+                        <span
+                            className="w-fit px-4 py-2 bg-main text-white font-bold rounded-xl absolute right-2 flex gap-2 items-center cursor-pointer"
+                            onClick={() => {
+                              if (
+                                datos.correo &&
+                                datos.correo != 'null' &&
+                                datos.correo != null
+                              ) {
+                                setOpenQuestion(true)
+                              } else {
+                                Swal.fire({
+                                  title: 'EL cliente no tiene un email registrado',
+                                  showDenyButton: true,
+                                  confirmButtonText: 'Registrar email',
+                                  denyButtonText: 'Cancelar'
+                                }).then(async (result: SweetAlertResult) => {
+                                  if (result.isConfirmed) {
+                                    setOpenMail(true)
+                                  }
+                                })
+                              }
+                            }}
+                        >
+                            Agregar avance
+                        </span>
+                        <section className="w-full quitar_padding_bottom">
+                            <SwiperAvances
+                            arrayAlta={arrayAlta}
+                            arrayAvances={arrayAvances}
+                            setAvance={setAvance}
+                            setOpen={setOpenAvance}
+                            setOpenFinal={setOpenFinal}
+                            arrayFinal={arrayFinal}
+                            setFinal={setfinal}
+                            setOpenActa={setOpenActa}
+                            arrayActa={arrayActa}
+                            datos={datos}
+                            setOpenAlta={setopenAlta}
+                            />
+                        </section>
+                        </div>
+                    </div>
 
-                    <Errors
-                      errors={errors.comentarios}
-                      touched={touched.comentarios}
-                    />
-                  </div>
-                </div>
-              </div>
-            </form>
-               )}
+                    <div className="bg-white p-4 rounded-xl mt-6">
+                        <div className="flex justify-between gap-2 mb-4">
+                        <h2 className="text-xl w-full lg:text-2xl font-bold text-black">
+                            Comentario general
+                        </h2>
+                        <div className="flex gap-2 w-full justify-end">
+                            <input
+                            type="submit"
+                            className="bg-main_2-200 text-white hover:bg-primary flex items-center gap-2 py-2 px-4 rounded-lg transition-colors cursor-pointer"
+                            value="Grabar comentario"
+                            />
+                        </div>
+                        </div>
+                        <div className="w-full flex justify-center items-center flex-col md:flex-row gap-2 lg:gap-5">
+                        <div className="w-full">
+                            <textarea
+                            cols={30}
+                            rows={10}
+                            className="border placeholder-gray-400 focus:outline-none
+                                                            focus:border-black w-full  pr-4 h-24 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                            border-gray-300 rounded-md transition-all text-black"
+                            name="comentarios"
+                            value={values.comentarios}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            ></textarea>
+
+                            <Errors
+                            errors={errors.comentarios}
+                            touched={touched.comentarios}
+                            />
+                        </div>
+                        </div>
+                    </div>
+                    </form>
+                   )}
           <ModalQuestion
             open={openQuestion}
             setOpen={setOpenQuestion}

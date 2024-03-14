@@ -169,6 +169,9 @@ export const GeneracionCorrelativo = ({
         } else if (formatearContrato(request.data.codigo) == ('LPMAPS')) {
           descripcionEntrada =
                             '<p><strong style="color: red;">1.-Propiedad Verificada:</strong></p><p>- Verificación desde Gmail y añadir DNS</p><p>- Verificar Google console search y listo la propiedad es del cliente</p><p>- Realizar solicitud de indexación para que la URL pueda aparecer</p><p>en Google</p><p><br></p><p><strong style="color: red;">2. Ubicación del negocio en google maps</strong></p><p><strong style="color: red;">&nbsp;</strong></p><p><strong style="color: red;">CLIENTE NOS RENITE : SUS ACCESOS A SU CUENTA GMAIL&nbsp;</strong></p>'
+        } else if (formatearContrato(request.data.codigo) == ('LPHOST')) {
+          descripcionEntrada =
+                              '<p><strong>Plan COBRE:</strong></p><p><strong>&#xFEFF;</strong></p><p>✓ Administracion de dominio .com .pe</p><p>✓ Alojamiento solo para correos</p><p>✓ Sin Cpanel Independiente</p><p>✓ Creación hasta 04 correos</p><p>✓ Manual de Configuración GMAIL - Outlokk</p><p>✓Pago ANUAL</p><p>✓ Trabajamos bajo contrato</p><p><br></p><p>Tiempo de entrega 48 - 72 Horas</p>'
         }
         setValues({
           ...values,

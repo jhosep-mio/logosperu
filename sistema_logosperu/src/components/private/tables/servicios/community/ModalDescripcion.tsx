@@ -274,7 +274,7 @@ export const ModalDescripcion = ({
     data.append('community', JSON.stringify(updatedEvents))
     data.append('archivosAEliminar', JSON.stringify(archivosAEliminar))
     data.append('_method', 'PUT')
-    if (arrayArchivos.length > 0) {
+    if (arrayArchivos.length > 5000) {
       enviarCorreo()
     }
     try {

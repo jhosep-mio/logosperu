@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable multiline-ternary */
 import { Dialog } from '@mui/material'
 import { type Dispatch, type SetStateAction, useState, useEffect } from 'react'
@@ -6,6 +7,8 @@ import useAuth from '../../../../hooks/useAuth'
 import { v4 as uuidv4 } from 'uuid'
 import { format, isToday } from 'date-fns'
 import { Loading } from '../../../shared/Loading'
+import { cn } from '../../../shared/cn'
+import { ModalProyectos } from './ModalProyectos'
 
 export const ModalRegistroLaboral = ({
   open,
@@ -25,6 +28,8 @@ export const ModalRegistroLaboral = ({
   const { auth } = useAuth()
   const [currentTime, setCurrentTime] = useState('0')
   const [loading, setLoading] = useState(true)
+  const [openProyectos, setOpenProyectos] = useState(false)
+  const [proyectoSeleccionado, setProyectoSeleccionado] = useState<string>('')
 
   const getCurrentTime = (): string => {
     const now = new Date()
@@ -34,10 +39,18 @@ export const ModalRegistroLaboral = ({
   }
 
   useEffect(() => {
+    const storedEvents = JSON.parse(localStorage.getItem('events') ?? '[]')
+    setEvents(storedEvents)
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('events', JSON.stringify(events))
+  }, [events])
+
+  useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(getCurrentTime())
     }, 1000)
-    // Limpieza del intervalo al desmontar el componente
     return () => {
       clearInterval(intervalId)
     }
@@ -79,30 +92,141 @@ export const ModalRegistroLaboral = ({
     checkIfRecordExists()
   }, [open, events])
 
-  //   const isWithinRange = (hour, startTime) => {
-  //     const currentTime = new Date()
-  //     const currentHour = currentTime.getHours()
-  //     const startDate = new Date(startTime)
-  //     const startHour = startDate.getHours()
-
-  //     return currentHour >= startHour && hour >= startHour
-  //   }
-
-  const handleFinishWork = (): void => {
+  const handleAddTimeRange = (): void => {
     const currentDateTime = new Date()
     const formattedCurrentTime = format(currentDateTime, 'yyyy-MM-dd HH:mm:ss')
     const updatedEvents = events.map((event: any) => {
-      if (event.id == Event.id) {
-        // Actualizar el evento actual con la hora de finalización
+      if (event.id === Event.id) {
+        const newTimeRange = { start: formattedCurrentTime, end: null }
+        const updatedTimeRanges = [...event.timeRanges, newTimeRange] // Crear un nuevo array con todos los objetos existentes más el nuevo objeto
+
         return {
           ...event,
-          timeRanges: [{ start: event.timeRanges[0].start, end: formattedCurrentTime }]
+          timeRanges: updatedTimeRanges
         }
       }
       return event
     })
+
+    setEvents(updatedEvents)
+  }
+
+  const handleFinishWork = (index: number): void => {
+    const currentDateTime = new Date()
+    const formattedCurrentTime = format(currentDateTime, 'yyyy-MM-dd HH:mm:ss')
+
+    const updatedEvents = events.map((event: any) => {
+      if (event.id === Event.id) {
+        const updatedTimeRanges = event.timeRanges.map(
+          (timeRange: any, i: number) => {
+            if (i == index) {
+              // Si el índice coincide con el rango de tiempo especificado,
+              // actualiza su propiedad "end" con la hora actual
+              return { ...timeRange, end: formattedCurrentTime }
+            }
+            return timeRange
+          }
+        )
+        return { ...event, timeRanges: updatedTimeRanges }
+      }
+      return event
+    })
+
     setOpen(false)
     setEvents(updatedEvents)
+  }
+
+  const Actividad = (hora: any): JSX.Element => {
+    const [editando, setEditando] = useState(false)
+    const [descripcionTemporal, setDescripcionTemporal] = useState('')
+    const descripcionHoraActual = Event.detalle?.horas.find(
+      (h: any) => h.hora == hora.hora
+    )?.descripcion
+    const cambiarEstadoEdicion = (): void => {
+      if (!editando) {
+        setDescripcionTemporal(descripcionHoraActual ?? '')
+      }
+      setEditando(!editando)
+    }
+    const handleChange = (
+      event: React.ChangeEvent<HTMLTextAreaElement>
+    ): void => {
+      setDescripcionTemporal(event.target.value)
+    }
+    const actualizarContenido = (): void => {
+      const updatedEvents = events.map((event: any) => {
+        if (event.id === Event.id) {
+          let updatedDetalle = { ...event.detalle }
+          if (!updatedDetalle) {
+            updatedDetalle = { horas: [] }
+          } else if (!updatedDetalle.horas) {
+            updatedDetalle.horas = []
+          }
+          const horaExistente = updatedDetalle.horas.find(
+            (horaObj: any) => horaObj.hora == hora.hora
+          )
+          if (horaExistente) {
+            horaExistente.descripcion = descripcionTemporal
+          } else {
+            updatedDetalle.horas.push({
+              id: uuidv4(),
+              hora: hora.hora,
+              descripcion: descripcionTemporal
+            })
+          }
+          return { ...event, detalle: updatedDetalle }
+        }
+        return event
+      })
+
+      setEvents(updatedEvents)
+    }
+    const handleGuardar = (): void => {
+      if (editando) {
+        actualizarContenido()
+      }
+      setEditando(false)
+    }
+
+    const handleCancelar = (): void => {
+      setDescripcionTemporal(descripcionHoraActual ?? '')
+      setEditando(false)
+    }
+    return (
+      <div>
+        {!editando ? (
+          <p
+            className="w-full break-words min-h-[10px] p-1 line-clamp-1"
+            // onClick={cambiarEstadoEdicion}
+            onClick={() => { setOpenProyectos(!openProyectos) }}
+          >
+            {descripcionHoraActual || 'Sin registro'}
+          </p>
+        ) : (
+          <>
+            <textarea
+              value={descripcionTemporal}
+              onChange={handleChange}
+              autoFocus
+              rows={1}
+              className="outline-none resize-none w-full border border-gray-300 rounded-md p-1"
+            />
+            <button
+              onClick={handleGuardar}
+              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md mr-2"
+            >
+              Guardar
+            </button>
+            <button
+              onClick={handleCancelar}
+              className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
+            >
+              Cancelar
+            </button>
+          </>
+        )}
+      </div>
+    )
   }
 
   return (
@@ -114,7 +238,7 @@ export const ModalRegistroLaboral = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       className=""
-      maxWidth={'md'}
+      maxWidth={!openProyectos ? 'md' : 'lg'}
     >
       {loading ? (
         <Loading />
@@ -145,74 +269,148 @@ export const ModalRegistroLaboral = ({
           </div>
         </div>
       ) : (
-        <div className="bg-white w-[800px] h-[700px] p-4 overflow-hidden group rounded-none  shadow hover:shadow-lg transition-all hover:cursor-pointer">
-          <div className="flex gap-3 items-center">
-            <div className="flex justify-center ">
-              <img
-                src={icono}
-                alt="JT Devs"
-                className="rounded-full w-14 h-14 object-cover ring-4 p-1 ring-gray-300"
-              />
+        <div className="bg-white w-[800px] h-[700px] p-4 overflow-hidden group rounded-none  shadow hover:shadow-lg transition-all hover:cursor-pointer overflow-y-auto">
+          <section className="w-full flex h-[50px]">
+            <div className="flex w-full h-full gap-3 items-center ">
+              <div className="flex justify-center ">
+                <img
+                  src={icono}
+                  alt="JT Devs"
+                  className="rounded-full w-14 h-14 object-cover ring-4 p-1 ring-gray-300"
+                />
+              </div>
+              <div className="flex flex-col items-start justify-center gap-0 p-4">
+                <h3 className="font-semibold text-xl transition-all">
+                  {auth.name}
+                </h3>
+                <span>{new Date(Event.start).toLocaleDateString()}</span>
+              </div>
             </div>
-            <div className="flex flex-col items-center gap-0 p-4">
-              <h3 className="font-semibold text-xl transition-all">
-                {auth.name}
-              </h3>
-            </div>
-          </div>
+          </section>
           {Event && (
-            <table>
-              <thead>
-                <tr>
-                  <th>Hora de inicio</th>
-                  <th>Descripción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(() => {
+            <section className="flex flex-col justify-between gap-6 mt-4 ">
+              <div className="w-full h-full">
+                {Event.timeRanges.map((timeRange: any, index: number) => {
                   const currentHour = new Date().getHours()
-                  const firstHour = new Date(
-                    Event?.timeRanges[0]?.start
-                  ).getHours() // Obtener la primera hora registrada
-
+                  const firstHour = new Date(timeRange.start).getHours()
+                  let lastHour = currentHour
+                  if (timeRange.end) {
+                    lastHour = new Date(timeRange.end).getHours()
+                  }
                   const hoursInRange = Array.from(
-                    { length: currentHour - firstHour + 1 },
+                    { length: lastHour - firstHour + 1 },
                     (_, i) => i + firstHour
                   )
-                  return hoursInRange.map((hour) => (
-                    <tr key={hour}>
-                      <td>
-                        {(() => {
-                          try {
-                            const dateObject = new Date()
-                            dateObject.setHours(hour, 0, 0) // Establecer la hora actual
-                            const formattedHour = dateObject
-                              .getHours()
-                              .toString()
-                              .padStart(2, '0')
-                            return formattedHour
-                          } catch (error) {
-                            console.error('Error al procesar la hora:', error)
-                            return 'Error'
-                          }
-                        })()}
-                      </td>
-                      <td>{Event?.title}</td>
-                    </tr>
-                  ))
-                })()}
-              </tbody>
-            </table>
+                  return (
+                    <section key={index} className='py-4'>
+                      {timeRange.start || timeRange.end ? (
+                        <div className="w-full flex justify-between px-1">
+                          {timeRange.start &&
+                            <span className="text-green-700 py-2 font-bold">
+                                INICIO:{' '}
+                                {new Date(timeRange.start).toLocaleTimeString()}{' '}
+                            </span>}
+                          {timeRange.end &&
+                            <span className="text-red-700 py-2 font-bold">
+                                FIN: {new Date(timeRange.end).toLocaleTimeString()}
+                            </span> }
+                        </div>
+                      ) : null}
+                      <div className="grid grid-cols-7 gap-3 border-y border-gray-300  py-2">
+                        <div className="w-full">
+                          <p className="w-full text-center font-semibold">
+                            Hora
+                          </p>
+                        </div>
+                        <div className="w-full ">
+                          <p className="w-full text-center font-semibold">
+                            Tiempo
+                          </p>
+                        </div>
+                        <div className="w-full col-span-2">
+                          <p className="w-full text-center font-semibold">
+                            Proyecto
+                          </p>
+                        </div>
+                        <div className="w-full col-span-3">
+                          <p className="w-full text-center font-semibold">
+                            Actividades
+                          </p>
+                        </div>
+                      </div>
+                      {hoursInRange.map((hour, indexHour: number) => (
+                        <div className={cn('grid grid-cols-7 gap-3 py-2 rounded-md', indexHour % 2 != 0 ? 'bg-gray-200' : '')} key={hour}>
+                          <div className="w-full h-full flex items-center">
+                            <p className="w-full text-center">
+                              {(() => {
+                                try {
+                                  const dateObject = new Date()
+                                  dateObject.setHours(hour, 0, 0) // Establecer la hora actual
+                                  const formattedHour = dateObject
+                                    .getHours()
+                                    .toString()
+                                    .padStart(2, '0')
+                                  return formattedHour
+                                } catch (error) {
+                                  console.error(
+                                    'Error al procesar la hora:',
+                                    error
+                                  )
+                                  return 'Error'
+                                }
+                              })()}
+                            </p>
+                          </div>
+                          <div className="w-full h-full flex items-center">
+                            <p className="w-full text-center">
+                            </p>
+                          </div>
+                          <div className="w-full col-span-2">
+                            <p className="w-full text-center"> </p>
+                          </div>
+                          <div className="w-full col-span-3">
+                            <p className="w-full text-center ">
+                              <Actividad hora={hour} />
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                      {timeRange.start && !timeRange.end ? (
+                        <div className="w-full h-fit flex justify-center mt-4">
+                          <button
+                            className=" bg-main hover:bg-main_dark transition-colors text-white rounded-md text-lg py-1 px-4 w-fit"
+                            onClick={() => {
+                              handleFinishWork(index)
+                            }}
+                          >
+                            Terminar horario
+                          </button>
+                        </div>
+                      ) : (
+                        Event.timeRanges.length == index + 1 && (
+                          <div className="w-full h-fit flex justify-center mt-4">
+                            <button
+                              className=" bg-main hover:bg-main_dark transition-colors text-white rounded-md text-lg py-1 px-4 w-fit"
+                              onClick={() => {
+                                handleAddTimeRange()
+                              }}
+                            >
+                              Retomar Actividades
+                            </button>
+                          </div>
+                        )
+                      )}
+                    </section>
+                  )
+                })}
+              </div>
+            </section>
           )}
-          <td>
-              <button
-                onClick={() => { handleFinishWork() }}
-              >
-                Terminar horario
-              </button>
-            </td>
         </div>
       )}
+      {openProyectos && !proyectoSeleccionado &&
+        <ModalProyectos setOpen={setOpenProyectos} setProyectoSeleccionado={setProyectoSeleccionado}/>
+      }
     </Dialog>
   )
 }

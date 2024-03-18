@@ -11,6 +11,9 @@ import { useFormik } from 'formik'
 import { SchemaPropuestas } from '../../../shared/schemas/Schemas'
 import { Errors } from '../../../shared/Errors'
 import { SwiperAvances } from './SwiperAvances'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
+import 'swiper/css/navigation'
 import { ModalRegistro } from './ModalRegistro'
 import { ViewAvance } from './ViewAvance'
 import { FiInstagram } from 'react-icons/fi'
@@ -19,8 +22,9 @@ import { FaWhatsapp, FaFacebookF } from 'react-icons/fa'
 import vieweb from '../../../../assets/webView.svg'
 import { TfiWorld } from 'react-icons/tfi'
 import { motion, useAnimation } from 'framer-motion'
-import { CiViewTimeline, CiPaperplane, CiCircleCheck, CiGlobe } from 'react-icons/ci'
-import { PiCheck } from 'react-icons/pi'
+import { CiViewTimeline, CiPaperplane, CiCircleCheck, CiGlobe, CiMonitor, CiEdit } from 'react-icons/ci'
+import { IoSaveOutline } from 'react-icons/io5'
+// import { PiCheck } from 'react-icons/pi'
 import {
   type valuesResumen,
   type FinalValues,
@@ -45,6 +49,19 @@ import { ViewAlta } from './modals/ViewAlta'
 import { OnlyCalendario } from './community/OnlyCalendario'
 import { ModalDescripcion2 } from './community/ModalDescripcion2'
 
+interface Dataweb {
+  dominio: string
+  domain_temp: string
+  cant_correos: string
+  porcentaje_proyecto: string
+  procesos: Proceso[]
+}
+
+interface Proceso {
+  nombre: string
+  fecha: string
+  icono: string
+}
 interface valuesDatos {
   idCliente: string
   nombres: string
@@ -86,6 +103,7 @@ export const Avances = (): JSX.Element => {
   const [openModal, setOpenModal] = useState(false)
   const [selectIDCLIENTE, setSelectIDCLIENTE] = useState(0)
   const [selectedItem, setSelectedItem] = useState<Event | null>(null)
+  const [percentage, setPercentage] = useState(0) // Estado para almacenar el porcentaje
   const [datos, setDatos] = useState<values>({
     nombres: '',
     email: '',
@@ -153,6 +171,8 @@ export const Avances = (): JSX.Element => {
     setLoading(true)
     const data = new FormData()
     data.append('comentarios', values.comentarios)
+    console.log('DATA WEB: ', JSON.stringify(dataWeb))
+    data.append('data_web', JSON.stringify(dataWeb))
     data.append('_method', 'PUT')
     try {
       const respuesta = await axios.post(
@@ -213,6 +233,14 @@ export const Avances = (): JSX.Element => {
     onSubmit: updatePropuestas
   })
 
+  const [dataUpdatedWeb, setDataUpdatedWeb] = useState<Dataweb>({
+    cant_correos: '',
+    domain_temp: '',
+    dominio: '',
+    porcentaje_proyecto: '',
+    procesos: []
+  })
+
   const getOneBrief = async (): Promise<void> => {
     try {
       const request = await axios.get(`${Global.url}/getVenta/${id ?? ''}`, {
@@ -234,7 +262,7 @@ export const Avances = (): JSX.Element => {
         }
       )
       setplan(requestPlan.data[0])
-
+      console.log(request.data[0].data_web)
       if (request.data[0].contrato) {
         setBrief({
           codigo: request.data[0].contrato.codigo,
@@ -317,6 +345,8 @@ export const Avances = (): JSX.Element => {
         id_contrato: request.data[0].id_contrato,
         comentarios: request.data[0].comentarios
       })
+      setDataUpdatedWeb(request.data[0].data_web)
+      setPercentage(request.data[0].data_web.porcentaje_proyecto)
       setpdfName(request.data[0].propuestas)
       setColaborador(
         request.data[0].asignacion ? JSON.parse(request.data[0].asignacion) : []
@@ -425,6 +455,8 @@ export const Avances = (): JSX.Element => {
         fecha_fin: request.data[0].fecha_fin,
         archivos_avances: request.data[0].archivos_avances
       })
+      setDataUpdatedWeb(request.data[0].data_web)
+      setPercentage(request.data[0].data_web.porcentaje_proyecto)
     } catch (error) {}
     setLoading(false)
   }
@@ -470,8 +502,18 @@ export const Avances = (): JSX.Element => {
     })
   }
 
-  const percentage = 60
+  useEffect(() => {
+    if (values.fecha_fin) {
+      setPercentage(100)
+    } else {
+      setPercentage(0)
+    }
+  }, [values.fecha_fin])
 
+  const handleInputChange = (event: any): void => {
+    // Actualizar el estado del porcentaje cuando cambia el valor del input
+    setPercentage(event.target.value)
+  }
   const fillAnimation = useAnimation()
 
   useEffect(() => {
@@ -499,14 +541,128 @@ export const Avances = (): JSX.Element => {
   const calculateY = (percentage: number): number => {
     return 60 - 50 * Math.cos((2 * Math.PI * percentage) / 100)
   }
+  // const [procesosActivos, setProcesosActivos] = useState<number[]>([])
+  // const agregarProceso = (id: number): void => {
+  //   const procesosActivosCopy = [...procesosActivos]
+  //   procesosActivosCopy.push(id)
+  //   setProcesosActivos(procesosActivosCopy)
+  // }
+  const [openModalProcess, setOpenModalProcess] = useState(false)
 
-  const [procesosActivos, setProcesosActivos] = useState<number[]>([])
+  const procesos: Proceso[] = [
+    {
+      nombre: 'Brief',
+      fecha: 'Sin fecha',
+      icono: 'br'
+    },
+    {
+      nombre: '1° Avance',
+      fecha: 'Sin fecha',
+      icono: 'av'
+    },
+    {
+      nombre: '2° Avance',
+      fecha: 'Sin fecha',
+      icono: 'av'
+    },
+    {
+      nombre: '3° Avance',
+      fecha: 'Sin fecha',
+      icono: 'av'
+    },
+    {
+      nombre: 'Capacitación',
+      fecha: 'Sin fecha',
+      icono: 'cap'
+    },
+    {
+      nombre: 'Dominio',
+      fecha: 'Sin fecha',
+      icono: 'dom'
+    },
+    {
+      nombre: 'Finalizado',
+      fecha: 'Sin fecha',
+      icono: 'fin'
+    }
+    // Otros procesos...
+  ]
 
-  const agregarProceso = (id: number): void => {
-    const procesosActivosCopy = [...procesosActivos]
-    procesosActivosCopy.push(id)
-    setProcesosActivos(procesosActivosCopy)
+  // const procesos = ['Brief', '1° Avance', '2° Avance', '3° Avance', 'Capacitación', 'Dominio', 'Finalizado']
+
+  const [procesosRegistrados, setProcesosRegistrados] = useState<Proceso[]>([])
+
+  const addProcess = (proceso: Proceso): void => {
+    if (!procesosRegistrados.some(p => p.nombre === proceso.nombre)) {
+      setProcesosRegistrados(prevProcesos => [...prevProcesos, proceso])
+    } else {
+      setProcesosRegistrados(prevProcesos => prevProcesos.filter(p => p.nombre !== proceso.nombre))
+    }
   }
+
+  const [activePercentage, setActivePercentage] = useState(false)
+
+  const [activeGroup, setActiveGroup] = useState(false)
+
+  const formatDate = (dateString: string): string => {
+    // Separar la fecha en día, mes y año
+
+    if (dateString === '' || dateString === null || dateString === undefined) {
+      return '--'
+    }
+
+    const [day, month] = dateString.split('/')
+
+    // Mapear los nombres de los meses
+    const monthNames: Record<string, string> = {
+      '01': 'Ene',
+      '02': 'Feb',
+      '03': 'Mar',
+      '04': 'Abr',
+      '05': 'May',
+      '06': 'Jun',
+      '07': 'Jul',
+      '08': 'Ago',
+      '09': 'Sep',
+      10: 'Oct',
+      11: 'Nov',
+      12: 'Dic'
+    }
+
+    // Obtener el nombre del mes abreviado
+    const monthAbbreviation = monthNames[month]
+
+    // Retornar la fecha en el formato deseado
+    return `${day} ${monthAbbreviation}`
+  }
+
+  const [domainTemp, setDomainTemp] = useState('')
+  const [domain, setDomain] = useState('Sin dominio')
+  const [cantCorreos, setCantCorreos] = useState('3 correos corporativos')
+
+  const changeDomainTemp = (event: any): void => {
+    setDomainTemp(event.target.value)
+  }
+
+  const changeDomain = (event: any): void => {
+    setDomain(event.target.value)
+  }
+
+  const changeCorreos = (event: any): void => {
+    setCantCorreos(event.target.value)
+  }
+
+  const dataWeb = {
+    dominio: domain,
+    domain_temp: domainTemp,
+    cant_correos: cantCorreos,
+    porcentaje_proyecto: percentage,
+    procesos: procesosRegistrados
+  }
+
+  useEffect(() => {
+    setDataUpdatedWeb(dataUpdatedWeb)
+  }, [dataUpdatedWeb])
 
   return (
     <>
@@ -514,6 +670,27 @@ export const Avances = (): JSX.Element => {
         <Loading />
       ) : (
         <>
+          {openModalProcess && (
+            <div onClick={() => { setOpenModalProcess(false) }} className="fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-[990]">
+                <div className="bg-white rounded-lg shadow-md w-full h-fit max-w-[500px] relative z-[995] p-10" onClick={(e) => { e.stopPropagation() }}>
+                    <h5 className="text-center text-[#252525] text-xl mb-6">Selecciona los procesos</h5>
+
+                    <div className='flex flex-col gap-2'>
+                      {procesos.map((proceso, index) => (
+                        <button type='button' key={index} className={`
+                        border border-[#cecece] shadow-sm rounded-lg py-1 px-4 text-center text-[#252525] 
+                        ${procesosRegistrados.some(p => p.nombre === proceso.nombre) ? ' border_selected_proceso' : ''}
+                      `} onClick={() => { addProcess(proceso) }}>
+                          {proceso.nombre}
+                        </button>
+                      ))}
+
+                      <button type="button" className="bg-green-500 text-white mt-4 rounded-lg py-2" onClick={() => { updatePropuestas(); setOpenModalProcess(false) }}>Guardar</button>
+
+                    </div>
+                </div>
+            </div>
+          )}
            {(datos?.id_contrato.split('_')[0]).includes('LPCM')
              ? <form className="mt-5" onSubmit={handleSubmit}>
               <section className="grid grid-cols-2 lg:grid-cols-3 gap-5 mt-1">
@@ -667,18 +844,34 @@ export const Avances = (): JSX.Element => {
                 </div>
               </div>
             </form>
-             : (datos?.id_contrato.split('_')[0]).includes('LPW') || (datos?.id_contrato.split('_')[0]).includes('LPTV') || (datos?.id_contrato.split('_')[0]).includes('LPLANDINGS')
+             : (datos?.id_contrato.split('_')[0]).includes('LPW') || (datos?.id_contrato.split('_')[0]).includes('LPTV') || (datos?.id_contrato.split('_')[0]).includes('LPLANDING')
                  ? <form className="mt-5" onSubmit={handleSubmit}>
                  <div className="flex gap-6 justify-between">
                  <div className="bg-white px-4 py-6 gap-4 rounded-xl flex justify-between flex-1">
-                   <div className="w-full flex flex-1  gap-4 ">
-                       <span className="text-left w-1/2 shadow-md p-4 px-8 rounded-md flex flex-col  gap-2 md:gap-6 text-black ">
+
+                   <div className="w-full flex flex-1 relative  gap-4 ">
+
+                       <span className="text-left w-1/2 relative shadow-md p-4 px-8 rounded-md flex flex-col  gap-2 md:gap-6 text-black ">
+                        <button type="button" className="btn_edit_percentage absolute top-2 right-2 text-2xl text-black" onClick={() => { setActiveGroup(!activeGroup) }}><CiEdit/></button>
+
                        <span className="text-sm md:text-base font-bold text-center uppercase text-main">
-                         WEB INFORMATIVA
+                          {datos.id_contrato.includes('LPTV') && ('Tienda virtual')}
+                          {datos.id_contrato.includes('LPSEO') && ('SEO')}
+                          {datos.id_contrato.includes('LPLANDING') && ('Landingpage')}
+                          {datos.id_contrato.includes('LPHOSTING') && ('HOSTING')}
+                          {datos.id_contrato.includes('LPWA') ? ('Web Administrable') : ('Web Informativa')}
+
                        </span>
 
-                             <p className='text-[#252525] mt-2 font-semibold text-center'><a href="https://logosperu.com.pe/" target='_blank' rel="noreferrer" className='text-blue-500'>logosperu.com.pe</a></p>
-                             <p className='text-center'>3 correos corporativos</p>
+                             <p className='text-[#252525] relative mt-2 font-semibold text-center'>
+                              <a href={domain} target='_blank' rel="noreferrer" className={`relative text-center  text-blue-500 ${activeGroup ? '-z-50' : 'z-50'}`}>
+                                  {domain}
+                              </a>
+                                <input type="text" disabled={!activeGroup} value={domain} onChange={changeDomain} className={`absolute text-center inset-0 m-auto bg-transparent text-blue-500 ${activeGroup ? 'z-50' : '-z-50'}`} />
+                             </p>
+                             <p className='text-center relative'>
+                                <input type="text" disabled={!activeGroup} value={cantCorreos} onChange={changeCorreos} className={'text-center bg-transparent '} />
+                              </p>
 
                      </span>
                      <span className="text-left w-1/2 shadow-md p-4 px-8 rounded-md flex flex-col  gap-2  text-black uppercase">
@@ -747,7 +940,7 @@ export const Avances = (): JSX.Element => {
 
                        <div className=" shadow-md rounded-lg ">
                            <div className="bg_date_card_avance w-[180px] h-full rounded-lg p-8 px-6 flex flex-col items-center justify-center text-[#202020]">
-                               <h6 className='font-bold text-2xl text-[#2fba59]'>11 Feb</h6>
+                               <h6 className='font-bold text-2xl text-[#2fba59]'>{formatDate(datos.fecha_inicio)}</h6>
 
                                <span className='mt-1 text-center'>Fecha de inicio</span>
                            </div>
@@ -756,7 +949,7 @@ export const Avances = (): JSX.Element => {
 
                        <div className=" shadow-md rounded-lg">
                            <div className="bg_date_card_avance w-[180px] h-full rounded-lg p-8 px-6 flex flex-col items-center justify-center text-[#202020]">
-                               <h6 className='font-bold text-2xl text-[#ca3a3a]'>13 Feb</h6>
+                               <h6 className='font-bold text-2xl text-[#ca3a3a]'>{formatDate(datos.fecha_fin || '')}</h6>
 
                                <span className='mt-1 text-center'>Fecha final</span>
                            </div>
@@ -766,9 +959,22 @@ export const Avances = (): JSX.Element => {
                    </div>
 
                  </div>
-                 <div className="bg-white  rounded-xl flex px-6 py-8 pb-4 flex-col justify-center items-center">
+                 <div className="bg-white min-w-[246px]  rounded-xl flex px-6 py-8 pb-4 flex-col justify-center items-center">
                        <div className="relative">
                          <div className={`w-20 h-20 rounded-full bg_neu relative ${Number(percentage) == 100 ? 'bg-complete-view' : ''} shadow-lg`}>
+                         {activePercentage && (
+                           <button type="button" className="btn_edit_percentage absolute bottom-full left-full text-2xl text-green-500" onClick={() => {
+                             setActivePercentage(!activePercentage)
+                             //  updatePropuestas()
+                           }}><IoSaveOutline/></button>
+
+                         )}
+
+                         {!activePercentage && (
+                           <button type="button" className="btn_edit_percentage absolute bottom-full left-full text-2xl text-black" onClick={() => { setActivePercentage(!activePercentage) }}><CiEdit/></button>
+
+                         )}
+
                            <div className="absolute rounded-full inset-0 m-auto w-full h-full "></div>
                            <div className="absolute inset-0 m-auto svg_porcentaje overflow-hidden">
                              <motion.svg
@@ -791,7 +997,7 @@ export const Avances = (): JSX.Element => {
                              </motion.svg>
                            </div>
                            <div className="absolute inset-0 flex justify-center items-center text-lg font-bold text-gray-800">
-                             <span className={`${Number(percentage) === 100 ? 'text-white' : 'text-[#D23741]'} `}>{percentage}%</span>
+                             <input onChange={handleInputChange} value={`${percentage}`} disabled={activePercentage} className={`text-right outline-none bg-transparent w-[40px] ${Number(percentage) === 100 ? 'text-white' : 'text-[#D23741]'} `}/> <span className={`${Number(percentage) === 100 ? 'text-white' : 'text-[#D23741]'}`}>%</span>
                            </div>
                          </div>
                        </div>
@@ -804,31 +1010,11 @@ export const Avances = (): JSX.Element => {
                  </div>
 
                  <div className="flex gap-2 justify-between">
-                   <div className="bg-white p-4 px-4 rounded-xl mt-6 w-[68%]">
+                   <div className="bg-white p-4 px-4 rounded-xl mt-6 w-[68%] relative" >
 
                      <h5 className='text-[#202020] font-bold text-xl'>Procesos completados</h5>
 
-                     <div className="grid grid-cols-5 gap-3 h-[80%]  place-content-center">
-                       <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
-                           <div className="flex items-center justify-between gap-2">
-                                   <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(1) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(1) }}>
-
-                                   {procesosActivos.includes(1) ? (
-                                     <PiCheck className='text-white  text-3xl transition-all duration-200' />
-
-                                   ) : (
-                                     <CiViewTimeline className='text-[#4E54C8]  text-3xl transition-all duration-200' />
-
-                                   )}
-                                   </span>
-                                   <span>
-                                     <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Brief</h5>
-                                     <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>12 de Marzo</p>
-                                   </span>
-
-                           </div>
-                       </div>
-                       <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
+                       {/* <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
                            <div className="flex items-center justify-between gap-2">
                                    <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(2) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(2) }}>
 
@@ -903,9 +1089,38 @@ export const Avances = (): JSX.Element => {
                                    </span>
 
                            </div>
-                       </div>
+                       </div> */}
+                    {procesosRegistrados.length === 0 ? (
+                      <button type="button" onClick={() => { setOpenModalProcess(!openModalProcess) }} className='absolute inset-0 m-auto w-fit h-fit bg-secundario rounded-lg py-2 px-8 text-white text-center transition-all active:scale-90'>Agregar procesos</button>
 
-                     </div>
+                    ) : (
+                    <Swiper slidesPerView={5} className='h-[80%]' spaceBetween={20}>
+                      {procesosRegistrados.map((proceso, index) => (
+
+                        <SwiperSlide key={index}>
+                        <div className="style_icon shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl" key={index}>
+                            <div className="flex items-center justify-between gap-2">
+                                    <span className={'p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full }'} >
+
+                                    {proceso.icono === 'br' && <CiViewTimeline/>}
+                                    {proceso.icono === 'av' && <CiPaperplane/>}
+                                    {proceso.icono === 'cap' && <CiMonitor/>}
+                                    {proceso.icono === 'dom' && <CiGlobe/>}
+                                    {proceso.icono === 'fin' && <CiCircleCheck/>}
+
+                                    </span>
+                                    <span>
+                                      <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>{proceso.nombre}</h5>
+                                      <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>{proceso.fecha}</p>
+                                    </span>
+
+                            </div>
+                        </div>
+                        </SwiperSlide>
+
+                      ))}
+                    </Swiper>
+                    )}
                      {/* <ArchivosFinales
                        getOneBrief={getOneBrief}
                        values={values}
@@ -918,7 +1133,11 @@ export const Avances = (): JSX.Element => {
                      /> */}
                    </div>
                    <div className="w-[32%] mt-6 rounded-xl bg_web_client p-4">
-                     <div className="flex gap-1 justify-between items-start">
+                     <div className="flex gap-1 relative justify-between items-start">
+
+                        <input type="text" onChange={changeDomainTemp} className='btn_edit_dom_temp absolute input_glass left-0 -top-2' placeholder="Dominio temporal"/>
+                        <button type="button" className="btn_edit_dom_temp absolute -top-2 right-0 left-0 mx-auto w-fit text-2xl text-white" ><IoSaveOutline/></button>
+
                        <div className=" w-[50%]">
                          {/* <div className="flex gap-2 items-center">
                            <img src={ico} alt="" width={22} />
@@ -928,12 +1147,12 @@ export const Avances = (): JSX.Element => {
                          </div> */}
 
                          <h6 className="block text-center text-white font-[500] text-2xl mt-7">
-                           Logos Perú
+                           {datos.nombre_marca}
                          </h6>
                          <a
-                           href="https://logosperu.com.pe/"
+                           href={`${domainTemp}`}
                            target='_blank'
-                           className="btn_vieweb w-fit bg-white rounded-full flex items-center gap-2 px-6 py-2 text-center text-black mt-5 mx-auto" rel="noreferrer"
+                           className="btn_vieweb w-fit bg-white relative rounded-full flex items-center gap-2 px-6 py-2 text-center text-black mt-5 mx-auto" rel="noreferrer"
                          >
                            <TfiWorld className="text-main" />
                            Ver web{' '}
@@ -1294,6 +1513,7 @@ export const Avances = (): JSX.Element => {
             <ViewActa open={openActa} setOpen={setOpenActa} datos={datos} />
           )}
           <button
+          type='button'
             className="bg-green-700 rounded-full p-4 fixed right-6 bottom-6 "
             onClick={() => {
               if (datos.nombre_marca.length > 0) {

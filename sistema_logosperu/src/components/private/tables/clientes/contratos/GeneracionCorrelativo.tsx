@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable multiline-ternary */
 import React, {
   type Dispatch,
@@ -69,7 +70,7 @@ export const GeneracionCorrelativo = ({
   const [abrirPlan, setAbrirPlan] = useState(false)
   const [arrayContacto, setarrayConacto] = useState<arrayContacto[]>([])
   const [loading, setLoading] = useState(false)
-  const [, setpersonContact] = useState<string | null>(null)
+  const [personContact, setpersonContact] = useState<string | null>(null)
   const [, setDuplicateCode] = useState<boolean>(false)
   const limpiar = (): void => {
     resetForm()
@@ -172,6 +173,12 @@ export const GeneracionCorrelativo = ({
         } else if (formatearContrato(request.data.codigo) == ('LPHOST')) {
           descripcionEntrada =
                               '<p><strong>Plan COBRE:</strong></p><p><strong>&#xFEFF;</strong></p><p>✓ Administracion de dominio .com .pe</p><p>✓ Alojamiento solo para correos</p><p>✓ Sin Cpanel Independiente</p><p>✓ Creación hasta 04 correos</p><p>✓ Manual de Configuración GMAIL - Outlokk</p><p>✓Pago ANUAL</p><p>✓ Trabajamos bajo contrato</p><p><br></p><p>Tiempo de entrega 48 - 72 Horas</p>'
+        } else if (formatearContrato(request.data.codigo) == ('LPLANDING-ADM')) {
+          descripcionEntrada =
+                                '<p><strong style="background-color: yellow; color: rgb(50, 50, 50);">01 DISEÑO WEB LANDING PAGE - ADMINISTRABLE :</strong><strong style="color: rgb(50, 50, 50);"> </strong></p><ul><li>01 interna de Aterrizaje - LANDING PAGE, El cliente elegirá una Plantilla </li><li>&nbsp;Formulario de Contacto Dinámico. </li><li><strong>Desarrollo de Modulo Administrable - 1 sección</strong></li><li>Capación de Uso del módulo administrable</li><li>Accesos o credenciales al administrador </li><li>NO Utilizamos plantillas o CMS Gratuitos de Internet</li><li>WEB desarrollada desde CERO </li><li>Seguridad Anti Spam </li><li>Interacción con Redes Sociales. (WhatsApp – Facebook – YouTube)</li><li>Soporte Técnico. Por 01 mes (Solo atendemos incidencias o fallas en nuestro servicio).</li></ul>'
+        } else if (formatearContrato(request.data.codigo) == ('LPLANDING-TV')) {
+          descripcionEntrada =
+                                  '<p>&nbsp;<strong style="background-color: yellow; color: rgb(50, 50, 50);">01 DISEÑO WEB LANDING PAGE – TIENDA VIRTUAL&nbsp;:</strong><strong style="color: rgb(50, 50, 50);"> </strong></p><ul><li>01 interna de Aterrizaje - LANDING PAGE, El cliente elegirá una Plantilla </li><li>Formulario de Contacto Dinámico. </li><li>Desarrollo de modulo de administración y actualización de productos - 1 sección</li><li>No incluye pasarela de pagos </li><li>Compra a traves de correo o Wsp </li><li>Capación de Uso del modulo administrable</li><li>Accesos o credenciales al administrador </li><li>Administración Dominio .com <strong>GRATIS x un AÑO</strong></li><li>Alojamiento Web Hasta 1000 MB (Sin Cpanel Independiente) <strong>GRATIS x un AÑO</strong></li><li>NO Utilizamos plantillas o CMS Gratuitos de Internet</li><li>WEB desarrollada desde CERO </li><li>Creación de 03 cuenta de correo&nbsp;Manual de Configuración GMAIL - Outloock </li><li>Seguridad Anti Spam </li><li>Interacción con Redes Sociales. (WhatsApp – Facebook – YouTube)</li><li>Soporte Técnico. Por 01 mes (Solo atendemos incidencias o fallas en nuestro servicio).&nbsp;&nbsp;</li></ul>'
         }
         setValues({
           ...values,
@@ -214,7 +221,6 @@ export const GeneracionCorrelativo = ({
   })
 
   useEffect(() => {
-    console.log(datos)
     setValues({
       ...values,
       id: datos?.id,
@@ -260,6 +266,7 @@ export const GeneracionCorrelativo = ({
               pdfUrl={pdfUrl}
               setLoading={setLoading}
               loading={loading}
+              personContact={personContact}
             />
           ) : (
             <div className="w-full">
@@ -294,12 +301,12 @@ export const GeneracionCorrelativo = ({
                                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                     // @ts-expect-error
                                     (contacto: ListcontactoClientes) =>
-                                      contacto.nombres === e.target.value
+                                      contacto.marca == e.target.value
                                   )
                                   setpersonContact(
                                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                     // @ts-expect-error
-                                    selectedContact ? selectedContact.id : null
+                                    selectedContact ? { id: selectedContact.id, nombre: `${selectedContact.nombres}`, tipo_documento: selectedContact.tipo_documento, dni_ruc: selectedContact.dni_ruc } : null
                                   )
                                 }
                                 handleChange(e)
@@ -308,14 +315,14 @@ export const GeneracionCorrelativo = ({
                               disabled={false}
                             >
                               <option value="">----SELECCIONAR ----</option>
-                              {values?.nombre_empresa && (
-                                <option value={values?.nombre_empresa}>
-                                  {values?.nombre_empresa}
+                              {datos?.nombre_empresa && (
+                                <option value={datos?.nombre_empresa}>
+                                  {datos?.nombre_empresa}
                                 </option>
                               )}
-                              {values?.nombre_cliente && (
-                                <option value={values?.nombre_cliente}>
-                                  {values?.nombre_cliente}
+                              {datos?.nombre_cliente && (
+                                <option value={datos?.nombre_cliente}>
+                                  {datos?.nombre_cliente}
                                 </option>
                               )}
                               {arrayContacto &&
@@ -325,10 +332,10 @@ export const GeneracionCorrelativo = ({
                                   // @ts-expect-error
                                   (contacto: ListcontactoClientes) => (
                                     <option
-                                      value={contacto.nombres}
+                                      value={contacto.marca}
                                       key={contacto.id}
                                     >
-                                      {contacto.nombres} - {contacto.marca}
+                                      {contacto.marca}
                                     </option>
                                   )
                                 )}

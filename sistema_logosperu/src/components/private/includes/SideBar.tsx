@@ -41,10 +41,9 @@ const SideBar = (): JSX.Element => {
   } = useAuth()
   const token = localStorage.getItem('token')
   const [showMenu, setShowMenu] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [openRegistro, setopenRegistro] = useState(false)
-
   const [showSubmenu, setShowSubmenu] = useState(false)
-  //   const [showSubmenu2, setShowSubmenu2] = useState(false)
   const [showSubmenu3, setShowSubmenu3] = useState(false)
   const [showSubmenu4, setShowSubmenu4] = useState(false)
   const [showSubmenu5, setShowSubmenu5] = useState(false)
@@ -54,6 +53,7 @@ const SideBar = (): JSX.Element => {
   const [showSubmenu10, setShowSubmenu10] = useState(false)
   const [showSubmenu11, setShowSubmenu11] = useState(false)
   const [showSubmenu12, setShowSubmenu12] = useState(false)
+  const [showSubmenu13, setShowSubmenu13] = useState(false)
   const navigate = useNavigate()
   const [activeItem, setActiveItem] = useState(0)
   const [activeItem2, setActiveItem2] = useState(0)
@@ -99,8 +99,26 @@ const SideBar = (): JSX.Element => {
     setColaboradores(request.data)
   }
 
+  const getHorarioLaboral = async (): Promise<void> => {
+    try {
+      const request = await axios.get(`${Global.url}/indexHorarioLaboral/${auth.id ?? ''}`, {
+        headers: {
+          Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+        }
+      })
+      if (request.data.horario_laboral) {
+        setEvents(JSON.parse(request.data.horario_laboral))
+      }
+    } catch (error) {
+      console.error('Error al obtener el horario laboral:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     getColaboradores()
+    getHorarioLaboral()
   }, [])
 
   return (
@@ -111,7 +129,7 @@ const SideBar = (): JSX.Element => {
         } transition-all`}
       >
         {/* asistencia laboral */}
-        <ModalRegistroLaboral Event={Event} setEvent={setEvent} open={openRegistro} setOpen={setopenRegistro} setEvents={setEvents} events={events}/>
+        <ModalRegistroLaboral Event={Event} setEvent={setEvent} open={openRegistro} setOpen={setopenRegistro} setEvents={setEvents} events={events} loading2={loading}/>
 
         <div>
           <h1 className="text-center text-2xl font-bold text-black mb-5">
@@ -119,7 +137,7 @@ const SideBar = (): JSX.Element => {
           </h1>
           <hr className="mb-5" />
           <ul className="ml-0 p-0">
-            <li className="">
+             <li className="">
               <button
                 className={
                   'flex items-center gap-3 py-2 animate-pulse rounded-lg text-white justify-center text-center bg-main mb-4 transition-colors w-full relative'
@@ -789,53 +807,65 @@ const SideBar = (): JSX.Element => {
                             </ul>
                           </ul>
                         </li>
-                        {/* <li key={232}>
-                            <Link
-                                to="transacciones"
-                                className={
-                                'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
-                                }
+                        <li >
+                          <button
+                            onClick={() => {
+                              setShowSubmenu13(!showSubmenu13)
+                            }}
+                            className="flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full"
+                          >
+                            <span className="flex items-center gap-4 w-full">
+                              <BsPersonVcardFill className="text-main/80 text-xl" />{' '}
+                              Colaboradores
+                            </span>
+                            <RiArrowRightSLine
+                              className={`mt-1 ${
+                                showSubmenu13 ? 'rotate-90' : ''
+                              } transition-all`}
+                            />
+                          </button>
+                          <ul
+                            className={` ml-0 ${
+                              showSubmenu13 ? '' : 'h-0'
+                            } overflow-hidden transition-all`}
+                          >
+                            <li>
+                              <Link
+                                to="colaboradores"
+                                className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                  activeItem == 344
+                                    ? 'before:bg-main'
+                                    : 'before:bg-gray-500'
+                                } hover:text-main transition-colors`}
                                 onClick={() => {
-                                  handleItemClick2(1)
+                                  handleItemClick(344)
                                   setShowMenu(false)
                                   setLoadingComponents(false)
                                 }}
-                            >
-                            <GrTransaction className="text-main/80 text-xl" />{' '} Transacciones
-                            </Link>
-                        </li> */}
-                        {/* <li key={25}>
-                          <Link
-                            to="lista-planes"
-                            className={
-                              'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
-                            }
-                            onClick={() => {
-                              handleItemClick2(25)
-                              setShowMenu(false)
-                              setLoadingComponents(false)
-                            }}
-                          >
-                            <FaReceipt className="text-main/80 text-xl" />{' '}
-                            Planes
-                          </Link>
-                        </li> */}
-                        <li key={77}>
-                          <Link
-                            to="colaboradores"
-                            className={
-                              'flex items-center gap-4 py-2 px-4 rounded-lg text-black hover:bg-main_2-100 hover:text-main transition-colors w-full'
-                            }
-                            onClick={() => {
-                              handleItemClick2(77)
-                              setShowMenu(false)
-                              setLoadingComponents(false)
-                            }}
-                          >
-                            <BsPersonVcardFill className="text-main/80 text-xl" />{' '}
-                            Colaboradores
-                          </Link>
+                              >
+                                Colaboradores
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                to="colaboradores/horario-laboral"
+                                className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                  activeItem == 1004
+                                    ? 'before:bg-main'
+                                    : 'before:bg-gray-500'
+                                } hover:text-main transition-colors`}
+                                onClick={() => {
+                                  handleItemClick(1004)
+                                  setShowMenu(false)
+                                  setLoadingComponents(false)
+                                }}
+                              >
+                                Horario laboral
+                              </Link>
+                            </li>
+                          </ul>
                         </li>
+
                         <li key={26}>
                           <button
                             onClick={() => {

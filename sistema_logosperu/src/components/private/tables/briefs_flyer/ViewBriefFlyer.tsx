@@ -82,7 +82,9 @@ export const ViewBriefFlyer = (): JSX.Element => {
       titular: request.data[0].titular,
       descripcion: request.data[0].descripcion,
       enlace: request.data[0].enlace,
-      colores: request.data[0].colores
+      colores: request.data[0].colores,
+      id_cliente: request.data[0].id_cliente,
+      id_contrato: request.data[0].id_contrato
     })
 
     setImagen1(request.data[0].logo_referencia)
@@ -174,7 +176,9 @@ export const ViewBriefFlyer = (): JSX.Element => {
       descripcion: '',
       enlace: '',
       colores: '',
-      email: ''
+      email: '',
+      id_cliente: '',
+      id_contrato: ''
     },
     validationSchema: SchemaBriefFlyer,
     onSubmit: saveBrief
@@ -275,7 +279,8 @@ export const ViewBriefFlyer = (): JSX.Element => {
                   <ViewCliente
                     handleClose={handleClose}
                     open={open}
-                    id={values.id_venta}
+                    id={values.id_cliente}
+                    id_contrato={values.id_contrato}
                   />
 
                   <label className="bg-secondary-150 px-4 text-white py-2 w-fit rounded-t-md mb-5 md:ml-3">

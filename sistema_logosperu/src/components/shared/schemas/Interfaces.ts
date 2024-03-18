@@ -28,6 +28,8 @@ export interface ListaContratosValues {
   correlativo: string
   nombres: string
   apellidos: string
+  id_contacto: string
+  arraycontacto: string
   created_at: string
   precio: string
   empresa: string
@@ -770,6 +772,8 @@ export interface contactoClientes {
   celular: string
   correo: string
   marca: string
+  dni_ruc: string
+  tipo_documento: string
 }
 
 export interface ListcontactoClientes {

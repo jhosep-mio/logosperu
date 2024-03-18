@@ -451,6 +451,11 @@
       scale: 1.05;
     }
 
+    & .btn_edit_dom_temp{
+      opacity: 1;
+      z-index: 30;
+    }
+
     h6{
       letter-spacing: 0.8px;
       scale: 1.01;
@@ -463,6 +468,16 @@
   }
 }
 
+.input_glass{
+  outline: none;
+  /* From https://css.glass */
+/* From https://css.glass */
+background: rgba(255, 255, 255, 0.07);
+border-radius: 8px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(5px);
+-webkit-backdrop-filter: blur(5px);
+}
 
 .btn_vieweb{
   border: 1px solid #fff;
@@ -475,7 +490,18 @@
     svg{
       color: #fff;
     }
+
+    & .btn_edit_dom_temp{
+      opacity: 1;
+      z-index: 30;
+    }
   }
+}
+
+.btn_edit_dom_temp{
+  z-index: -50;
+    opacity: 0;
+    transition: all .2s;
 }
 
 .svg_porcentaje{
@@ -493,6 +519,17 @@
   &:hover{
     box-shadow: inset 9px -9px 14px #bdbdbd,
             inset -9px 9px 14px #ffffff;
+   & .btn_edit_percentage{
+    z-index: 20;
+    opacity: 1;
+   }
+  }
+
+
+  & .btn_edit_percentage{
+    z-index: -50;
+    opacity: 0;
+    transition: all .2s;
   }
 }
 
@@ -505,6 +542,12 @@
 
   }
 }
+
+.border_selected_proceso{
+  border-color: #2fba59 !important;
+}
+
+/*****************************************/
 
 .content_acta_Acaptacion {
   .content_editor {
@@ -1156,6 +1199,12 @@ input[type="date"] {
   }
 }
 
+.calendario_cm2 .rbc-toolbar {
+    & :first-child {
+      display: none !important;
+    }
+  }
+
 .quitar_padding_bottom {
   & .swiper-wrapper {
     padding: 25px;
@@ -1173,6 +1222,48 @@ input[type="date"] {
     scale: 1.005;
   }
 }
+
+.calendario_cm2 .rbc-toolbar-label {
+    // background: #D33741 !important;
+    color: #D33741 !important;
+    font-size: 42px !important;
+    text-transform: uppercase !important;
+    font-weight: 900 !important;
+    text-align: left !important;
+  }
+  
+  .calendario_cm2 .rbc-active {
+    background: #D33741 !important;
+    color: white !important;
+  }
+  
+  .calendario_cm2 .rbc-header {
+    background: #D33741 !important;
+    color: white !important;
+  }
+  
+  .calendario_cm2 .react-calendar__month-view__weekdays__weekday {
+    color: #D33741 !important;
+    font-weight: bolder !important;
+  }
+  
+  .calendario_cm2 .rbc-event .rbc-event-label {
+    background: transparent !important;
+  }
+  
+  .calendario_cm2 .react-calendar__tile--active:enabled:hover,
+  .calendario_cm2 .react-calendar__tile--active:enabled:focus {
+    background: transparent !important;
+  }
+  
+  .calendario_cm2 .rbc-events-container .rbc-event {
+    height: fit-content !important;
+    background: #D33741 !important;
+    width: fit-content !important;
+    flex-flow: column-reverse wrap !important;
+  }
+
+
 
 .calendario_cm .rbc-toolbar-label {
   // background: #129990 !important;
@@ -1210,6 +1301,13 @@ input[type="date"] {
 .calendario_cm .rbc-events-container .rbc-event {
   height: fit-content !important;
   background: #129990 !important;
+}
+
+.style_icon svg{
+  color: #4E54C8;
+  font-size: 1.875rem; /* 30px */
+  line-height: 2.25rem; /* 36px */
+  transition: all .2s;
 }
 
 //CALENDARIO GESTIOR DE TAREAS

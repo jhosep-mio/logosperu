@@ -95,6 +95,7 @@ export const GenerarAlta = ({
         data2.append('titulo', values.asunto)
         data2.append('contexto', contenido)
         data2.append('email', auth.email)
+        data2.append('id_contacto', '')
         data2.append('email_alter', auth.email_alter)
         data2.append('correos', JSON.stringify(correos))
         console.log(correos)

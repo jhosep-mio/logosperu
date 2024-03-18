@@ -203,7 +203,8 @@ export const SchemaContactoClientes = Yup.object().shape({
   celular: Yup.string()
     .required('Este campo es requerido')
     .min(7, 'El numero debe tener al menos 7 digitos'),
-  marca: Yup.string().required('Este campo es requerido').min(1)
+  marca: Yup.string().required('Este campo es requerido').min(1),
+  tipo_documento: Yup.string().required('Este campo es requerido').min(1)
 })
 
 export const SchemeVentas = Yup.object().shape({

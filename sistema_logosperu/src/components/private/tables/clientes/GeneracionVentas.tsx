@@ -175,7 +175,6 @@ export const GeneracionVentas = ({
             })
           } catch (error: unknown) {
             console.log(error)
-            console.log(error)
             Swal.fire('Error al subir', '', 'error')
           }
         }

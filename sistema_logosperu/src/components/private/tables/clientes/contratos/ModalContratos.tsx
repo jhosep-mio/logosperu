@@ -35,13 +35,15 @@ export const ModalContratos = ({
   setPdfUrl,
   setLoading,
   loading,
-  pdfUrl
+  pdfUrl,
+  personContact
 }: {
   datos: valuesVentasTO
   setPdfUrl: Dispatch<SetStateAction<any | null>>
   setLoading: Dispatch<SetStateAction<boolean>>
   loading: boolean
   pdfUrl: any | null
+  personContact: string | null
 }): JSX.Element => {
   const token = localStorage.getItem('token')
   // @ts-expect-error
@@ -97,14 +99,15 @@ export const ModalContratos = ({
 
   const GenerarContrato = async (values: VluesContrato): Promise<void> => {
     if (contenido) {
+      console.log(personContact)
       setLoading(true)
       const data = new FormData()
-      console.log(datos?.nombre_empresa)
       data.append('nombres_cliente', datos?.nombre_empresa)
       data.append('titulo_contrato', values.titulo_contrato)
       data.append('id_contrato', datos?.id_contrato)
       data.append('tipo_documento', values.tipo_documento)
       data.append('dni_ruc', values.tipo_documento)
+
       if (values.tipo_documento == 'DNI') {
         data.append(
           'sexo',
@@ -139,7 +142,6 @@ export const ModalContratos = ({
       data.append('primero', values.primero)
       data.append('contenido', contenido)
       data.append('_method', 'PUT')
-      console.log(formatearContrato2(datos?.id_contrato))
 
       try {
         const response = await axios.post(
@@ -208,10 +210,12 @@ export const ModalContratos = ({
       data.append('correlativo', datos?.id_contrato)
       data.append('adicionales', JSON.stringify(arrayAdicionales ?? ''))
       data.append('medio_ingreso', datos?.medio_ingreso)
-      data.append('nombres_cliente', datos?.nombre_cliente)
+      data.append('nombres_cliente', datos?.nombre_empresa)
       data.append('titulo_contrato', values.titulo_contrato)
       data.append('id_contrato', datos?.id_contrato)
       data.append('tipo_documento', values.tipo_documento)
+      // @ts-expect-error
+      data.append('id_contacto', personContact ? personContact.id : '')
       //   data.append('dni_ruc', values.tipo_documento)
       if (values.tipo_documento == 'DNI') {
         data.append(
@@ -371,12 +375,16 @@ export const ModalContratos = ({
       titulo_contrato: request2.data[0].titulo,
       servicio: request2.data[0].servicio,
       primero: request2.data[0].primero,
-      dni_cliente: datos?.dni_ruc,
+      // @ts-expect-error
+      tipo_documento: personContact?.id ? personContact?.tipo_documento : '',
+      // @ts-expect-error
+      dni_cliente: personContact?.id ? personContact?.dni_ruc : datos?.dni_ruc,
       fecha: generarFecha(),
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       precio: datos?.precio
     })
+    console.log(personContact)
   }
 
   const eliminarArray = (id: number | null): void => {
@@ -465,7 +473,8 @@ export const ModalContratos = ({
                 </label>
                 <input
                   className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
-                  value={datos?.nombre_cliente}
+                  // @ts-expect-error
+                  value={personContact?.id ? personContact?.nombre : datos?.nombre_cliente}
                   disabled
                 />
               </div>

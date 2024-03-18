@@ -69,7 +69,7 @@ const Header = (): JSX.Element => {
        <ModalNoti />
        <Toaster position="top-center" richColors />
 
-      {!currentPath.includes('admin/gestor-tareas') && !currentPath.includes('admin/colaboradores/gestor_tareas') && !currentPath.includes('admin/listadocm') && !currentPath.includes('admin/documentos') &&
+      {!currentPath.includes('admin/gestor-tareas') && !currentPath.includes('admin/colaboradores/gestor_tareas') && !currentPath.includes('admin/listadocm') && !currentPath.includes('admin/documentos') && !currentPath.includes('/admin/colaboradores/horario-laboral') &&
       (
         <>
           <header className="h-[7vh] lg:h-[10vh] border-b border-gray-100 shadow-sm p-8 flex items-center justify-between bg-white z-10">

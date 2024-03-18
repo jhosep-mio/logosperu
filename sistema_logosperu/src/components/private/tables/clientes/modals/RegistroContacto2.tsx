@@ -95,7 +95,9 @@ export const RegistroContacto2 = ({
       nombres: '',
       celular: '',
       correo: '',
-      marca: ''
+      marca: '',
+      dni_ruc: '',
+      tipo_documento: ''
     },
     validationSchema: SchemaContactoClientes,
     onSubmit: savePreventa

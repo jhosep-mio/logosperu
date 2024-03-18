@@ -108,6 +108,7 @@ export const EditarContrato = (): JSX.Element => {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         nombre_cliente: `${request.data.nombres} ${request.data.apellidos}`,
         nombre_empresa: request.data.empresa,
+        id_contacto: request.data.id_contacto,
         precio: request.data.precio,
         correlativo: request.data.correlativo,
         dni_cliente: request.data.dni_cliente,
@@ -236,6 +237,7 @@ export const EditarContrato = (): JSX.Element => {
   } = useFormik({
     initialValues: {
       correlativo: '',
+      id_contacto: '',
       nombre_cliente: '',
       nombre_empresa: '',
       medio_ingreso: '',

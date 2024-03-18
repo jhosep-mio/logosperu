@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable multiline-ternary */
 import { Dialog } from '@mui/material'
@@ -9,6 +10,13 @@ import { format, isToday } from 'date-fns'
 import { Loading } from '../../../shared/Loading'
 import { cn } from '../../../shared/cn'
 import { ModalProyectos } from './ModalProyectos'
+import { Link } from 'react-router-dom'
+import { MdDelete, MdEdit } from 'react-icons/md'
+import { FaWhatsapp } from 'react-icons/fa'
+import { ModalEdicion } from './ModalEdicion'
+import { toast } from 'sonner'
+import axios from 'axios'
+import { Global } from '../../../../helper/Global'
 
 export const ModalRegistroLaboral = ({
   open,
@@ -16,7 +24,8 @@ export const ModalRegistroLaboral = ({
   events,
   setEvents,
   Event,
-  setEvent
+  setEvent,
+  loading2
 }: {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
@@ -24,12 +33,18 @@ export const ModalRegistroLaboral = ({
   setEvents: Dispatch<SetStateAction<Event[]>>
   Event: any | undefined
   setEvent: Dispatch<SetStateAction<any | undefined>>
+  loading2: boolean
 }): JSX.Element => {
   const { auth } = useAuth()
+  const token = localStorage.getItem('token')
   const [currentTime, setCurrentTime] = useState('0')
   const [loading, setLoading] = useState(true)
   const [openProyectos, setOpenProyectos] = useState(false)
-  const [proyectoSeleccionado, setProyectoSeleccionado] = useState<string>('')
+  const [openProyectosEdicion, setOpenProyectosEdicion] = useState(false)
+  const [proyectoSeleccionado, setProyectoSeleccionado] = useState<any | null>(
+    null
+  )
+  const [actividadEditando, setActividadEditando] = useState<any | null>(null)
 
   const getCurrentTime = (): string => {
     const now = new Date()
@@ -38,14 +53,37 @@ export const ModalRegistroLaboral = ({
     return `${hours}:${minutes}`
   }
 
-  useEffect(() => {
-    const storedEvents = JSON.parse(localStorage.getItem('events') ?? '[]')
-    setEvents(storedEvents)
-  }, [])
+  const updateHorario = async (updatedEvents: Event[]): Promise<void> => {
+    const data = new FormData()
+    data.append('horario_laboral', JSON.stringify(updatedEvents))
+    data.append('_method', 'PUT')
+    try {
+      const respuesta = await axios.post(`${Global.url}/updateHorario/${auth.id}`, data, {
+        headers: {
+          Authorization: `Bearer ${
+            token !== null && token !== '' ? token : ''
+          }`
+        }
+      })
+      console.log(respuesta)
+    } catch (error) {
+      toast.errror('error al guardar')
+    }
+  }
 
   useEffect(() => {
-    localStorage.setItem('events', JSON.stringify(events))
+    if (!loading2 && open) {
+      updateHorario(events)
+    }
   }, [events])
+
+  const handleEditActividad = (hour: string, actividadId: string): void => {
+    const actividad = Event?.detalle[hour.toString()].find((a: any) => a.id == actividadId)
+    if (actividad) {
+      setActividadEditando({ hora: hour, actividad })
+      setOpenProyectosEdicion(true)
+    }
+  }
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -95,20 +133,32 @@ export const ModalRegistroLaboral = ({
   const handleAddTimeRange = (): void => {
     const currentDateTime = new Date()
     const formattedCurrentTime = format(currentDateTime, 'yyyy-MM-dd HH:mm:ss')
-    const updatedEvents = events.map((event: any) => {
-      if (event.id === Event.id) {
-        const newTimeRange = { start: formattedCurrentTime, end: null }
-        const updatedTimeRanges = [...event.timeRanges, newTimeRange] // Crear un nuevo array con todos los objetos existentes más el nuevo objeto
-
-        return {
-          ...event,
-          timeRanges: updatedTimeRanges
-        }
+    // Verificar si la hora de inicio del nuevo rango ya existe en los rangos actuales
+    const startTimeExists = Event.timeRanges.some(
+      (timeRange: any) => {
+        const startTime = new Date(timeRange.start)
+        const newTime = new Date(formattedCurrentTime)
+        return startTime.getHours() === newTime.getHours()
       }
-      return event
-    })
+    )
 
-    setEvents(updatedEvents)
+    if (!startTimeExists) {
+      const updatedEvents = events.map((event: any) => {
+        if (event.id === Event.id) {
+          const newTimeRange = { start: formattedCurrentTime, end: null }
+          const updatedTimeRanges = [...event.timeRanges, newTimeRange]
+
+          return {
+            ...event,
+            timeRanges: updatedTimeRanges
+          }
+        }
+        return event
+      })
+      setEvents(updatedEvents)
+    } else {
+      toast.warning('Hora actual ya registrada')
+    }
   }
 
   const handleFinishWork = (index: number): void => {
@@ -136,97 +186,55 @@ export const ModalRegistroLaboral = ({
     setEvents(updatedEvents)
   }
 
-  const Actividad = (hora: any): JSX.Element => {
-    const [editando, setEditando] = useState(false)
-    const [descripcionTemporal, setDescripcionTemporal] = useState('')
-    const descripcionHoraActual = Event.detalle?.horas.find(
-      (h: any) => h.hora == hora.hora
-    )?.descripcion
-    const cambiarEstadoEdicion = (): void => {
-      if (!editando) {
-        setDescripcionTemporal(descripcionHoraActual ?? '')
+  const handleDeleteActividad = (hour: string, actividadId: string): void => {
+    // Filtra el detalle actualizado para eliminar la actividad especificada
+    const updatedDetalle = {
+      ...Event.detalle,
+      [hour.toString()]: Event.detalle[hour.toString()].filter(
+        (actividad: any) => actividad.id !== actividadId
+      )
+    }
+    // Actualiza el evento actual con el detalle actualizado
+    const updatedEvent = {
+      ...Event,
+      detalle: updatedDetalle
+    }
+    // Actualiza el array de eventos con el evento actualizado
+    const updatedEvents = events.map((event: any) => {
+      if (event.id === updatedEvent.id) {
+        return updatedEvent
       }
-      setEditando(!editando)
-    }
-    const handleChange = (
-      event: React.ChangeEvent<HTMLTextAreaElement>
-    ): void => {
-      setDescripcionTemporal(event.target.value)
-    }
-    const actualizarContenido = (): void => {
-      const updatedEvents = events.map((event: any) => {
-        if (event.id === Event.id) {
-          let updatedDetalle = { ...event.detalle }
-          if (!updatedDetalle) {
-            updatedDetalle = { horas: [] }
-          } else if (!updatedDetalle.horas) {
-            updatedDetalle.horas = []
-          }
-          const horaExistente = updatedDetalle.horas.find(
-            (horaObj: any) => horaObj.hora == hora.hora
-          )
-          if (horaExistente) {
-            horaExistente.descripcion = descripcionTemporal
-          } else {
-            updatedDetalle.horas.push({
-              id: uuidv4(),
-              hora: hora.hora,
-              descripcion: descripcionTemporal
-            })
-          }
-          return { ...event, detalle: updatedDetalle }
-        }
-        return event
+      return event
+    })
+    setEvents(updatedEvents)
+    setEvent(updatedEvent)
+  }
+
+  const retornarFecha = (evento: string): string => {
+    const fechaInicio = new Date(evento).toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric'
+    })
+    return fechaInicio
+  }
+
+  const exportarEventos = (): void => {
+    let mensajeWsp = ''
+    events.forEach((evento: any) => {
+      mensajeWsp += `RESUMEN ${(evento.user.name).toUpperCase()} / ${retornarFecha(evento.start)} \n\n`
+      Object.keys(evento.detalle).forEach((hora: string) => {
+        const actividades = evento.detalle[hora]
+        // Agregar información de las actividades al mensaje
+        actividades.forEach((actividad: any) => {
+          mensajeWsp += `${(actividad.proyecto).nombre} (${(actividad.proyecto).nombreCliente}) > ${actividad.horaInicio} - ${actividad.horaFin}: ${actividad.descripcion}  \n`
+        })
       })
-
-      setEvents(updatedEvents)
-    }
-    const handleGuardar = (): void => {
-      if (editando) {
-        actualizarContenido()
-      }
-      setEditando(false)
-    }
-
-    const handleCancelar = (): void => {
-      setDescripcionTemporal(descripcionHoraActual ?? '')
-      setEditando(false)
-    }
-    return (
-      <div>
-        {!editando ? (
-          <p
-            className="w-full break-words min-h-[10px] p-1 line-clamp-1"
-            // onClick={cambiarEstadoEdicion}
-            onClick={() => { setOpenProyectos(!openProyectos) }}
-          >
-            {descripcionHoraActual || 'Sin registro'}
-          </p>
-        ) : (
-          <>
-            <textarea
-              value={descripcionTemporal}
-              onChange={handleChange}
-              autoFocus
-              rows={1}
-              className="outline-none resize-none w-full border border-gray-300 rounded-md p-1"
-            />
-            <button
-              onClick={handleGuardar}
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md mr-2"
-            >
-              Guardar
-            </button>
-            <button
-              onClick={handleCancelar}
-              className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md"
-            >
-              Cancelar
-            </button>
-          </>
-        )}
-      </div>
-    )
+      mensajeWsp += '\n'
+    })
+    const mensajeWspEncoded = encodeURIComponent(mensajeWsp)
+    const urlWhatsApp = `https://web.whatsapp.com/send?text=${mensajeWspEncoded}`
+    window.open(urlWhatsApp, '_blank')
   }
 
   return (
@@ -286,6 +294,11 @@ export const ModalRegistroLaboral = ({
                 <span>{new Date(Event.start).toLocaleDateString()}</span>
               </div>
             </div>
+            <div className='h-full flex items-center'>
+                <FaWhatsapp className='text-2xl text-green-600 hover:text-green-700 transition-colors hover:scale-110'
+                onClick={() => { exportarEventos() }}
+                />
+            </div>
           </section>
           {Event && (
             <section className="flex flex-col justify-between gap-6 mt-4 ">
@@ -302,18 +315,21 @@ export const ModalRegistroLaboral = ({
                     (_, i) => i + firstHour
                   )
                   return (
-                    <section key={index} className='py-4'>
+                    <section key={index} className="py-4">
                       {timeRange.start || timeRange.end ? (
                         <div className="w-full flex justify-between px-1">
-                          {timeRange.start &&
+                          {timeRange.start && (
                             <span className="text-green-700 py-2 font-bold">
-                                INICIO:{' '}
-                                {new Date(timeRange.start).toLocaleTimeString()}{' '}
-                            </span>}
-                          {timeRange.end &&
+                              INICIO:{' '}
+                              {new Date(timeRange.start).toLocaleTimeString()}{' '}
+                            </span>
+                          )}
+                          {timeRange.end && (
                             <span className="text-red-700 py-2 font-bold">
-                                FIN: {new Date(timeRange.end).toLocaleTimeString()}
-                            </span> }
+                              FIN:{' '}
+                              {new Date(timeRange.end).toLocaleTimeString()}
+                            </span>
+                          )}
                         </div>
                       ) : null}
                       <div className="grid grid-cols-7 gap-3 border-y border-gray-300  py-2">
@@ -339,39 +355,77 @@ export const ModalRegistroLaboral = ({
                         </div>
                       </div>
                       {hoursInRange.map((hour, indexHour: number) => (
-                        <div className={cn('grid grid-cols-7 gap-3 py-2 rounded-md', indexHour % 2 != 0 ? 'bg-gray-200' : '')} key={hour}>
-                          <div className="w-full h-full flex items-center">
-                            <p className="w-full text-center">
-                              {(() => {
-                                try {
-                                  const dateObject = new Date()
-                                  dateObject.setHours(hour, 0, 0) // Establecer la hora actual
-                                  const formattedHour = dateObject
-                                    .getHours()
-                                    .toString()
-                                    .padStart(2, '0')
-                                  return formattedHour
-                                } catch (error) {
-                                  console.error(
-                                    'Error al procesar la hora:',
-                                    error
-                                  )
-                                  return 'Error'
-                                }
-                              })()}
+                        <div
+                          className={cn(
+                            'grid grid-cols-7 gap-3 py-2 rounded-md relative',
+                            indexHour % 2 != 0 ? 'bg-gray-200' : ''
+                          )}
+                          key={hour}
+                        >
+                          <div className="w-full h-full flex items-center justify-center">
+                            <p
+                              className="text-center flex items-center justify-center hover:bg-main w-fit px-3 hover:text-white transition-colors rounded-md"
+                              onClick={() => {
+                                setOpenProyectos(!openProyectos)
+                                setProyectoSeleccionado({
+                                  hora: hour,
+                                  proyecto: null
+                                })
+                              }}
+                            >
+                              {hour}
                             </p>
                           </div>
+                          {Event?.detalle &&
+                            Event?.detalle[hour.toString()] && (
+                              <div className="col-span-6 ">
+                                {Event.detalle[hour.toString()].map(
+                                  (actividad: any) => (
+                                    <div
+                                      key={actividad.id}
+                                      className="grid grid-cols-6 gap-4"
+                                    >
+                                      <p className="col-span-1">
+                                        {actividad.horaInicio} -{' '}
+                                        {actividad.horaFin}
+                                      </p>
+                                      <Link
+                                        to={`/admin/lista-servicios/avances/${
+                                          actividad?.proyecto?.id ?? ''
+                                        }`}
+                                        target="_blank"
+                                        className="col-span-3 w-full line-clamp-1 hover:text-blue-600"
+                                      >
+                                        {actividad?.proyecto?.nombre}
+                                      </Link>
+                                      <div className='flex gap-2 col-span-2 '>
+                                        <p className="w-full break-words line-clamp-1 pr-6">
+                                            {actividad.descripcion}
+                                        </p>
+                                        <button
+                                            onClick={() => { handleEditActividad(hour.toString(), actividad.id) }}
+                                            className=" text-blue-500 hover:text-blue-700  text-lg"
+                                        >
+                                            <MdEdit/>
+                                        </button>
+                                        <button
+                                          onClick={() => { handleDeleteActividad(hour.toString(), actividad.id) }
+                                          }
+                                          className=" text-red-500 hover:text-red-700"
+                                        >
+                                          <MdDelete/>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                          )}
                           <div className="w-full h-full flex items-center">
-                            <p className="w-full text-center">
-                            </p>
+                            <p className="w-full text-center"></p>
                           </div>
                           <div className="w-full col-span-2">
                             <p className="w-full text-center"> </p>
-                          </div>
-                          <div className="w-full col-span-3">
-                            <p className="w-full text-center ">
-                              <Actividad hora={hour} />
-                            </p>
                           </div>
                         </div>
                       ))}
@@ -408,9 +462,26 @@ export const ModalRegistroLaboral = ({
           )}
         </div>
       )}
-      {openProyectos && !proyectoSeleccionado &&
-        <ModalProyectos setOpen={setOpenProyectos} setProyectoSeleccionado={setProyectoSeleccionado}/>
-      }
+      {openProyectos && (
+        <ModalProyectos
+          events={events}
+          setEvents={setEvents}
+          Event={Event}
+          setOpen={setOpenProyectos}
+          proyectoSeleccionado={proyectoSeleccionado}
+          setProyectoSeleccionado={setProyectoSeleccionado}
+        />
+      )}
+      {openProyectosEdicion && (
+        <ModalEdicion
+          events={events}
+          setEvents={setEvents}
+          Event={Event}
+          setOpen={setOpenProyectosEdicion}
+          proyectoSeleccionado={actividadEditando}
+          setProyectoSeleccionado={setActividadEditando}
+        />
+      )}
     </Dialog>
   )
 }

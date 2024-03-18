@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { Dialog, DialogContent } from '@mui/material'
 import { type Dispatch, type SetStateAction, useState, useEffect } from 'react'
-import { type arrayContacto, type contactoClientes } from '../../../../shared/schemas/Interfaces'
+import {
+  type arrayContacto,
+  type contactoClientes
+} from '../../../../shared/schemas/Interfaces'
 import { useFormik } from 'formik'
 import axios from 'axios'
 import { Global } from '../../../../../helper/Global'
@@ -35,7 +39,16 @@ export const RegistroContacto = ({
     // Create a copy of the existing array
     const updatedArray = [...arrayContacto]
     // Add the new contact to the copy
-    const newContact = { id: uuidv4(), nombres: values.nombres, celular: values.celular, correo: values.correo, marca: values.marca, created_at: new Date().toISOString() }
+    const newContact = {
+      id: uuidv4(),
+      nombres: values.nombres,
+      celular: values.celular,
+      correo: values.correo,
+      marca: values.marca,
+      dni_ruc: values.dni_ruc,
+      tipo_documento: values.tipo_documento,
+      created_at: new Date().toISOString()
+    }
     updatedArray.push(newContact)
     // Update the state with the new array
     setarrayConacto(updatedArray)
@@ -94,7 +107,9 @@ export const RegistroContacto = ({
       nombres: '',
       celular: '',
       correo: '',
-      marca: ''
+      marca: '',
+      dni_ruc: '',
+      tipo_documento: ''
     },
     validationSchema: SchemaContactoClientes,
     onSubmit: savePreventa
@@ -113,10 +128,12 @@ export const RegistroContacto = ({
   useEffect(() => {
     setValues({
       ...values,
-      nombres: datos.nombres,
+      nombres: `${datos.nombres} ${datos.apellidos}`,
       celular: datos.celular,
-      correo: datos.correo,
-      marca: ''
+      correo: datos.email,
+      marca: '',
+      dni_ruc: '',
+      tipo_documento: ''
     })
   }, [])
 
@@ -129,13 +146,14 @@ export const RegistroContacto = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       className=""
+      maxWidth="xl"
     >
-      <DialogContent>
-        <form className="mt-8" onSubmit={handleSubmit}>
-        <div className="max-w-lg mb-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className='relative'>
-             <TitleBriefs titulo="Nombres" />
-                <input
+      <DialogContent className="w-[700px]">
+        <form className="mt-8 w-full" onSubmit={handleSubmit}>
+          <div className="mb-4 w-full flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="relative w-full">
+              <TitleBriefs titulo="Nombres" />
+              <input
                 type="text"
                 autoComplete="off"
                 className="w-full py-3 px-4 rounded-xl outline-none bg-transparent border border-gray-300 text-gray-500 group"
@@ -145,12 +163,12 @@ export const RegistroContacto = ({
                 onChange={handleChange}
                 onBlur={handleBlur}
                 disabled={false}
-                />
-                <Errors errors={errors.nombres} touched={touched.nombres} />
+              />
+              <Errors errors={errors.nombres} touched={touched.nombres} />
             </div>
-            <div className='relative'>
-             <TitleBriefs titulo="Marca / Empresa" />
-                <input
+            <div className="relative w-full">
+              <TitleBriefs titulo="Marca / Empresa" />
+              <input
                 type="text"
                 autoComplete="off"
                 className="w-full py-3 px-4 rounded-xl outline-none bg-transparent border border-gray-300 text-gray-500 group"
@@ -160,13 +178,13 @@ export const RegistroContacto = ({
                 onChange={handleChange}
                 onBlur={handleBlur}
                 disabled={false}
-                />
-                <Errors errors={errors.marca} touched={touched.marca} />
+              />
+              <Errors errors={errors.marca} touched={touched.marca} />
             </div>
           </div>
-          <div className="max-w-lg mb-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="relative">
-             <TitleBriefs titulo="Celular" />
+          <div className="mb-4 w-full flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="relative w-full">
+              <TitleBriefs titulo="Celular" />
               <input
                 type="text"
                 autoComplete="off"
@@ -180,8 +198,8 @@ export const RegistroContacto = ({
               />
               <Errors errors={errors.celular} touched={touched.celular} />
             </div>
-            <div className="relative">
-             <TitleBriefs titulo="Correo" />
+            <div className="relative w-full">
+              <TitleBriefs titulo="Correo" />
               <input
                 type="text"
                 autoComplete="off"
@@ -196,15 +214,60 @@ export const RegistroContacto = ({
               <Errors errors={errors.correo} touched={touched.correo} />
             </div>
           </div>
-          <div className="max-w-lg mt-10">
+          <div className="mb-4 w-full flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="relative w-full">
+              <TitleBriefs titulo="Tipo de documento" />
+              <select
+                  className="w-full py-3 px-4 rounded-xl outline-none bg-transparent border border-gray-300 text-gray-500 group"
+                  name="tipo_documento"
+                  value={values.tipo_documento}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  {/* FB GOOGLE, VENTAS, POST VENTA, RECOMENDACION, ISNTAGRAM) */}
+                  <option value="">Seleccionar</option>
+                  <option value="DNI">DNI</option>
+                  <option value="RUC">RUC</option>
+                </select>
+                <Errors
+                  errors={errors.tipo_documento}
+                  touched={touched.tipo_documento}
+                />
+            </div>
+            <div className="relative w-full">
+              <TitleBriefs titulo="Numero de documento" />
+              <input
+                type="text"
+                autoComplete="off"
+                className="w-full py-3 px-4 rounded-xl outline-none bg-transparent border border-gray-300 text-gray-500 group"
+                placeholder="DNI / RUC"
+                name="dni_ruc"
+                value={values.dni_ruc}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                disabled={false}
+              />
+              <Errors errors={errors.dni_ruc} touched={touched.dni_ruc} />
+            </div>
+          </div>
+          <div className="-full mt-10">
             {!loading
-              ? <button type='submit' className="bg-main text-white w-full py-3 px-4 rounded-full hover:bg-main_dark transition-colors">
+              ? (
+              <button
+                type="submit"
+                className="bg-main text-white w-full py-3 px-4 rounded-full hover:bg-main_dark transition-colors"
+              >
                 Registrar contacto
-                </button>
-              : <button type='button' className="bg-main_dark text-white w-full py-3 px-4 rounded-full hover:bg-main_dark transition-colors">
+              </button>
+                )
+              : (
+              <button
+                type="button"
+                className="bg-main_dark text-white w-full py-3 px-4 rounded-full hover:bg-main_dark transition-colors"
+              >
                 Validando...
               </button>
-            }
+                )}
           </div>
         </form>
       </DialogContent>

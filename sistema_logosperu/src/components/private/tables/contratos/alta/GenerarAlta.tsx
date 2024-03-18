@@ -53,7 +53,6 @@ export const GenerarAlta = ({
   const token = localStorage.getItem('token')
   const [loading, setLoading] = useState(false)
   const [contenido, setContenido] = useState('')
-  const [personContact] = useState<string | null>(null)
   const [correos, setCorreos] = useState<arrayCorreos[]>([])
   const [arrayPesos, setarrayPesos] = useState<arrayAsignacion[]>([
     { id: null, peso: '' }
@@ -89,7 +88,7 @@ export const GenerarAlta = ({
 
   const generarVenta = async (): Promise<void> => {
     if (arrayPesos.length > 1) {
-      setLoading(true)
+      console.log(datos?.id_contacto)
       try {
         const data = new FormData()
         data.append('id_cliente', datos?.id_cliente ?? '')
@@ -97,7 +96,7 @@ export const GenerarAlta = ({
         data.append('dni_ruc', datos?.dni_cliente ?? '')
         data.append('nombre_empresa', datos?.empresa ?? '')
         data.append('id_contrato', datos?.correlativo ?? '')
-        data.append('id_contacto', personContact ?? '')
+        data.append('id_contacto', datos?.id_contacto ?? '')
         data.append('asignacion', JSON.stringify(arrayPesos))
         data.append('fecha_alta', generarFecha())
         data.append('fecha_inicio', values.fecha_inicio)

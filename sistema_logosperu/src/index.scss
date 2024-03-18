@@ -6,6 +6,10 @@
   width: 0px;
 }
 
+.dialog_index{
+    z-index: 998 !important;
+}
+
 .scroll_transparent::-webkit-scrollbar-track {
     background-color: none !important; 
     border-radius: 5px !important; /* Bordes redondeados */
@@ -465,6 +469,14 @@
 
   & .imgViewWeb{
     transition: all .5s ease-out;
+  }
+}
+
+.swp_procesos{
+  & .swiper-slide{
+    display: flex;
+    width: 100%;
+    align-items: center;
   }
 }
 
@@ -1304,7 +1316,6 @@ input[type="date"] {
 }
 
 .style_icon svg{
-  color: #4E54C8;
   font-size: 1.875rem; /* 30px */
   line-height: 2.25rem; /* 36px */
   transition: all .2s;

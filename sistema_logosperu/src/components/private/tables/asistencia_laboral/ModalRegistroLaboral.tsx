@@ -17,6 +17,9 @@ import { ModalEdicion } from './ModalEdicion'
 import { toast } from 'sonner'
 import axios from 'axios'
 import { Global } from '../../../../helper/Global'
+import { RiFolderSharedFill } from 'react-icons/ri'
+import { LoadingSmall } from '../../../shared/LoadingSmall'
+import Swal from 'sweetalert2'
 
 export const ModalRegistroLaboral = ({
   open,
@@ -39,6 +42,7 @@ export const ModalRegistroLaboral = ({
   const token = localStorage.getItem('token')
   const [currentTime, setCurrentTime] = useState('0')
   const [loading, setLoading] = useState(true)
+  const [loadingBoton, setLoadingBoton] = useState(false)
   const [openProyectos, setOpenProyectos] = useState(false)
   const [openProyectosEdicion, setOpenProyectosEdicion] = useState(false)
   const [proyectoSeleccionado, setProyectoSeleccionado] = useState<any | null>(
@@ -164,9 +168,8 @@ export const ModalRegistroLaboral = ({
   const handleFinishWork = (index: number): void => {
     const currentDateTime = new Date()
     const formattedCurrentTime = format(currentDateTime, 'yyyy-MM-dd HH:mm:ss')
-
     const updatedEvents = events.map((event: any) => {
-      if (event.id === Event.id) {
+      if (event.id == Event.id) {
         const updatedTimeRanges = event.timeRanges.map(
           (timeRange: any, i: number) => {
             if (i == index) {
@@ -181,7 +184,6 @@ export const ModalRegistroLaboral = ({
       }
       return event
     })
-
     setOpen(false)
     setEvents(updatedEvents)
   }
@@ -221,20 +223,177 @@ export const ModalRegistroLaboral = ({
 
   const exportarEventos = (): void => {
     let mensajeWsp = ''
-    events.forEach((evento: any) => {
+    const fechaActual = new Date() // Obtener la fecha actual
+    const eventosHoy = events.filter((evento: any) => {
+      const fechaEvento = new Date(evento.start)
+      return (
+        fechaEvento.getDate() === fechaActual.getDate() &&
+        fechaEvento.getMonth() === fechaActual.getMonth() &&
+        fechaEvento.getFullYear() === fechaActual.getFullYear()
+      )
+    })
+    const proyectos: Record<string, string> = {} // Objeto para agrupar las actividades por proyecto
+    eventosHoy.forEach((evento: any) => {
       mensajeWsp += `RESUMEN ${(evento.user.name).toUpperCase()} / ${retornarFecha(evento.start)} \n\n`
       Object.keys(evento.detalle).forEach((hora: string) => {
         const actividades = evento.detalle[hora]
-        // Agregar información de las actividades al mensaje
+        // Agrupar actividades por proyecto
         actividades.forEach((actividad: any) => {
-          mensajeWsp += `${(actividad.proyecto).nombre} (${(actividad.proyecto).nombreCliente}) > ${actividad.horaInicio} - ${actividad.horaFin}: ${actividad.descripcion}  \n`
+          const nombreProyecto = `${(actividad.proyecto).nombre} (${(actividad.proyecto).nombreCliente})`
+          if (!proyectos[nombreProyecto]) {
+            proyectos[nombreProyecto] = ''
+          }
+          proyectos[nombreProyecto] += `${actividad.horaInicio} - ${actividad.horaFin}: ${actividad.descripcion}  \n`
         })
       })
-      mensajeWsp += '\n'
     })
+
+    // Construir el mensaje para WhatsApp con la información agrupada por proyecto
+    Object.keys(proyectos).forEach((proyecto: string) => {
+      mensajeWsp += `${proyecto}\n${proyectos[proyecto]}\n\n`
+    })
+
+    if (mensajeWsp === '') {
+      alert('No hay eventos para exportar hoy.')
+      return
+    }
+
     const mensajeWspEncoded = encodeURIComponent(mensajeWsp)
     const urlWhatsApp = `https://web.whatsapp.com/send?text=${mensajeWspEncoded}`
     window.open(urlWhatsApp, '_blank')
+  }
+
+  const obtenerFecha = (): string => {
+    const fecha = new Date()
+    return `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`
+  }
+
+  const obtenerHora = (): string => {
+    const fecha = new Date()
+    return `${fecha.getHours()}:${fecha
+        .getMinutes()
+        .toString()
+        .padStart(2, '0')}`
+  }
+
+  const exportarProyectos = (): void => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción exportará los proyectos. ¿Deseas continuar?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, exportar',
+      cancelButtonText: 'Cancelar'
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        exportarProyectos2()
+      }
+    })
+  }
+
+  const exportarProyectos2 = (): void => {
+    const fechaActual = new Date()
+    const eventosHoy = events.filter((evento: any) => {
+      const fechaEvento = new Date(evento.start)
+      return (
+        fechaEvento.getDate() === fechaActual.getDate() &&
+        fechaEvento.getMonth() === fechaActual.getMonth() &&
+        fechaEvento.getFullYear() === fechaActual.getFullYear()
+      )
+    })
+
+    eventosHoy.forEach((evento: any) => {
+      const proyectos: Record<string, { id: string, actividades: string, nombreCliente: string, nombre: string }> = {} // Objeto para agrupar las actividades por proyecto y almacenar su ID
+      // Iterar sobre las actividades de cada evento y agruparlas por proyecto
+      Object.keys(evento.detalle).forEach((hora: string) => {
+        const actividades = evento.detalle[hora]
+        actividades.forEach((actividad: any) => {
+          const nombreProyecto = `${actividad.proyecto.nombre} (${actividad.proyecto.nombreCliente})`
+          const idProyecto = actividad.proyecto.id // Obtener el ID del proyecto desde la actividad actual
+          if (!proyectos[nombreProyecto]) {
+            proyectos[nombreProyecto] = { id: idProyecto, actividades: '', nombreCliente: actividad.proyecto.nombreCliente, nombre: actividad.proyecto.nombre }
+          }
+          proyectos[nombreProyecto].actividades += `${actividad.horaInicio} - ${actividad.horaFin}: ${actividad.descripcion}  \n`
+        })
+      })
+
+      // Agregar cada proyecto y sus actividades al resumen
+      Object.keys(proyectos).forEach((proyectoNombre: string) => {
+        const { id: idProyecto, actividades, nombreCliente, nombre } = proyectos[proyectoNombre]
+        agregarResumen(actividades, idProyecto, nombreCliente, nombre)
+      })
+    })
+  }
+
+  const agregarResumen = async (texto: string, id: string, nombreCliente: string, nombreMarca: string): Promise<void> => {
+    setLoadingBoton(true)
+    // Crear el nuevo resumen primero
+    const nuevoResumen = {
+      id: Date.now(),
+      fecha: obtenerFecha(),
+      hora: obtenerHora(),
+      user: auth.name,
+      userId: auth.id,
+      texto,
+      respuesta: null,
+      respuestas: []
+    }
+    const enviarDatos = async (): Promise<void> => {
+      const data = new FormData()
+      data.append('resumen', JSON.stringify(nuevoResumen))
+      data.append('_method', 'PUT')
+      try {
+        const respuesta = await axios.post(
+                `${Global.url}/saveHorarioUser/${id ?? ''}`,
+                data,
+                {
+                  headers: {
+                    Authorization: `Bearer ${
+                      token !== null && token !== '' ? token : ''
+                    }`
+                  }
+                }
+        )
+        if (respuesta.data.status == 'success') {
+          toast.success('CONTENIDO ENVIADA CORRECTAMENTE')
+          const enviarNotificacion = async (): Promise<void> => {
+            const data = new FormData()
+            data.append('id_usuario', auth.id)
+            data.append('id_venta', id ?? '')
+            data.append('nombre', auth.name)
+            data.append('icono', 'comentario')
+            data.append('url', `/admin/seguimiento/${id ?? ''}`)
+            data.append('contenido', `Ha subido un nuevo comentario para el proyecto ${nombreMarca ?? ''}  (${nombreCliente ?? ''})`)
+            data.append('hidden_users', '')
+            try {
+              await axios.post(
+                    `${Global.url}/nuevaNotificacion`,
+                    data,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${
+                          token !== null && token !== '' ? token : ''
+                        }`
+                      }
+                    }
+              )
+            } catch (error: unknown) {
+              console.log(error)
+              Swal.fire('Error al subir', '', 'error')
+            }
+          }
+          enviarNotificacion()
+          setOpen(false)
+        } else {
+          console.log('error al subir')
+        }
+      } catch (error: unknown) {
+        console.log(error)
+      } finally {
+        setLoadingBoton(false)
+      }
+    }
+    enviarDatos()
   }
 
   return (
@@ -245,7 +404,7 @@ export const ModalRegistroLaboral = ({
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
-      className=""
+      className="dialog_index"
       maxWidth={!openProyectos ? 'md' : 'lg'}
     >
       {loading ? (
@@ -294,7 +453,16 @@ export const ModalRegistroLaboral = ({
                 <span>{new Date(Event.start).toLocaleDateString()}</span>
               </div>
             </div>
-            <div className='h-full flex items-center'>
+            <div className='h-full flex gap-3 items-center'>
+                {!loadingBoton
+                  ? <RiFolderSharedFill className='text-2xl text-red-600 hover:text-red-700 transition-colors hover:scale-110'
+                    onClick={() => { exportarProyectos() }}
+                    />
+                  : <span>
+                        <LoadingSmall/>
+                    </span>
+                }
+
                 <FaWhatsapp className='text-2xl text-green-600 hover:text-green-700 transition-colors hover:scale-110'
                 onClick={() => { exportarEventos() }}
                 />
@@ -379,8 +547,11 @@ export const ModalRegistroLaboral = ({
                           {Event?.detalle &&
                             Event?.detalle[hour.toString()] && (
                               <div className="col-span-6 ">
-                                {Event.detalle[hour.toString()].map(
-                                  (actividad: any) => (
+                             {Event.detalle[hour.toString()]
+                               .sort((a: any, b: any) =>
+                                 a.horaInicio.localeCompare(b.horaInicio)
+                               )
+                               .map((actividad: any) => (
                                     <div
                                       key={actividad.id}
                                       className="grid grid-cols-6 gap-4"
@@ -394,11 +565,11 @@ export const ModalRegistroLaboral = ({
                                           actividad?.proyecto?.id ?? ''
                                         }`}
                                         target="_blank"
-                                        className="col-span-3 w-full line-clamp-1 hover:text-blue-600"
+                                        className="col-span-2 w-full text-center line-clamp-1 hover:text-blue-600"
                                       >
                                         {actividad?.proyecto?.nombre}
                                       </Link>
-                                      <div className='flex gap-2 col-span-2 '>
+                                      <div className='flex gap-2 col-span-3 '>
                                         <p className="w-full break-words line-clamp-1 pr-6">
                                             {actividad.descripcion}
                                         </p>
@@ -417,8 +588,8 @@ export const ModalRegistroLaboral = ({
                                         </button>
                                       </div>
                                     </div>
-                                  )
-                                )}
+                               )
+                               )}
                               </div>
                           )}
                           <div className="w-full h-full flex items-center">

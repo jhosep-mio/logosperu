@@ -129,14 +129,16 @@ const SideBar = (): JSX.Element => {
         } transition-all`}
       >
         {/* asistencia laboral */}
-        <ModalRegistroLaboral Event={Event} setEvent={setEvent} open={openRegistro} setOpen={setopenRegistro} setEvents={setEvents} events={events} loading2={loading}/>
-
+        {auth.id_rol != 99 &&
+            <ModalRegistroLaboral Event={Event} setEvent={setEvent} open={openRegistro} setOpen={setopenRegistro} setEvents={setEvents} events={events} loading2={loading}/>
+        }
         <div>
           <h1 className="text-center text-2xl font-bold text-black mb-5">
             <img src={logo} alt="" className="m-auto w-[5.4rem]" />
           </h1>
           <hr className="mb-5" />
           <ul className="ml-0 p-0">
+            {auth.id_rol != 99 &&
              <li className="">
               <button
                 className={
@@ -148,7 +150,7 @@ const SideBar = (): JSX.Element => {
               >
                 {!Event ? 'Registrar asistencia' : 'Registrar actividades'}
               </button>
-            </li>
+            </li>}
             <li className="">
               <button
                 className={

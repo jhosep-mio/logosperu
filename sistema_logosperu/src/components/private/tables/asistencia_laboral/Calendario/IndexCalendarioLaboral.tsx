@@ -136,7 +136,7 @@ export const IndexCalendarioLaboral = (): JSX.Element => {
             endAccessor="end"
             selectable
             messages={messages}
-            views={['day', 'month', 'agenda']}
+            views={['day', 'month', 'week', 'agenda']}
             defaultView="month"
             date={selectedDate}
             components={components}

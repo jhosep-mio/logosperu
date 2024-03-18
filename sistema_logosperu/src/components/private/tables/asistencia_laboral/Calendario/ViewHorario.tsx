@@ -101,7 +101,7 @@ export const ViewHorario = ({
                           </p>
                         </div>
                       </div>
-                      {Object.keys(open?.evento?.event.detalle).map(
+                      {open?.evento?.event?.detalle && Object.keys(open?.evento?.event?.detalle).map(
                         (hourKey: string, hourIndex: number) => {
                           const hour = parseInt(hourKey, 10)
                           if (

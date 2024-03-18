@@ -17,14 +17,14 @@ import 'swiper/css/navigation'
 import { ModalRegistro } from './ModalRegistro'
 import { ViewAvance } from './ViewAvance'
 import { FiInstagram } from 'react-icons/fi'
-import { BsChatRightText } from 'react-icons/bs'
+import { BsChatRightText, BsFillGiftFill } from 'react-icons/bs'
 import { FaWhatsapp, FaFacebookF } from 'react-icons/fa'
 import vieweb from '../../../../assets/webView.svg'
 import { TfiWorld } from 'react-icons/tfi'
 import { motion, useAnimation } from 'framer-motion'
 import { CiViewTimeline, CiPaperplane, CiCircleCheck, CiGlobe, CiMonitor, CiEdit } from 'react-icons/ci'
 import { IoSaveOutline } from 'react-icons/io5'
-// import { PiCheck } from 'react-icons/pi'
+import { PiCheck } from 'react-icons/pi'
 import {
   type valuesResumen,
   type FinalValues,
@@ -232,7 +232,7 @@ export const Avances = (): JSX.Element => {
     validationSchema: SchemaPropuestas,
     onSubmit: updatePropuestas
   })
-
+  // dataUpdatedWeb
   const [dataUpdatedWeb, setDataUpdatedWeb] = useState<Dataweb>({
     cant_correos: '',
     domain_temp: '',
@@ -262,7 +262,6 @@ export const Avances = (): JSX.Element => {
         }
       )
       setplan(requestPlan.data[0])
-      console.log(request.data[0].data_web)
       if (request.data[0].contrato) {
         setBrief({
           codigo: request.data[0].contrato.codigo,
@@ -335,6 +334,7 @@ export const Avances = (): JSX.Element => {
         fecha_fin: request.data[0].fecha_fin,
         archivos_avances: request.data[0].archivos_avances
       })
+
       setDatos2({
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         nombres: `${request.data[0].nombres} ${request.data[0].apellidos}`,
@@ -345,8 +345,10 @@ export const Avances = (): JSX.Element => {
         id_contrato: request.data[0].id_contrato,
         comentarios: request.data[0].comentarios
       })
-      setDataUpdatedWeb(request.data[0].data_web)
-      setPercentage(request.data[0].data_web.porcentaje_proyecto)
+      if (request.data[0].data_web) {
+        setDataUpdatedWeb(JSON.parse(request.data[0].data_web))
+      }
+
       setpdfName(request.data[0].propuestas)
       setColaborador(
         request.data[0].asignacion ? JSON.parse(request.data[0].asignacion) : []
@@ -433,8 +435,11 @@ export const Avances = (): JSX.Element => {
           { id: Date.now(), correo: request.data[0].email }
         ])
       }
+    } catch (error) {
+      console.log(error)
+    } finally {
       setLoading(false)
-    } catch (error) {}
+    }
   }
 
   const getOneBrief2 = async (): Promise<void> => {
@@ -455,8 +460,9 @@ export const Avances = (): JSX.Element => {
         fecha_fin: request.data[0].fecha_fin,
         archivos_avances: request.data[0].archivos_avances
       })
-      setDataUpdatedWeb(request.data[0].data_web)
-      setPercentage(request.data[0].data_web.porcentaje_proyecto)
+      if (request.data[0].data_web) {
+        setDataUpdatedWeb(JSON.parse(request.data[0].data_web))
+      }
     } catch (error) {}
     setLoading(false)
   }
@@ -660,8 +666,71 @@ export const Avances = (): JSX.Element => {
     procesos: procesosRegistrados
   }
 
+  function limpiarDominio (url: string): string | null {
+    // Expresión regular para extraer el dominio
+    // eslint-disable-next-line no-useless-escape
+    const patron: RegExp = /^(?:https?:\/\/)?(?:www\.)?([^:\/\n?]+)/g
+    // Busca el patrón en la URL
+    const coincidencia: RegExpMatchArray | null = url.match(patron)
+    if (coincidencia) {
+      // Elimina "www." si está presente
+      let dominio: string = coincidencia[0].replace('www.', '')
+      // Elimina "https://" si está presente
+      dominio = dominio.replace('https://', '')
+      return dominio
+    } else {
+      return null
+    }
+  }
+
+  function obtenerFechaActual (): string {
+    const fechaActual: Date = new Date()
+
+    const año: number = fechaActual.getFullYear()
+    const mes: string = agregarCeroAlInicio(fechaActual.getMonth() + 1)
+    const dia: string = agregarCeroAlInicio(fechaActual.getDate())
+
+    const fechaFormateada: string = `${año}-${mes}-${dia}`
+    return fechaFormateada
+  }
+
+  function agregarCeroAlInicio (numero: number): string {
+    return numero < 10 ? '0' + String(numero) : numero.toString()
+  }
+
+  function obtenerDiaMes (fecha: string): string {
+    if (fecha === 'Sin fecha') {
+      return 'Sin fecha'
+    }
+    const partesFecha: string[] = fecha.split('-')
+    const dia: number = parseInt(partesFecha[2], 10)
+    const mes: number = parseInt(partesFecha[1], 10)
+
+    // Nombres de los meses
+    const nombresMeses: string[] = [
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ]
+
+    const nombreMes: string = nombresMeses[mes - 1]
+
+    return `${dia} de ${nombreMes}`
+  }
+
+  const updatedProceso = (id: number): void => {
+    console.log('ID: ', id)
+    procesosRegistrados[id].fecha = obtenerFechaActual().toString()
+    console.log(procesosRegistrados)
+    updatePropuestas()
+  }
+
   useEffect(() => {
-    setDataUpdatedWeb(dataUpdatedWeb)
+    console.log(dataUpdatedWeb.porcentaje_proyecto)
+    setPercentage(Number(dataUpdatedWeb.porcentaje_proyecto))
+    setDomain(dataUpdatedWeb.dominio)
+    setDomainTemp(dataUpdatedWeb.domain_temp)
+    setProcesosRegistrados(dataUpdatedWeb.procesos)
+    console.log(dataUpdatedWeb)
   }, [dataUpdatedWeb])
 
   return (
@@ -670,6 +739,7 @@ export const Avances = (): JSX.Element => {
         <Loading />
       ) : (
         <>
+          <BsFillGiftFill className='text-2xl text-main mt-3 hover:text-main_dark transition-colors'/>
           {openModalProcess && (
             <div onClick={() => { setOpenModalProcess(false) }} className="fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-[990]">
                 <div className="bg-white rounded-lg shadow-md w-full h-fit max-w-[500px] relative z-[995] p-10" onClick={(e) => { e.stopPropagation() }}>
@@ -848,24 +918,21 @@ export const Avances = (): JSX.Element => {
                  ? <form className="mt-5" onSubmit={handleSubmit}>
                  <div className="flex gap-6 justify-between">
                  <div className="bg-white px-4 py-6 gap-4 rounded-xl flex justify-between flex-1">
-
                    <div className="w-full flex flex-1 relative  gap-4 ">
-
                        <span className="text-left w-1/2 relative shadow-md p-4 px-8 rounded-md flex flex-col  gap-2 md:gap-6 text-black ">
                         <button type="button" className="btn_edit_percentage absolute top-2 right-2 text-2xl text-black" onClick={() => { setActiveGroup(!activeGroup) }}><CiEdit/></button>
-
                        <span className="text-sm md:text-base font-bold text-center uppercase text-main">
                           {datos.id_contrato.includes('LPTV') && ('Tienda virtual')}
                           {datos.id_contrato.includes('LPSEO') && ('SEO')}
                           {datos.id_contrato.includes('LPLANDING') && ('Landingpage')}
                           {datos.id_contrato.includes('LPHOSTING') && ('HOSTING')}
-                          {datos.id_contrato.includes('LPWA') ? ('Web Administrable') : ('Web Informativa')}
+                          {datos.id_contrato === 'LPWA' && ('Web Administrable')}
+                          {datos.id_contrato === 'LPW' && ('Web Informativa')}
 
                        </span>
-
                              <p className='text-[#252525] relative mt-2 font-semibold text-center'>
                               <a href={domain} target='_blank' rel="noreferrer" className={`relative text-center  text-blue-500 ${activeGroup ? '-z-50' : 'z-50'}`}>
-                                  {domain}
+                                  {limpiarDominio(domain)}
                               </a>
                                 <input type="text" disabled={!activeGroup} value={domain} onChange={changeDomain} className={`absolute text-center inset-0 m-auto bg-transparent text-blue-500 ${activeGroup ? 'z-50' : '-z-50'}`} />
                              </p>
@@ -965,7 +1032,7 @@ export const Avances = (): JSX.Element => {
                          {activePercentage && (
                            <button type="button" className="btn_edit_percentage absolute bottom-full left-full text-2xl text-green-500" onClick={() => {
                              setActivePercentage(!activePercentage)
-                             //  updatePropuestas()
+                             updatePropuestas()
                            }}><IoSaveOutline/></button>
 
                          )}
@@ -1014,104 +1081,36 @@ export const Avances = (): JSX.Element => {
 
                      <h5 className='text-[#202020] font-bold text-xl'>Procesos completados</h5>
 
-                       {/* <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
-                           <div className="flex items-center justify-between gap-2">
-                                   <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(2) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(2) }}>
-
-                                   {procesosActivos.includes(2) ? (
-                                     <PiCheck className='text-white  text-3xl transition-all duration-200' />
-
-                                   ) : (
-                                     <CiPaperplane className='text-[#4E54C8]  text-3xl transition-all duration-200' />
-
-                                   )}
-                                   </span>
-                                   <span>
-                                     <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>1° Avance</h5>
-                                     <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>13 de Marzo</p>
-                                   </span>
-
-                           </div>
-                       </div>
-                       <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
-                           <div className="flex items-center justify-between gap-2">
-                                   <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(3) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(3) }}>
-
-                                   {procesosActivos.includes(3) ? (
-                                     <PiCheck className='text-white  text-3xl transition-all duration-200' />
-
-                                   ) : (
-                                     <CiPaperplane className='text-[#4E54C8]  text-3xl transition-all duration-200' />
-
-                                   )}
-                                   </span>
-                                   <span>
-                                     <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>2° Avance</h5>
-                                     <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>14 de Marzo</p>
-                                   </span>
-
-                           </div>
-                       </div>
-                       <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
-                           <div className="flex items-center justify-between gap-2">
-                                   <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(4) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(4) }}>
-
-                                   {procesosActivos.includes(4) ? (
-                                     <PiCheck className='text-white  text-3xl transition-all duration-200' />
-
-                                   ) : (
-                                     <CiGlobe className='text-[#4E54C8]  text-3xl transition-all duration-200' />
-
-                                   )}
-                                   </span>
-                                   <span>
-                                     <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Dominio</h5>
-                                     <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>14 de Marzo</p>
-                                   </span>
-
-                           </div>
-                       </div>
-                       <div className="shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl">
-                           <div className="flex items-center justify-between gap-2">
-                                   <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${procesosActivos.includes(5) ? 'bg-[#4E54C8]' : ''}`} onClick={() => { agregarProceso(5) }}>
-
-                                   {procesosActivos.includes(5) ? (
-                                     <PiCheck className='text-white  text-3xl transition-all duration-200' />
-
-                                   ) : (
-                                     <CiCircleCheck className='text-[#4E54C8]  text-3xl transition-all duration-200' />
-
-                                   )}
-                                   </span>
-                                   <span>
-                                     <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>Finalizado</h5>
-                                     <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>16 de Marzo</p>
-                                   </span>
-
-                           </div>
-                       </div> */}
                     {procesosRegistrados.length === 0 ? (
                       <button type="button" onClick={() => { setOpenModalProcess(!openModalProcess) }} className='absolute inset-0 m-auto w-fit h-fit bg-secundario rounded-lg py-2 px-8 text-white text-center transition-all active:scale-90'>Agregar procesos</button>
 
                     ) : (
-                    <Swiper slidesPerView={5} className='h-[80%]' spaceBetween={20}>
+                    <Swiper slidesPerView={5} className='h-[80%] swp_procesos' spaceBetween={20} >
                       {procesosRegistrados.map((proceso, index) => (
 
                         <SwiperSlide key={index}>
-                        <div className="style_icon shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl" key={index}>
+                        <div className="style_icon w-full shadow-lg h-fit flex items-center gap-4 p-4 rounded-xl" key={index}>
                             <div className="flex items-center justify-between gap-2">
-                                    <span className={'p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full }'} >
+                                    <span className={`p-2 border border-[#4E54C8] cursor-pointer transition-all duration-200 flex rounded-full ${proceso.fecha !== 'Sin fecha' ? 'bg-[#4E54C8]' : ''}`} onClick={() => { updatedProceso(index) }}>
+                                    {proceso.fecha !== 'Sin fecha' ? (
+                                        <PiCheck className='text-white  text-3xl transition-all duration-200' />
 
-                                    {proceso.icono === 'br' && <CiViewTimeline/>}
-                                    {proceso.icono === 'av' && <CiPaperplane/>}
-                                    {proceso.icono === 'cap' && <CiMonitor/>}
-                                    {proceso.icono === 'dom' && <CiGlobe/>}
-                                    {proceso.icono === 'fin' && <CiCircleCheck/>}
+                                    ) : (
+                                      <>
+                                        {proceso.icono === 'br' && <CiViewTimeline className="text-[#4E54C8]"/>}
+                                        {proceso.icono === 'av' && <CiPaperplane className="text-[#4E54C8]"/>}
+                                        {proceso.icono === 'cap' && <CiMonitor className="text-[#4E54C8]"/>}
+                                        {proceso.icono === 'dom' && <CiGlobe className="text-[#4E54C8]"/>}
+                                        {proceso.icono === 'fin' && <CiCircleCheck className="text-[#4E54C8]"/>}
+
+                                      </>
+
+                                    )}
 
                                     </span>
                                     <span>
                                       <h5 className='text-[#252525] select-none line-clamp-1 text-lg font-[500]'>{proceso.nombre}</h5>
-                                      <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>{proceso.fecha}</p>
+                                      <p className='text-[13px] select-none italic text-[#606060] line-clamp-1'>{obtenerDiaMes(proceso.fecha)}</p>
                                     </span>
 
                             </div>

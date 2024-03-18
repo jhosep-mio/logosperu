@@ -80,7 +80,7 @@ export const ModalEdicion = ({
       <div className="w-full h-full flex flex-col justify-center items-center">
         <div className="flex flex-col gap-2 w-[400px]">
           <h2 className="text-xl font-bold text-center">
-            Edictar contenido
+            Editar contenido
           </h2>
           <label htmlFor="horaInicio">Hora de inicio: {horaInicio}</label>
           <select
@@ -143,7 +143,7 @@ export const ModalEdicion = ({
               actualizarContenido()
             }}
           >
-            Agregar Actividad
+            Editar Actividad
           </button>
           <button
             onClick={() => {

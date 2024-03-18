@@ -221,6 +221,12 @@ export const ModalProyectos = ({
     e.target.style.height = `${e.target.scrollHeight}px` // Ajusta la altura
   }
 
+  useEffect(() => {
+    if (proyectoSeleccionado.hora) {
+      setHoraInicio(`${proyectoSeleccionado.hora}:00`)
+    }
+  }, [proyectoSeleccionado])
+
   return (
     <section className="absolute z-[999] inset-0 bg-gray-200 py-2">
       {proyectoSeleccionado.proyecto == null ? (
@@ -500,53 +506,100 @@ export const ModalProyectos = ({
             <h2 className="text-xl font-bold text-center">
               Selecciona el rango de minutos : {proyectoSeleccionado.hora}
             </h2>
-            <label htmlFor="horaInicio">Hora de inicio: {horaInicio}</label>
-            <select
-              id="minutos"
-              value={horaInicio.split(':')[1]} // Obtener solo los minutos de la hora seleccionada
-              onChange={(e) => {
-                const newMinutes = e.target.value
-                setHoraInicio(`${proyectoSeleccionado.hora}:${newMinutes}`) // Mantener la hora '10' y solo actualizar los minutos
-              }}
-            >
-              <option value=''>Seleccionar</option>
-              {[...Array(60).keys()]
-                .filter((minute) => minute % 5 === 0 || minute === 59)
-                .map((minute) => (
-                  <option
-                    key={minute}
-                    value={minute < 10 ? '0' + minute : minute}
-                  >
-                    {minute < 10 ? '0' + minute : minute}
-                  </option>
-                ))}
-            </select>
-            <label htmlFor="horaFin" className='mt-4'>Hora de fin: {horaFin}</label>
-            <select
-              id="minutos"
-              value={horaFin.split(':')[1]} // Obtener solo los minutos de la hora seleccionada
-              onChange={(e) => {
-                const newMinutes = e.target.value
-                setHoraFin(`${proyectoSeleccionado.hora}:${newMinutes}`) // Mantener la hora '10' y solo actualizar los minutos
-              }}
-            >
-              <option value=''>Seleccionar</option>
-              {[...Array(60).keys()]
-                .filter((minute) => minute % 5 === 0 || minute === 59)
-                .map((minute) => (
-                  <option
-                    key={minute}
-                    value={minute < 10 ? '0' + minute : minute}
-                  >
-                    {minute < 10 ? '0' + minute : minute}
-                  </option>
-                ))}
-            </select>
-            <label htmlFor="horaFin" className='mt-4'>Detallar actividad</label>
+            <label htmlFor="horaInicioHour">
+              Hora de inicio: {horaInicio}
+            </label>
+            <div className="flex gap-3 w-full">
+                <select
+                    id="horaInicioHour"
+                    value={horaInicio.split(':')[0]} // Obtener solo la hora de la hora seleccionada
+                    onChange={(e) => {
+                      const newHour = e.target.value
+                      setHoraInicio(
+                        `${newHour}:${horaInicio.split(':')[1]}` // Mantener los minutos y solo actualizar la hora
+                      )
+                    }}
+                >
+                    <option value="">Seleccionar</option>
+                    {[...Array(24).keys()].map((hour) => (
+                    <option key={hour} value={hour < 10 ? '0' + hour : hour}>
+                        {hour < 10 ? '0' + hour : hour}
+                    </option>
+                    ))}
+                </select>
+                <select
+                    id="minutos"
+                    className="w-full"
+                    value={horaInicio.split(':')[1]} // Obtener solo los minutos de la hora seleccionada
+                    onChange={(e) => {
+                      const newMinutes = e.target.value
+                      setHoraInicio(`${horaInicio.split(':')[0]}:${newMinutes}`) // Mantener la hora y solo actualizar los minutos
+                    }}
+                >
+                    <option value="">Seleccionar</option>
+                    {[...Array(60).keys()]
+                      .filter((minute) => minute % 5 === 0 || minute === 59)
+                      .map((minute) => (
+                        <option
+                        key={minute}
+                        value={minute < 10 ? '0' + minute : minute}
+                        >
+                        {minute < 10 ? '0' + minute : minute}
+                        </option>
+                      ))}
+                </select>
+            </div>
+
+            <label htmlFor="horaFin" className="mt-4">
+              Hora de fin: {horaFin}
+            </label>
+            <div className="flex gap-3 w-full">
+                <select
+                    id="horaInicioHour"
+                    value={horaFin.split(':')[0]} // Obtener solo la hora de la hora seleccionada
+                    onChange={(e) => {
+                      const newHour = e.target.value
+                      setHoraFin(
+                        `${newHour}:${horaFin.split(':')[1]}` // Mantener los minutos y solo actualizar la hora
+                      )
+                    }}
+                >
+                    <option value="">Seleccionar</option>
+                    {[...Array(24).keys()].map((hour) => (
+                    <option key={hour} value={hour < 10 ? '0' + hour : hour}>
+                        {hour < 10 ? '0' + hour : hour}
+                    </option>
+                    ))}
+                </select>
+                <select
+                    id="minutos"
+                    className="w-full"
+                    value={horaFin.split(':')[1]} // Obtener solo los minutos de la hora seleccionada
+                    onChange={(e) => {
+                      const newMinutes = e.target.value
+                      setHoraFin(`${horaFin.split(':')[0]}:${newMinutes}`) // Mantener la hora y solo actualizar los minutos
+                    }}
+                >
+                    <option value="">Seleccionar</option>
+                    {[...Array(60).keys()]
+                      .filter((minute) => minute % 5 === 0 || minute === 59)
+                      .map((minute) => (
+                        <option
+                        key={minute}
+                        value={minute < 10 ? '0' + minute : minute}
+                        >
+                        {minute < 10 ? '0' + minute : minute}
+                        </option>
+                      ))}
+                </select>
+            </div>
+            <label htmlFor="horaFin" className="mt-4">
+              Detallar actividad
+            </label>
             <textarea
               placeholder="Escribir resumen"
               className="w-full h-full outline-none p-2 resize-none overflow-hidden text-black"
-              id='tuTextArea'
+              id="tuTextArea"
               rows={1}
               value={texto}
               onChange={handleTextChange}

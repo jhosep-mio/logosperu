@@ -461,7 +461,7 @@ const SideBar = (): JSX.Element => {
 
                                     <ul
                                         className={` ${
-                                        showSubmenu12 ? 'h-[160px]' : 'h-0'
+                                        showSubmenu12 ? 'h-[200px]' : 'h-0'
                                         } overflow-y-hidden transition-all`}
                                     >
                                         {roles.map(
@@ -540,6 +540,23 @@ const SideBar = (): JSX.Element => {
                                                         }}
                                                         >
                                                          Comunity M.
+                                                        </Link>
+                                                    </li>
+                                                    <li>
+                                                        <Link
+                                                        to="/admin/lista-ventas/categoria/hosting"
+                                                        className={`py-2 px-4 border-l flex items-center gap-3 text-black border-gray-500 ml-6  relative before:w-3 before:h-3 before:absolute before:bg-primary before:rounded-full before:-left-[6.5px] before:top-1/2 before:-translate-y-1/2 before:border-4 ${
+                                                            activeItem2 == 996
+                                                            ? 'before:bg-main'
+                                                            : 'before:bg-gray-500'
+                                                        } hover:text-main transition-colors`}
+                                                        onClick={() => {
+                                                          handleItemClick2(996)
+                                                          setShowMenu(false)
+                                                          setLoadingComponents(false)
+                                                        }}
+                                                        >
+                                                         Hosting.
                                                         </Link>
                                                     </li>
                                                     </Fragment>

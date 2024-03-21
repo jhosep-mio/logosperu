@@ -40,6 +40,7 @@ export const ModalRegistroLaboral = ({
 }): JSX.Element => {
   const { auth } = useAuth()
   const token = localStorage.getItem('token')
+  const [tiempoTrabajado, setTiempoTrabajado] = useState(0)
   const [currentTime, setCurrentTime] = useState('0')
   const [loading, setLoading] = useState(true)
   const [loadingBoton, setLoadingBoton] = useState(false)
@@ -62,14 +63,13 @@ export const ModalRegistroLaboral = ({
     data.append('horario_laboral', JSON.stringify(updatedEvents))
     data.append('_method', 'PUT')
     try {
-      const respuesta = await axios.post(`${Global.url}/updateHorario/${auth.id}`, data, {
+      await axios.post(`${Global.url}/updateHorario/${auth.id}`, data, {
         headers: {
           Authorization: `Bearer ${
             token !== null && token !== '' ? token : ''
           }`
         }
       })
-      console.log(respuesta)
     } catch (error) {
       toast.errror('error al guardar')
     }
@@ -82,7 +82,9 @@ export const ModalRegistroLaboral = ({
   }, [events])
 
   const handleEditActividad = (hour: string, actividadId: string): void => {
-    const actividad = Event?.detalle[hour.toString()].find((a: any) => a.id == actividadId)
+    const actividad = Event?.detalle[hour.toString()].find(
+      (a: any) => a.id == actividadId
+    )
     if (actividad) {
       setActividadEditando({ hora: hour, actividad })
       setOpenProyectosEdicion(true)
@@ -130,21 +132,84 @@ export const ModalRegistroLaboral = ({
     setLoading(false)
   }
 
+  const calcularTiempoTrabajadoActividades = (actividades: any[]): number => {
+    let tiempoTrabajado = 0
+    actividades.forEach((actividad: any) => {
+      if (actividad.horaInicio && actividad.horaFin) {
+        const horaInicio = new Date(`2024-03-18 ${actividad.horaInicio}`)
+        const horaFin = new Date(`2024-03-18 ${actividad.horaFin}`)
+
+        if (!isNaN(horaInicio.getTime()) && !isNaN(horaFin.getTime())) {
+          let diffMs = horaFin.getTime() - horaInicio.getTime()
+
+          // Ajustar el tiempo si los minutos terminan en _:59
+          if (actividad.horaFin.endsWith(':59')) {
+            diffMs += 60000 // Sumar un minuto en milisegundos
+          }
+
+          tiempoTrabajado += diffMs
+        }
+      }
+    })
+
+    // Convertir el tiempo a horas y minutos
+    const horas = Math.floor(tiempoTrabajado / (1000 * 60 * 60))
+    const minutos = Math.floor((tiempoTrabajado % (1000 * 60 * 60)) / (1000 * 60))
+
+    // Puedes devolver el tiempo en el formato que necesites, como un objeto { horas, minutos }
+    // o simplemente la cantidad total de minutos, dependiendo de tus necesidades
+    return horas * 60 + minutos
+  }
+
+  const obtenerSumatoriaTiempoTrabajadoActividades = (): number => {
+    let sumatoriaTiempoTrabajado = 0
+    const fechaHoy = new Date() // Obtener la fecha actual
+
+    events.forEach((event: any) => {
+      if (event.timeRanges) {
+        event.timeRanges.forEach((timeRange: any) => {
+          const start = new Date(timeRange.start)
+          if (
+            start.getDate() === fechaHoy.getDate() &&
+            start.getMonth() === fechaHoy.getMonth() &&
+            start.getFullYear() === fechaHoy.getFullYear()
+          ) {
+            // @ts-expect-error
+            Object.values(event.detalle).forEach((detalle: any[]) => {
+              const actividadesHoy = detalle.filter((actividad) => {
+                const actividadDate = new Date(
+                  `${start.toDateString()} ${actividad.horaInicio}`
+                )
+                return actividadDate.toDateString() === fechaHoy.toDateString()
+              })
+              const tiempoTrabajado =
+                calcularTiempoTrabajadoActividades(actividadesHoy)
+              sumatoriaTiempoTrabajado += tiempoTrabajado
+            })
+          }
+        })
+      }
+    })
+
+    return sumatoriaTiempoTrabajado
+  }
+
   useEffect(() => {
-    checkIfRecordExists()
+    if (open) {
+      checkIfRecordExists()
+      setTiempoTrabajado(obtenerSumatoriaTiempoTrabajadoActividades())
+    }
   }, [open, events])
 
   const handleAddTimeRange = (): void => {
     const currentDateTime = new Date()
     const formattedCurrentTime = format(currentDateTime, 'yyyy-MM-dd HH:mm:ss')
     // Verificar si la hora de inicio del nuevo rango ya existe en los rangos actuales
-    const startTimeExists = Event.timeRanges.some(
-      (timeRange: any) => {
-        const startTime = new Date(timeRange.start)
-        const newTime = new Date(formattedCurrentTime)
-        return startTime.getHours() === newTime.getHours()
-      }
-    )
+    const startTimeExists = Event.timeRanges.some((timeRange: any) => {
+      const startTime = new Date(timeRange.start)
+      const newTime = new Date(formattedCurrentTime)
+      return startTime.getHours() === newTime.getHours()
+    })
 
     if (!startTimeExists) {
       const updatedEvents = events.map((event: any) => {
@@ -186,6 +251,7 @@ export const ModalRegistroLaboral = ({
     })
     setOpen(false)
     setEvents(updatedEvents)
+    updateHorario(updatedEvents)
   }
 
   const handleDeleteActividad = (hour: string, actividadId: string): void => {
@@ -234,16 +300,20 @@ export const ModalRegistroLaboral = ({
     })
     const proyectos: Record<string, string> = {} // Objeto para agrupar las actividades por proyecto
     eventosHoy.forEach((evento: any) => {
-      mensajeWsp += `RESUMEN ${(evento.user.name).toUpperCase()} / ${retornarFecha(evento.start)} \n\n`
+      mensajeWsp += `RESUMEN ${evento.user.name.toUpperCase()} / ${retornarFecha(
+        evento.start
+      )} \n\n`
       Object.keys(evento.detalle).forEach((hora: string) => {
         const actividades = evento.detalle[hora]
         // Agrupar actividades por proyecto
         actividades.forEach((actividad: any) => {
-          const nombreProyecto = `${(actividad.proyecto).nombre} (${(actividad.proyecto).nombreCliente})`
+          const nombreProyecto = `${actividad.proyecto.nombre} (${actividad.proyecto.nombreCliente})`
           if (!proyectos[nombreProyecto]) {
             proyectos[nombreProyecto] = ''
           }
-          proyectos[nombreProyecto] += `${actividad.horaInicio} - ${actividad.horaFin}: ${actividad.descripcion}  \n`
+          proyectos[
+            nombreProyecto
+          ] += `${actividad.horaInicio} - ${actividad.horaFin}: ${actividad.descripcion}  \n`
         })
       })
     })
@@ -271,9 +341,9 @@ export const ModalRegistroLaboral = ({
   const obtenerHora = (): string => {
     const fecha = new Date()
     return `${fecha.getHours()}:${fecha
-        .getMinutes()
-        .toString()
-        .padStart(2, '0')}`
+      .getMinutes()
+      .toString()
+      .padStart(2, '0')}`
   }
 
   const exportarProyectos = (): void => {
@@ -303,7 +373,15 @@ export const ModalRegistroLaboral = ({
     })
 
     eventosHoy.forEach((evento: any) => {
-      const proyectos: Record<string, { id: string, actividades: string, nombreCliente: string, nombre: string }> = {} // Objeto para agrupar las actividades por proyecto y almacenar su ID
+      const proyectos: Record<
+      string,
+      {
+        id: string
+        actividades: string
+        nombreCliente: string
+        nombre: string
+      }
+      > = {} // Objeto para agrupar las actividades por proyecto y almacenar su ID
       // Iterar sobre las actividades de cada evento y agruparlas por proyecto
       Object.keys(evento.detalle).forEach((hora: string) => {
         const actividades = evento.detalle[hora]
@@ -311,21 +389,38 @@ export const ModalRegistroLaboral = ({
           const nombreProyecto = `${actividad.proyecto.nombre} (${actividad.proyecto.nombreCliente})`
           const idProyecto = actividad.proyecto.id // Obtener el ID del proyecto desde la actividad actual
           if (!proyectos[nombreProyecto]) {
-            proyectos[nombreProyecto] = { id: idProyecto, actividades: '', nombreCliente: actividad.proyecto.nombreCliente, nombre: actividad.proyecto.nombre }
+            proyectos[nombreProyecto] = {
+              id: idProyecto,
+              actividades: '',
+              nombreCliente: actividad.proyecto.nombreCliente,
+              nombre: actividad.proyecto.nombre
+            }
           }
-          proyectos[nombreProyecto].actividades += `${actividad.horaInicio} - ${actividad.horaFin}: ${actividad.descripcion}  \n`
+          proyectos[
+            nombreProyecto
+          ].actividades += `${actividad.horaInicio} - ${actividad.horaFin}: ${actividad.descripcion}  \n`
         })
       })
 
       // Agregar cada proyecto y sus actividades al resumen
       Object.keys(proyectos).forEach((proyectoNombre: string) => {
-        const { id: idProyecto, actividades, nombreCliente, nombre } = proyectos[proyectoNombre]
+        const {
+          id: idProyecto,
+          actividades,
+          nombreCliente,
+          nombre
+        } = proyectos[proyectoNombre]
         agregarResumen(actividades, idProyecto, nombreCliente, nombre)
       })
     })
   }
 
-  const agregarResumen = async (texto: string, id: string, nombreCliente: string, nombreMarca: string): Promise<void> => {
+  const agregarResumen = async (
+    texto: string,
+    id: string,
+    nombreCliente: string,
+    nombreMarca: string
+  ): Promise<void> => {
     setLoadingBoton(true)
     // Crear el nuevo resumen primero
     const nuevoResumen = {
@@ -344,15 +439,15 @@ export const ModalRegistroLaboral = ({
       data.append('_method', 'PUT')
       try {
         const respuesta = await axios.post(
-                `${Global.url}/saveHorarioUser/${id ?? ''}`,
-                data,
-                {
-                  headers: {
-                    Authorization: `Bearer ${
-                      token !== null && token !== '' ? token : ''
-                    }`
-                  }
-                }
+          `${Global.url}/saveHorarioUser/${id ?? ''}`,
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${
+                token !== null && token !== '' ? token : ''
+              }`
+            }
+          }
         )
         if (respuesta.data.status == 'success') {
           toast.success('CONTENIDO ENVIADA CORRECTAMENTE')
@@ -363,20 +458,21 @@ export const ModalRegistroLaboral = ({
             data.append('nombre', auth.name)
             data.append('icono', 'comentario')
             data.append('url', `/admin/seguimiento/${id ?? ''}`)
-            data.append('contenido', `Ha subido un nuevo comentario para el proyecto ${nombreMarca ?? ''}  (${nombreCliente ?? ''})`)
+            data.append(
+              'contenido',
+              `Ha subido un nuevo comentario para el proyecto ${
+                nombreMarca ?? ''
+              }  (${nombreCliente ?? ''})`
+            )
             data.append('hidden_users', '')
             try {
-              await axios.post(
-                    `${Global.url}/nuevaNotificacion`,
-                    data,
-                    {
-                      headers: {
-                        Authorization: `Bearer ${
-                          token !== null && token !== '' ? token : ''
-                        }`
-                      }
-                    }
-              )
+              await axios.post(`${Global.url}/nuevaNotificacion`, data, {
+                headers: {
+                  Authorization: `Bearer ${
+                    token !== null && token !== '' ? token : ''
+                  }`
+                }
+              })
             } catch (error: unknown) {
               console.log(error)
               Swal.fire('Error al subir', '', 'error')
@@ -384,8 +480,6 @@ export const ModalRegistroLaboral = ({
           }
           enviarNotificacion()
           setOpen(false)
-        } else {
-          console.log('error al subir')
         }
       } catch (error: unknown) {
         console.log(error)
@@ -395,6 +489,23 @@ export const ModalRegistroLaboral = ({
     }
     enviarDatos()
   }
+
+  const formatTiempoTrabajado = (tiempoTrabajado: number): string => {
+    let horas = Math.floor(tiempoTrabajado / 60) // Convertir minutos a horas
+    let minutos = tiempoTrabajado % 60 // Obtener los minutos restantes
+
+    // Redondear hacia arriba si los minutos son mayores o iguales a 30
+    if (minutos == 60) {
+      horas++
+      minutos = 0
+    }
+    // Formatear el resultado en el formato deseado
+    const horasFormateadas = horas.toString().padStart(2, '0')
+    const minutosFormateados = minutos.toString().padStart(2, '0')
+    return `${horasFormateadas}:${minutosFormateados}`
+  }
+
+  // Llamada a la función para obtener la sumatoria de tiempo trabajado en las actividades de los detalles de los eventos
 
   return (
     <Dialog
@@ -438,34 +549,44 @@ export const ModalRegistroLaboral = ({
       ) : (
         <div className="bg-white w-[800px] h-[700px] p-4 overflow-hidden group rounded-none  shadow hover:shadow-lg transition-all hover:cursor-pointer overflow-y-auto">
           <section className="w-full flex h-[50px]">
-            <div className="flex w-full h-full gap-3 items-center ">
-              <div className="flex justify-center ">
-                <img
-                  src={icono}
-                  alt="JT Devs"
-                  className="rounded-full w-14 h-14 object-cover ring-4 p-1 ring-gray-300"
-                />
+            <div className='w-full flex flex-col gap-3'>
+              <div className="flex w-full h-full gap-3 items-center ">
+                <div className="flex justify-center ">
+                  <img
+                    src={icono}
+                    alt="JT Devs"
+                    className="rounded-full w-14 h-14 object-cover ring-4 p-1 ring-gray-300"
+                  />
+                </div>
+                <div className="flex flex-col items-start justify-center gap-0 p-4">
+                  <h3 className="font-semibold text-xl transition-all">
+                    {auth.name}
+                  </h3>
+                  <span>{new Date(Event.start).toLocaleDateString()}</span>
+                </div>
               </div>
-              <div className="flex flex-col items-start justify-center gap-0 p-4">
-                <h3 className="font-semibold text-xl transition-all">
-                  {auth.name}
-                </h3>
-                <span>{new Date(Event.start).toLocaleDateString()}</span>
-              </div>
+              <div className='font-bold pl-1 '>Horas trabajadas : {tiempoTrabajado && formatTiempoTrabajado(tiempoTrabajado)}</div>
             </div>
-            <div className='h-full flex gap-3 items-center'>
-                {!loadingBoton
-                  ? <RiFolderSharedFill className='text-2xl text-red-600 hover:text-red-700 transition-colors hover:scale-110'
-                    onClick={() => { exportarProyectos() }}
-                    />
-                  : <span>
-                        <LoadingSmall/>
-                    </span>
-                }
-
-                <FaWhatsapp className='text-2xl text-green-600 hover:text-green-700 transition-colors hover:scale-110'
-                onClick={() => { exportarEventos() }}
+            <div className="h-full flex gap-3 items-center">
+              {!loadingBoton ? (
+                <RiFolderSharedFill
+                  className="text-2xl text-red-600 hover:text-red-700 transition-colors hover:scale-110"
+                  onClick={() => {
+                    exportarProyectos()
+                  }}
                 />
+              ) : (
+                <span>
+                  <LoadingSmall />
+                </span>
+              )}
+
+              <FaWhatsapp
+                className="text-2xl text-green-600 hover:text-green-700 transition-colors hover:scale-110"
+                onClick={() => {
+                  exportarEventos()
+                }}
+              />
             </div>
           </section>
           {Event && (
@@ -547,11 +668,11 @@ export const ModalRegistroLaboral = ({
                           {Event?.detalle &&
                             Event?.detalle[hour.toString()] && (
                               <div className="col-span-6 ">
-                             {Event.detalle[hour.toString()]
-                               .sort((a: any, b: any) =>
-                                 a.horaInicio.localeCompare(b.horaInicio)
-                               )
-                               .map((actividad: any) => (
+                                {Event.detalle[hour.toString()]
+                                  .sort((a: any, b: any) =>
+                                    a.horaInicio.localeCompare(b.horaInicio)
+                                  )
+                                  .map((actividad: any) => (
                                     <div
                                       key={actividad.id}
                                       className="grid grid-cols-6 gap-4"
@@ -569,27 +690,35 @@ export const ModalRegistroLaboral = ({
                                       >
                                         {actividad?.proyecto?.nombre}
                                       </Link>
-                                      <div className='flex gap-2 col-span-3 '>
+                                      <div className="flex gap-2 col-span-3 ">
                                         <p className="w-full break-words line-clamp-1 pr-6">
-                                            {actividad.descripcion}
+                                          {actividad.descripcion}
                                         </p>
                                         <button
-                                            onClick={() => { handleEditActividad(hour.toString(), actividad.id) }}
-                                            className=" text-blue-500 hover:text-blue-700  text-lg"
+                                          onClick={() => {
+                                            handleEditActividad(
+                                              hour.toString(),
+                                              actividad.id
+                                            )
+                                          }}
+                                          className=" text-blue-500 hover:text-blue-700  text-lg"
                                         >
-                                            <MdEdit/>
+                                          <MdEdit />
                                         </button>
                                         <button
-                                          onClick={() => { handleDeleteActividad(hour.toString(), actividad.id) }
-                                          }
+                                          onClick={() => {
+                                            handleDeleteActividad(
+                                              hour.toString(),
+                                              actividad.id
+                                            )
+                                          }}
                                           className=" text-red-500 hover:text-red-700"
                                         >
-                                          <MdDelete/>
+                                          <MdDelete />
                                         </button>
                                       </div>
                                     </div>
-                               )
-                               )}
+                                  ))}
                               </div>
                           )}
                           <div className="w-full h-full flex items-center">

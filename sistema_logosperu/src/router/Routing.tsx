@@ -107,6 +107,7 @@ import { ViewContrato } from '../components/private/tables/contratos/ViewContrat
 import { ListaVentasToOneCliente } from '../components/private/tables/ventas/ListaVentasToOneCliente'
 import { ListaVentasGrafico } from '../components/private/tables/ventas/disenografico/ListaVentasGrafico'
 import { IndexCalendarioLaboral } from '../components/private/tables/asistencia_laboral/Calendario/IndexCalendarioLaboral'
+import { IndexCalendarioLaboral2 } from '../components/private/tables/asistencia_laboral/Calendario/IndexCalendarioLaboral2'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -143,6 +144,7 @@ export const Routing = (): JSX.Element => {
             {/* COLABORADORES */}
             <Route path="colaboradores" element={<ListaColaboradores />} />
             <Route path="colaboradores/horario-laboral" element={<IndexCalendarioLaboral />} />
+            <Route path="colaboradores/horario-laboral2" element={<IndexCalendarioLaboral2 />} />
             <Route path="colaboradores/agregar" element={<RegistroColaborador />} />
             <Route path="colaboradores/reporte/:id" element={<ReportePorColaborador />} />
             <Route path="colaboradores/gestor_tareas/:idCol/:nameCol" element={<IndexGestorColaborador />} />

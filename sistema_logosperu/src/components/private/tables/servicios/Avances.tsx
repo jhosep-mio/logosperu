@@ -48,6 +48,8 @@ import { IndexComunity } from './community/IndexComunity'
 import { ViewAlta } from './modals/ViewAlta'
 import { OnlyCalendario } from './community/OnlyCalendario'
 import { ModalDescripcion2 } from './community/ModalDescripcion2'
+import { ModalObsequios } from './obsequios/ModalObsequios'
+import { PlanHosting } from './forms/PlanHosting'
 
 interface Dataweb {
   dominio: string
@@ -92,7 +94,7 @@ export const Avances = (): JSX.Element => {
   const { id } = useParams()
   const navigate = useNavigate()
   const token = localStorage.getItem('token')
-  const { setTitle } = useAuth()
+  const { setTitle, auth } = useAuth()
   const [loading, setLoading] = useState(true)
   const [plan, setplan] = useState<ValuesPlanes | null>(null)
   const [open, setOpen] = useState(false)
@@ -100,6 +102,7 @@ export const Avances = (): JSX.Element => {
   const [openAvisoNotificacion, setOpenAvisoNotificacion] = useState(false)
   const [openActaAceptacion, setOpenActaAceptacion] = useState(false)
   const [openQuestion, setOpenQuestion] = useState(false)
+  const [openObsequio, setOpenObsequio] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const [selectIDCLIENTE, setSelectIDCLIENTE] = useState(0)
   const [selectedItem, setSelectedItem] = useState<Event | null>(null)
@@ -121,6 +124,7 @@ export const Avances = (): JSX.Element => {
   })
   //   const [openChat, setOpenChat] = useState(false)
   const [openMail, setOpenMail] = useState(false)
+  const [usuarios, setUsuarios] = useState<never[]>([])
   const [openCorreoFinal, setOpenCorreoFinal] = useState(false)
   const [arrayAvances, setArrayAvances] = useState([])
   const [arrayAlta, setArrayAlta] = useState<any | null>(null)
@@ -476,8 +480,18 @@ export const Avances = (): JSX.Element => {
     setColaboradores(request.data)
   }
 
+  const getUsuarios = async (): Promise<void> => {
+    const request = await axios.get(`${Global.url}/getUsuarios`, {
+      headers: {
+        Authorization: `Bearer ${token !== null && token !== '' ? token : ''}`
+      }
+    })
+    setUsuarios(request.data)
+  }
+
   useEffect(() => {
     getColaboradores()
+    getUsuarios()
   }, [])
 
   useEffect(() => {
@@ -718,19 +732,15 @@ export const Avances = (): JSX.Element => {
   }
 
   const updatedProceso = (id: number): void => {
-    console.log('ID: ', id)
     procesosRegistrados[id].fecha = obtenerFechaActual().toString()
-    console.log(procesosRegistrados)
     updatePropuestas()
   }
 
   useEffect(() => {
-    console.log(dataUpdatedWeb.porcentaje_proyecto)
     setPercentage(Number(dataUpdatedWeb.porcentaje_proyecto))
     setDomain(dataUpdatedWeb.dominio)
     setDomainTemp(dataUpdatedWeb.domain_temp)
     setProcesosRegistrados(dataUpdatedWeb.procesos)
-    console.log(dataUpdatedWeb)
   }, [dataUpdatedWeb])
 
   return (
@@ -739,7 +749,14 @@ export const Avances = (): JSX.Element => {
         <Loading />
       ) : (
         <>
-          <BsFillGiftFill className='text-2xl text-main mt-3 hover:text-main_dark transition-colors'/>
+         {auth.id_rol == 99 && datos?.id_contrato.split('_')[0] != ('LPHOST') &&
+            <BsFillGiftFill className='text-2xl  text-main mt-3 hover:text-main_dark transition-colors cursor-pointer' onClick={() => { setOpenObsequio(!openObsequio) } }/>
+         }
+         {auth.id_rol == 99 && datos?.id_contrato.split('_')[0] == ('LPHOST') &&
+            <div className='w-full flex justify-end absolute right-6 top-2'>
+                 <BsFillGiftFill className='text-2xl  text-main mt-3 hover:text-main_dark transition-colors cursor-pointer' onClick={() => { setOpenObsequio(!openObsequio) } }/>
+            </div>
+         }
           {openModalProcess && (
             <div onClick={() => { setOpenModalProcess(false) }} className="fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-[990]">
                 <div className="bg-white rounded-lg shadow-md w-full h-fit max-w-[500px] relative z-[995] p-10" onClick={(e) => { e.stopPropagation() }}>
@@ -1258,7 +1275,34 @@ export const Avances = (): JSX.Element => {
                    </div>
                  </div>
                </form>
-                 : (
+                 : (datos?.id_contrato.split('_')[0]).includes('LPHOST')
+                     ? <PlanHosting
+                     arrayActa={arrayActa}
+                     arrayAlta={arrayAlta}
+                     arrayAvances={arrayAvances}
+                     arrayFinal={arrayFinal}
+                     colaborador={colaborador}
+                     colaboradores={colaboradores}
+                     datos={datos}
+                     datos2={datos2}
+                     errors={errors}
+                     handleBlur={handleBlur}
+                     handleChange={handleChange}
+                     handleSubmit={handleSubmit}
+                     setAvance={setAvance}
+                     setOpenActa={setOpenActa}
+                     setOpenAvance={setOpenAvance}
+                     setOpenCorreoFinal={setOpenCorreoFinal}
+                     setOpenFinal={setOpenFinal}
+                     setOpenMail={setOpenMail}
+                     setOpenMailFinal={setOpenMailFinal}
+                     setOpenQuestion={setOpenQuestion}
+                     setfinal={setfinal}
+                     setopenAlta={setopenAlta}
+                     touched={touched}
+                     values={values}
+                     />
+                     : (
                     <form className="mt-5" onSubmit={handleSubmit}>
                     <div className="bg-white p-4 rounded-xl mt-6">
                     <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 md:gap-0">
@@ -1423,7 +1467,7 @@ export const Avances = (): JSX.Element => {
                         </div>
                     </div>
                     </form>
-                   )}
+                       )}
           <ModalQuestion
             open={openQuestion}
             setOpen={setOpenQuestion}
@@ -1543,6 +1587,14 @@ export const Avances = (): JSX.Element => {
         setOpen={setOpenMail}
         id={selectIDCLIENTE}
         getOneBrief={getOneBrief}
+      />
+      <ModalObsequios
+        open={openObsequio}
+        setOpen={setOpenObsequio}
+        // @ts-expect-error
+        datos={datos}
+        getClientes={getOneBrief}
+        usuarios={usuarios}
       />
     </>
   )

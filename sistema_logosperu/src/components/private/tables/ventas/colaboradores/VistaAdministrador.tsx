@@ -147,6 +147,10 @@ export const VistaAdministrador = ({
     const lineas = texto.split('\n')
 
     const lineasFormateadas = lineas.map((linea, index) => {
+      if (linea.trim() === '') {
+        return null // Ignorar líneas vacías
+      }
+
       const primeraLetraMayuscula = linea.trim().charAt(0).toUpperCase()
       const restoTexto = linea.trim().slice(1)
       const textoFormateado = primeraLetraMayuscula + restoTexto
@@ -158,8 +162,7 @@ export const VistaAdministrador = ({
         </p>
       )
     })
-
-    return <>{lineasFormateadas}</>
+    return <>{lineasFormateadas.filter(Boolean)}</> // Filtrar elementos nulos (líneas vacías)
   }
 
   return (

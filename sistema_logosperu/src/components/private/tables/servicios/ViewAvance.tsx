@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as React from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -54,6 +55,7 @@ export const ViewAvance = ({ open, setOpen, avance, datos }: values): JSX.Elemen
   const [arrayArchivos, setArrayArchivos] = React.useState<arrayImagenes[]>([])
   const [contexto, setContexto] = React.useState('')
   const [asunto, setAsunto] = React.useState('')
+  const [razon, setrazon] = React.useState('')
   const [empresa, setEmpresa] = React.useState('')
   const [contacto, setContacto] = React.useState('')
   const [openReenvio, setOpenReenvio] = React.useState(false)
@@ -68,6 +70,13 @@ export const ViewAvance = ({ open, setOpen, avance, datos }: values): JSX.Elemen
       setContexto(avance.contexto)
     } else {
       setContexto('')
+    }
+    // @ts-expect-error
+    if (avance.razon) {
+    // @ts-expect-error
+      setrazon(avance.razon)
+    } else {
+      setrazon('')
     }
     if (avance.imagenes) {
       setArrayImagenes(avance.imagenes)
@@ -249,6 +258,18 @@ export const ViewAvance = ({ open, setOpen, avance, datos }: values): JSX.Elemen
             </h2>
             <ViewSwiperCorreos correos={correos} />
           </div>
+          {razon &&
+          <div className="flex items-center  border border-b-gray-400">
+            <p className="block h-full py-3 px-4 border-r border-r-gray-400 text-black font-bold w-[150px]">
+              RAZON DE OBSEQUIO:
+            </p>
+            <input
+              type="text"
+              className="uppercase text-black outline-none px-4 py-3 w-full"
+              value={razon}
+              disabled
+            />
+          </div>}
           {empresa &&
           <div className="flex items-center  border border-b-gray-400">
             <p className="block h-full py-3 px-4 border-r border-r-gray-400 text-black font-bold w-[150px]">

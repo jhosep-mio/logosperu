@@ -71,6 +71,7 @@ export const ModalDescripcion = ({
   const [archivosAEliminar, setarchivosAEliminar] = useState<
   arrayCategoriasToPortafolio[] | undefined
   >([])
+  const [nuevoTitulo, setNuevoTitulo] = useState(eventSelected?.title || '')
 
   const [openResponder, setOpenResponder] = useState(false)
   const [idComentario, setIdComentario] = useState<string | null>('')
@@ -215,6 +216,7 @@ export const ModalDescripcion = ({
       if (event.id == eventSelected?.event.id) {
         return {
           ...event,
+          title: nuevoTitulo,
           descripcion: {
             contexto,
             arrayArchivos,
@@ -230,11 +232,17 @@ export const ModalDescripcion = ({
   }
 
   useEffect(() => {
+    console.log(eventSelected)
     if (eventSelected?.event) {
       if (eventSelected?.event?.descripcion?.contexto) {
         setContexto(eventSelected?.event?.descripcion?.contexto)
       } else {
         setContexto('')
+      }
+      if (eventSelected?.title) {
+        setNuevoTitulo(eventSelected?.title)
+      } else {
+        setNuevoTitulo('')
       }
       if (eventSelected?.event?.descripcion?.hora) {
         setHora(eventSelected?.event?.descripcion?.hora)
@@ -274,7 +282,7 @@ export const ModalDescripcion = ({
     data.append('community', JSON.stringify(updatedEvents))
     data.append('archivosAEliminar', JSON.stringify(archivosAEliminar))
     data.append('_method', 'PUT')
-    if (arrayArchivos.length > 5000) {
+    if (arrayArchivos.length > 0) {
       enviarCorreo()
     }
     try {
@@ -382,10 +390,14 @@ export const ModalDescripcion = ({
             {!edicion ? (
               <>
                 <div className="w-full ">
-                  <div className="w-full relative">
-                    <h1 className="w-full uppercase text-center font-bold text-2xl">
-                      {eventSelected?.title}
-                    </h1>
+                  <div className="w-full px-8 relative">
+                    <input
+                      type="text"
+                      value={nuevoTitulo}
+                      onChange={(e) => { setNuevoTitulo(e.target.value) }}
+                      className="w-full text-center focus:border border-gray-300 rounded-md px-4 py-2 outline-none"
+                      placeholder="Nuevo título"
+                    />
                     {comentarios.length == 0 &&
                       !eventSelected?.event?.publicado && (
                         <RiDeleteBin6Line
@@ -419,17 +431,22 @@ export const ModalDescripcion = ({
                           Hora
                         </label>
                         <select
-                        id="hora"
-                        name="hora"
-                        className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
-                        value={hora}
-                        onChange={(e) => {
-                          setHora(e.target.value)
-                        }}
+                          id="hora"
+                          name="hora"
+                          className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
+                          value={hora}
+                          onChange={(e) => {
+                            setHora(e.target.value)
+                          }}
                         >
-                        {Array.from({ length: 10 }, (_, i) => i + 9).map(hour => (
-                            <option key={hour} value={`${hour}:00`}>{`${hour}:00`}</option>
-                        ))}
+                          {Array.from({ length: 10 }, (_, i) => i + 9).map(
+                            (hour) => (
+                              <option
+                                key={hour}
+                                value={`${hour}:00`}
+                              >{`${hour}:00`}</option>
+                            )
+                          )}
                         </select>
                       </div>
                     </div>

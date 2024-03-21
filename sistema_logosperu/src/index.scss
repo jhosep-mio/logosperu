@@ -6,6 +6,10 @@
   width: 0px;
 }
 
+.shadow_hosting{
+    box-shadow: rgba(134, 132, 134, 0.4) 5px 5px;
+}
+
 .dialog_index{
     z-index: 998 !important;
 }
@@ -471,6 +475,9 @@
     transition: all .5s ease-out;
   }
 }
+
+
+
 
 .swp_procesos{
   & .swiper-slide{
@@ -1369,7 +1376,149 @@ input[type="date"] {
 }
 
 
+//CALENDARIO HORARIO LABORAL
+.calendario_horario_laboral{
+  background: #fff;
+  padding: 30px 40px;
+
+  & .rbc-toolbar {
+    transition: all .3s;
+    button{
+      border: 0 !important;
+      padding: 12px 20px;
+    transition: all .2s;
+
+      &:active{
+        scale: 0.97;
+      }
+    }
+  }
+  
+  & .rbc-events-container {
+    & .rbc-event{
+      background: #54A9DC !important;
+    }
+  }
+
+  & .rbc-btn-group{
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 15px;
+    overflow: hidden;
+
+    
+  }
+
+  & .rbc-date-cell{
+    text-align: left !important;
+  }
+    
+  & .rbc-row-segment, & .rbc-event-content{
+    display: flex;
+    justify-content: end;
+  }
+
+  & .rbc-button-link{
+    position: relative;
+    padding: 15px 0 0 15px !important;
+  }
+
+  & .rbc-show-more{
+    padding: 7px 0 0 0 !important;
+  }
+
+  & .rbc-month-view{
+    border-radius: 6px !important;
+    border: 0 !important;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    transition: all .3s;
+    & .rbc-day-bg{
+      border-left: 0 !important;
+    }
+  }
+
+  & .rbc-toolbar{
+    margin-top: 10px !important;
+    margin-bottom: 40px !important;
+  }
+
+  & .rbc-month-row + & .rbc-month-row{
+    border-top: 0 !important;
+  }
+
+  & .rbc-header{
+    padding: 15px 6px !important;
+    border: 0 !important;
+    background: #54A9DC !important;
+
+    span{
+      display: block;
+      &::first-letter{
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  & .rbc-toolbar-label{
+    color: #54A9DC !important;
+    padding-left: 40px !important;
+    text-transform: lowercase !important;
+
+    &::first-letter{
+      text-transform: uppercase;
+    }
+  }
+
+  & .rbc-active{
+    background: #54A9DC !important;
+
+  }
+
+
+  //VISTA DIARIA
+  & .rbc-time-content{
+    border-top: 0 !important;
+  }
+
+  & .rbc-time-view{
+    border: 0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+  }
+
+  & .rbc-time-slot{
+    position: relative;
+    top: 8px;
+    color: #303030 !important;
+  }
+
+  & .rbc-day-slot,  & .rbc-time-slot{
+    border-top: 0 !important;
+  }
+
+}
+
+.fullCalendar{
+  padding:  20px 40px !important;
+  & .rbc-toolbar {
+    height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+  }
+}
+
+.activeDescription{
+  & .rbc-month-view, & .rbc-time-view{
+    width: 55% !important;
+  }
+}
+
 @media (max-width: 576px) {
+
+    .dialog_index .MuiPaper-root {
+        margin: 0 !important;
+    }
     .scroll_movil::-webkit-scrollbar {
         width: 0px !important;
     }

@@ -53,6 +53,8 @@ import { AsignacionComunity } from '../components/private/tables/brief_comunity/
 import { ListaServicios } from '../components/private/tables/servicios/ListaServicios'
 import { ViewServicio } from '../components/private/tables/servicios/ViewServicio'
 import { Avances } from '../components/private/tables/servicios/Avances'
+// import { Avances2 } from '../components/private/tables/servicios/Avances2'
+
 import { ViewPreventa } from '../components/private/tables/preventa/ViewPreventa'
 import { Status } from '../components/private/tables/ventas/Status'
 import { EditarPreventa } from '../components/private/tables/preventa/EditarPreventa'
@@ -107,7 +109,7 @@ import { ViewContrato } from '../components/private/tables/contratos/ViewContrat
 import { ListaVentasToOneCliente } from '../components/private/tables/ventas/ListaVentasToOneCliente'
 import { ListaVentasGrafico } from '../components/private/tables/ventas/disenografico/ListaVentasGrafico'
 import { IndexCalendarioLaboral } from '../components/private/tables/asistencia_laboral/Calendario/IndexCalendarioLaboral'
-import { IndexCalendarioLaboral2 } from '../components/private/tables/asistencia_laboral/Calendario/IndexCalendarioLaboral2'
+import { IndexCalendarioLaboralColaborador } from '../components/private/tables/colaboradores/horariolaboral/IndexCalendarioLaboralColaborador'
 
 export const Routing = (): JSX.Element => {
   return (
@@ -144,7 +146,7 @@ export const Routing = (): JSX.Element => {
             {/* COLABORADORES */}
             <Route path="colaboradores" element={<ListaColaboradores />} />
             <Route path="colaboradores/horario-laboral" element={<IndexCalendarioLaboral />} />
-            <Route path="colaboradores/horario-laboral2" element={<IndexCalendarioLaboral2 />} />
+            <Route path="colaboradores/horario-laboral/:id" element={<IndexCalendarioLaboralColaborador />} />
             <Route path="colaboradores/agregar" element={<RegistroColaborador />} />
             <Route path="colaboradores/reporte/:id" element={<ReportePorColaborador />} />
             <Route path="colaboradores/gestor_tareas/:idCol/:nameCol" element={<IndexGestorColaborador />} />
@@ -197,6 +199,8 @@ export const Routing = (): JSX.Element => {
             <Route path="lista-servicios" element={<ListaServicios />} />
             <Route path="lista-servicios/view/:id" element={<ViewServicio />} />
             <Route path="lista-servicios/avances/:id" element={<Avances/>} />
+            {/* <Route path="lista-servicios/avances2/:id" element={<Avances2/>} /> */}
+
             <Route path="clientes" element={<ListaClientesColaboradores/>} />
             <Route path="clientes/resumen/:id" element={<ComentariosClientes />} />
             {/* TRANSACCIONES */}

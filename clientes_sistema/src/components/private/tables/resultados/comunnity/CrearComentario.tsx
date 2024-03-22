@@ -68,6 +68,14 @@ export const CrearComentario = ({
       const data = new FormData()
       data.append('nombres', auth.name)
       data.append('contrato', datos.id_contrato)
+      data.append('titulo', eventSelected?.event?.title)
+      const startDate = new Date(eventSelected?.event?.start)
+      const day = startDate.getDate().toString().padStart(2, '0') // Obtener el día y agregar un cero al principio si es necesario
+      const month = (startDate.getMonth() + 1).toString().padStart(2, '0') // Obtener el mes (se suma 1 porque los meses van de 0 a 11) y agregar un cero al principio si es necesario
+      const year = startDate.getFullYear().toString() // Obtener el año
+      const formattedDate = `${day}/${month}/${year}`
+      data.append('fecha', formattedDate)
+      data.append('texto', texto)
       data.append('empresa', datos.nombre_marca)
       data.append('id', id?.toString() ?? '')
 
@@ -83,6 +91,7 @@ export const CrearComentario = ({
       console.log(respuesta)
     } catch (error) {
       console.log(error)
+      toast.error('Error, recargue la pagina')
     }
   }
 
@@ -144,6 +153,7 @@ export const CrearComentario = ({
           })
           getOneBrief()
           updateCita(updatedEvents)
+          //   enviarCorreo()
           setEvents(updatedEvents)
           return nuevosResumenes
         }

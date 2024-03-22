@@ -279,6 +279,14 @@ export const ListaColaboradores = (): JSX.Element => {
                       </Link>
                     </MenuItem>
                     <MenuItem className="p-0 hover:bg-transparent">
+                      <Link
+                        to={`horario-laboral/${orden.id}`}
+                        className="rounded-lg transition-colors text-gray-300 hover:bg-secondary-900 flex items-center justify-center gap-x-4 p-2 flex-1"
+                      >
+                        Horario Laboral
+                      </Link>
+                    </MenuItem>
+                    <MenuItem className="p-0 hover:bg-transparent">
                       <button
                         // eslint-disable-next-line @typescript-eslint/no-misused-promises
                         onClick={async () => { await cambiarEstado(orden.id) }}

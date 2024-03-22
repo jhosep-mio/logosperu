@@ -124,7 +124,7 @@ const SideBar = (): JSX.Element => {
   return (
     <>
       <div
-        className={`manejar_Scroll xl:h-[100vh] md:overflow-y-scroll fixed xl:static w-[80%] md:w-[40%] lg:w-[30%] xl:w-auto h-full top-0 bg-[#f1f1f1] shadow-xl p-4 flex flex-col justify-between z-50 ${
+        className={`manejar_Scroll xl:h-[100vh] md:overflow-y-scroll fixed xl:static w-[80%] md:w-[40%] lg:w-[30%] xl:w-auto h-full top-0 bg-[#ffff] shadow-xl p-4 flex flex-col justify-between z-50 ${
           showMenu ? 'left-0' : 'left-full'
         } transition-all`}
       >

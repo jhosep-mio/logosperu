@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Finger+Paint&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,8 +7,28 @@
   width: 0px;
 }
 
+.typografy_plan{
+  font-family: "Finger Paint", sans-serif;
+}
+
+.bg_date_inicio_diseno{
+  background: #22C55E;
+  // box-shadow: inset -5px -5px 10px #1a9848,
+  //             inset 5px 5px 10px #2af274;
+}
+
+.bg_date_final_diseno{
+  background: #e15941;
+  // box-shadow: inset -5px -5px 10px #ad4532,
+  //             inset 5px 5px 10px #ff6d50;
+}
+
 .shadow_hosting{
-    box-shadow: rgba(134, 132, 134, 0.4) 5px 5px;
+    box-shadow: rgba(25, 58, 94, 0.6) 5px 5px;
+}
+
+.shadow_hosting_grafico{
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 12px;
 }
 
 .dialog_index{
@@ -235,6 +256,9 @@
   }
   .rbc-timeslot-group {
     background: white !important;
+    & .rbc-label{
+      font-size: 14px !important;
+    }
   }
   .rbc-row {
     background: white !important;
@@ -550,6 +574,12 @@ backdrop-filter: blur(5px);
     opacity: 0;
     transition: all .2s;
   }
+}
+
+.bg_date_card_avance{
+  background: #fff;
+  box-shadow: inset -5px -5px 10px #dbdbdb,
+  inset 5px 5px 10px #ffffff;
 }
 
 .bg-complete-view{
@@ -1282,6 +1312,12 @@ input[type="date"] {
     flex-flow: column-reverse wrap !important;
   }
 
+    
+  .calendario_colaboradores .rbc-events-container .rbc-event {
+    width: 100% !important;
+  }
+
+
 
 
 .calendario_cm .rbc-toolbar-label {
@@ -1397,6 +1433,7 @@ input[type="date"] {
   & .rbc-events-container {
     & .rbc-event{
       background: #54A9DC !important;
+      padding: 0 !important;
     }
   }
 
@@ -1438,7 +1475,7 @@ input[type="date"] {
 
   & .rbc-toolbar{
     margin-top: 10px !important;
-    margin-bottom: 40px !important;
+    margin-bottom: 30px !important;
   }
 
   & .rbc-month-row + & .rbc-month-row{
@@ -1460,6 +1497,7 @@ input[type="date"] {
 
   & .rbc-toolbar-label{
     color: #54A9DC !important;
+    text-align: center !important;
     padding-left: 40px !important;
     text-transform: lowercase !important;
 
@@ -1485,6 +1523,15 @@ input[type="date"] {
     overflow: hidden !important;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 
+    & .rbc-button-link{
+      position: relative;
+      padding: 0 !important;
+    }
+
+    & .rbc-event-label{
+      display: none !important;
+    }
+
   }
 
   & .rbc-time-slot{
@@ -1497,7 +1544,10 @@ input[type="date"] {
     border-top: 0 !important;
   }
 
+
 }
+
+
 
 .fullCalendar{
   padding:  20px 40px !important;
@@ -1514,7 +1564,79 @@ input[type="date"] {
   }
 }
 
+@media(max-width: 1200px){
+  .activeDescription{
+    & .rbc-month-view, & .rbc-time-view{
+      width: 100% !important;
+    }
+  }
+}
+
+@media(max-width: 992px){
+  .calendario_horario_laboral{
+    padding: 10px 20px;
+
+    & .rbc-toolbar-label{
+      font-size: 36px !important;
+    }
+
+    & .rbc-button-link{
+      padding: 12px 0 0 12px !important;
+    }
+  }
+
+  
+
+  
+}
+
 @media (max-width: 576px) {
+
+  .calendario_horario_laboral{
+    padding: 10px;
+
+    & .rbc-toolbar{
+      margin-top: 0 !important;
+      margin-bottom: 15px !important;
+    }
+
+    & .rbc-toolbar-label{
+      font-size: 18px !important;
+      margin-bottom: 0 !important;
+      padding-left: 0 !important;
+      text-align: left !important;
+    }
+
+    & .rbc-header{
+      padding: 8px 6px !important;
+      font-size: 12px !important;
+    }
+
+    & .rbc-btn-group{
+      button{
+        font-size: 12px !important;
+        padding: 8px 10px !important
+      }
+    }
+
+    & .rbc-button-link{
+      padding: 8px 0 0 8px !important;
+      font-size: 12px !important;
+    }
+
+    .rbc-time-view .rbc-label{
+      padding-left: 0 !important;
+    }
+
+  }
+
+  .fullCalendar{
+    padding: 10px !important;
+
+    & .rbc-toolbar{
+      margin-bottom: 0 !important;
+    }
+  }
 
     .dialog_index .MuiPaper-root {
         margin: 0 !important;

@@ -830,6 +830,22 @@ export const ModalContratos = ({
                     >
                     Impresión de tarjeta de presentación
                     </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de logo 1 propuesta')
+                    }}
+                    >
+                    Diseño de logo 1 propuesta
+                    </p>
+                    <p
+                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                    onClick={() => {
+                      agregarArrayPesos('Diseño de logo 2 propuestas')
+                    }}
+                    >
+                    Diseño de logo 2 propuestas
+                    </p>
                 </div>
                 </div>
             }

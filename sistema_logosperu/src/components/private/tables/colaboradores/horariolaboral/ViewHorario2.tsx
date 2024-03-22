@@ -8,6 +8,7 @@ import { icono } from '../../../../shared/Images'
 import { IoCloseCircleSharp } from 'react-icons/io5'
 import { Link } from 'react-router-dom'
 import { IoMdClose } from 'react-icons/io'
+import { DiasFestivos } from './DiasFestivos'
 interface values {
   estado: boolean
   proyecto: any
@@ -17,13 +18,17 @@ export const ViewHorario2 = ({
   open,
   activeDescription,
   fullScreen,
-  setActiveDescription
+  setActiveDescription,
+  openFestivo,
+  festivos
 }: {
   open: any
   setOpen: any
   activeDescription: boolean
   setActiveDescription: any
   fullScreen: boolean
+  openFestivo: boolean
+  festivos: any
 }): JSX.Element => {
   const [proyectoSeleccionado, setProyectoSeleccionado] = useState<values>({
     estado: false,
@@ -115,12 +120,12 @@ export const ViewHorario2 = ({
   return (
     <div
       className={`${
-        activeDescription ? 'w-[97%] md:w-3/4 xl:w-[42%]' : 'w-0'
+        activeDescription || openFestivo ? 'w-[97%] md:w-3/4 xl:w-[42%]' : 'w-0 hidden'
       } overflow-hidden shadow-md absolute ${
         fullScreen ? 'top-[10px] h-[93%]' : 'top-[10px] xl:top-[143px]'
       }  right-[10px] xl:right-[40px] transition-all ease-out duration-300`}
     >
-      {open?.evento?.event && proyectoSeleccionado.proyecto == null ? (
+      {open?.evento?.event && proyectoSeleccionado.proyecto == null && !openFestivo ? (
         <div className="bg-white relative z-50 shadow-md w-full  py-4 px-2 md:p-4  overflow-hidden group rounded-none h-full  hover:shadow-lg transition-all hover:cursor-pointer overflow-y-auto">
           <section className="w-full flex h-fit items-center">
             <div className='flex flex-col w-full gap-0'>
@@ -269,7 +274,7 @@ export const ViewHorario2 = ({
           </section>
         </div>
       ) : (
-        open?.estado && (
+        open?.estado && !openFestivo ? (
           <div className="bg-white w-full  p-4 overflow-hidden group rounded-none  shadow hover:shadow-lg transition-all hover:cursor-pointer overflow-y-auto">
             <section className="w-full flex h-[50px]">
               <div className="flex w-full h-full gap-3 items-center ">
@@ -379,6 +384,7 @@ export const ViewHorario2 = ({
             </section>
           </div>
         )
+          : <DiasFestivos festivos={festivos}/>
       )}
     </div>
   )

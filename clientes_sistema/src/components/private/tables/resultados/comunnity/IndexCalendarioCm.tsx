@@ -70,16 +70,15 @@ export const IndexCalendarioCm = ({
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     showMore: (total: any) => `+ Ver más (${total})`
   }
-  // @ts-expect-error
-  const [selectedDate, setSelectedDate] = useState<Date | null>(Date.now())
+  //   const [selectedDate, setSelectedDate] = useState<Date | null>(Date.now())
   const workDayStart = new Date() // Fecha de inicio para el día de trabajo
   workDayStart.setHours(9, 0, 0, 0)
   const workDayEnd = new Date() // Fecha de fin para el día de trabajo
   workDayEnd.setHours(19, 0, 0, 0)
   // Función para formatear la fecha con el año seleccionado
-  const formatDate = (): any => {
-    return selectedDate ? moment(selectedDate).format('YYYY-MM') : ''
-  }
+  //   const formatDate = (): any => {
+  //     return selectedDate ? moment(selectedDate).format('YYYY-MM') : ''
+  //   }
 
   const components = {
     event: (props: any) => {
@@ -154,13 +153,13 @@ export const IndexCalendarioCm = ({
     }
   }
 
-  const handleDateChange = (e: any): void => {
-    const { value } = e.target
-    const [year, month] = value.split('-').map(Number)
-    if (year > 2023) {
-      setSelectedDate(new Date(year, month - 1, 1))
-    }
-  }
+  //   const handleDateChange = (e: any): void => {
+  //     const { value } = e.target
+  //     const [year, month] = value.split('-').map(Number)
+  //     if (year > 2023) {
+  //       setSelectedDate(new Date(year, month - 1, 1))
+  //     }
+  //   }
 
   const updateCita = async (
     updatedEvents: any,
@@ -288,7 +287,7 @@ export const IndexCalendarioCm = ({
               </span>}
             </div>
             {openHistorial && (
-              <div className="absolute bg-gray-100 shadow-md mt-4 left-0 right-0 text-black w-[400px] z-[999] top-full flex flex-col gap-0">
+              <div className="absolute bg-gray-100 shadow-md mt-4 right-0 text-black w-[400px] z-[999] top-full flex flex-col gap-0">
                 {
                   // @ts-expect-error
                   datos?.aprobacion && datos?.aprobacion.length > 0 // @ts-expect-error
@@ -329,14 +328,14 @@ export const IndexCalendarioCm = ({
               </div>
             )}
           </div>
-          <input
+          {/* <input
             type="month"
             value={formatDate()}
             onChange={handleDateChange}
-            className="bg-transparent text-black"
+            className="bg-transparent text-black opacity-0"
             min="2023-01"
             max="2030-12"
-          />
+          /> */}
         </div>
       </section>
       <section className="w-full h-[500px] lg:h-[90%] px-0 lg:px-6 lg:pb-4 relative content_modal">
@@ -354,7 +353,7 @@ export const IndexCalendarioCm = ({
               defaultView="month"
               min={workDayStart} // Establecer la hora de inicio del día
               max={workDayEnd}
-              date={selectedDate}
+            //   date={selectedDate}
               components={components} // Use the custom event renderer
             />
           </div>

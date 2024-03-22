@@ -173,7 +173,7 @@ export const IndexComunity = ({
                 {events.length > 0 &&
                   <div className="w-full h-full ">
                     <Calendar
-                      className="calendario_cm text-black"
+                      className="calendario_cm calendario_cm2 text-black"
                       localizer={localizer}
                       events={events}
                       startAccessor="start"

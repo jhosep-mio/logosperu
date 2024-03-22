@@ -1,44 +1,53 @@
+/* eslint-disable multiline-ternary */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useState } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import 'moment/locale/es'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { ViewHorario2 } from './ViewHorario2'
 import { cn } from '../../../../shared/cn'
 import axios from 'axios'
 import { Global } from '../../../../../helper/Global'
 import { Loading } from '../../../../shared/Loading'
 import { SlSizeFullscreen, SlSizeActual } from 'react-icons/sl'
-
+import { useParams } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import { v4 as uuidv4 } from 'uuid'
+import useAuth from '../../../../../hooks/useAuth'
+import { ViewHorario2 } from './ViewHorario2'
 moment.locale('es')
 
-export const IndexCalendarioLaboral = (): JSX.Element => {
+export const IndexCalendarioLaboralColaborador = (): JSX.Element => {
   const token = localStorage.getItem('token')
+  const { id } = useParams()
   const [loading, setLoading] = useState(true)
+  const { auth } = useAuth()
   const [activeDescription, setActiveDescription] = useState(false)
+  const [festivos, setFestivos] = useState<Event[]>([])
+  const [events, setEvents] = useState<Event[]>([])
+  const [openDiasFestivos, setOpenDiasFestivos] = useState(false)
 
   const getHorarioLaboral = async (): Promise<void> => {
     try {
-      const request = await axios.get(`${Global.url}/allHorarioLaboral`, {
-        headers: {
-          Authorization: `Bearer ${
-            token !== null && token !== '' ? token : ''
-          }`
+      const request = await axios.get(
+        `${Global.url}/indexHorarioLaboral/${id ?? ''}`,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+          }
         }
-      })
-      if (request.data.length > 0) {
-        // Verificar si hay datos en la respuesta
-        const eventosCombinados = request.data.reduce(
-          (accumulator: any, usuario: any) => {
-            const eventosUsuario = JSON.parse(usuario.horario_laboral)
-            return accumulator.concat(eventosUsuario)
-          },
-          []
-        )
-        setEvents(eventosCombinados)
-      } else {
-        console.log('No se encontraron registros de horario laboral')
+      )
+      if (request.data) {
+        // setEvents(JSON.parse(request.data.horario_laboral))
+        if (festivos) {
+          const horario = JSON.parse(request.data.horario_laboral)
+          const total = horario.concat(festivos)
+          setEvents(total)
+        } else {
+          setEvents(JSON.parse(request.data.horario_laboral))
+        }
       }
     } catch (error) {
       console.error('Error al obtener el horario laboral:', error)
@@ -46,6 +55,7 @@ export const IndexCalendarioLaboral = (): JSX.Element => {
       setLoading(false)
     }
   }
+
   const localizer = momentLocalizer(moment)
 
   const messages = {
@@ -64,7 +74,6 @@ export const IndexCalendarioLaboral = (): JSX.Element => {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     showMore: (total: any) => `+ Ver más (${total})`
   }
-  const [events, setEvents] = useState<Event[]>([])
   const [open, setOpen] = useState({ estado: false, evento: null })
   const [selectedDate, setSelectedDate] = useState<Date | null>()
 
@@ -79,6 +88,10 @@ export const IndexCalendarioLaboral = (): JSX.Element => {
   useEffect(() => {
     getHorarioLaboral()
   }, [])
+
+  useEffect(() => {
+    getHorarioLaboral()
+  }, [festivos])
 
   const formatDate = (): any => {
     return selectedDate ? moment(selectedDate).format('YYYY-MM') : ''
@@ -98,21 +111,26 @@ export const IndexCalendarioLaboral = (): JSX.Element => {
     event: (props: any) => {
       return (
         <div
-          className="cursor-pointer overflow-hidden relative rounded-md h-full hover:text-black/40 w-fit transition-colors outline-none duration-300 break-words flex "
+          className="cursor-pointer w-full  overflow-hidden relative rounded-md h-full hover:text-black/40 transition-colors outline-none duration-300 break-words flex "
           rel="noreferrer"
           onClick={() => {
-            setOpen({ estado: true, evento: props })
-            console.log(props)
+            if (props.event.modalidad != 'Dia festivo') {
+              setOpen({ estado: true, evento: props })
+              setActiveDescription(true)
+              setOpenDiasFestivos(false)
+            }
           }}
         >
           <span
             className={cn(
-              'absolute top-0 w-[200%] h-[200%] block bg-red-800 z-[1]',
+              'absolute top-0 w-[200%] h-[200%] block  z-[1]',
               props.event.modalidad == 'Presencial'
                 ? 'bg-yellow-500'
                 : props.event.modalidad == 'Home office'
                   ? 'bg-green-600'
-                  : 'bg-[#54A9DC]'
+                  : props.event.modalidad == 'Dia festivo'
+                    ? 'bg-transparent'
+                    : 'bg-[#54A9DC]'
             )}
           ></span>
           <div
@@ -122,9 +140,6 @@ export const IndexCalendarioLaboral = (): JSX.Element => {
           >
             <span
               className="block lowercase first-letter:uppercase text-[12px] md:text-sm"
-              onClick={() => {
-                setActiveDescription(true)
-              }}
             >
               <p className="hidden md:block">{props.title}</p>
               <p className="block md:hidden">{onlyName(props.title)}</p>
@@ -133,6 +148,61 @@ export const IndexCalendarioLaboral = (): JSX.Element => {
         </div>
       )
     }
+  }
+  // @ts-expect-error
+  const festivosDates = festivos.map((feriado) => new Date(feriado.start))
+  const customDayPropGetter = (date: any): any => {
+    // Verificar si la fecha actual está en el array de festivosDates
+    const isHoliday = festivosDates.some((holiday) => {
+      return (
+        holiday.getDate() === date.getDate() &&
+        holiday.getMonth() === date.getMonth() &&
+        holiday.getFullYear() === date.getFullYear()
+      )
+    })
+
+    if (isHoliday) {
+      return {
+        className: 'bg-red-500/80 ' // Estilo para feriados
+      }
+    } else {
+      return {} // No aplicar estilos especiales
+    }
+  }
+
+  const handleSelectSlot = ({ start }: { start: any }): void => {
+    setSelectedDate(start)
+    Swal.fire({
+      title: 'DIA FESTIVO',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      allowOutsideClick: false,
+      inputValidator: (value) => {
+        if (!value) {
+          return '¡Debe ingresar un título!'
+        }
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const newEvent = {
+          id: uuidv4(),
+          modalidad: 'Dia festivo',
+          user: { name: auth.name, id: auth.id },
+          title: result.value,
+          timeRanges: null,
+          start,
+          end: start,
+          detalle: null
+        }
+        // Agregar el nuevo evento al array de eventos
+        const updatedEvents: any = [...festivos, newEvent]
+        setFestivos(updatedEvents)
+        // Actualizar la base de datos con el array de eventos actualizado
+        // await updateCita(updatedEvents)
+      }
+    })
   }
 
   return (
@@ -153,11 +223,18 @@ export const IndexCalendarioLaboral = (): JSX.Element => {
             </div>
           </div>
           <div>
-            <span className='bg-yellow-500 text-white px-2 py-1 rounded-md ml-4'>Presencial</span>
-            <span className='bg-green-600 text-white px-2 py-1 rounded-md ml-4'>Home Office</span>
+            <span className="bg-yellow-500 text-white px-2 py-1 rounded-md ml-4">
+              Presencial
+            </span>
+            <span className="bg-green-600 text-white px-2 py-1 rounded-md ml-4">
+              Home Office
+            </span>
           </div>
         </div>
         <div className="flex gap-6 justify-end">
+          <span onClick={() => { setOpenDiasFestivos(!openDiasFestivos); setActiveDescription(false) }} className="bg-gray-400 hover:bg-main transition-colors cursor-pointer text-white px-2 py-1 rounded-md ml-4">
+            Dias festivos
+          </span>
           <input
             type="month"
             value={formatDate()}
@@ -169,15 +246,13 @@ export const IndexCalendarioLaboral = (): JSX.Element => {
         </div>
       </section>
 
-      {loading
-        ? (
+      {loading ? (
         <Loading />
-          )
-        : (
+      ) : (
         <section className=" w-full h-[90%] relative">
           <Calendar
-            className={`calendario_cm2 text-black calendario_horario_laboral ${
-              activeDescription ? 'activeDescription' : ''
+            className={`calendario_cm2 calendario_colaboradores text-black calendario_horario_laboral ${
+              activeDescription || openDiasFestivos ? 'activeDescription' : ''
             } ${fullView ? 'fullCalendar' : ''}`}
             localizer={localizer}
             events={events}
@@ -187,11 +262,14 @@ export const IndexCalendarioLaboral = (): JSX.Element => {
             endAccessor="end"
             selectable
             messages={messages}
-            views={['day', 'month', 'agenda']}
+            views={['day', 'month']}
             defaultView="month"
+            dayPropGetter={customDayPropGetter}
             date={selectedDate}
             components={components}
-          ></Calendar>
+            onSelectSlot={handleSelectSlot}
+            ></Calendar>
+
           <button
             type="button"
             className={`absolute w-12 h-12 flex items-center justify-center shadow-lg bottom-[40px] lg:top-[20px] bg-white rounded-full p-2 right-[20px] lg:left-[10px] text-xl mb-2 text-[#54A9DC] ${
@@ -217,13 +295,15 @@ export const IndexCalendarioLaboral = (): JSX.Element => {
 
           <ViewHorario2
             open={open}
+            openFestivo={openDiasFestivos}
+            festivos={festivos}
             setOpen={setOpen}
             activeDescription={activeDescription}
             setActiveDescription={setActiveDescription}
             fullScreen={fullView}
           />
         </section>
-          )}
+      )}
     </>
   )
 }

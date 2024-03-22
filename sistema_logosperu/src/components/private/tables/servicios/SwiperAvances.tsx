@@ -70,8 +70,8 @@ export const SwiperAvances = ({
       {arrayAlta &&
         <SwiperSlide className="" onClick={() => { setOpenAlta(true) }}>
             <div
-                className="w-full h-64 bg-form p-4 border-2 border-main rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main
-            hover:shadow-md hover:shadow-main "
+                className="w-full h-[230px] bg-white p-4 px-6 border-2 shadowCard border-main/50 rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main/70
+            hover:shadow-md "
             >
                 <div className="h-full flex justify-between flex-col gap-2 text-black ">
                 <p className="text-base font-bold text-center">{arrayAlta?.asunto}</p>
@@ -101,7 +101,7 @@ export const SwiperAvances = ({
           setOpen(true)
         }}>
           <div
-            className="w-full h-[290px] cursor-pointer bg-white p-5 px-6 shadowCard border-2 border-[#cecece] rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main/70"
+            className="w-full h-[230px] cursor-pointer bg-white p-5 px-6 shadowCard border-2 border-[#cecece] rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main/70"
           >
             <div className="h-full flex justify-between flex-col gap-2 text-black ">
               <p className=" font-bold text-center text-[#353535] text-base">{avance.asunto}</p>
@@ -131,7 +131,7 @@ export const SwiperAvances = ({
       {arrayFinal.map((final: FinalValues, index: number) => (
         <SwiperSlide className="" key={index}>
           <div
-            className="w-full h-64 bg-form p-4 px-6 border-2 border-main rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main
+            className="w-full h-[230px] cursor-pointer bg-white p-5 px-6 border-2 shadowCard border-main/50 rounded-xl relative duration-300 transition-all ease-out group overflow-visible hover:border-main/70
         hover:shadow-md hover:shadow-main "
           >
             <div className="h-full flex justify-between flex-col gap-2 text-black ">

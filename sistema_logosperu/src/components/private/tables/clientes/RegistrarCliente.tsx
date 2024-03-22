@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../../../../hooks/useAuth'
@@ -56,6 +57,8 @@ export const RegistrarCliente = (): JSX.Element => {
     data.append('celular', values.celular)
     data.append('dni_ruc', values.dni_ruc)
     data.append('sexo', values.sexo)
+    // @ts-expect-error
+    data.append('email', values.email)
     data.append('medio_ingreso', values.medio_ingreso)
 
     try {
@@ -97,7 +100,8 @@ export const RegistrarCliente = (): JSX.Element => {
       dni_ruc: '',
       sexo: '',
       medio_ingreso: '',
-      empresa: ''
+      empresa: '',
+      email: ''
     },
     validationSchema: SchemePreventas,
     onSubmit: savePreventa
@@ -344,6 +348,28 @@ export const RegistrarCliente = (): JSX.Element => {
                         <Errors
                           errors={errors.dni_ruc}
                           touched={touched.dni_ruc}
+                        />
+                      </div>
+                      <div className="w-full md:w-full relative h-fit">
+                        <TitleBriefs titulo="Email" />
+                        <input
+                          className="border placeholder-gray-400 focus:outline-none
+                                                      focus:border-black w-full pr-4 h-16 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white
+                                                      border-gray-300 rounded-md transition-all"
+                          name="email"
+                          type="email"
+                          value={values.email}
+                          disabled={false}
+                          onChange={(e) => {
+                            handleChange(e)
+                          }}
+                          onBlur={(e) => {
+                            handleBlur(e)
+                          }}
+                        />
+                        <Errors
+                          errors={errors.email}
+                          touched={touched.email}
                         />
                       </div>
                     </div>

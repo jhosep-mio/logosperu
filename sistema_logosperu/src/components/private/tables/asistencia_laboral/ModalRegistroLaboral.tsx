@@ -43,6 +43,7 @@ export const ModalRegistroLaboral = ({
   const [tiempoTrabajado, setTiempoTrabajado] = useState(0)
   const [currentTime, setCurrentTime] = useState('0')
   const [loading, setLoading] = useState(true)
+  const [tipoTrabajo, setTipoTrabajo] = useState('')
   const [loadingBoton, setLoadingBoton] = useState(false)
   const [openProyectos, setOpenProyectos] = useState(false)
   const [openProyectosEdicion, setOpenProyectosEdicion] = useState(false)
@@ -114,22 +115,27 @@ export const ModalRegistroLaboral = ({
   }
 
   const handleSelectSlot = (): void => {
-    setLoading(true)
-    const currentDateTime = new Date()
-    const formattedCurrentTime = format(currentDateTime, 'yyyy-MM-dd HH:mm:ss')
-    const newEvent = {
-      id: uuidv4(),
-      user: { name: auth.name, id: auth.id },
-      title: auth.name,
-      timeRanges: [{ start: formattedCurrentTime, end: null }], // Array de objetos con hora de inicio y fin inicialmente iguales
-      start: formattedCurrentTime,
-      end: formattedCurrentTime,
-      detalle: null
+    if (tipoTrabajo) {
+      setLoading(true)
+      const currentDateTime = new Date()
+      const formattedCurrentTime = format(currentDateTime, 'yyyy-MM-dd HH:mm:ss')
+      const newEvent = {
+        id: uuidv4(),
+        modalidad: tipoTrabajo,
+        user: { name: auth.name, id: auth.id },
+        title: auth.name,
+        timeRanges: [{ start: formattedCurrentTime, end: null }], // Array de objetos con hora de inicio y fin inicialmente iguales
+        start: formattedCurrentTime,
+        end: formattedCurrentTime,
+        detalle: null
+      }
+      // Agregar el nuevo evento al array de eventos
+      const updatedEvents: any = [...events, newEvent]
+      setEvents(updatedEvents)
+      setLoading(false)
+    } else {
+      toast.warning('Debe seleccionar la modalidad de trabajo')
     }
-    // Agregar el nuevo evento al array de eventos
-    const updatedEvents: any = [...events, newEvent]
-    setEvents(updatedEvents)
-    setLoading(false)
   }
 
   const calcularTiempoTrabajadoActividades = (actividades: any[]): number => {
@@ -154,7 +160,9 @@ export const ModalRegistroLaboral = ({
 
     // Convertir el tiempo a horas y minutos
     const horas = Math.floor(tiempoTrabajado / (1000 * 60 * 60))
-    const minutos = Math.floor((tiempoTrabajado % (1000 * 60 * 60)) / (1000 * 60))
+    const minutos = Math.floor(
+      (tiempoTrabajado % (1000 * 60 * 60)) / (1000 * 60)
+    )
 
     // Puedes devolver el tiempo en el formato que necesites, como un objeto { horas, minutos }
     // o simplemente la cantidad total de minutos, dependiendo de tus necesidades
@@ -174,18 +182,22 @@ export const ModalRegistroLaboral = ({
             start.getMonth() === fechaHoy.getMonth() &&
             start.getFullYear() === fechaHoy.getFullYear()
           ) {
-            // @ts-expect-error
-            Object.values(event.detalle).forEach((detalle: any[]) => {
-              const actividadesHoy = detalle.filter((actividad) => {
-                const actividadDate = new Date(
-                  `${start.toDateString()} ${actividad.horaInicio}`
-                )
-                return actividadDate.toDateString() === fechaHoy.toDateString()
+            if (event.detalle) {
+              // @ts-expect-error
+              Object.values(event.detalle).forEach((detalle: any[]) => {
+                const actividadesHoy = detalle.filter((actividad) => {
+                  const actividadDate = new Date(
+                    `${start.toDateString()} ${actividad.horaInicio}`
+                  )
+                  return (
+                    actividadDate.toDateString() === fechaHoy.toDateString()
+                  )
+                })
+                const tiempoTrabajado =
+                  calcularTiempoTrabajadoActividades(actividadesHoy)
+                sumatoriaTiempoTrabajado += tiempoTrabajado
               })
-              const tiempoTrabajado =
-                calcularTiempoTrabajadoActividades(actividadesHoy)
-              sumatoriaTiempoTrabajado += tiempoTrabajado
-            })
+            }
           }
         })
       }
@@ -535,6 +547,19 @@ export const ModalRegistroLaboral = ({
             </h3>
             <p className="text-gray-600 ">{currentTime}</p>
           </div>
+          <div className='px-4'>
+            <select
+              className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
+              name="tipo_documento"
+              value={tipoTrabajo}
+              onChange={(e) => { setTipoTrabajo(e.target.value) }}
+            >
+              {/* FB GOOGLE, VENTAS, POST VENTA, RECOMENDACION, ISNTAGRAM) */}
+              <option value="">Seleccionar modalidad de trabajo</option>
+              <option value="Presencial">Presencial</option>
+              <option value="Home office">Home office</option>
+            </select>
+          </div>
           <div className="w-full py-3 flex justify-center">
             <button
               onClick={() => {
@@ -549,7 +574,7 @@ export const ModalRegistroLaboral = ({
       ) : (
         <div className="bg-white w-[800px] h-[700px] p-4 overflow-hidden group rounded-none  shadow hover:shadow-lg transition-all hover:cursor-pointer overflow-y-auto">
           <section className="w-full flex h-[50px]">
-            <div className='w-full flex flex-col gap-3'>
+            <div className="w-full flex flex-col gap-3">
               <div className="flex w-full h-full gap-3 items-center ">
                 <div className="flex justify-center ">
                   <img
@@ -565,7 +590,10 @@ export const ModalRegistroLaboral = ({
                   <span>{new Date(Event.start).toLocaleDateString()}</span>
                 </div>
               </div>
-              <div className='font-bold pl-1 '>Horas trabajadas : {tiempoTrabajado && formatTiempoTrabajado(tiempoTrabajado)}</div>
+              <div className="font-bold pl-1 ">
+                Horas trabajadas :{' '}
+                {tiempoTrabajado && formatTiempoTrabajado(tiempoTrabajado)}
+              </div>
             </div>
             <div className="h-full flex gap-3 items-center">
               {!loadingBoton ? (

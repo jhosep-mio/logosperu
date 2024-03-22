@@ -89,6 +89,18 @@ export const SchemaValidarAlta = Yup.object().shape({
   asunto: Yup.string().required('Este campo es requerido')
 })
 
+export const SchemaValidarHosting = Yup.object().shape({
+  dominio: Yup.string().required('Este campo es requerido'),
+  phosting: Yup.string().required('Este campo es requerido'),
+  plan: Yup.string().required('Este campo es requerido'),
+  inicio: Yup.string().required('Este campo es requerido'),
+  usuario: Yup.string().required('Este campo es requerido'),
+  password: Yup.string().required('Este campo es requerido'),
+  montoC: Yup.string().required('Este campo es requerido'),
+  montoP: Yup.string().required('Este campo es requerido'),
+  ganancia: Yup.string().required('Este campo es requerido')
+})
+
 export const SchemaValidarVentas = Yup.object().shape({
   nombre_empresa: Yup.string().required('Este campo es requerido'),
   id_cliente: Yup.string().required('Este campo es requerido')

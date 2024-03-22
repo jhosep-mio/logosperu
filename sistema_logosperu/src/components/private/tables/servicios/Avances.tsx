@@ -57,6 +57,8 @@ interface Dataweb {
   cant_correos: string
   porcentaje_proyecto: string
   procesos: Proceso[]
+  domain_owner: string
+  hosting_owner: string
 }
 
 interface Proceso {
@@ -158,6 +160,7 @@ export const Avances = (): JSX.Element => {
   })
   const [fechaCreacion, setFechaCreacion] = useState<Date | null>(null)
   const [openAvance, setOpenAvance] = useState(false)
+  const [hosting, setHosting] = useState<any | null>(null)
   const [openFinal, setOpenFinal] = useState(false)
   const [openAlta, setopenAlta] = useState(false)
   const [openMarca, setOpenMarca] = useState(false)
@@ -175,7 +178,6 @@ export const Avances = (): JSX.Element => {
     setLoading(true)
     const data = new FormData()
     data.append('comentarios', values.comentarios)
-    console.log('DATA WEB: ', JSON.stringify(dataWeb))
     data.append('data_web', JSON.stringify(dataWeb))
     data.append('_method', 'PUT')
     try {
@@ -242,7 +244,9 @@ export const Avances = (): JSX.Element => {
     domain_temp: '',
     dominio: '',
     porcentaje_proyecto: '',
-    procesos: []
+    procesos: [],
+    domain_owner: '',
+    hosting_owner: ''
   })
 
   const getOneBrief = async (): Promise<void> => {
@@ -254,6 +258,7 @@ export const Avances = (): JSX.Element => {
           }`
         }
       })
+      console.log(request.data)
       const codContr: string = request.data[0].id_contrato.split('_')[0]
       const requestPlan = await axios.get(
         `${Global.url}/onePlanToNombre/${codContr ?? ''}`,
@@ -273,6 +278,11 @@ export const Avances = (): JSX.Element => {
         })
       } else {
         setBrief({ codigo: request.data[0].codigo, uso: request.data[0].uso })
+      }
+
+      const contratoData = localStorage.getItem('contratoData')
+      if (contratoData) {
+        setHosting(JSON.parse(contratoData))
       }
 
       if (requestPlan.data[0].tipo?.includes('Diseño Logotipo')) {
@@ -659,6 +669,9 @@ export const Avances = (): JSX.Element => {
   const [domainTemp, setDomainTemp] = useState('')
   const [domain, setDomain] = useState('Sin dominio')
   const [cantCorreos, setCantCorreos] = useState('3 correos corporativos')
+  const [domainOwner, setDomainOwner] = useState('')
+  const [hostingOwner, setHostingOwner] = useState('')
+  const [activeDomHosOwner, setActiveDomHosOwner] = useState(false)
 
   const changeDomainTemp = (event: any): void => {
     setDomainTemp(event.target.value)
@@ -672,16 +685,25 @@ export const Avances = (): JSX.Element => {
     setCantCorreos(event.target.value)
   }
 
+  const changeDomainOwner = (event: any): void => {
+    setDomainOwner(event.target.value)
+  }
+
+  const changeHostingOwner = (event: any): void => {
+    setHostingOwner(event.target.value)
+  }
+
   const dataWeb = {
     dominio: domain,
     domain_temp: domainTemp,
     cant_correos: cantCorreos,
     porcentaje_proyecto: percentage,
-    procesos: procesosRegistrados
+    procesos: procesosRegistrados,
+    domain_owner: domainOwner,
+    hosting_owner: hostingOwner
   }
 
   function limpiarDominio (url: string): string | null {
-    // Expresión regular para extraer el dominio
     // eslint-disable-next-line no-useless-escape
     const patron: RegExp = /^(?:https?:\/\/)?(?:www\.)?([^:\/\n?]+)/g
     // Busca el patrón en la URL
@@ -738,9 +760,11 @@ export const Avances = (): JSX.Element => {
 
   useEffect(() => {
     setPercentage(Number(dataUpdatedWeb.porcentaje_proyecto))
-    setDomain(dataUpdatedWeb.dominio)
+    setDomain(dataUpdatedWeb.dominio === '' ? 'Sin dominio' : dataUpdatedWeb.dominio)
     setDomainTemp(dataUpdatedWeb.domain_temp)
     setProcesosRegistrados(dataUpdatedWeb.procesos)
+    setDomainOwner(dataUpdatedWeb.domain_owner)
+    setHostingOwner(dataUpdatedWeb.hosting_owner)
   }, [dataUpdatedWeb])
 
   return (
@@ -749,9 +773,30 @@ export const Avances = (): JSX.Element => {
         <Loading />
       ) : (
         <>
-         {auth.id_rol == 99 && datos?.id_contrato.split('_')[0] != ('LPHOST') &&
-            <BsFillGiftFill className='text-2xl  text-main mt-3 hover:text-main_dark transition-colors cursor-pointer' onClick={() => { setOpenObsequio(!openObsequio) } }/>
-         }
+         {(auth.id_rol == 99 && datos?.id_contrato.split('_')[0] == ('LPTV')) || (auth.id_rol == 99 && datos?.id_contrato.split('_')[0] == ('LPWA')) || datos?.id_contrato.split('_')[0] == ('LPW') || datos?.id_contrato.split('_')[0] == ('LPLANDING')
+           ? <div className="bg-white px-4 py-4 rounded-lg flex items-center justify-between">
+              <div className="flex relative gap-6 items-center text-[#252525]">
+
+                <p className='font-semibold'>Dominio:
+                  <span className='font-normal'>
+                     <input type="text" disabled={!activeDomHosOwner} value={domainOwner} onChange={changeDomainOwner} className={'text-center bg-transparent '} />
+                  </span>
+                </p>
+                <p className='font-semibold pr-4'>Hosting:
+                  <span className='font-normal'>
+                     <input type="text" disabled={!activeDomHosOwner} value={hostingOwner} onChange={changeHostingOwner} className={'text-center bg-transparent '} />
+                  </span>
+                </p>
+                <button type="button" className="w-fit h-fit absolute top-2 bottom-2 my-auto left-full text-2xl text-black" onClick={() => { setActiveDomHosOwner(!activeDomHosOwner) }}><CiEdit/></button>
+
+              </div>
+            <BsFillGiftFill className='text-2xl  rounded-lg text-main hover:text-main_dark transition-colors cursor-pointer' onClick={() => { setOpenObsequio(!openObsequio) } }/>
+           </div>
+           : auth.id_rol == 99 && datos?.id_contrato.split('_')[0] != ('LPHOST') &&
+           <BsFillGiftFill className='text-2xl mt-3  text-main hover:text-main_dark transition-colors cursor-pointer' onClick={() => { setOpenObsequio(!openObsequio) } }/>
+
+          }
+
          {auth.id_rol == 99 && datos?.id_contrato.split('_')[0] == ('LPHOST') &&
             <div className='w-full flex justify-end absolute right-6 top-2'>
                  <BsFillGiftFill className='text-2xl  text-main mt-3 hover:text-main_dark transition-colors cursor-pointer' onClick={() => { setOpenObsequio(!openObsequio) } }/>
@@ -832,17 +877,13 @@ export const Avances = (): JSX.Element => {
               <div className="bg-white p-4 rounded-xl mt-6">
                 <div className="w-full flex flex-col justify-start md:items-start gap-y-2 relative">
                   <div className="flex flex-col gap-2 mb-3 ">
-                    <h2 className="text-xl lg:text-2xl font-bold text-black">
+                    <h2 className="text-xl lg:text-2xl font-bold ">
                       Seguimiento del proyecto
                     </h2>
-                    <h3 className="font-bold text-base">
-                      <span className="text-gray-400 text-sm lg:text-base">
-                        Correos recibidos
-                      </span>{' '}
-                    </h3>
+
                   </div>
                   <span
-                    className="w-fit px-4 py-2 bg-main text-white font-bold rounded-xl text-xs md:text-base absolute right-2 top-8 lg:top-0 flex gap-2 items-center cursor-pointer"
+                    className="w-fit  px-4 py-2 bg-main text-white font-semibold rounded-xl text-xs md:text-base absolute right-2 top-8 lg:top-0 flex gap-2 items-center cursor-pointer transition-all active:scale-90"
                     onClick={() => {
                       if (
                         datos.correo &&
@@ -866,7 +907,7 @@ export const Avances = (): JSX.Element => {
                   >
                     Agregar avance
                   </span>
-                  <section className="w-full quitar_padding_bottom">
+                  <section className="w-full pt-6">
                     <SwiperAvances
                       arrayAlta={arrayAlta}
                       arrayAvances={arrayAvances}
@@ -943,8 +984,8 @@ export const Avances = (): JSX.Element => {
                           {datos.id_contrato.includes('LPSEO') && ('SEO')}
                           {datos.id_contrato.includes('LPLANDING') && ('Landingpage')}
                           {datos.id_contrato.includes('LPHOSTING') && ('HOSTING')}
-                          {datos.id_contrato === 'LPWA' && ('Web Administrable')}
-                          {datos.id_contrato === 'LPW' && ('Web Informativa')}
+                          {(datos.id_contrato).slice(0, 4) === 'LPWA' && ('Web Administrable')}
+                          {(datos.id_contrato).slice(0, 4) === 'LPW' && ('Web Informativa')}
 
                        </span>
                              <p className='text-[#252525] relative mt-2 font-semibold text-center'>
@@ -1188,17 +1229,13 @@ export const Avances = (): JSX.Element => {
                  <div className="bg-white p-4 rounded-xl mt-6">
                    <div className="w-full flex flex-col justify-start md:items-start gap-y-2 relative">
                      <div className="flex flex-col gap-2 mb-3 ">
-                       <h2 className="text-xl lg:text-2xl font-bold text-black">
+                       <h2 className="text-xl lg:text-2xl font-bold text-black ">
                          Seguimiento del proyecto
                        </h2>
-                       <h3 className="font-bold text-base">
-                         <span className="text-gray-400 text-sm lg:text-base">
-                           Correos recibidos
-                         </span>{' '}
-                       </h3>
+
                      </div>
                      <span
-                       className="w-fit px-4 py-2 bg-main text-white font-bold rounded-xl absolute right-2 flex gap-2 items-center cursor-pointer"
+                       className="w-fit px-4 py-2 bg-main text-white font-semibold rounded-xl absolute right-2 flex gap-2 items-center cursor-pointer transition-all active:scale-90"
                        onClick={() => {
                          if (
                            datos.correo &&
@@ -1222,7 +1259,7 @@ export const Avances = (): JSX.Element => {
                      >
                        Agregar avance
                      </span>
-                     <section className="w-full quitar_padding_bottom">
+                     <section className="w-full pt-6">
                        <SwiperAvances
                          arrayAlta={arrayAlta}
                          arrayAvances={arrayAvances}
@@ -1280,6 +1317,8 @@ export const Avances = (): JSX.Element => {
                      arrayActa={arrayActa}
                      arrayAlta={arrayAlta}
                      arrayAvances={arrayAvances}
+                     hosting={hosting}
+                     setHosting={setHosting}
                      arrayFinal={arrayFinal}
                      colaborador={colaborador}
                      colaboradores={colaboradores}
@@ -1301,6 +1340,7 @@ export const Avances = (): JSX.Element => {
                      setopenAlta={setopenAlta}
                      touched={touched}
                      values={values}
+                     getDatos={getOneBrief}
                      />
                      : (
                     <form className="mt-5" onSubmit={handleSubmit}>
@@ -1383,14 +1423,10 @@ export const Avances = (): JSX.Element => {
                             <h2 className="text-xl lg:text-2xl font-bold text-black">
                             Seguimiento del proyecto
                             </h2>
-                            <h3 className="font-bold text-base">
-                            <span className="text-gray-400 text-sm lg:text-base">
-                                Correos recibidos
-                            </span>{' '}
-                            </h3>
+
                         </div>
                         <span
-                            className="w-fit px-4 py-2 bg-main text-white font-bold rounded-xl absolute right-2 flex gap-2 items-center cursor-pointer"
+                            className="w-fit px-4 py-2 bg-main text-white font-semibold rounded-xl absolute right-2 flex gap-2 items-center cursor-pointer transition-all active:scale-90"
                             onClick={() => {
                               if (
                                 datos.correo &&
@@ -1414,7 +1450,7 @@ export const Avances = (): JSX.Element => {
                         >
                             Agregar avance
                         </span>
-                        <section className="w-full quitar_padding_bottom">
+                        <section className="w-full pt-6">
                             <SwiperAvances
                             arrayAlta={arrayAlta}
                             arrayAvances={arrayAvances}

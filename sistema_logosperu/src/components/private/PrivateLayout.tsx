@@ -27,7 +27,7 @@ export const PrivateLayout = (): JSX.Element => {
         <SideBar />
         <div className="xl:col-span-6">
           <Header />
-          <div className={`${currentPath.includes('admin/gestor-tareas') || currentPath.includes('admin/colaboradores/gestor_tareas') || currentPath.includes('/admin/colaboradores/horario-laboral') || currentPath.includes('admin/listadocm') || currentPath.includes('admin/documentos') ? 'h-[100vh]' : 'h-[90vh] py-2 px-4 lg:px-8 '} overflow-y-auto relative`}>
+          <div className={`${currentPath.includes('admin/lista-servicios/avances2') ? 'bg-white/60' : ''} ${currentPath.includes('admin/gestor-tareas') || currentPath.includes('admin/colaboradores/gestor_tareas') || currentPath.includes('/admin/colaboradores/horario-laboral') || currentPath.includes('admin/listadocm') || currentPath.includes('admin/documentos') ? 'h-[100vh]' : 'h-[90vh] py-2 px-4 lg:px-8 '} overflow-y-auto relative `}>
           {
               auth.id != ''
                 ? <Outlet />

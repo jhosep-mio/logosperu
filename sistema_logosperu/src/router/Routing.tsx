@@ -53,7 +53,7 @@ import { AsignacionComunity } from '../components/private/tables/brief_comunity/
 import { ListaServicios } from '../components/private/tables/servicios/ListaServicios'
 import { ViewServicio } from '../components/private/tables/servicios/ViewServicio'
 import { Avances } from '../components/private/tables/servicios/Avances'
-// import { Avances2 } from '../components/private/tables/servicios/Avances2'
+import { Avances2 } from '../components/private/tables/servicios/Avances2'
 
 import { ViewPreventa } from '../components/private/tables/preventa/ViewPreventa'
 import { Status } from '../components/private/tables/ventas/Status'
@@ -199,7 +199,7 @@ export const Routing = (): JSX.Element => {
             <Route path="lista-servicios" element={<ListaServicios />} />
             <Route path="lista-servicios/view/:id" element={<ViewServicio />} />
             <Route path="lista-servicios/avances/:id" element={<Avances/>} />
-            {/* <Route path="lista-servicios/avances2/:id" element={<Avances2/>} /> */}
+            <Route path="lista-servicios/avances2/:id" element={<Avances2/>} />
 
             <Route path="clientes" element={<ListaClientesColaboradores/>} />
             <Route path="clientes/resumen/:id" element={<ComentariosClientes />} />

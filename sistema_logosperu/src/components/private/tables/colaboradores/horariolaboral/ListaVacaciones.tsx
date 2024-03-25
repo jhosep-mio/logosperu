@@ -4,7 +4,7 @@ import { RiFilter2Fill } from 'react-icons/ri'
 import { Paginacion } from '../../../../shared/Paginacion'
 import { quitarAcentos } from '../../../../shared/functions/QuitarAcerntos'
 
-export const DiasFestivos = ({ festivos }: { festivos: any }): JSX.Element => {
+export const ListaVacaciones = ({ festivos }: { festivos: any }): JSX.Element => {
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(14)
@@ -38,7 +38,7 @@ export const DiasFestivos = ({ festivos }: { festivos: any }): JSX.Element => {
   }
 
   return (
-    <div className="w-full h-screen p-0 flex flex-col gap-6 relative">
+    <div className="w-full  p-0 flex flex-col gap-6 relative">
       <div className="w-full h-full ">
         <div className="w-full flex mb-3 justify-between">
           <div className="flex gap-3 w-full mx-2">
@@ -57,9 +57,9 @@ export const DiasFestivos = ({ festivos }: { festivos: any }): JSX.Element => {
           </div>
         </div>
         <h2 className="mt-2 w-full text-center uppercase text-main font-bold text-2xl">
-          Dias festivos
+          Vacaciones
         </h2>
-        <div className="md:bg-[#fff] p-0 md:p-8 rounded-xl">
+        <div className="md:bg-[#fff] p-0 md:p-8 rounded-xl mt-3">
           <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-3 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300">
             <h5 className="md:text-left text-gray-700 font-medium line-clamp-1">
               ID

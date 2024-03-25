@@ -11,6 +11,10 @@
   font-family: "Finger Paint", sans-serif;
 }
 
+.rdrDateRangePickerWrapper{
+    margin: auto !important;
+}
+
 .bg_date_inicio_diseno{
   background: #22C55E;
   // box-shadow: inset -5px -5px 10px #1a9848,
@@ -469,7 +473,7 @@
   }
 }
 
-// VIEW CARD WEB CLIENT 
+// VIEW CARD DESARROLLO
 .bg_web_client{
   background-image: url(./assets/diego.svg);
   background-size: cover;
@@ -500,6 +504,12 @@
   }
 }
 
+
+// NUEVA ESTRUCTURA PARA DISEÑO XD
+.bg_neu_procesosDesign{
+  box-shadow: inset -7px -7px 14px #d9d9d9,
+            inset 7px 7px 14px #ffffff;
+}
 
 
 

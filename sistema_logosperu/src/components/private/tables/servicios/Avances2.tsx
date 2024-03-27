@@ -100,6 +100,13 @@ interface values {
   comunnity: string
 }
 
+interface Datadiseno {
+  propuestas: boolean
+  fecha_propuestas: string
+  envio_informacion: boolean
+  fecha_informacion: string
+}
+
 export const Avances2 = (): JSX.Element => {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -187,6 +194,40 @@ export const Avances2 = (): JSX.Element => {
     const data = new FormData()
     data.append('comentarios', values.comentarios)
     data.append('data_web', JSON.stringify(dataWeb))
+    data.append('data_diseno', '')
+    data.append('_method', 'PUT')
+    try {
+      const respuesta = await axios.post(
+        `${Global.url}/updatePropuestas/${id ?? ''}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              token !== null && token !== '' ? token : ''
+            }`
+          }
+        }
+      )
+      if (respuesta.data.status == 'success') {
+        Swal.fire('Actualización exitosa', '', 'success')
+        getOneBrief2()
+      } else {
+        Swal.fire('Error al actualizar', '', 'error')
+      }
+    } catch (error: unknown) {
+      Swal.fire('Error', '', 'error')
+    }
+    setLoading(false)
+  }
+
+  // PARA ACTUALIZAR EL ENVIO DE PROPUESTAS EN LA ESTRUCTURA DE DISEÑO
+  const updateStructuraDiseno = async (dataDiseno: Datadiseno): Promise<void> => {
+    setLoading(true)
+    const data = new FormData()
+    data.append('comentarios', values.comentarios)
+    data.append('data_web', JSON.stringify(dataWeb))
+    data.append('data_diseno', JSON.stringify(dataDiseno))
+
     data.append('_method', 'PUT')
     try {
       const respuesta = await axios.post(
@@ -371,6 +412,10 @@ export const Avances2 = (): JSX.Element => {
         setDataUpdatedWeb(JSON.parse(request.data[0].data_web))
       }
 
+      if (request.data[0].data_diseno) {
+        setDataUpdatedDiseno(JSON.parse(request.data[0].data_diseno))
+      }
+
       setpdfName(request.data[0].propuestas)
       setColaborador(
         request.data[0].asignacion ? JSON.parse(request.data[0].asignacion) : []
@@ -463,6 +508,12 @@ export const Avances2 = (): JSX.Element => {
       setLoading(false)
     }
   }
+  const [dataUpdatedDiseno, setDataUpdatedDiseno] = useState<Datadiseno>({
+    propuestas: false,
+    fecha_propuestas: '',
+    envio_informacion: false,
+    fecha_informacion: ''
+  })
 
   const getOneBrief2 = async (): Promise<void> => {
     setLoading(true)
@@ -484,6 +535,10 @@ export const Avances2 = (): JSX.Element => {
       })
       if (request.data[0].data_web) {
         setDataUpdatedWeb(JSON.parse(request.data[0].data_web))
+      }
+      console.log(request.data[0].data_diseno)
+      if (request.data[0].data_diseno) {
+        setDataUpdatedDiseno(JSON.parse(request.data[0].data_diseno))
       }
     } catch (error) {}
     setLoading(false)
@@ -1757,11 +1812,12 @@ export const Avances2 = (): JSX.Element => {
               //   </form>
                   <PlanLogotipo
                  getOneBrief={getOneBrief}
+                 dataUpdatedDiseno={dataUpdatedDiseno}
                  id={id}
                  limite={limite}
                  pdfName={pdfName}
                  plan={plan}
-
+                 updateStructuraDiseno={updateStructuraDiseno}
                  validateBrief={validateBrief}
                   fechaCreacion={fechaCreacion}
                   arrayActa={arrayActa}

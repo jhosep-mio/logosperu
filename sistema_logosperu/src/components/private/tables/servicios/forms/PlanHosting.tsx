@@ -331,7 +331,7 @@ export const PlanHosting = ({
                 <div className="w-full shadow_hosting bg-[#3c70a6] rounded-2xl p-6 flex flex-col space-y-5">
                   <div className="relative">
                     <h2 className="bg-[#5B87B4] rounded-md px-2 py-1 text-white font-bold uppercase">
-                      {datos?.nombre_marca}
+                      {datos?.nombre_marca ? datos?.nombre_marca : 'No registrado'}
                     </h2>
                     <span className="absolute h-5 border-2 border-dashed  w-1 top-10 left-5 before:w-4 before:h-4 before:absolute before:-bottom-5 before:border-2 before:border-white before:rounded-full before:-left-2"></span>
                     <div className="flex gap-7 items-center mt-6 pl-10">

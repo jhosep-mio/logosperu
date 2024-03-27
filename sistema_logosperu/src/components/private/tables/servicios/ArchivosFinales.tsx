@@ -17,7 +17,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { SubirAvances } from './avancesArchivos/SubirAvances'
 import filarachive from '../../../../assets/plataformas/archivo.png'
 import useAuth from '../../../../hooks/useAuth'
-
+import { AiOutlineCloudUpload } from 'react-icons/ai'
 interface valuesPropuesta {
   propuestas: string
   link_final: string
@@ -350,7 +350,7 @@ export const ArchivosFinales = ({
           </h3>
         </div>
         <div className="w-40 relative h-fit flex justify-end">
-          <button
+          {/* <button
             type="button"
             className="w-40 px-4 h-fit bg-gray-500  rounded-xl font-normal text-sm lg:text-base text-white py-1"
             onClick={() => {
@@ -404,7 +404,7 @@ export const ArchivosFinales = ({
                 </button>
               </motion.div>
             )}
-          </AnimatePresence>
+          </AnimatePresence> */}
         </div>
       </div>
       {values.link_final ??
@@ -615,9 +615,67 @@ export const ArchivosFinales = ({
           )
         : (
         <div className="w-full  pb-4 flex flex-col gap-4">
-          <h2 className="text-black w-full text-center text-sm lg:text-xl">
-            Aun no hay archivos para este proyecto
-          </h2>
+          <div className="border-gray-500 border-dashed border-2 border-spacing-2 rounded-lg py-8">
+            <button
+              type="button"
+              className="flex relative items-center gap-2 w-40 px-4 h-fit bg-secundario/80 mb-4 mx-auto rounded-lg font-normal text-sm lg:text-base text-white py-2"
+              onClick={() => {
+                setSeleccion(!seleccion)
+              }}
+            >
+              <AiOutlineCloudUpload className="text-2xl"/> Subir archivo
+              <AnimatePresence>
+                {seleccion && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute bg-white shadow-lg rounded-md overflow-hidden w-40 h-auto left-full top-0 mx-auto flex flex-col z-20"
+                  >
+                    {plan?.tipo && plan?.tipo.includes('Diseño Logotipo') && (
+                      <div className="w-full lg:w-40 relative cursor-pointer">
+                        <button
+                          type="button"
+                          className="w-full hover:text-white hover:bg-main font-normal transition-colors text-gray-600 px-4 py-2 cursor-pointer"
+                          onClick={() => {
+                            setOpenPDF(true)
+                            setSeleccion(false)
+                          }}
+                        >
+                          Subir propuesta
+                        </button>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      className="w-full lg:w-40  hover:text-white hover:bg-yellow-600 transition-colors font-normal text-gray-600 px-4 py-2"
+                      onClick={() => {
+                        setOpenAvance(true)
+                        setSeleccion(false)
+                      }}
+                    >
+                      Subir avance
+                    </button>
+                    <button
+                      type="button"
+                      className="w-full lg:w-40  hover:text-white hover:bg-green-600  font-normal text-gray-600 px-4 py-2"
+                      onClick={() => {
+                        setOpen(true)
+                        setSeleccion(false)
+                      }}
+                    >
+                      Subir archivo final
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </button>
+
+            <h2 className="text-black w-full text-center text-sm lg:text-xl">
+              Aún no hay archivos para este proyecto
+            </h2>
+
+          </div>
         </div>
           )}
       <SubirArchivosFinales

@@ -19,6 +19,7 @@ interface valueUsuarios {
   name: string
   email: string
   genero: string
+  celular: string
 }
 
 export const ListaUsuarios = ({
@@ -49,11 +50,11 @@ export const ListaUsuarios = ({
     setCorreos(correosActualizados)
   }
 
-  const agregarArrayPesos = (peso: any, nombre: string, email: string, genero: string): void => {
+  const agregarArrayPesos = (peso: any, nombre: string, email: string, genero: string, celular: string): void => {
     if (peso) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      setarrayPesos([...arrayPesos, { id: Date.now(), peso, nombre, email, genero }])
+      setarrayPesos([...arrayPesos, { id: Date.now(), peso, nombre, email, genero, celular }])
       agregarCorreo(email)
     }
     setAgregar(false)
@@ -180,7 +181,7 @@ export const ListaUsuarios = ({
                   key={index}
                   className="text-white text-center block w-full cursor-pointer py-2 hover:text-main transition-colors"
                   onClick={() => {
-                    agregarArrayPesos(String(usuario.id), usuario.name, usuario.email, usuario.genero)
+                    agregarArrayPesos(String(usuario.id), usuario.name, usuario.email, usuario.genero, usuario.celular)
                   }}
                 >
                   {usuario.name}

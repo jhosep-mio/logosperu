@@ -31,6 +31,7 @@ export const IndexCalendarioLaboralColaborador = (): JSX.Element => {
   const [events, setEvents] = useState<Event[]>([])
   const [openDiasFestivos, setOpenDiasFestivos] = useState(false)
   const [vacaciones, setVacaciones] = useState(false)
+  const [permisos, setPermisos] = useState<Event[]>([])
   const localizer = momentLocalizer(moment)
 
   const getHorarioLaboral = async (): Promise<void> => {
@@ -49,7 +50,12 @@ export const IndexCalendarioLaboralColaborador = (): JSX.Element => {
         // setEvents(JSON.parse(request.data.horario_laboral))
         if (festivos && vacacionesEvents) {
           const horario = JSON.parse(request.data.horario_laboral)
-          const total = [...horario, ...festivos, ...vacacionesEvents]
+          const total = [
+            ...horario,
+            ...festivos,
+            ...vacacionesEvents,
+            ...permisos
+          ]
           setEvents(total)
         } else {
           setEvents(JSON.parse(request.data.horario_laboral))
@@ -95,7 +101,7 @@ export const IndexCalendarioLaboralColaborador = (): JSX.Element => {
 
   useEffect(() => {
     getHorarioLaboral()
-  }, [festivos, vacacionesEvents])
+  }, [festivos, vacacionesEvents, permisos])
 
   const formatDate = (): any => {
     return selectedDate ? moment(selectedDate).format('YYYY-MM') : ''
@@ -118,7 +124,10 @@ export const IndexCalendarioLaboralColaborador = (): JSX.Element => {
           className="cursor-pointer w-full  overflow-hidden relative rounded-md h-full hover:text-black/40 transition-colors outline-none duration-300 break-words flex "
           rel="noreferrer"
           onClick={() => {
-            if (props.event.modalidad != 'Dia festivo') {
+            if (
+              props.event.modalidad != 'Presencial' ||
+              props.event.modalidad != 'Home office'
+            ) {
               setOpen({ estado: true, evento: props })
               setActiveDescription(true)
               setOpenDiasFestivos(false)
@@ -135,8 +144,10 @@ export const IndexCalendarioLaboralColaborador = (): JSX.Element => {
                   : props.event.modalidad == 'Dia festivo'
                     ? 'bg-red-500'
                     : props.event.modalidad == 'Vacaciones'
-                      ? 'bg-[#bd9fc9]'
-                      : 'bg-[#54A9DC]'
+                      ? 'bg-[#e8e888] text-black'
+                      : props.event.modalidad == 'Permisos'
+                        ? 'bg-[#be98ce]'
+                        : 'bg-[#54A9DC]'
             )}
           ></span>
           <div
@@ -144,10 +155,17 @@ export const IndexCalendarioLaboralColaborador = (): JSX.Element => {
               'div_cita px-1 z-[1] h-full w-full text-white transition-colors rounded-t-md bg-transparent'
             )}
           >
-            <span
-              className="block lowercase first-letter:uppercase text-[12px] md:text-sm"
-            >
-              <p className="hidden md:block text-center w-full">{props.title}</p>
+            <span className="block lowercase first-letter:uppercase text-[12px] md:text-sm">
+              <p
+                className={cn(
+                  'hidden md:block text-center w-full',
+                  props.event.modalidad == 'Vacaciones'
+                    ? 'text-black'
+                    : 'text-white'
+                )}
+              >
+                {props.title}
+              </p>
               <p className="block md:hidden">{onlyName(props.title)}</p>
             </span>
           </div>
@@ -170,20 +188,43 @@ export const IndexCalendarioLaboralColaborador = (): JSX.Element => {
     return dates
   })
 
+  const permisosDates = permisos.flatMap((feriado: any) => {
+    const startDate = new Date(feriado.start)
+    const endDate = new Date(feriado.end)
+    const dates = eachDayOfInterval({ start: startDate, end: endDate }) // Sin restar un día al final
+    return dates
+  })
+
   const customDayPropGetter = (date: Date): any => {
     const isVacation = vacionessDates.some((vacation) => {
-      return date.getTime() >= vacation.getTime() && date.getTime() <= vacation.getTime()
+      return (
+        date.getTime() >= vacation.getTime() &&
+        date.getTime() <= vacation.getTime()
+      )
+    })
+    const isPermisos = permisosDates.some((vacation) => {
+      return (
+        date.getTime() >= vacation.getTime() &&
+        date.getTime() <= vacation.getTime()
+      )
     })
     const isHoliday = festivosDates.some((holiday) => {
-      return date.getTime() >= holiday.getTime() && date.getTime() <= holiday.getTime()
+      return (
+        date.getTime() >= holiday.getTime() &&
+        date.getTime() <= holiday.getTime()
+      )
     })
     if (isVacation) {
       return {
-        className: 'bg-blue-500/80' // Estilo para vacaciones
+        className: 'bg-[#FDFD96]' // Estilo para vacaciones
       }
     } else if (isHoliday) {
       return {
         className: 'bg-red-500/80' // Estilo para días festivos
+      }
+    } else if (isPermisos) {
+      return {
+        className: 'bg-[#d4b5e1]' // Estilo para días festivos
       }
     } else {
       return {} // No aplicar estilos especiales
@@ -225,6 +266,32 @@ export const IndexCalendarioLaboralColaborador = (): JSX.Element => {
     })
   }
 
+  //   const reenviarCorreo = async (): Promise<void> => {
+  //     const token = localStorage.getItem('token')
+  //     const data = new FormData()
+  //     data.append('nombres', 'ASUNTO DE PRUEBA')
+
+  //     try {
+  //       const respuesta = await axios.post(
+  //         `${Global.url}/correoPrueba`,
+  //         data,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${
+  //               token !== null && token !== '' ? token : ''
+  //             }`
+  //           }
+  //         }
+  //       )
+
+  //       if (respuesta.data.status == 'success') {
+  //         Swal.fire('Correo enviado', '', 'success')
+  //       }
+  //     } catch (error: unknown) {
+  //       console.log(error)
+  //     }
+  //   }
+
   return (
     <>
       <section className="flex  items-center justify-between bg-white border-b border-gray-300 h-[7%] py-1 md:py-0 lg:h-[8%]  md:px-8">
@@ -249,13 +316,36 @@ export const IndexCalendarioLaboralColaborador = (): JSX.Element => {
             <span className="bg-green-600 text-white px-2 py-1 rounded-md ml-4">
               Home Office
             </span>
+            <span className="bg-[#FDFD96] text-black px-2 py-1 rounded-md ml-4">
+              Vacaciones
+            </span>
+            <span className="bg-[#d4b5e1] text-white px-2 py-1 rounded-md ml-4">
+              Permisos
+            </span>
+            {/* <span className="bg-[#d4b5e1] text-white px-2 py-1 rounded-md ml-4"
+            onClick={async () => { await reenviarCorreo() }}
+            >
+              Prueba
+            </span> */}
           </div>
         </div>
         <div className="flex gap-4 justify-end">
-         <span onClick={() => { setVacaciones(!vacaciones) }} className="bg-gray-400 hover:bg-main transition-colors cursor-pointer text-white px-2 py-1 rounded-md ">
+          <span
+            onClick={() => {
+              setVacaciones(!vacaciones)
+            }}
+            className="bg-gray-400 hover:bg-main transition-colors cursor-pointer text-white px-2 py-1 rounded-md "
+          >
             Vacaciones
           </span>
-          <span onClick={() => { setOpenDiasFestivos(!openDiasFestivos); setActiveDescription(false); setVacaciones(false) }} className="bg-gray-400 hover:bg-main transition-colors cursor-pointer text-white px-2 py-1 rounded-md ">
+          <span
+            onClick={() => {
+              setOpenDiasFestivos(!openDiasFestivos)
+              setActiveDescription(false)
+              setVacaciones(false)
+            }}
+            className="bg-gray-400 hover:bg-main transition-colors cursor-pointer text-white px-2 py-1 rounded-md "
+          >
             Dias festivos
           </span>
           <input
@@ -273,65 +363,74 @@ export const IndexCalendarioLaboralColaborador = (): JSX.Element => {
         <Loading />
       ) : (
         <>
-           {!vacaciones
-             ? <section className=" w-full h-[90%] relative">
-                <Calendar
-                    className={`calendario_cm2 calendario_colaboradores text-black calendario_horario_laboral ${
-                    activeDescription || openDiasFestivos ? 'activeDescription' : ''
-                    } ${fullView ? 'fullCalendar' : ''}`}
-                    localizer={localizer}
-                    events={events}
-                    startAccessor={(event: any) => {
-                      return new Date(event.start)
-                    }}
-                    endAccessor="end"
-                    selectable
-                    messages={messages}
-                    views={['day', 'month']}
-                    defaultView="month"
-                    dayPropGetter={customDayPropGetter}
-                    date={selectedDate}
-                    components={components}
-                    onSelectSlot={handleSelectSlot}
-                    ></Calendar>
+          {!vacaciones ? (
+            <section className=" w-full h-[90%] relative">
+              <Calendar
+                className={`calendario_cm2 calendario_colaboradores text-black calendario_horario_laboral ${
+                  activeDescription || openDiasFestivos
+                    ? 'activeDescription'
+                    : ''
+                } ${fullView ? 'fullCalendar' : ''}`}
+                localizer={localizer}
+                events={events}
+                startAccessor={(event: any) => {
+                  return new Date(event.start)
+                }}
+                endAccessor="end"
+                selectable
+                messages={messages}
+                views={['day', 'month']}
+                defaultView="month"
+                dayPropGetter={customDayPropGetter}
+                date={selectedDate}
+                components={components}
+                onSelectSlot={handleSelectSlot}
+              ></Calendar>
 
-                <button
-                    type="button"
-                    className={`absolute w-12 h-12 flex items-center justify-center shadow-lg bottom-[40px] lg:top-[20px] bg-white rounded-full p-2 right-[20px] lg:left-[10px] text-xl mb-2 text-[#54A9DC] ${
-                    fullView ? 'block' : 'hidden'
-                    }`}
-                    onClick={() => {
-                      setFullView(false)
-                    }}
-                >
-                    <SlSizeActual />
-                </button>
-                <button
-                    type="button"
-                    className={`absolute w-12 h-12 flex items-center justify-center shadow-lg bottom-[40px] lg:top-[65px] bg-white rounded-full p-2 right-[20px] lg:left-[40px] text-xl mb-2 text-[#54A9DC] ${
-                    fullView ? 'hidden' : 'block'
-                    }`}
-                    onClick={() => {
-                      setFullView(true)
-                    }}
-                >
-                    <SlSizeFullscreen />
-                </button>
+              <button
+                type="button"
+                className={`absolute w-12 h-12 flex items-center justify-center shadow-lg bottom-[40px] lg:top-[20px] bg-white rounded-full p-2 right-[20px] lg:left-[10px] text-xl mb-2 text-[#54A9DC] ${
+                  fullView ? 'block' : 'hidden'
+                }`}
+                onClick={() => {
+                  setFullView(false)
+                }}
+              >
+                <SlSizeActual />
+              </button>
+              <button
+                type="button"
+                className={`absolute w-12 h-12 flex items-center justify-center shadow-lg bottom-[40px] lg:top-[65px] bg-white rounded-full p-2 right-[20px] lg:left-[40px] text-xl mb-2 text-[#54A9DC] ${
+                  fullView ? 'hidden' : 'block'
+                }`}
+                onClick={() => {
+                  setFullView(true)
+                }}
+              >
+                <SlSizeFullscreen />
+              </button>
 
-                <ViewHorario2
-                    open={open}
-                    openFestivo={openDiasFestivos}
-                    festivos={festivos}
-                    setOpen={setOpen}
-                    activeDescription={activeDescription}
-                    setActiveDescription={setActiveDescription}
-                    fullScreen={fullView}
-                />
-                </section>
-             : <section className=" w-full h-[90%] relative">
-                  <Vacaciones setVacacionesEvents={setVacacionesEvents} vacacionesEvents={vacacionesEvents}/>
-                </section>
-           }
+              <ViewHorario2
+                open={open}
+                openFestivo={openDiasFestivos}
+                festivos={festivos}
+                setOpen={setOpen}
+                activeDescription={activeDescription}
+                setActiveDescription={setActiveDescription}
+                fullScreen={fullView}
+              />
+            </section>
+          ) : (
+            <section className=" w-full h-[90%] relative">
+              <Vacaciones
+                setVacacionesEvents={setVacacionesEvents}
+                vacacionesEvents={vacacionesEvents}
+                setPermisos={setPermisos}
+                permisos={permisos}
+                setOpen={setVacaciones}
+              />
+            </section>
+          )}
         </>
       )}
     </>

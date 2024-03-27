@@ -4,7 +4,7 @@ import { RiFilter2Fill } from 'react-icons/ri'
 import { Paginacion } from '../../../../shared/Paginacion'
 import { quitarAcentos } from '../../../../shared/functions/QuitarAcerntos'
 
-export const ListaVacaciones = ({ festivos }: { festivos: any }): JSX.Element => {
+export const ListaVacaciones = ({ festivos, permisos }: { festivos: any, permisos: any }): JSX.Element => {
   const [paginaActual, setpaginaActual] = useState<number>(1)
   const [search, setSearch] = useState('')
   const [cantidadRegistros] = useState(14)
@@ -14,12 +14,14 @@ export const ListaVacaciones = ({ festivos }: { festivos: any }): JSX.Element =>
 
   const filterDate = (): any => {
     let filteredItems: any
-
+    let combinedList: any[] = []
+    // Concatenar los arrays festivos y permisos
+    combinedList = festivos.concat(permisos)
     if (search.length === 0) {
-      filteredItems = festivos.slice(indexOfFirstPost, indexOfLastPost)
+      filteredItems = combinedList.slice(indexOfFirstPost, indexOfLastPost)
     } else {
       const searchTerm = quitarAcentos(search.toLowerCase())
-      const filter = festivos.filter((pro: any) => {
+      const filter = combinedList.filter((pro: any) => {
         const fullName = `${pro.title}`.toLowerCase()
         return quitarAcentos(fullName).includes(searchTerm)
       })
@@ -57,7 +59,7 @@ export const ListaVacaciones = ({ festivos }: { festivos: any }): JSX.Element =>
           </div>
         </div>
         <h2 className="mt-2 w-full text-center uppercase text-main font-bold text-2xl">
-          Vacaciones
+          Vacaciones / Permisos
         </h2>
         <div className="md:bg-[#fff] p-0 md:p-8 rounded-xl mt-3">
           <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-3 mb-2 md:px-4 md:py-2 text-gray-400 border-y border-gray-300">

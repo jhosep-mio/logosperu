@@ -194,6 +194,11 @@ export const GenerarAlta = ({
     setContenido('')
   }
 
+  const formatearContrato = (cadena: string): string => {
+    const partes = cadena.split('_')
+    return partes[0]
+  }
+
   const returnIngreso = (id: string): string => {
     if (id == '0') {
       return 'Facebook'
@@ -266,14 +271,29 @@ export const GenerarAlta = ({
 
   useEffect(() => {
     if (open) {
-      const nombresColaboradores = arrayPesos
-        .filter((item: any) => item.nombre) // Filtrar los elementos que tienen un nombre definido
-        .map((item: any) => `${item.genero === 'mujer' ? 'Srta.' : ''} ${item.nombre}`)
-        .join(' – ')
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands, @typescript-eslint/restrict-template-expressions
+      let nombresColaboradores = ''
+      // @ts-expect-error
+      if (formatearContrato(datos?.correlativo) == 'LPCME' || formatearContrato(datos?.correlativo) == 'LPCMC' || formatearContrato(datos?.correlativo) == 'LPCMS' || formatearContrato(datos?.correlativo) == 'LPCMG') {
+        nombresColaboradores = arrayPesos
+          .filter((item: any) => item.nombre) // Filtrar los elementos que tienen un nombre definido
+          .map((item: any) => {
+            const nombre = `–${item.genero === 'mujer' ? 'Srta.' : ''} ${item.nombre}<p><p>&nbsp;</p></p>`
+            const movil = item.celular ? `Celular: ${item.celular}\n<p><p>&nbsp;</p></p>` : ''
+            const correo = item.email ? `Correo: ${item.email}\n` : ''
+            return `${nombre}${movil}${correo}`
+          })
+          .join('<p></p><p> </p>') // Separar cada colaborador con dos saltos de línea
+      } else {
+        nombresColaboradores = arrayPesos
+          .filter((item: any) => item.nombre) // Filtrar los elementos que tienen un nombre definido
+          .map((item: any) => `${item.genero === 'mujer' ? 'Srta.' : ''} ${item.nombre}`)
+          .join(' – ')
+      }
+
       const textoadcional = `<p>Estimados Colaboradores </p><p>&nbsp;</p><p>Le damos la Bienvenida al cliente :&nbsp;<span style="background-color: rgb(249, 250, 251);"> ${datos?.empresa}</span></p><p>&nbsp;</p><ul><li>Persona de contacto : Sr. ${datos?.nombres} ${datos?.apellidos} </li><li>Mail&nbsp;: ${datos?.email ?? ''} </li><li>Móvil&nbsp;: ${datos?.celular ?? ''} </li></ul></p><p>&nbsp;</p>`
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const textofinal = `<p>&nbsp;</p><p>${datos?.correlativo ?? ''}/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M1 – ${returnIngreso(datos?.medio_ingreso ?? '')} </p><p>&nbsp;</p><p>COLABORADORES A CARGO: ${nombresColaboradores}</p><p>&nbsp;</p><p>FECHA DE INICIO DEL SERVICIO:&nbsp;${values.fecha_inicio ?? ''}</p><p>&nbsp;</p><p>&nbsp;</p><p>SALUDOS.&nbsp;</p>`
+      const textofinal = `<p>&nbsp;</p><p>${datos?.correlativo ?? ''}/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M1 – ${returnIngreso(datos?.medio_ingreso ?? '')} </p><p>&nbsp;</p><p>COLABORADORES A CARGO: <p></p> ${nombresColaboradores}</p><p>&nbsp;</p><p>&nbsp;</p><p>FECHA DE INICIO DEL SERVICIO:&nbsp;${values.fecha_inicio ?? ''}</p><p>&nbsp;</p><p>&nbsp;</p><p>SALUDOS.&nbsp;</p>`
+
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       const contenidoConTextoAdicional = textoadcional + (datos?.contenido ?? '') + textofinal
       setContenido(contenidoConTextoAdicional)

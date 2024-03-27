@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Finger+Paint&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,48 +7,93 @@
   width: 0px;
 }
 
-.typografy_plan{
-  font-family: "Finger Paint", sans-serif;
+.ctn_confirmacion{
+
+  button{
+    z-index: -20;
+    transition: all .3s;
+  }
+
+  &:hover{
+    button{
+      z-index: 20;
+    }
+  }
 }
 
-.rdrDateRangePickerWrapper{
-    margin: auto !important;
+.typografy_plan {
+  font-family: "Lexend Deca", sans-serif;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
 
-.bg_date_inicio_diseno{
-  background: #22C55E;
+.rdrDateRangePickerWrapper {
+  margin: auto !important;
+}
+
+.bg_date_inicio_diseno {
+  background: #22c55e;
   // box-shadow: inset -5px -5px 10px #1a9848,
   //             inset 5px 5px 10px #2af274;
 }
 
-.bg_date_final_diseno{
+.bg_date_final_diseno {
   background: #e15941;
   // box-shadow: inset -5px -5px 10px #ad4532,
   //             inset 5px 5px 10px #ff6d50;
 }
 
-.shadow_hosting{
-    box-shadow: rgba(25, 58, 94, 0.6) 5px 5px;
+.shadow_hosting {
+  box-shadow: rgba(25, 58, 94, 0.6) 5px 5px;
 }
 
-.shadow_hosting_grafico{
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 12px;
+.shadow_hosting_grafico {
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 12px;
 }
 
-.dialog_index{
-    z-index: 998 !important;
+.dialog_index {
+  z-index: 998 !important;
 }
 
 .scroll_transparent::-webkit-scrollbar-track {
-    background-color: none !important; 
-    border-radius: 5px !important; /* Bordes redondeados */
+  background-color: none !important;
+  border-radius: 5px !important; /* Bordes redondeados */
 }
 
 .scroll_transparent::-webkit-scrollbar-thumb {
-    background: #888 !important; /* Color del thumb */
-    border-radius: 5px !important; /* Bordes redondeados */
+  background: #888 !important; /* Color del thumb */
+  border-radius: 5px !important; /* Bordes redondeados */
 }
 
+.prue{
+    background: #4E54C8;
+    box-shadow: inset -10px -10px 11px #3b4098,
+                inset 10px 10px 11px #6168f8;
+
+    transition: all .3s;
+
+    &:hover{
+        transform: scale(1.01);
+    }
+}
+
+.prue_circulo{
+    background: #ffffff;
+    box-shadow: inset -5px -5px 5px #c9c9c9,
+                inset 5px 5px 5px #ffffff;
+}
+
+.effect_neu_porcentaje_dise {
+  background: #ffffff;
+  box-shadow: inset -6px -6px 13px #dbdbdb, inset 6px 6px 13px #ffffff;
+  transition: all 0.3s;
+
+  &:hover {
+    background: #ffffff;
+    box-shadow: inset 6px -6px 13px #dbdbdb,
+                inset -6px 6px 13px #ffffff;
+  }
+}
 
 .fondo_documentos {
   & .MuiList-root {
@@ -260,7 +305,7 @@
   }
   .rbc-timeslot-group {
     background: white !important;
-    & .rbc-label{
+    & .rbc-label {
       font-size: 14px !important;
     }
   }
@@ -303,7 +348,7 @@
 .rbc-month-view {
   border-radius: 10px;
   background-color: white !important;
-//   border: 1px solid black;
+  //   border: 1px solid black;
   overflow: hidden;
 }
 
@@ -474,135 +519,125 @@
 }
 
 // VIEW CARD DESARROLLO
-.bg_web_client{
+.bg_web_client {
   background-image: url(./assets/diego.svg);
   background-size: cover;
 
-  h6{
-    transition: all ease-out .3s;
+  h6 {
+    transition: all ease-out 0.3s;
   }
 
-  &:hover{
-    & .imgViewWeb{
+  &:hover {
+    & .imgViewWeb {
       scale: 1.05;
     }
 
-    & .btn_edit_dom_temp{
+    & .btn_edit_dom_temp {
       opacity: 1;
       z-index: 30;
     }
 
-    h6{
+    h6 {
       letter-spacing: 0.8px;
       scale: 1.01;
-
     }
   }
 
-  & .imgViewWeb{
-    transition: all .5s ease-out;
+  & .imgViewWeb {
+    transition: all 0.5s ease-out;
   }
 }
 
-
 // NUEVA ESTRUCTURA PARA DISEÑO XD
-.bg_neu_procesosDesign{
-  box-shadow: inset -7px -7px 14px #d9d9d9,
-            inset 7px 7px 14px #ffffff;
+.bg_neu_procesosDesign {
+  box-shadow: inset -7px -7px 14px #d9d9d9, inset 7px 7px 14px #ffffff;
 }
 
-
-
-.swp_procesos{
-  & .swiper-slide{
+.swp_procesos {
+  & .swiper-slide {
     display: flex;
     width: 100%;
     align-items: center;
   }
 }
 
-.input_glass{
+.input_glass {
   outline: none;
   /* From https://css.glass */
-/* From https://css.glass */
-background: rgba(255, 255, 255, 0.07);
-border-radius: 8px;
-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-backdrop-filter: blur(5px);
--webkit-backdrop-filter: blur(5px);
+  /* From https://css.glass */
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
-.btn_vieweb{
+.btn_vieweb {
   border: 1px solid #fff;
-  transition: all .3s;
+  transition: all 0.3s;
 
-  &:hover{
+  &:hover {
     background: transparent;
     color: #fff !important;
 
-    svg{
+    svg {
       color: #fff;
     }
 
-    & .btn_edit_dom_temp{
+    & .btn_edit_dom_temp {
       opacity: 1;
       z-index: 30;
     }
   }
 }
 
-.btn_edit_dom_temp{
+.btn_edit_dom_temp {
   z-index: -50;
-    opacity: 0;
-    transition: all .2s;
+  opacity: 0;
+  transition: all 0.2s;
 }
 
-.svg_porcentaje{
+.svg_porcentaje {
   width: calc(100% + 24px);
   height: calc(100% + 24px);
   left: -11px;
 }
 
-.bg_neu{
+.bg_neu {
   background: #fff;
-  box-shadow: inset -9px -9px 14px #bdbdbd,
-  inset 9px 9px 14px #ffffff;
-  transition: all .3s ease-out;
+  box-shadow: inset -9px -9px 14px #bdbdbd, inset 9px 9px 14px #ffffff;
+  transition: all 0.3s ease-out;
 
-  &:hover{
-    box-shadow: inset 9px -9px 14px #bdbdbd,
-            inset -9px 9px 14px #ffffff;
-   & .btn_edit_percentage{
-    z-index: 20;
-    opacity: 1;
-   }
+  &:hover {
+    box-shadow: inset 9px -9px 14px #bdbdbd, inset -9px 9px 14px #ffffff;
+    & .btn_edit_percentage {
+      z-index: 20;
+      opacity: 1;
+    }
   }
 
-
-  & .btn_edit_percentage{
+  & .btn_edit_percentage {
     z-index: -50;
     opacity: 0;
-    transition: all .2s;
+    transition: all 0.2s;
   }
 }
 
-.bg_date_card_avance{
+.bg_date_card_avance {
   background: #fff;
-  box-shadow: inset -5px -5px 10px #dbdbdb,
-  inset 5px 5px 10px #ffffff;
+  box-shadow: inset -5px -5px 10px #dbdbdb, inset 5px 5px 10px #ffffff;
 }
 
-.bg-complete-view{
+.bg-complete-view {
   background: #38e36b !important;
   box-shadow: none !important;
 
-  &:hover{
-  box-shadow: none !important;
-
+  &:hover {
+    box-shadow: none !important;
   }
 }
 
-.border_selected_proceso{
+.border_selected_proceso {
   border-color: #2fba59 !important;
 }
 
@@ -957,7 +992,6 @@ input[type="number"] {
   padding-bottom: 25px;
 }
 
-
 .swal2-modal {
   border: 2px solid #916fae !important;
   background-color: #eaeaea !important;
@@ -1259,10 +1293,10 @@ input[type="date"] {
 }
 
 .calendario_cm2 .rbc-toolbar {
-    & :first-child {
-      display: none !important;
-    }
+  & :first-child {
+    display: none !important;
   }
+}
 
 .quitar_padding_bottom {
   & .swiper-wrapper {
@@ -1270,65 +1304,60 @@ input[type="date"] {
   }
 }
 
-.shadowCard{
+.shadowCard {
   box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 12px;
   background: #ffffff;
-  box-shadow: inset -6px -6px 10px #e8e8e8,
-              inset 6px 6px 10px #ffffff;
+  box-shadow: inset -6px -6px 10px #e8e8e8, inset 6px 6px 10px #ffffff;
 
-  &:hover{
+  &:hover {
     box-shadow: rgba(210, 55, 65, 0.4) 0px 4px 12px;
     scale: 1.005;
   }
 }
 
 .calendario_cm2 .rbc-toolbar-label {
-    // background: #D33741 !important;
-    color: #D33741 !important;
-    font-size: 42px !important;
-    text-transform: uppercase !important;
-    font-weight: 900 !important;
-    text-align: left !important;
-  }
-  
-  .calendario_cm2 .rbc-active {
-    background: #D33741 !important;
-    color: white !important;
-  }
-  
-  .calendario_cm2 .rbc-header {
-    background: #D33741 !important;
-    color: white !important;
-  }
-  
-  .calendario_cm2 .react-calendar__month-view__weekdays__weekday {
-    color: #D33741 !important;
-    font-weight: bolder !important;
-  }
-  
-  .calendario_cm2 .rbc-event .rbc-event-label {
-    background: transparent !important;
-  }
-  
-  .calendario_cm2 .react-calendar__tile--active:enabled:hover,
-  .calendario_cm2 .react-calendar__tile--active:enabled:focus {
-    background: transparent !important;
-  }
-  
-  .calendario_cm2 .rbc-events-container .rbc-event {
-    height: fit-content !important;
-    background: #D33741 !important;
-    width: fit-content !important;
-    flex-flow: column-reverse wrap !important;
-  }
+  // background: #D33741 !important;
+  color: #d33741 !important;
+  font-size: 42px !important;
+  text-transform: uppercase !important;
+  font-weight: 900 !important;
+  text-align: left !important;
+}
 
-    
-  .calendario_colaboradores .rbc-events-container .rbc-event {
-    width: 100% !important;
-  }
+.calendario_cm2 .rbc-active {
+  background: #d33741 !important;
+  color: white !important;
+}
 
+.calendario_cm2 .rbc-header {
+  background: #d33741 !important;
+  color: white !important;
+}
 
+.calendario_cm2 .react-calendar__month-view__weekdays__weekday {
+  color: #d33741 !important;
+  font-weight: bolder !important;
+}
 
+.calendario_cm2 .rbc-event .rbc-event-label {
+  background: transparent !important;
+}
+
+.calendario_cm2 .react-calendar__tile--active:enabled:hover,
+.calendario_cm2 .react-calendar__tile--active:enabled:focus {
+  background: transparent !important;
+}
+
+.calendario_cm2 .rbc-events-container .rbc-event {
+  height: fit-content !important;
+  background: #d33741 !important;
+  width: fit-content !important;
+  flex-flow: column-reverse wrap !important;
+}
+
+.calendario_colaboradores .rbc-events-container .rbc-event {
+  width: 100% !important;
+}
 
 .calendario_cm .rbc-toolbar-label {
   // background: #129990 !important;
@@ -1368,10 +1397,10 @@ input[type="date"] {
   background: #129990 !important;
 }
 
-.style_icon svg{
+.style_icon svg {
   font-size: 1.875rem; /* 30px */
   line-height: 2.25rem; /* 36px */
-  transition: all .2s;
+  transition: all 0.2s;
 }
 
 //CALENDARIO GESTIOR DE TAREAS
@@ -1421,146 +1450,138 @@ input[type="date"] {
   height: 100% !important;
 }
 
-
 //CALENDARIO HORARIO LABORAL
-.calendario_horario_laboral{
+.calendario_horario_laboral {
   background: #fff;
   padding: 30px 40px;
 
   & .rbc-toolbar {
-    transition: all .3s;
-    button{
+    transition: all 0.3s;
+    button {
       border: 0 !important;
       padding: 12px 20px;
-    transition: all .2s;
+      transition: all 0.2s;
 
-      &:active{
+      &:active {
         scale: 0.97;
       }
     }
   }
-  
+
   & .rbc-events-container {
-    & .rbc-event{
-      background: #54A9DC !important;
+    & .rbc-event {
+      background: #54a9dc !important;
       padding: 0 !important;
     }
   }
 
-  & .rbc-btn-group{
+  & .rbc-btn-group {
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 15px;
     overflow: hidden;
-
-    
   }
 
-  & .rbc-date-cell{
+  & .rbc-date-cell {
     text-align: left !important;
   }
-    
-  & .rbc-row-segment, & .rbc-event-content{
+
+  & .rbc-row-segment,
+  & .rbc-event-content {
     display: flex;
     justify-content: end;
   }
 
-  & .rbc-button-link{
+  & .rbc-button-link {
     position: relative;
     padding: 15px 0 0 15px !important;
   }
 
-  & .rbc-show-more{
+  & .rbc-show-more {
     padding: 7px 0 0 0 !important;
   }
 
-  & .rbc-month-view{
+  & .rbc-month-view {
     border-radius: 6px !important;
     border: 0 !important;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    transition: all .3s;
-    & .rbc-day-bg{
+    transition: all 0.3s;
+    & .rbc-day-bg {
       border-left: 0 !important;
     }
   }
 
-  & .rbc-toolbar{
+  & .rbc-toolbar {
     margin-top: 10px !important;
     margin-bottom: 30px !important;
   }
 
-  & .rbc-month-row + & .rbc-month-row{
+  & .rbc-month-row + & .rbc-month-row {
     border-top: 0 !important;
   }
 
-  & .rbc-header{
+  & .rbc-header {
     padding: 15px 6px !important;
     border: 0 !important;
-    background: #54A9DC !important;
+    background: #54a9dc !important;
 
-    span{
+    span {
       display: block;
-      &::first-letter{
+      &::first-letter {
         text-transform: uppercase;
       }
     }
   }
 
-  & .rbc-toolbar-label{
-    color: #54A9DC !important;
+  & .rbc-toolbar-label {
+    color: #54a9dc !important;
     text-align: center !important;
     padding-left: 40px !important;
     text-transform: lowercase !important;
 
-    &::first-letter{
+    &::first-letter {
       text-transform: uppercase;
     }
   }
 
-  & .rbc-active{
-    background: #54A9DC !important;
-
+  & .rbc-active {
+    background: #54a9dc !important;
   }
 
-
   //VISTA DIARIA
-  & .rbc-time-content{
+  & .rbc-time-content {
     border-top: 0 !important;
   }
 
-  & .rbc-time-view{
+  & .rbc-time-view {
     border: 0 !important;
     border-radius: 8px !important;
     overflow: hidden !important;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 
-    & .rbc-button-link{
+    & .rbc-button-link {
       position: relative;
       padding: 0 !important;
     }
 
-    & .rbc-event-label{
+    & .rbc-event-label {
       display: none !important;
     }
-
   }
 
-  & .rbc-time-slot{
+  & .rbc-time-slot {
     position: relative;
     top: 8px;
     color: #303030 !important;
   }
 
-  & .rbc-day-slot,  & .rbc-time-slot{
+  & .rbc-day-slot,
+  & .rbc-time-slot {
     border-top: 0 !important;
   }
-
-
 }
 
-
-
-.fullCalendar{
-  padding:  20px 40px !important;
+.fullCalendar {
+  padding: 20px 40px !important;
   & .rbc-toolbar {
     height: 0 !important;
     overflow: hidden !important;
@@ -1568,111 +1589,107 @@ input[type="date"] {
   }
 }
 
-.activeDescription{
-  & .rbc-month-view, & .rbc-time-view{
+.activeDescription {
+  & .rbc-month-view,
+  & .rbc-time-view {
     width: 55% !important;
   }
 }
 
-@media(max-width: 1200px){
-  .activeDescription{
-    & .rbc-month-view, & .rbc-time-view{
+@media (max-width: 1200px) {
+  .activeDescription {
+    & .rbc-month-view,
+    & .rbc-time-view {
       width: 100% !important;
     }
   }
 }
 
-@media(max-width: 992px){
-  .calendario_horario_laboral{
+@media (max-width: 992px) {
+  .calendario_horario_laboral {
     padding: 10px 20px;
 
-    & .rbc-toolbar-label{
+    & .rbc-toolbar-label {
       font-size: 36px !important;
     }
 
-    & .rbc-button-link{
+    & .rbc-button-link {
       padding: 12px 0 0 12px !important;
     }
   }
-
-  
-
-  
 }
 
 @media (max-width: 576px) {
-
-  .calendario_horario_laboral{
+  .calendario_horario_laboral {
     padding: 10px;
 
-    & .rbc-toolbar{
+    & .rbc-toolbar {
       margin-top: 0 !important;
       margin-bottom: 15px !important;
     }
 
-    & .rbc-toolbar-label{
+    & .rbc-toolbar-label {
       font-size: 18px !important;
       margin-bottom: 0 !important;
       padding-left: 0 !important;
       text-align: left !important;
     }
 
-    & .rbc-header{
+    & .rbc-header {
       padding: 8px 6px !important;
       font-size: 12px !important;
     }
 
-    & .rbc-btn-group{
-      button{
+    & .rbc-btn-group {
+      button {
         font-size: 12px !important;
-        padding: 8px 10px !important
+        padding: 8px 10px !important;
       }
     }
 
-    & .rbc-button-link{
+    & .rbc-button-link {
       padding: 8px 0 0 8px !important;
       font-size: 12px !important;
     }
 
-    .rbc-time-view .rbc-label{
+    .rbc-time-view .rbc-label {
       padding-left: 0 !important;
     }
-
   }
 
-  .fullCalendar{
+  .fullCalendar {
     padding: 10px !important;
 
-    & .rbc-toolbar{
+    & .rbc-toolbar {
       margin-bottom: 0 !important;
     }
   }
 
-    .dialog_index .MuiPaper-root {
-        margin: 0 !important;
-    }
-    .scroll_movil::-webkit-scrollbar {
-        width: 0px !important;
-    }
-    .modal_community_clientes .quitaR_padding {
-        padding: 0 !important;
-    }
+  .dialog_index .MuiPaper-root {
+    margin: 0 !important;
+  }
+  .scroll_movil::-webkit-scrollbar {
+    width: 0px !important;
+  }
+  .modal_community_clientes .quitaR_padding {
+    padding: 0 !important;
+  }
 
-    .modal_dialog_correlativo{
-        & .MuiDialog-container{
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-        & .MuiPaper-root{
-            padding: 0 !important;
-            margin:  10px 0 !important;
-            width: 98% !important;
-            max-width:  98% !important;
-        }
-        & .MuiPaper-root-MuiDialog-paper {
-            margin: 0 !important;
-        }
+  .modal_dialog_correlativo {
+    & .MuiDialog-container {
+      padding: 0 !important;
+      margin: 0 !important;
     }
+    & .MuiPaper-root {
+      padding: 0 !important;
+      margin: 10px 0 !important;
+      width: 98% !important;
+      max-width: 98% !important;
+    }
+    & .MuiPaper-root-MuiDialog-paper {
+      margin: 0 !important;
+    }
+  }
 
   .moda_registro {
     & .MuiPaper-root {
@@ -1711,11 +1728,9 @@ input[type="date"] {
   }
 }
 
-@media(max-width: 992px){
-
-    .content_modal{
-        .rbc-month-view{
-        }
+@media (max-width: 992px) {
+  .content_modal {
+    .rbc-month-view {
     }
-
+  }
 }

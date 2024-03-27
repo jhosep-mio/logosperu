@@ -175,17 +175,17 @@ export const ModalObsequios = ({
                 data.append('url', pathName)
                 data.append(
                   'contenido',
-                      `Ha enviado una alta para el proyecto ${
-                        values?.nombre_empresa ?? ''
-                      }  (${values?.nombre_cliente ?? ''})`
+                  `Ha enviado una alta para el proyecto ${
+                    values?.nombre_empresa ?? ''
+                  }  (${values?.nombre_cliente ?? ''})`
                 )
                 data.append('hidden_users', '')
                 try {
                   await axios.post(`${Global.url}/nuevaNotificacion`, data, {
                     headers: {
                       Authorization: `Bearer ${
-                            token !== null && token !== '' ? token : ''
-                          }`
+                        token !== null && token !== '' ? token : ''
+                      }`
                     }
                   })
                 } catch (error: unknown) {
@@ -264,7 +264,8 @@ export const ModalObsequios = ({
       celular: '',
       email: '',
       razon: '',
-      precio: ''
+      precio: '',
+      tipo: ''
     },
     validationSchema: SchemaValidarObsequio,
     onSubmit: guardarAvance
@@ -327,7 +328,10 @@ export const ModalObsequios = ({
       )
       const correoPredeterminado = datos?.email
       if (!correos.some((c: any) => c.correo == correoPredeterminado)) {
-        setCorreos([...correos, { id: uuidv4(), correo: correoPredeterminado }])
+        setCorreos([
+          ...correos,
+          { id: uuidv4(), correo: correoPredeterminado }
+        ])
       }
     }
   }, [open])
@@ -459,6 +463,22 @@ export const ModalObsequios = ({
                   <div className="mb-3 md:mb-0 w-full bg-form rounded-md rounded-tl-none md:p-3 text-black flex flex-col items-end gap-2 lg:gap-x-5 lg:gap-y-0">
                     <div className="w-full flex flex-col lg:flex-row gap-3 lg:gap-5 mt-3 lg:mt-0">
                       <div className="w-full lg:relative pb-5">
+                        <select
+                          name="tipo"
+                          value={values.tipo}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
+                        >
+                          <option value="">Seleccionar tipo de correo</option>
+                          <option value="Obsequio">Obsequio</option>
+                          <option value="Con costo">Con costo</option>
+                        </select>
+                        <Errors errors={errors.tipo} touched={touched.tipo} />
+                      </div>
+                    </div>
+                    <div className="w-full flex flex-col lg:flex-row gap-3 lg:gap-5 mt-3 lg:mt-0">
+                      <div className="w-full lg:relative pb-5">
                         <label
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                           htmlFor="email"
@@ -515,47 +535,52 @@ export const ModalObsequios = ({
                       </div>
                     </div>
                     <div className="w-full flex flex-col lg:flex-row gap-3 lg:gap-5 mt-3 lg:mt-0">
-                      <div className="w-full lg:relative pb-5">
-                        <label
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          htmlFor="email"
-                        >
-                          Razon de obsequio
-                        </label>
-                        <input
-                          className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
-                          name="razon"
-                          value={values.razon}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          disabled={false}
-                        />
-                        <Errors
-                          errors={errors.razon}
-                          touched={touched.razon}
-                        />
-                      </div>
-                      <div className="w-full lg:relative pb-5">
-                        <label
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          htmlFor="email"
-                        >
-                          Precio
-                        </label>
-                        <input
-                          className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
-                          name="precio"
-                          type='number'
-                          value={values.precio}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          disabled={false}
-                        />
-                        <Errors
-                          errors={errors.precio}
-                          touched={touched.precio}
-                        />
-                      </div>
+                      {values.tipo == 'Obsequio' ? (
+                        <div className="w-full lg:relative pb-5">
+                          <label
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            htmlFor="email"
+                          >
+                            Razon de obsequio
+                          </label>
+                          <input
+                            className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
+                            name="razon"
+                            value={values.razon}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            disabled={false}
+                          />
+                          <Errors
+                            errors={errors.razon}
+                            touched={touched.razon}
+                          />
+                        </div>
+                      ) : (
+                        values.tipo == 'Con costo' && (
+                          <div className="w-full lg:relative pb-5">
+                            <label
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              htmlFor="email"
+                            >
+                              Precio
+                            </label>
+                            <input
+                              className="flex h-9 w-full rounded-md border border-input border-gray-400 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed"
+                              name="precio"
+                              type="number"
+                              value={values.precio}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              disabled={false}
+                            />
+                            <Errors
+                              errors={errors.precio}
+                              touched={touched.precio}
+                            />
+                          </div>
+                        )
+                      )}
                     </div>
                     <ListaUsuarios
                       arrayPesos={arrayPesos}
@@ -689,209 +714,218 @@ export const ModalObsequios = ({
                       Creacion de Reel 30s con locución
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => { agregarArrayPesos('Diseño de Firma(s) de correo(s)') }} >
-                    Diseño de Firma de correo
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Firma(s) de correo(s)')
+                      }}
+                    >
+                      Diseño de Firma de correo
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Portada(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Portada(s)')
+                      }}
                     >
-                    Diseño de Portada
+                      Diseño de Portada
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Perfil(es)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Perfil(es)')
+                      }}
                     >
-                    Diseño de Perfil
+                      Diseño de Perfil
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Tarjeta(s) de presentación')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos(
+                          'Diseño de Tarjeta(s) de presentación'
+                        )
+                      }}
                     >
-                    Diseño de Tarjeta de presentación
+                      Diseño de Tarjeta de presentación
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Hoja(s) membretada(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Hoja(s) membretada(s)')
+                      }}
                     >
-                    Diseño de Hoja membretada
+                      Diseño de Hoja membretada
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Flyer(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Flyer(s)')
+                      }}
                     >
-                    Diseño de Flyer
+                      Diseño de Flyer
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Brochure 04 caras')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Brochure 04 caras')
+                      }}
                     >
-                    Diseño de Brochure 04 caras
+                      Diseño de Brochure 04 caras
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Brochure 06 caras')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Brochure 06 caras')
+                      }}
                     >
-                    Diseño de Brochure 06 caras
+                      Diseño de Brochure 06 caras
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Brochure 08 caras')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Brochure 08 caras')
+                      }}
                     >
-                    Diseño de Brochure 08 caras
+                      Diseño de Brochure 08 caras
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Fotocheck(s) o uniforme(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos(
+                          'Diseño de Fotocheck(s) o uniforme(s)'
+                        )
+                      }}
                     >
-                    Diseño de Fotocheck o uniforme
+                      Diseño de Fotocheck o uniforme
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Etiqueta(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Etiqueta(s)')
+                      }}
                     >
-                    Diseño de Etiqueta
+                      Diseño de Etiqueta
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Montaje(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Montaje(s)')
+                      }}
                     >
-                    Diseño de Montaje
+                      Diseño de Montaje
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Animación de Logo(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Animación de Logo(s)')
+                      }}
                     >
-                    Animación de Logo
+                      Animación de Logo
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Animación de Personaje(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Animación de Personaje(s)')
+                      }}
                     >
-                    Animación de Personaje
+                      Animación de Personaje
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Personaje(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Personaje(s)')
+                      }}
                     >
-                    Diseño de Personaje
+                      Diseño de Personaje
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Manual de marca(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Manual de marca(s)')
+                      }}
                     >
-                    Diseño de Manual de marca
+                      Diseño de Manual de marca
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Vectorización de logo(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Vectorización de logo(s)')
+                      }}
                     >
-                    Vectorización de logo
+                      Vectorización de logo
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Letrero(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Letrero(s)')
+                      }}
                     >
-                    Diseño de Letrero
+                      Diseño de Letrero
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Sticker(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Sticker(s)')
+                      }}
                     >
-                    Diseño de sticker
+                      Diseño de sticker
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Banner(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Banner(s)')
+                      }}
                     >
-                    Diseño de Banner
+                      Diseño de Banner
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Volante(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Volante(s)')
+                      }}
                     >
-                    Diseño de Volante
+                      Diseño de Volante
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Sobre(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Sobre(s)')
+                      }}
                     >
-                    Diseño de Sobre
+                      Diseño de Sobre
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Folder(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Folder(s)')
+                      }}
                     >
-                    Diseño de Folder
+                      Diseño de Folder
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Bolsa(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Bolsa(s)')
+                      }}
                     >
-                    Diseño de Bolsa
+                      Diseño de Bolsa
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Diseño de Calendario(s)')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos('Diseño de Calendario(s)')
+                      }}
                     >
-                    Diseño de Calendario
+                      Diseño de Calendario
                     </p>
                     <p
-                    className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
-                    onClick={() => {
-                      agregarArrayPesos('Impresión de tarjeta de presentación')
-                    }}
+                      className="bg-white hover:bg-gray-300 transition-colors px-2 cursor-pointer"
+                      onClick={() => {
+                        agregarArrayPesos(
+                          'Impresión de tarjeta de presentación'
+                        )
+                      }}
                     >
-                    Impresión de tarjeta de presentación
+                      Impresión de tarjeta de presentación
                     </p>
                   </div>
                 </div>
